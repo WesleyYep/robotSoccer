@@ -7,7 +7,7 @@ public class RobotSoccerMain {
 	public static void main(String[] args) {
 		IReceiver receiver = new Receiver();
 		//probably need to make a swingworker for this?
-		receiver.accept(63400);
+		receiver.accept(80);
 	}
 
 }
