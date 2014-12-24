@@ -31,7 +31,7 @@ public class Receiver extends SwingWorker<Void, Integer> {
         Random random = new Random();
 		try {
 			output.append("Started!\n");
-			serverSocket = new ServerSocket(80);
+			serverSocket = new ServerSocket(31000);
 			clientSocket = serverSocket.accept();
 			output.append("Connected!");
 	        //Initialize progress property.
