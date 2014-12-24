@@ -51,7 +51,17 @@ public class Receiver extends SwingWorker<Void, Integer> {
 	@Override
 	protected void process(List<Integer> chunks) {
 		for (int i = 0; i < chunks.size(); i++) {
-			if (chunks.get(i) > 4000) {
+			if (chunks.get(i) > 9000) {
+				output.append("\nRobot 5: y = " + (chunks.get(i) - 9000));
+			} else if (chunks.get(i) > 8000) {
+				output.append("\nRobot 4: y = " + (chunks.get(i) - 8000));
+			} else if (chunks.get(i) > 7000) {
+				output.append("\nRobot 3: y = " + (chunks.get(i) - 7000));
+			} else if (chunks.get(i) > 6000) {
+				output.append("\nRobot 2: y = " + (chunks.get(i) - 6000));
+			} else if (chunks.get(i) > 5000) {
+				output.append("\nRobot 1: y = " + (chunks.get(i) - 5000));
+			} else if (chunks.get(i) > 4000) {
 				output.append("\nRobot 5: x = " + (chunks.get(i) - 4000));
 			} else if (chunks.get(i) > 3000) {
 				output.append("\nRobot 4: x = " + (chunks.get(i) - 3000));
@@ -73,79 +83,3 @@ public class Receiver extends SwingWorker<Void, Integer> {
         output.append("Done!\n");
     }
 }
-
-//public class Receiver implements IReceiver{
-//	private ServerSocket serverSocket;
-//	private Socket clientSocket;
-//	private DataInputStream in;
-//	
-//	public void accept(int port) {
-//		//		serverSocket = new ServerSocket(port);
-////		clientSocket = serverSocket.accept();
-//		worker.execute();
-//		// Create a reader
-////			while (true){
-////				in = new DataInputStream(clientSocket.getInputStream());
-////				// Get the client message
-////				while(in.available() != 0){
-////					publish(in.readInt()/256);
-////				}
-////			}
-//	}
-//
-//
-//	private SwingWorker <Integer, String> worker = new SwingWorker<Integer, String>(){
-//		
-//		@Override
-//		  protected Integer doInBackground() throws Exception {
-//		    // Start
-//		    publish("Start");
-//		    setProgress(1);
-//		    
-//		    // More work was done
-//		    publish("More work was done");
-//		    setProgress(10);
-//
-//		    // Complete
-//		    publish("Complete");
-//		    setProgress(100);
-//		    return 1;
-//		  }
-//		  
-//		  @Override
-//		  protected void process(List<String> chunks) {
-//		    System.out.println(chunks.get(0));
-//		  }
-////		@Override
-////		protected Void doInBackground() throws Exception {
-////			System.out.println("connected");
-////		    for (int i = 0; i < 1000; i++) {
-////		    	publish (i);
-////		    }
-////		    return null;
-////		}
-////		
-////		@Override
-////		protected void process(List<Integer> chunks) {
-////			for (int i = 0; i < chunks.size(); i++) {
-////				if (i > 4000) {
-////					System.out.println("Robot 5: x = " + (chunks.get(i) - 4000));
-////				} else if (i > 3000) {
-////					System.out.println("Robot 4: x = " + (chunks.get(i) - 3000));
-////				} else if (i > 2000) {
-////					System.out.println("Robot 3: x = " + (chunks.get(i) - 2000));
-////				} else if (i > 1000) {
-////					System.out.println("Robot 2: x = " + (chunks.get(i) - 1000));
-////				} else {
-////					System.out.println("Robot 1: x = " + chunks.get(i));
-////				}
-////			}
-////		}
-////		
-////		@Override
-////		protected void done() {
-////			System.out.println("done");
-////		}
-//	};
-//	
-//}

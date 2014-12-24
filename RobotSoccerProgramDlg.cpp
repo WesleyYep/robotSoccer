@@ -675,11 +675,12 @@ void CRobotSoccerProgramDlg::Process(void)
 		CObjectPositionInfo past = m_SynchronousModule.PositionDataPast();
 		CObjectPositionInfo error = m_SynchronousModule.PositionDataError();
 
-		int lol;
+		int x, y;
 		for (int i = 0; i < 5; i++) {
-			lol = current.m_Robot[i].pos.x*100 + i * 1000;
-			//int lol = 2;
-			sendStuff(lol);
+			x = current.m_Robot[i].pos.x*100 + i * 1000;
+			sendStuff(x);
+			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000;
+			sendStuff(y);
 		}
 
 		m_propGame.SetObjectInfomation( m_ObjectInfo, current, past, error );

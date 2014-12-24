@@ -11,6 +11,7 @@ public class RobotSoccerMain extends JPanel
     private JButton startButton;
     private JTextArea taskOutput;
     private Receiver task;
+    private Field field;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -23,12 +24,14 @@ public class RobotSoccerMain extends JPanel
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
         taskOutput.setEditable(false);
-
+        
         JPanel panel = new JPanel();
         panel.add(startButton);
+        field = new Field();
 
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.CENTER);
+        add(field, BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
     }
