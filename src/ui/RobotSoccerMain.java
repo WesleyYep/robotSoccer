@@ -8,10 +8,13 @@ import communication.Receiver;
 public class RobotSoccerMain extends JPanel
                              implements ActionListener {
 
+	public static final int DEFAULT_PORT_NUMBER = 31000;
     private JButton startButton;
     private JTextArea taskOutput;
     private Receiver task;
     private Field field;
+    
+    private JTextField portField;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -25,8 +28,11 @@ public class RobotSoccerMain extends JPanel
         taskOutput.setMargin(new Insets(5,5,5,5));
         taskOutput.setEditable(false);
         
+        portField = new JTextField(10);
+        
         JPanel panel = new JPanel();
         panel.add(startButton);
+        panel.add(portField);
         field = new Field();
 
         add(panel, BorderLayout.PAGE_START);
@@ -42,7 +48,15 @@ public class RobotSoccerMain extends JPanel
     public void actionPerformed(ActionEvent evt) {
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-        task = new Receiver(taskOutput);
+    	int portNumber;
+    	try {
+    		portNumber = Integer.parseInt(portField.getText());
+    	}	catch (NumberFormatException e) {
+    		portNumber = DEFAULT_PORT_NUMBER;
+    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+    	}
+    	
+        task = new Receiver(taskOutput, portNumber);
         task.execute();
     }
 

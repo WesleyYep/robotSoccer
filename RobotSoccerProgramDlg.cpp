@@ -6,6 +6,7 @@
 #include "RobotSoccerProgram.h"
 #include "RobotSoccerProgramDlg.h"
 #include "afxdialogex.h"
+#include <cctype>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -113,6 +114,10 @@ void CRobotSoccerProgramDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_ROBOT_INFO_SAVE, m_bRobotInfoSave);
 	DDX_Control(pDX, IDC_COMBO_ROBOT_TEST_BEHAVIOR, m_comboRobotTestBehavior);
 	DDX_Check(pDX, IDC_CHECK_CAMERA_IMAGE_ON_GAME, m_bCameraImageOnGame);
+
+	//storing port number into a variable
+	DDX_Text(pDX, IDC_EDIT_PORT_NUMBER, m_portNumber);
+	DDX_Text(pDX, IDC_EDIT_CONNECTION_STATUS, m_connectionStatus);
 }
 
 BEGIN_MESSAGE_MAP(CRobotSoccerProgramDlg, CDialogEx)
@@ -150,6 +155,9 @@ BEGIN_MESSAGE_MAP(CRobotSoccerProgramDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_ROBOT_INFO_SAVE, &CRobotSoccerProgramDlg::OnBnClickedCheckRobotInfoSave)
 	ON_CBN_SELCHANGE(IDC_COMBO_ROBOT_TEST_BEHAVIOR, &CRobotSoccerProgramDlg::OnSelchangeComboRobotTestBehavior)
 	ON_BN_CLICKED(IDC_CHECK_CAMERA_IMAGE_ON_GAME, &CRobotSoccerProgramDlg::OnBnClickedCheckCameraImageOnGame)
+
+	//connecting to port 
+	ON_BN_CLICKED(IDC_CONNECT_TO_PORT, &CRobotSoccerProgramDlg::OnBnClickedConnectToHost)
 END_MESSAGE_MAP()
 
 
@@ -495,14 +503,56 @@ bool CRobotSoccerProgramDlg::Initialization(void)
 		return false;
 	}
 
-	connectToHost();
+	//connectToHost(31000);
 
 
 	return false;
 }
 
 //CONNECTTOHOST – Connects to a remote host
-bool CRobotSoccerProgramDlg::connectToHost()
+void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
+	
+	//variable to store the control
+	CEdit *Display; //connection status
+	CEdit *Number;	//text field
+
+	//getting reference of the controls
+	Display = reinterpret_cast<CEdit *>(GetDlgItem(IDC_EDIT_CONNECTION_STATUS));
+	Number = reinterpret_cast<CEdit *>(GetDlgItem(IDC_EDIT_PORT_NUMBER));
+
+	//getting the string from the text field
+	Number->GetWindowText(m_portNumber);
+	
+	//checking if the string is number only
+	has_only_digit = true;
+
+	for (int n = 0; n < m_portNumber.GetLength(); n++) {
+		if (!std::isdigit( m_portNumber[ n ] )) {
+			has_only_digit = false;
+			break;
+		}
+	}  
+
+	//return an error if the string is not number only
+	if (has_only_digit == false) {
+		Display->SetWindowText( _T("Input Error") );
+		return;
+	}
+
+	//convert CString into int 
+	//NOTE: don't know how to error handle +tstoi yet so I check if it's 
+	//correct format beforehand.
+	int portNumber = _tstoi(m_portNumber);
+
+	//connect to the host and display the status 
+	if (connectToHost(portNumber) == true) {
+		Display->SetWindowText( _T("Connected") );
+	}else {
+		Display->SetWindowText( _T("Error") );
+	}
+}
+
+bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 {
 	//Start up Winsock…
 	WSADATA wsadata;
@@ -524,7 +574,7 @@ bool CRobotSoccerProgramDlg::connectToHost()
 	SOCKADDR_IN target; //Socket address information
 
 	target.sin_family = AF_INET; // address family Internet
-	target.sin_port = htons (31000); //Port to connect on
+	target.sin_port = htons (portNumber); //Port to connect on
 	target.sin_addr.s_addr = inet_addr ("127.0.0.1"); //Target IP
 
 	s = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP); //Create socket
@@ -1169,6 +1219,7 @@ void CRobotSoccerProgramDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 	CDialogEx::OnLButtonUp(nFlags, point);
 }
+
 
 
 void CRobotSoccerProgramDlg::OnRButtonDown(UINT nFlags, CPoint point)
