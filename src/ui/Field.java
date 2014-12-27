@@ -3,13 +3,23 @@ package ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.List;
 
 import javax.swing.JPanel;
 
+import communication.ReceiverListener;
 import bot.Robot;
 
-public class Field extends JPanel {
-	
+public class Field extends JPanel implements ReceiverListener {
+    private Robot[] bots = new Robot[5];
+    
+    public Field() {
+		//draw robots
+    	for (int i = 0; i < 5; i++) {
+    		bots[i] = new Robot();
+    	}  
+    }
+    
     @Override
 	protected void paintComponent(Graphics g) {
 	    super.paintComponent(g); 
@@ -41,11 +51,45 @@ public class Field extends JPanel {
 		// Draw goals
 		g.drawRect(5, 75, 15, 50);
 		g.drawRect(395-15, 75, 15, 50);
+		
+		//draw robots
+    	for (Robot r : bots) {
+    		r.draw(g);
+    	}    
     }
     
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(400, 200); // appropriate constants
+    }
+    
+   
+    @Override
+    public void action(List<Integer> chunks) {
+    	for (int i = 0; i < chunks.size(); i++) {
+			if (chunks.get(i) > 9000) {
+				bots[4].setY(chunks.get(i) - 9000);
+			} else if (chunks.get(i) > 8000) {
+				bots[3].setY(chunks.get(i) - 8000);
+			} else if (chunks.get(i) > 7000) {
+				bots[2].setY(chunks.get(i) - 7000);
+			} else if (chunks.get(i) > 6000) {
+				bots[1].setY(chunks.get(i) - 6000);
+			} else if (chunks.get(i) > 5000) {
+				bots[0].setY(chunks.get(i) - 5000);
+			} else if (chunks.get(i) > 4000) {
+				bots[4].setX(chunks.get(i) - 4000);
+			} else if (chunks.get(i) > 3000) {
+				bots[3].setX(chunks.get(i) - 3000);
+			} else if (chunks.get(i) > 2000) {
+				bots[2].setX(chunks.get(i) - 2000);
+			} else if (chunks.get(i) > 1000) {
+				bots[1].setX(chunks.get(i) - 1000);
+			} else {
+				bots[0].setX(chunks.get(i));
+			}
+		}
+    	repaint();
     }
     
 }

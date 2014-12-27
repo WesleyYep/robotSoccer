@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -23,6 +24,7 @@ public class Receiver extends SwingWorker<Void, Integer> {
 	private DataInputStream in;
 	private int portNumber;
 	private String errorMessage = "";
+	private List<ReceiverListener> listeners = new ArrayList<ReceiverListener>();
 	
 	public Receiver(JTextArea output, int portNumber) {
 		this.output =output;
@@ -56,28 +58,8 @@ public class Receiver extends SwingWorker<Void, Integer> {
     
 	@Override
 	protected void process(List<Integer> chunks) {
-		for (int i = 0; i < chunks.size(); i++) {
-			if (chunks.get(i) > 9000) {
-				output.append("\nRobot 5: y = " + (chunks.get(i) - 9000));
-			} else if (chunks.get(i) > 8000) {
-				output.append("\nRobot 4: y = " + (chunks.get(i) - 8000));
-			} else if (chunks.get(i) > 7000) {
-				output.append("\nRobot 3: y = " + (chunks.get(i) - 7000));
-			} else if (chunks.get(i) > 6000) {
-				output.append("\nRobot 2: y = " + (chunks.get(i) - 6000));
-			} else if (chunks.get(i) > 5000) {
-				output.append("\nRobot 1: y = " + (chunks.get(i) - 5000));
-			} else if (chunks.get(i) > 4000) {
-				output.append("\nRobot 5: x = " + (chunks.get(i) - 4000));
-			} else if (chunks.get(i) > 3000) {
-				output.append("\nRobot 4: x = " + (chunks.get(i) - 3000));
-			} else if (chunks.get(i) > 2000) {
-				output.append("\nRobot 3: x = " + (chunks.get(i) - 2000));
-			} else if (chunks.get(i) > 1000) {
-				output.append("\nRobot 2: x = " + (chunks.get(i) - 1000));
-			} else {
-				output.append("\nRobot 1: x = " + chunks.get(i));
-			}
+		for (ReceiverListener l : listeners) {
+			l.action(chunks);
 		}
 	}
 
@@ -95,5 +77,9 @@ public class Receiver extends SwingWorker<Void, Integer> {
     	else {
     		output.append("Unknown error\n");
     	}
+    }
+    
+    public void registerListener(ReceiverListener listener) {
+    	listeners.add(listener);
     }
 }

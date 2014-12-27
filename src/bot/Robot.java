@@ -10,20 +10,20 @@ public class Robot extends JPanel {
 	private int x;
 	private int y;
 	
-	public Robot (int x, int y) {
+	public void setX (int x) {
 		this.x = x;
+	}
+	
+	public void setY (int y) {
 		this.y = y;
 	}
-    @Override
-	protected void paintComponent(Graphics g) {
-	    super.paintComponent(g);  
-	     g.drawRect(x,y,40,20);  
-	     g.setColor(Color.BLACK);  
-	     g.fillRect(x,y,40,20);  
+	
+	public void draw(Graphics g) {
+	     g.fillRect(x,y,15,15);  
     }
     
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(40, 20); // appropriate constants
+        return new Dimension(15, 15); // appropriate constants
     }
 }

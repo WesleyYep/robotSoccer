@@ -2,8 +2,11 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+
 import communication.Receiver;
+import bot.Robot;
 
 public class RobotSoccerMain extends JPanel
                              implements ActionListener {
@@ -12,9 +15,7 @@ public class RobotSoccerMain extends JPanel
     private JButton startButton;
     private JTextArea taskOutput;
     private Receiver task;
-    private Field field;
-    
-    
+    private Field field;    
     private JTextField portField;
 
     public RobotSoccerMain() {
@@ -36,7 +37,7 @@ public class RobotSoccerMain extends JPanel
         panel.add(portField);
         field = new Field();
         field.setBackground(Color.green);
-
+        
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.CENTER);
         add(field, BorderLayout.SOUTH);
@@ -59,6 +60,7 @@ public class RobotSoccerMain extends JPanel
     	}
     	
         task = new Receiver(taskOutput, portNumber);
+        task.registerListener(field);
         task.execute();
     }
 
