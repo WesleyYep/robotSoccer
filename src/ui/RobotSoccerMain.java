@@ -14,6 +14,7 @@ public class RobotSoccerMain extends JPanel
     private Receiver task;
     private Field field;
     
+    
     private JTextField portField;
 
     public RobotSoccerMain() {
@@ -34,6 +35,7 @@ public class RobotSoccerMain extends JPanel
         panel.add(startButton);
         panel.add(portField);
         field = new Field();
+        field.setBackground(Color.green);
 
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.CENTER);
