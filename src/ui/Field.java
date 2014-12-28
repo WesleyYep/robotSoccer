@@ -68,25 +68,25 @@ public class Field extends JPanel implements ReceiverListener {
     public void action(List<Integer> chunks) {
     	for (int i = 0; i < chunks.size(); i++) {
 			if (chunks.get(i) > 9000) {
-				bots[4].setY(chunks.get(i) - 9000);
+				bots[4].setY(190 -(chunks.get(i) - 9001) * 190/179 - 5);
 			} else if (chunks.get(i) > 8000) {
-				bots[3].setY(chunks.get(i) - 8000);
+				bots[3].setY(190 - (chunks.get(i) - 8001) * 190/179 - 5);
 			} else if (chunks.get(i) > 7000) {
-				bots[2].setY(chunks.get(i) - 7000);
+				bots[2].setY(190 - (chunks.get(i) - 7001) * 190/179 - 5);
 			} else if (chunks.get(i) > 6000) {
-				bots[1].setY(chunks.get(i) - 6000);
+				bots[1].setY(190 - (chunks.get(i) - 6001) * 190/179 - 5);
 			} else if (chunks.get(i) > 5000) {
-				bots[0].setY(chunks.get(i) - 5000);
+				bots[0].setY(190 - (chunks.get(i) - 5001) * 190/179 - 5);
 			} else if (chunks.get(i) > 4000) {
-				bots[4].setX(chunks.get(i) - 4000);
+				bots[4].setX((chunks.get(i) - 4001) * 390/220);
 			} else if (chunks.get(i) > 3000) {
-				bots[3].setX(chunks.get(i) - 3000);
+				bots[3].setX((chunks.get(i) - 3001) * 390/220);
 			} else if (chunks.get(i) > 2000) {
-				bots[2].setX(chunks.get(i) - 2000);
+				bots[2].setX((chunks.get(i) - 2001) * 390/220);
 			} else if (chunks.get(i) > 1000) {
-				bots[1].setX(chunks.get(i) - 1000);
+				bots[1].setX((chunks.get(i) - 1001) * 390/220);
 			} else {
-				bots[0].setX(chunks.get(i));
+				bots[0].setX((chunks.get(i) - 0001) * 390/220);
 			}
 		}
     	repaint();
