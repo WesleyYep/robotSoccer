@@ -6,6 +6,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import ui.Field;
+
 public class Robot extends JPanel {
 	private int x;
 	private int y;
@@ -18,8 +20,15 @@ public class Robot extends JPanel {
 		this.y = y;
 	}
 	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
 	public void draw(Graphics g) {
-	     g.fillRect(x,y,15,15);  
+	     g.fillRect(x,y*Field.SCALE_FACTOR,15,15);  
     }
     
     @Override
