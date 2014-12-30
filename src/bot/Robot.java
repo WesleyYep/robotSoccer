@@ -25,11 +25,11 @@ public class Robot extends JPanel {
 		this.y = y;
 	}
 	
-	public int getX() {
+	public int getXPostion() {
 		return x;
 	}
 	
-	public int getY() {
+	public int getYPosition() {
 		return y;
 	}
 	public void draw(Graphics g) {

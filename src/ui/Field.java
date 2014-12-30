@@ -39,12 +39,14 @@ public class Field extends JPanel implements ReceiverListener {
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
     private Robot[] bots = new Robot[5];
+    private Ball ball;
     
     public Field() {
 		//draw robots
     	for (int i = 0; i < 5; i++) {
     		bots[i] = new Robot();
     	}  
+    	ball = new Ball();
     }
     
     @Override
@@ -216,7 +218,10 @@ public class Field extends JPanel implements ReceiverListener {
 		//draw robots
     	for (Robot r : bots) {
     		r.draw(g);
-    	}    
+    	} 
+    	
+    	//draw ball
+    	ball.draw(g);
     }
     
     @Override
@@ -229,7 +234,15 @@ public class Field extends JPanel implements ReceiverListener {
     @Override
     public void action(List<Integer> chunks) {
     	for (int i = 0; i < chunks.size(); i++) {
-			if (chunks.get(i) > 9000) {
+    		
+    		if ( chunks.get(i) > 11000) {
+    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
+    		}
+    		else if (chunks.get(i) > 10000) {
+    			ball.setX(chunks.get(i)-10000);
+    		}
+    		//robots
+    		else if (chunks.get(i) > 9000) {
 				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9001));
 			} else if (chunks.get(i) > 8000) {
 				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8001) );
@@ -254,7 +267,7 @@ public class Field extends JPanel implements ReceiverListener {
 			
 			//for testing purposes
 			/*for (int j=0; j<5; j++) {
-		        	System.out.println("robot "  + (j+1) + "x=" + bots[j].getX() +  " y=" + bots[j].getY());
+		        	System.out.println("robot "  + (j+1) + "x=" + bots[j].getXPosition() +  " y=" + bots[j].getYPosition());
 		    }*/   
 		    //System.out.println(chunks.get(i));
 		    

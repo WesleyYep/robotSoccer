@@ -526,6 +526,9 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	//checking if the string is number only
 	has_only_digit = true;
 
+
+
+
 	for (int n = 0; n < m_portNumber.GetLength(); n++) {
 		if (!std::isdigit( m_portNumber[ n ] )) {
 			has_only_digit = false;
@@ -534,7 +537,7 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	}  
 
 	//return an error if the string is not number only
-	if (has_only_digit == false) {
+	if (has_only_digit == false || m_portNumber.GetLength() == 0) {
 		Display->SetWindowText( _T("Input Error") );
 		return;
 	}
@@ -578,15 +581,44 @@ bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 	target.sin_addr.s_addr = inet_addr ("127.0.0.1"); //Target IP
 
 	s = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP); //Create socket
-	connect(s, (SOCKADDR *)&target, sizeof(target));
-	send(s, "hi", sizeof("hi"), 0);
+	
+	//check if the socket is valid
+	if (s == INVALID_SOCKET) {
+		WSACleanup();
+		return false;
+	}
+
+	error = connect(s, (SOCKADDR *)&target, sizeof(target));
+	
+	//check if the socket is able to the server
+	if (error == SOCKET_ERROR) {
+		closeConnection();
+		return false;
+	}
+
+	error = send(s, "hi", sizeof("hi"), 0);
+	if (error == SOCKET_ERROR) {
+		closeConnection();
+		return false;
+	}
+
 	return true;
 }
 
 void CRobotSoccerProgramDlg::sendStuff(int data){
-	int b = htonl(data);
-	const char* bytesOfi = (const char*)&b;
-	send(s, bytesOfi, sizeof(data), 0);
+	if (s) {
+		int b = htonl(data);
+		const char* bytesOfi = (const char*)&b;
+
+		CEdit *Display;
+		Display = reinterpret_cast<CEdit *>(GetDlgItem(IDC_EDIT_CONNECTION_STATUS));
+		int iResult = send(s, bytesOfi, sizeof(data), 0);
+
+		if (iResult == SOCKET_ERROR) {
+			Display->SetWindowText( _T("send fail with error") );
+			closeConnection();
+		}
+	}
 }
 
 //CLOSECONNECTION – shuts down the socket and closes any connection on it
@@ -595,7 +627,6 @@ void CRobotSoccerProgramDlg::closeConnection ()
 	//Close the socket if it exists
 	if (s)
 		closesocket(s);
-
 		WSACleanup(); //Clean up Winsock
 }
 
@@ -732,6 +763,11 @@ void CRobotSoccerProgramDlg::Process(void)
 			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000;
 			sendStuff(y);
 		}
+		
+		int ball_xPos = (m_ObjectInfo.m_Ball.pos.x*100+10000);
+		sendStuff(ball_xPos);
+		int ball_yPos = (m_ObjectInfo.m_Ball.pos.y*100+11000);
+		sendStuff(ball_yPos); 
 
 		m_propGame.SetObjectInfomation( m_ObjectInfo, current, past, error );
 		
