@@ -41,9 +41,9 @@ public class Receiver extends SwingWorker<Void, Integer> {
 			output.append("Started!\n");
 			clientSocket = serverSocket.accept();
 			output.append("Connected!");
+			in = new DataInputStream(clientSocket.getInputStream());
 	        //Initialize progress property.
 			while (true){
-				in = new DataInputStream(clientSocket.getInputStream());
 				// Get the client message
 				while(in.available() != 0){
 					publish(in.readInt()/256);
@@ -53,7 +53,17 @@ public class Receiver extends SwingWorker<Void, Integer> {
 			e.printStackTrace();
 			errorMessage = e.getMessage();
 			return null;
-		} 
+		} finally {
+			// Could do this in try-with resources but w/e. Close the resources when finished reading. Close in reverse
+			// order that they were created.
+			try {
+				in.close();
+				clientSocket.close();
+				serverSocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     }
     
 	@Override
