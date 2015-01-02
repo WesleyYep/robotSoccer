@@ -15,7 +15,24 @@ public class Robot extends JPanel {
 	private int y;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
 	private int theta;
-
+	
+	/*
+	 * Java theta
+	 * 
+	 * 		 	^ 270
+	 * 			|
+	 * 	  0	<=== ===> 180
+	 * 			|
+	 * 			v 90
+	 * 
+	 * C++ theta
+	 * 
+	 * 		 	^ 90
+	 * 			|
+	 * 	 180<=== ===> 0
+	 * 			|
+	 * 			v -90
+	 */
 	
 	//still need to measure the actual size, just using 7cm for now
 	final public static int ROBOT_WIDTH =8;
@@ -37,6 +54,10 @@ public class Robot extends JPanel {
 	
 	public void setTheta (int theta) {
 		this.theta = theta;
+	}
+	
+	public int getTheta() {
+		return this.theta;
 	}
 	
 	public int getXPosition() {

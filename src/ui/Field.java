@@ -242,7 +242,6 @@ public class Field extends JPanel implements ReceiverListener {
     	for (int i = 0; i < chunks.size(); i++) {
     		//orientation
     		if ( chunks.get(i) > 24000) {
-    			System.out.println("theta: " + (chunks.get(i) - 20000 - 4000));
     			bots[4].setTheta(chunks.get(i) - 20000 - 4000);
     		} else if ( chunks.get(i) > 23000) {
     			bots[3].setTheta(chunks.get(i) - 20000 - 3000);
@@ -251,7 +250,6 @@ public class Field extends JPanel implements ReceiverListener {
     		} else if ( chunks.get(i) > 21000) {
     			bots[1].setTheta(chunks.get(i) - 20000 - 1000);
     		} else if ( chunks.get(i) > 20000) {
-    			System.out.println("theta: " + (chunks.get(i) - 20000));
     			bots[0].setTheta(chunks.get(i) - 20000);
     		}
     		//ball
