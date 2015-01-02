@@ -3,6 +3,7 @@ package ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -217,7 +218,7 @@ public class Field extends JPanel implements ReceiverListener {
 		
 		//draw robots
     	for (Robot r : bots) {
-    		r.draw(g);
+    		r.draw((Graphics2D) g);
     	} 
     	
     	//draw ball
@@ -234,11 +235,24 @@ public class Field extends JPanel implements ReceiverListener {
     @Override
     public void action(List<Integer> chunks) {
     	for (int i = 0; i < chunks.size(); i++) {
-    		
-    		if ( chunks.get(i) > 11000) {
-    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
+    		//orientation
+    		if ( chunks.get(i) > 24000) {
+    			System.out.println("theta: " + (chunks.get(i) - 20000 - 4000));
+    			bots[4].setTheta(chunks.get(i) - 20000 - 4000);
+    		} else if ( chunks.get(i) > 23000) {
+    			bots[3].setTheta(chunks.get(i) - 20000 - 3000);
+    		} else if ( chunks.get(i) > 22000) {
+    			bots[2].setTheta(chunks.get(i) - 20000 - 2000);
+    		} else if ( chunks.get(i) > 21000) {
+    			bots[1].setTheta(chunks.get(i) - 20000 - 1000);
+    		} else if ( chunks.get(i) > 20000) {
+    			System.out.println("theta: " + (chunks.get(i) - 20000));
+    			bots[0].setTheta(chunks.get(i) - 20000);
     		}
-    		else if (chunks.get(i) > 10000) {
+    		//ball
+    		else if ( chunks.get(i) > 11000) {
+    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
+    		} else if (chunks.get(i) > 10000) {
     			ball.setX(chunks.get(i)-10000);
     		}
     		//robots
