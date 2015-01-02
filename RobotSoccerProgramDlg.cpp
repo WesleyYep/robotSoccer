@@ -756,15 +756,17 @@ void CRobotSoccerProgramDlg::Process(void)
 		CObjectPositionInfo past = m_SynchronousModule.PositionDataPast();
 		CObjectPositionInfo error = m_SynchronousModule.PositionDataError();
 
-		int x, y;
+		int x, y, theta;
 		for (int i = 0; i < 5; i++) {
 			x = current.m_Robot[i].pos.x*100 + i * 1000;
 			sendStuff(x);
-			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000;
+			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000; //we know its the y coordinate by adding 5000
 			sendStuff(y);
+			theta = current.m_Robot[i].orientation + i * 1000 + 20180; //we know its the orientation by adding 20180, the +180 will make it between 0 - 360
+			sendStuff(theta);
 		}
 		
-		int ball_xPos = (m_ObjectInfo.m_Ball.pos.x*100+10000);
+		int ball_xPos = (m_ObjectInfo.m_Ball.pos.x*100+10000); //we know its the ball by adding 10000
 		sendStuff(ball_xPos);
 		int ball_yPos = (m_ObjectInfo.m_Ball.pos.y*100+11000);
 		sendStuff(ball_yPos); 

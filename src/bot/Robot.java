@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
-
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 import ui.Field;
@@ -13,6 +14,8 @@ public class Robot extends JPanel {
 	private int x;
 	private int y;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
+	private int theta;
+
 	
 	//still need to measure the actual size, just using 7cm for now
 	final public static int ROBOT_WIDTH =8;
@@ -32,6 +35,10 @@ public class Robot extends JPanel {
 		this.y = y;
 	}
 	
+	public void setTheta (int theta) {
+		this.theta = theta;
+	}
+	
 	public int getXPosition() {
 		return x;
 	}
@@ -39,11 +46,16 @@ public class Robot extends JPanel {
 	public int getYPosition() {
 		return y;
 	}
-	public void draw(Graphics g) {
-	     g.fillRect(x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2),
-	    		    y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2),
-	    		    ROBOT_WIDTH*Field.SCALE_FACTOR,
-	    		    ROBOT_HEIGHT*Field.SCALE_FACTOR);  
+	public void draw(Graphics2D g) {
+		int xPos = x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
+		int yPos = y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
+		int width = ROBOT_WIDTH*Field.SCALE_FACTOR;
+		int height = ROBOT_HEIGHT*Field.SCALE_FACTOR;
+		
+		g.rotate(Math.toRadians(360-theta), xPos + width/2, yPos + height/2);
+	    g.fillRect(xPos, yPos, width, height);	
+	  
+		g.rotate(Math.toRadians(-(360-theta)), xPos + width/2, yPos + height/2);
     }
 	
 	
@@ -59,4 +71,12 @@ public class Robot extends JPanel {
     public Dimension getPreferredSize() {
         return new Dimension(ROBOT_WIDTH*Field.SCALE_FACTOR, ROBOT_WIDTH*Field.SCALE_FACTOR); // appropriate constants
     }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+    	Graphics2D g2d = (Graphics2D) g;
+    	g2d.rotate(theta);
+    	super.paintComponent(g2d);
+    }
+    
 }
