@@ -36,6 +36,7 @@ public class Field extends JPanel implements ReceiverListener {
 	
 	final public static int CORNER_LENGTH = 7;
 	
+	
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
     private Robot[] bots = new Robot[5];
@@ -135,36 +136,36 @@ public class Field extends JPanel implements ReceiverListener {
 		//1st quarter
 		//center
 		g.fillRect(FREE_BALL_FROM_GOAL_LINE*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
 		//right dot
 		g.fillRect((FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		//left dot
 		g.fillRect((FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
 		//2nd quarter
 		//center dot
 		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
 		//right dot
 		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		//left dot
 		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
@@ -230,6 +231,10 @@ public class Field extends JPanel implements ReceiverListener {
         					 SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+10); // appropriate constants
     }
     
+    public Robot[] getRobot() {
+    	return bots;
+    }
+    
    
     @Override
     public void action(List<Integer> chunks) {
@@ -243,25 +248,25 @@ public class Field extends JPanel implements ReceiverListener {
     		}
     		//robots
     		else if (chunks.get(i) > 9000) {
-				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9001));
+				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9000));
 			} else if (chunks.get(i) > 8000) {
-				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8001) );
+				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8000) );
 			} else if (chunks.get(i) > 7000) {
-				bots[2].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 7001));
+				bots[2].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 7000));
 			} else if (chunks.get(i) > 6000) {
-				bots[1].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 6001));
+				bots[1].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 6000));
 			} else if (chunks.get(i) > 5000) {
-				bots[0].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 5001));
+				bots[0].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 5000));
 			} else if (chunks.get(i) > 4000) {
-				bots[4].setX((chunks.get(i) - 4001));
+				bots[4].setX((chunks.get(i) - 4000));
 			} else if (chunks.get(i) > 3000) {
-				bots[3].setX((chunks.get(i) - 3001));
+				bots[3].setX((chunks.get(i) - 3000));
 			} else if (chunks.get(i) > 2000) {
-				bots[2].setX((chunks.get(i) - 2001));
+				bots[2].setX((chunks.get(i) - 2000));
 			} else if (chunks.get(i) > 1000) {
-				bots[1].setX((chunks.get(i) - 1001));
+				bots[1].setX((chunks.get(i) - 1000));
 			} else {
-				bots[0].setX((chunks.get(i) - 0001));
+				bots[0].setX((chunks.get(i) - 0000));
 			}
 			
 			
