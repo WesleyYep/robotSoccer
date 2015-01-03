@@ -53,6 +53,9 @@ public class Robot extends JPanel {
 	}
 	
 	public void setTheta (int theta) {
+		for (RobotListener l : listeners) {
+			l.positionChanged();
+		}
 		this.theta = theta;
 	}
 	
