@@ -1,7 +1,9 @@
 package communication;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,7 +19,7 @@ import javax.swing.SwingWorker;
  * @author wesley
  *
  */
-public class Receiver extends SwingWorker<Void, Integer> {
+public class Receiver extends SwingWorker<Void, String> {
 	private JTextArea output;
 	private ServerSocket serverSocket;
 	private Socket clientSocket;
@@ -41,13 +43,20 @@ public class Receiver extends SwingWorker<Void, Integer> {
 			output.append("Started!\n");
 			clientSocket = serverSocket.accept();
 			output.append("Connected!");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	        //Initialize progress property.
 			while (true){
-				in = new DataInputStream(clientSocket.getInputStream());
+				/*in = new DataInputStream(clientSocket.getInputStream());
 				// Get the client message
 				while(in.available() != 0){
 					publish(in.readInt()/256);
+				}*/
+				String message = reader.readLine();
+				
+				if (message != null) {
+					publish(message);
 				}
+				
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
@@ -56,12 +65,18 @@ public class Receiver extends SwingWorker<Void, Integer> {
 		} 
     }
     
-	@Override
+	/*@Override
 	protected void process(List<Integer> chunks) {
 		for (ReceiverListener l : listeners) {
 			l.action(chunks);
 		}
-	}
+	}*/
+    
+    protected void process(List<String> chunks) {
+    	for (ReceiverListener l : listeners) {
+			l.action(chunks);
+		}
+    }
 
     /*
      * Executed in event dispatching thread

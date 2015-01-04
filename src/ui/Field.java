@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -235,9 +237,54 @@ public class Field extends JPanel implements ReceiverListener {
     public Robot[] getRobot() {
     	return bots;
     }
+
+	@Override
+	public void action(List<String> chunks) {
+		for (String s : chunks) {
+			
+			if (s.indexOf("Robot") != -1) {
+				int idIndex = s.indexOf("id=");
+				int xIndex = s.indexOf("x=");
+				int yIndex = s.indexOf("y=");
+				int thetaIndex = s.indexOf("theta=");
+				
+				/*System.out.println(s.substring(idIndex+3,idIndex+4));
+				System.out.println(s.substring(xIndex+2, yIndex-1));
+				System.out.println(s.substring(yIndex+2, thetaIndex-1));
+				System.out.println(s.substring(thetaIndex+6, s.length()));*/
+				
+				int id = Integer.parseInt(s.substring(idIndex+3,idIndex+4));
+				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
+				double y = Double.parseDouble(s.substring(yIndex+2, thetaIndex-1));
+				double theta = Double.parseDouble(s.substring(thetaIndex+6, s.length()));
+				
+				bots[id].setX((int)Math.round(x*100));
+				bots[id].setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
+				bots[id].setTheta((int)Math.round(theta));
+				
+				
+				//System.out.println("Received: Robot " + id + " x=" + x + " y=" + y + " theta=" + theta);
+				
+			}
+			else if (s.indexOf("Ball") != -1) {
+				int xIndex = s.indexOf("x=");
+				int yIndex = s.indexOf("y=");
+				
+				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
+				double y = Double.parseDouble(s.substring(yIndex+2, s.length()));
+				
+				ball.setX((int)Math.round(x*100));
+				ball.setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
+				
+				System.out.println("ball x=" + x + " y=" + y);
+			}
+		}
+		
+		repaint();
+	}
     
    
-    @Override
+    /*@Override
     public void action(List<Integer> chunks) {
     	for (int i = 0; i < chunks.size(); i++) {
     		//orientation
@@ -283,13 +330,14 @@ public class Field extends JPanel implements ReceiverListener {
 			
 			
 			//for testing purposes
-			/*for (int j=0; j<5; j++) {
+			for (int j=0; j<5; j++) {
 		        	System.out.println("robot "  + (j+1) + "x=" + bots[j].getXPosition() +  " y=" + bots[j].getYPosition());
-		    }*/   
+		    }   
 		    //System.out.println(chunks.get(i));
 		    
 		}
     	repaint();
-    }
+    } */
+	
     
 }
