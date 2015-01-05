@@ -275,8 +275,6 @@ public class Field extends JPanel implements ReceiverListener {
 				
 				ball.setX((int)Math.round(x*100));
 				ball.setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
-				
-				System.out.println("ball x=" + x + " y=" + y);
 			}
 		}
 		
