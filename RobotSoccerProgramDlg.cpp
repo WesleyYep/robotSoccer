@@ -621,6 +621,37 @@ void CRobotSoccerProgramDlg::sendStuff(int data){
 	}
 }
 
+void CRobotSoccerProgramDlg::sendStuff(std::string data) {
+
+	//creating char* buffer
+	char buffer[512];
+	buffer[0] = 0;
+	bool hasNewLine = false;
+
+	//checking if the message has newline character at the end if not add it in the end
+	//this is because java readLine() require newline character to know the end of each line
+	if (data[data.length()-1] == '\n') {
+		hasNewLine = true;
+	}
+	else {
+		data.append("\n");
+	}
+
+	//putting the string into the buffer
+	sprintf_s(buffer, data.c_str()); 
+
+	CEdit *Display;
+	Display = reinterpret_cast<CEdit *>(GetDlgItem(IDC_EDIT_CONNECTION_STATUS));
+	int len = strlen(buffer);
+	int iResult = send(s, buffer, len, 0);
+
+
+	if (iResult == SOCKET_ERROR) {
+			Display->SetWindowText( _T("send fail with error") );
+			closeConnection();
+	}
+}
+
 //CLOSECONNECTION – shuts down the socket and closes any connection on it
 void CRobotSoccerProgramDlg::closeConnection ()
 {
@@ -755,19 +786,51 @@ void CRobotSoccerProgramDlg::Process(void)
 		CObjectPositionInfo current = m_SynchronousModule.PositionDataCurrent();
 		CObjectPositionInfo past = m_SynchronousModule.PositionDataPast();
 		CObjectPositionInfo error = m_SynchronousModule.PositionDataError();
-
-		int x, y;
+		/*
+		int x, y, theta;
 		for (int i = 0; i < 5; i++) {
 			x = current.m_Robot[i].pos.x*100 + i * 1000;
 			sendStuff(x);
-			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000;
+			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000; //we know its the y coordinate by adding 5000
 			sendStuff(y);
+			theta = current.m_Robot[i].orientation + i * 1000 + 20180; //we know its the orientation by adding 20180, the +180 will make it between 0 - 360
+			sendStuff(theta);
 		}
 		
-		int ball_xPos = (m_ObjectInfo.m_Ball.pos.x*100+10000);
+		int ball_xPos = (m_ObjectInfo.m_Ball.pos.x*100+10000); //we know its the ball by adding 10000
 		sendStuff(ball_xPos);
 		int ball_yPos = (m_ObjectInfo.m_Ball.pos.y*100+11000);
-		sendStuff(ball_yPos); 
+		sendStuff(ball_yPos);  */
+
+		sendStuff("Working\n");
+		double x, y, theta;
+		for (int i = 0; i < 5; i++) {
+			x = current.m_Robot[i].pos.x;
+			y = current.m_Robot[i].pos.y;
+			theta = current.m_Robot[i].orientation;
+
+			
+
+			char test[512];
+			test[0] = 0;
+			int n;
+			n = sprintf(test,"Robot id=%d x=%f y=%f theta=%f", i,x,y,theta);
+			std::string message(test);
+			sendStuff(message);
+			//sendStuff("Robot id=" + std::to_string(i) + " x=" + std::to_string(x) + " y=" + std::to_string(y) 
+			//	+ " theta=" + std::to_string(theta));
+		}
+		
+		double ball_xPos = (m_ObjectInfo.m_Ball.pos.x); //we know its the ball by adding 10000
+		double ball_yPos = (m_ObjectInfo.m_Ball.pos.y);
+
+		char test[512];
+		test[0] = 0;
+		int n;
+		n = sprintf(test,"Ball x=%f y=%f ",ball_xPos,ball_yPos);
+		std::string message(test);
+		sendStuff(message);
+		
 
 		m_propGame.SetObjectInfomation( m_ObjectInfo, current, past, error );
 		

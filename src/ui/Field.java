@@ -3,6 +3,9 @@ package ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -35,6 +38,7 @@ public class Field extends JPanel implements ReceiverListener {
 	final public static int SCALE_FACTOR = 2;
 	
 	final public static int CORNER_LENGTH = 7;
+	
 	
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
@@ -135,36 +139,36 @@ public class Field extends JPanel implements ReceiverListener {
 		//1st quarter
 		//center
 		g.fillRect(FREE_BALL_FROM_GOAL_LINE*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
 		//right dot
 		g.fillRect((FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		//left dot
 		g.fillRect((FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
 		//2nd quarter
 		//center dot
 		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
 		//right dot
 		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		//left dot
 		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
-				   FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR,
+				 FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				   SCALE_FACTOR,
 				   SCALE_FACTOR);
 		
@@ -217,7 +221,7 @@ public class Field extends JPanel implements ReceiverListener {
 		
 		//draw robots
     	for (Robot r : bots) {
-    		r.draw(g);
+    		r.draw((Graphics2D) g);
     	} 
     	
     	//draw ball
@@ -230,49 +234,108 @@ public class Field extends JPanel implements ReceiverListener {
         					 SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+10); // appropriate constants
     }
     
+    public Robot[] getRobot() {
+    	return bots;
+    }
+
+	@Override
+	public void action(List<String> chunks) {
+		for (String s : chunks) {
+			
+			if (s.indexOf("Robot") != -1) {
+				int idIndex = s.indexOf("id=");
+				int xIndex = s.indexOf("x=");
+				int yIndex = s.indexOf("y=");
+				int thetaIndex = s.indexOf("theta=");
+				
+				/*System.out.println(s.substring(idIndex+3,idIndex+4));
+				System.out.println(s.substring(xIndex+2, yIndex-1));
+				System.out.println(s.substring(yIndex+2, thetaIndex-1));
+				System.out.println(s.substring(thetaIndex+6, s.length()));*/
+				
+				int id = Integer.parseInt(s.substring(idIndex+3,idIndex+4));
+				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
+				double y = Double.parseDouble(s.substring(yIndex+2, thetaIndex-1));
+				double theta = Double.parseDouble(s.substring(thetaIndex+6, s.length()));
+				
+				bots[id].setX((int)Math.round(x*100));
+				bots[id].setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
+				bots[id].setTheta((int)Math.round(theta));
+				
+				
+				//System.out.println("Received: Robot " + id + " x=" + x + " y=" + y + " theta=" + theta);
+				
+			}
+			else if (s.indexOf("Ball") != -1) {
+				int xIndex = s.indexOf("x=");
+				int yIndex = s.indexOf("y=");
+				
+				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
+				double y = Double.parseDouble(s.substring(yIndex+2, s.length()));
+				
+				ball.setX((int)Math.round(x*100));
+				ball.setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
+			}
+		}
+		
+		repaint();
+	}
+    
    
-    @Override
+    /*@Override
     public void action(List<Integer> chunks) {
     	for (int i = 0; i < chunks.size(); i++) {
-    		
-    		if ( chunks.get(i) > 11000) {
-    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
+    		//orientation
+    		if ( chunks.get(i) > 24000) {
+    			bots[4].setTheta(chunks.get(i) - 20000 - 4000);
+    		} else if ( chunks.get(i) > 23000) {
+    			bots[3].setTheta(chunks.get(i) - 20000 - 3000);
+    		} else if ( chunks.get(i) > 22000) {
+    			bots[2].setTheta(chunks.get(i) - 20000 - 2000);
+    		} else if ( chunks.get(i) > 21000) {
+    			bots[1].setTheta(chunks.get(i) - 20000 - 1000);
+    		} else if ( chunks.get(i) > 20000) {
+    			bots[0].setTheta(chunks.get(i) - 20000);
     		}
-    		else if (chunks.get(i) > 10000) {
+    		//ball
+    		else if ( chunks.get(i) > 11000) {
+    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
+    		} else if (chunks.get(i) > 10000) {
     			ball.setX(chunks.get(i)-10000);
     		}
     		//robots
     		else if (chunks.get(i) > 9000) {
-				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9001));
+				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9000));
 			} else if (chunks.get(i) > 8000) {
-				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8001) );
+				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8000) );
 			} else if (chunks.get(i) > 7000) {
-				bots[2].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 7001));
+				bots[2].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 7000));
 			} else if (chunks.get(i) > 6000) {
-				bots[1].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 6001));
+				bots[1].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 6000));
 			} else if (chunks.get(i) > 5000) {
-				bots[0].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 5001));
+				bots[0].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 5000));
 			} else if (chunks.get(i) > 4000) {
-				bots[4].setX((chunks.get(i) - 4001));
+				bots[4].setX((chunks.get(i) - 4000));
 			} else if (chunks.get(i) > 3000) {
-				bots[3].setX((chunks.get(i) - 3001));
+				bots[3].setX((chunks.get(i) - 3000));
 			} else if (chunks.get(i) > 2000) {
-				bots[2].setX((chunks.get(i) - 2001));
+				bots[2].setX((chunks.get(i) - 2000));
 			} else if (chunks.get(i) > 1000) {
-				bots[1].setX((chunks.get(i) - 1001));
+				bots[1].setX((chunks.get(i) - 1000));
 			} else {
-				bots[0].setX((chunks.get(i) - 0001));
+				bots[0].setX((chunks.get(i) - 0000));
 			}
 			
 			
 			//for testing purposes
-			/*for (int j=0; j<5; j++) {
+			for (int j=0; j<5; j++) {
 		        	System.out.println("robot "  + (j+1) + "x=" + bots[j].getXPosition() +  " y=" + bots[j].getYPosition());
-		    }*/   
+		    }   
 		    //System.out.println(chunks.get(i));
 		    
 		}
     	repaint();
-    }
+    } */
+	
     
 }

@@ -127,6 +127,7 @@ public:
 	//port connection
 	void closeConnection();
 	void sendStuff(int data);
+	void sendStuff(std::string data);
 	bool connectToHost(int  portNumber);
 
 	bool has_only_digit;

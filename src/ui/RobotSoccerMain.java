@@ -17,6 +17,7 @@ public class RobotSoccerMain extends JPanel
     private Receiver task;
     private Field field;    
     private JTextField portField;
+    private RobotInfoPanel[] robotInfoPanels;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -38,9 +39,19 @@ public class RobotSoccerMain extends JPanel
         field = new Field();
         field.setBackground(Color.green);
         
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new FlowLayout());
+        robotInfoPanels = new RobotInfoPanel[5];
+        
+        for (int i = 0; i<5; i++) {
+        	robotInfoPanels[i] = new RobotInfoPanel(field.getRobot()[i], i);
+        	infoPanel.add(robotInfoPanels[i]);
+        }
+        
         add(panel, BorderLayout.PAGE_START);
-        add(new JScrollPane(taskOutput), BorderLayout.CENTER);
-        add(field, BorderLayout.SOUTH);
+        add(new JScrollPane(taskOutput), BorderLayout.LINE_END);
+        add(field, BorderLayout.CENTER);
+        add(infoPanel,BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
     }
