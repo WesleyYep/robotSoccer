@@ -6,6 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import communication.Receiver;
+import communication.SerialPortCommunicator;
 import bot.Robot;
 
 public class RobotSoccerMain extends JPanel
@@ -18,6 +19,9 @@ public class RobotSoccerMain extends JPanel
     private Field field;    
     private JTextField portField;
     private RobotInfoPanel[] robotInfoPanels;
+    private TestComPanel testComPanel;
+    
+    private SerialPortCommunicator serialCom;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -33,6 +37,9 @@ public class RobotSoccerMain extends JPanel
         
         portField = new JTextField(10);
         
+        //create serial port communicator;
+        serialCom = new SerialPortCommunicator();
+        
         JPanel panel = new JPanel();
         panel.add(startButton);
         panel.add(portField);
@@ -42,6 +49,9 @@ public class RobotSoccerMain extends JPanel
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
+        
+        testComPanel = new TestComPanel(serialCom);
+        infoPanel.add(testComPanel);
         
         for (int i = 0; i<5; i++) {
         	robotInfoPanels[i] = new RobotInfoPanel(field.getRobot()[i], i);
