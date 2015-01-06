@@ -45,7 +45,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 		int o = robot.getTheta();
 		
 		
-			
+		
 		xCoordinate.setText("x= " + x);
 		yCoordinate.setText("y= " + y);
 		orientation.setText("theta= " + o);

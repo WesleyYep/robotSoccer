@@ -10,6 +10,12 @@ import javax.swing.JPanel;
 
 import ui.Field;
 
+/**
+ * Properties associated to individual robot.
+ * @author Chang Kon, Wesley, John
+ *
+ */
+
 public class Robot extends JPanel {
 	private int x;
 	private int y;
@@ -39,28 +45,22 @@ public class Robot extends JPanel {
 	final public static int ROBOT_HEIGHT = 8;
 	
 	public void setX (int x) {
-		for (RobotListener l : listeners) {
-			l.positionChanged();
-		}
 		this.x = x;
+		notifyRobotListeners();
 	}
 	
 	public void setY (int y) {
-		for (RobotListener l : listeners) {
-			l.positionChanged();
-		}
 		this.y = y;
+		notifyRobotListeners();
 	}
 	
 	public void setTheta (int theta) {
-		for (RobotListener l : listeners) {
-			l.positionChanged();
-		}
 		this.theta = theta;
+		notifyRobotListeners();
 	}
 	
 	public int getTheta() {
-		return this.theta;
+		return theta;
 	}
 	
 	public int getXPosition() {
@@ -76,10 +76,23 @@ public class Robot extends JPanel {
 		int width = ROBOT_WIDTH*Field.SCALE_FACTOR;
 		int height = ROBOT_HEIGHT*Field.SCALE_FACTOR;
 		
+		/*
 		g.rotate(Math.toRadians(360-theta), xPos + width/2, yPos + height/2);
-	    g.fillRect(xPos, yPos, width, height);	
-	  
+	    g.fillRect(xPos, yPos, width, height);
 		g.rotate(Math.toRadians(-(360-theta)), xPos + width/2, yPos + height/2);
+		*/
+		
+		// Get a copy of the current graphics object. Hence can manipulate the copy without affecting the original.
+		g = (Graphics2D)g.create();
+		
+		// Concatenates current graphics object affinetransform with a translated rotation transform.
+		g.rotate(Math.toRadians(360-theta), xPos + width/2, yPos + height/2);
+		
+		// Renders above transformation.
+		g.fillRect(xPos, yPos, width, height);
+		
+		// Free up resources.
+		g.dispose();
     }
 	
 	
@@ -91,16 +104,29 @@ public class Robot extends JPanel {
 		listeners.remove(l);
 	}
     
+	/**
+	 * Notify all robotlisteners. Call positionChanged. <br />
+	 * {@link ui.RobotInfoPanel}
+	 */
+	
+	private void notifyRobotListeners() {
+		for (RobotListener l : listeners) {
+			l.positionChanged();
+		}
+	}
+	
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(ROBOT_WIDTH*Field.SCALE_FACTOR, ROBOT_WIDTH*Field.SCALE_FACTOR); // appropriate constants
     }
     
+    // Not sure if this method is being called.
+    /*
     @Override
     protected void paintComponent(Graphics g) {
     	Graphics2D g2d = (Graphics2D) g;
     	g2d.rotate(theta);
     	super.paintComponent(g2d);
     }
-    
+    */
 }
