@@ -260,7 +260,7 @@ public class Field extends JPanel implements ReceiverListener {
 				
 				bots[id].setX((int)Math.round(x*100));
 				bots[id].setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
-				bots[id].setTheta((int)Math.round(theta));
+				bots[id].setTheta(theta);
 				
 				
 				//System.out.println("Received: Robot " + id + " x=" + x + " y=" + y + " theta=" + theta);

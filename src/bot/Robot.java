@@ -20,7 +20,7 @@ public class Robot extends JPanel {
 	private int x;
 	private int y;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
-	private int theta;
+	private double theta;
 	
 	/*
 	 * Java theta
@@ -54,12 +54,12 @@ public class Robot extends JPanel {
 		notifyRobotListeners();
 	}
 	
-	public void setTheta (int theta) {
+	public void setTheta (double theta) {
 		this.theta = theta;
 		notifyRobotListeners();
 	}
 	
-	public int getTheta() {
+	public double getTheta() {
 		return theta;
 	}
 	
