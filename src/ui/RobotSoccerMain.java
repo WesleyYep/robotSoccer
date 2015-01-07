@@ -18,6 +18,9 @@ public class RobotSoccerMain extends JPanel
     private Field field;    
     private JTextField portField;
     private RobotInfoPanel[] robotInfoPanels;
+    private JCheckBox simulationCheckBox;
+    private JButton testForward;
+    private JButton testRotate;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -32,12 +35,16 @@ public class RobotSoccerMain extends JPanel
         taskOutput.setEditable(false);
         
         portField = new JTextField(10);
+        simulationCheckBox = new JCheckBox("Simulation");
+        testForward = new JButton("Test Forward");
+        testRotate = new JButton("Test Rotate");
         
         JPanel panel = new JPanel();
         panel.add(startButton);
         panel.add(portField);
         field = new Field();
         field.setBackground(Color.green);
+        field.setUpGame();
         
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
@@ -47,6 +54,9 @@ public class RobotSoccerMain extends JPanel
         	robotInfoPanels[i] = new RobotInfoPanel(field.getRobot()[i], i);
         	infoPanel.add(robotInfoPanels[i]);
         }
+        infoPanel.add(simulationCheckBox);
+        infoPanel.add(testForward);
+        infoPanel.add(testRotate);
         
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.LINE_END);
@@ -54,6 +64,26 @@ public class RobotSoccerMain extends JPanel
         add(infoPanel,BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        simulationCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (simulationCheckBox.isSelected()) {
+					field.makeSimRobots();
+				} else {
+					field.makeRealRobots();
+				}
+			}
+        });
+        
+        testForward.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < 50; i++) {
+					field.testForward();
+				}
+			}
+        });
+        
     }
 
     /**

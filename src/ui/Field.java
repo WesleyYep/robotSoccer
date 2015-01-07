@@ -1,17 +1,18 @@
 package ui;
 
+import game.Tick;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
+import java.util.Timer;
 
 import javax.swing.JPanel;
 
 import communication.ReceiverListener;
-import bot.Robot;
+import bot.*;
 
 public class Field extends JPanel implements ReceiverListener {
 	
@@ -47,10 +48,26 @@ public class Field extends JPanel implements ReceiverListener {
     
     public Field() {
 		//draw robots
-    	for (int i = 0; i < 5; i++) {
-    		bots[i] = new Robot();
-    	}  
+    	makeRealRobots();
     	ball = new Ball();
+    }
+    
+    public void makeRealRobots() {
+    	for (int i = 0; i < 5; i++) {
+    		bots[i] = new RealRobot();
+    	}  
+    }
+    
+    public void makeSimRobots() {
+    	for (int i = 0; i < 5; i++) {
+    		bots[i] = new SimRobot();
+    	} 
+    }
+    
+    public void testForward() {
+    	for (int i = 0; i < 5; i++) {
+    		bots[i].linearVelocity = 1;
+    	} 
     }
     
     @Override
@@ -279,6 +296,11 @@ public class Field extends JPanel implements ReceiverListener {
 		}
 		
 		repaint();
+	}
+
+	public void setUpGame() {
+		Timer timer = new Timer();
+		timer.schedule(new Tick(this, bots), 0, 50);
 	}
     
    

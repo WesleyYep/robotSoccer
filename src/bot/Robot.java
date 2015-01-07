@@ -10,11 +10,13 @@ import javax.swing.JPanel;
 
 import ui.Field;
 
-public class Robot extends JPanel {
-	private int x;
-	private int y;
+public abstract class Robot extends JPanel {
+	private int x = 50;
+	private int y = 50;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
-	private int theta;
+	private int theta = 0;
+	public int linearVelocity;
+	public int angularVelocity;
 	
 	/*
 	 * Java theta
@@ -102,5 +104,10 @@ public class Robot extends JPanel {
     	g2d.rotate(theta);
     	super.paintComponent(g2d);
     }
+    
+    public abstract void moveLinear();
+    
+    public abstract void moveAngular();
+
     
 }
