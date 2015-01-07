@@ -6,6 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import communication.Receiver;
+import communication.SerialPortCommunicator;
 import bot.Robot;
 
 public class RobotSoccerMain extends JPanel
@@ -18,9 +19,8 @@ public class RobotSoccerMain extends JPanel
     private Field field;    
     private JTextField portField;
     private RobotInfoPanel[] robotInfoPanels;
-    private JCheckBox simulationCheckBox;
-    private JButton testForward;
-    private JButton testRotate;
+    private TestComPanel testComPanel;
+    private SerialPortCommunicator serialCom;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -35,9 +35,9 @@ public class RobotSoccerMain extends JPanel
         taskOutput.setEditable(false);
         
         portField = new JTextField(10);
-        simulationCheckBox = new JCheckBox("Simulation");
-        testForward = new JButton("Test Forward");
-        testRotate = new JButton("Test Rotate");
+        
+        //create serial port communicator;
+        serialCom = new SerialPortCommunicator();
         
         JPanel panel = new JPanel();
         panel.add(startButton);
@@ -50,39 +50,19 @@ public class RobotSoccerMain extends JPanel
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
         
+        testComPanel = new TestComPanel(serialCom, field);
+        infoPanel.add(testComPanel);
+        
         for (int i = 0; i<5; i++) {
         	robotInfoPanels[i] = new RobotInfoPanel(field.getRobot()[i], i);
         	infoPanel.add(robotInfoPanels[i]);
         }
-        infoPanel.add(simulationCheckBox);
-        infoPanel.add(testForward);
-        infoPanel.add(testRotate);
         
         add(panel, BorderLayout.PAGE_START);
         add(new JScrollPane(taskOutput), BorderLayout.LINE_END);
         add(field, BorderLayout.CENTER);
         add(infoPanel,BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        simulationCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (simulationCheckBox.isSelected()) {
-					field.makeSimRobots();
-				} else {
-					field.makeRealRobots();
-				}
-			}
-        });
-        
-        testForward.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < 50; i++) {
-					field.testForward();
-				}
-			}
-        });
         
     }
 
