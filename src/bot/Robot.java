@@ -6,7 +6,10 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+
 import javax.swing.JPanel;
+
+import communication.ReceiverListener;
 
 import ui.Field;
 

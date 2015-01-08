@@ -8,6 +8,7 @@ import javax.swing.*;
 import communication.Receiver;
 import communication.SerialPortCommunicator;
 import bot.Robot;
+import bot.Robots;
 
 public class RobotSoccerMain extends JPanel
                              implements ActionListener {
@@ -21,10 +22,13 @@ public class RobotSoccerMain extends JPanel
     private RobotInfoPanel[] robotInfoPanels;
     private TestComPanel testComPanel;
     private SerialPortCommunicator serialCom;
+    private Robots bots = new Robots();
 
     public RobotSoccerMain() {
         super(new BorderLayout());
 
+        bots.makeRealRobots();
+        
         //Create the demo's UI.
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
@@ -42,7 +46,7 @@ public class RobotSoccerMain extends JPanel
         JPanel panel = new JPanel();
         panel.add(startButton);
         panel.add(portField);
-        field = new Field();
+        field = new Field(bots);
         field.setBackground(Color.green);
         field.setUpGame();
         
@@ -50,11 +54,11 @@ public class RobotSoccerMain extends JPanel
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
         
-        testComPanel = new TestComPanel(serialCom, field);
+        testComPanel = new TestComPanel(serialCom, bots);
         infoPanel.add(testComPanel);
         
         for (int i = 0; i<5; i++) {
-        	robotInfoPanels[i] = new RobotInfoPanel(field.getRobot()[i], i);
+        	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
         	infoPanel.add(robotInfoPanels[i]);
         }
         

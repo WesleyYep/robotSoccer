@@ -8,9 +8,8 @@ public class SimRobot extends Robot {
 	
 	@Override
 	public void moveLinear() {
-		System.out.println(linearVelocity);
-		setX(getXPosition() + (linearVelocity * Math.cos(getTheta())));
-		setY(getYPosition() + (angularVelocity * Math.sin(getTheta())));
+		setX(getXPosition() + (linearVelocity * Math.cos(Math.toRadians(getTheta()))));
+		setY(getYPosition() + (linearVelocity * -Math.sin(Math.toRadians(getTheta()))));
 	}
 
 	@Override
@@ -18,5 +17,6 @@ public class SimRobot extends Robot {
 		// TODO Auto-generated method stub
 		
 	}
+
 	
 }

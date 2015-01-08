@@ -43,35 +43,13 @@ public class Field extends JPanel implements ReceiverListener {
 	
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
-    private Robot[] bots = new Robot[5];
     private Ball ball;
+    private Robots bots;
     
-    public Field() {
+    public Field(Robots bots) {
 		//draw robots
-    	makeRealRobots();
+    	this.bots = bots;
     	ball = new Ball();
-    }
-    
-    public void makeRealRobots() {
-    	for (int i = 0; i < 5; i++) {
-    		if (bots[i] == null) {
-        		bots[i] = new RealRobot(50, 50, 0);
-    		} else {
-        		bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta());
-    		}
-    	} 
-    }
-    
-    public void makeSimRobots() {
-    	for (int i = 0; i < 5; i++) {
-    		bots[i] = new SimRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta());
-    	}
-    }
-    
-    public void testForward() {
-    	for (int i = 0; i < 5; i++) {
-    		bots[i].linearVelocity = 1;
-    	} 
     }
     
     @Override
@@ -241,9 +219,7 @@ public class Field extends JPanel implements ReceiverListener {
 		
 		
 		//draw robots
-    	for (Robot r : bots) {
-    		r.draw((Graphics2D) g);
-    	} 
+		bots.draw(g);
     	
     	//draw ball
     	ball.draw(g);
@@ -255,13 +231,9 @@ public class Field extends JPanel implements ReceiverListener {
         					 SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+10); // appropriate constants
     }
     
-    public Robot[] getRobot() {
-    	return bots;
-    }
 
 	@Override
 	public void action(List<String> chunks) {
-		System.out.println("wtf");
 		for (String s : chunks) {
 			
 			if (s.indexOf("Robot") != -1) {
@@ -270,22 +242,12 @@ public class Field extends JPanel implements ReceiverListener {
 				int yIndex = s.indexOf("y=");
 				int thetaIndex = s.indexOf("theta=");
 				
-				/*System.out.println(s.substring(idIndex+3,idIndex+4));
-				System.out.println(s.substring(xIndex+2, yIndex-1));
-				System.out.println(s.substring(yIndex+2, thetaIndex-1));
-				System.out.println(s.substring(thetaIndex+6, s.length()));*/
-				
 				int id = Integer.parseInt(s.substring(idIndex+3,idIndex+4));
 				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
 				double y = Double.parseDouble(s.substring(yIndex+2, thetaIndex-1));
 				double theta = Double.parseDouble(s.substring(thetaIndex+6, s.length()));
 				
-				bots[id].setX((int)Math.round(x*100));
-				bots[id].setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
-				bots[id].setTheta((int)Math.round(theta));
-				
-				
-				//System.out.println("Received: Robot " + id + " x=" + x + " y=" + y + " theta=" + theta);
+				bots.setIndividualBotPosition(id, x, y, theta);
 				
 			}
 			else if (s.indexOf("Ball") != -1) {
@@ -307,62 +269,6 @@ public class Field extends JPanel implements ReceiverListener {
 		Timer timer = new Timer();
 		timer.schedule(new Tick(this, bots), 0, 50);
 	}
-    
-   
-    /*@Override
-    public void action(List<Integer> chunks) {
-    	for (int i = 0; i < chunks.size(); i++) {
-    		//orientation
-    		if ( chunks.get(i) > 24000) {
-    			bots[4].setTheta(chunks.get(i) - 20000 - 4000);
-    		} else if ( chunks.get(i) > 23000) {
-    			bots[3].setTheta(chunks.get(i) - 20000 - 3000);
-    		} else if ( chunks.get(i) > 22000) {
-    			bots[2].setTheta(chunks.get(i) - 20000 - 2000);
-    		} else if ( chunks.get(i) > 21000) {
-    			bots[1].setTheta(chunks.get(i) - 20000 - 1000);
-    		} else if ( chunks.get(i) > 20000) {
-    			bots[0].setTheta(chunks.get(i) - 20000);
-    		}
-    		//ball
-    		else if ( chunks.get(i) > 11000) {
-    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
-    		} else if (chunks.get(i) > 10000) {
-    			ball.setX(chunks.get(i)-10000);
-    		}
-    		//robots
-    		else if (chunks.get(i) > 9000) {
-				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9000));
-			} else if (chunks.get(i) > 8000) {
-				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8000) );
-			} else if (chunks.get(i) > 7000) {
-				bots[2].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 7000));
-			} else if (chunks.get(i) > 6000) {
-				bots[1].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 6000));
-			} else if (chunks.get(i) > 5000) {
-				bots[0].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 5000));
-			} else if (chunks.get(i) > 4000) {
-				bots[4].setX((chunks.get(i) - 4000));
-			} else if (chunks.get(i) > 3000) {
-				bots[3].setX((chunks.get(i) - 3000));
-			} else if (chunks.get(i) > 2000) {
-				bots[2].setX((chunks.get(i) - 2000));
-			} else if (chunks.get(i) > 1000) {
-				bots[1].setX((chunks.get(i) - 1000));
-			} else {
-				bots[0].setX((chunks.get(i) - 0000));
-			}
-			
-			
-			//for testing purposes
-			for (int j=0; j<5; j++) {
-		        	System.out.println("robot "  + (j+1) + "x=" + bots[j].getXPosition() +  " y=" + bots[j].getYPosition());
-		    }   
-		    //System.out.println(chunks.get(i));
-		    
-		}
-    	repaint();
-    } */
 	
     
 }

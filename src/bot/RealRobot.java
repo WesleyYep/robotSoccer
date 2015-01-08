@@ -1,5 +1,7 @@
 package bot;
 
+import java.util.List;
+
 public class RealRobot extends Robot {
 
 	public RealRobot (double x, double y, double theta) {
@@ -17,6 +19,5 @@ public class RealRobot extends Robot {
 		// TODO Auto-generated method stub
 		
 	}
-
 
 }

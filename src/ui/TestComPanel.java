@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import bot.Robots;
 import communication.RobotController;
 import communication.SerialPortCommunicator;
 import jssc.SerialPortList;
@@ -27,15 +28,15 @@ public class TestComPanel extends JPanel {
 	private double[] angularVelocity;
 
 	private TestWorker currentWorker;
+	private Robots robots;
 	
 	private SerialPortCommunicator serialCom;
-	private Field field;
 	
-	public TestComPanel (SerialPortCommunicator s, Field f) {
+	public TestComPanel (SerialPortCommunicator s, Robots bots) {
 		linearVelocity = new double[11];
 		angularVelocity = new double[11];
 		serialCom = s;
-		field = f;
+		robots = bots;
 		
 		String[] portNames = SerialPortList.getPortNames();
 		comboBox = new JComboBox<String>(portNames);
@@ -94,7 +95,7 @@ public class TestComPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (simulationCheckBox.isSelected()) {
 					for (int i = 0; i < 50; i++) {
-						field.testForward();
+						robots.testForward();
 					}
 				} 
 				else {
@@ -117,9 +118,9 @@ public class TestComPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (simulationCheckBox.isSelected()) {
-					field.makeSimRobots();
+					robots.makeSimRobots();
 				} else {
-					field.makeRealRobots();
+					robots.makeRealRobots();
 				}
 			}
         });  
