@@ -54,14 +54,18 @@ public class Field extends JPanel implements ReceiverListener {
     
     public void makeRealRobots() {
     	for (int i = 0; i < 5; i++) {
-    		bots[i] = new RealRobot();
-    	}  
+    		if (bots[i] == null) {
+        		bots[i] = new RealRobot(50, 50, 0);
+    		} else {
+        		bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta());
+    		}
+    	} 
     }
     
     public void makeSimRobots() {
     	for (int i = 0; i < 5; i++) {
-    		bots[i] = new SimRobot();
-    	} 
+    		bots[i] = new SimRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta());
+    	}
     }
     
     public void testForward() {
@@ -257,6 +261,7 @@ public class Field extends JPanel implements ReceiverListener {
 
 	@Override
 	public void action(List<String> chunks) {
+		System.out.println("wtf");
 		for (String s : chunks) {
 			
 			if (s.indexOf("Robot") != -1) {

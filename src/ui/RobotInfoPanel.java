@@ -40,9 +40,9 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 
 	@Override
 	public void positionChanged() {
-		int x = robot.getXPosition();
-		int y = robot.getYPosition();
-		int o = robot.getTheta();
+		double x = robot.getXPosition();
+		double y = robot.getYPosition();
+		double o = robot.getTheta();
 		
 		
 			

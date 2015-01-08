@@ -2,10 +2,15 @@ package bot;
 
 public class SimRobot extends Robot {
 
+	public SimRobot(double x, double y, double theta) {
+		super(x, y, theta);
+	}
+	
 	@Override
 	public void moveLinear() {
-		setX(getXPosition() + (int)(linearVelocity * Math.cos(getTheta())));
-		setY(getYPosition() + (int)(angularVelocity * Math.sin(getTheta())));
+		System.out.println(linearVelocity);
+		setX(getXPosition() + (linearVelocity * Math.cos(getTheta())));
+		setY(getYPosition() + (angularVelocity * Math.sin(getTheta())));
 	}
 
 	@Override

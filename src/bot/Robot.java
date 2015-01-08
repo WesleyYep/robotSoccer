@@ -11,10 +11,10 @@ import javax.swing.JPanel;
 import ui.Field;
 
 public abstract class Robot extends JPanel {
-	private int x = 50;
-	private int y = 50;
+	private double x;
+	private double y;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
-	private int theta = 0;
+	private double theta;
 	public int linearVelocity;
 	public int angularVelocity;
 	
@@ -40,41 +40,47 @@ public abstract class Robot extends JPanel {
 	final public static int ROBOT_WIDTH =8;
 	final public static int ROBOT_HEIGHT = 8;
 	
-	public void setX (int x) {
+	public Robot (double x, double y, double theta) {
+		setX(x);
+		setY(y);
+		setTheta(theta);
+	}
+	
+	public void setX (double x) {
 		for (RobotListener l : listeners) {
 			l.positionChanged();
 		}
 		this.x = x;
 	}
 	
-	public void setY (int y) {
+	public void setY (double y) {
 		for (RobotListener l : listeners) {
 			l.positionChanged();
 		}
 		this.y = y;
 	}
 	
-	public void setTheta (int theta) {
+	public void setTheta (double theta) {
 		for (RobotListener l : listeners) {
 			l.positionChanged();
 		}
 		this.theta = theta;
 	}
 	
-	public int getTheta() {
+	public double getTheta() {
 		return this.theta;
 	}
 	
-	public int getXPosition() {
+	public double getXPosition() {
 		return x;
 	}
 	
-	public int getYPosition() {
+	public double getYPosition() {
 		return y;
 	}
 	public void draw(Graphics2D g) {
-		int xPos = x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
-		int yPos = y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
+		int xPos = (int) (x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
+		int yPos = (int) (y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
 		int width = ROBOT_WIDTH*Field.SCALE_FACTOR;
 		int height = ROBOT_HEIGHT*Field.SCALE_FACTOR;
 		

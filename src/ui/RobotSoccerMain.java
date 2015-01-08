@@ -72,17 +72,23 @@ public class RobotSoccerMain extends JPanel
     public void actionPerformed(ActionEvent evt) {
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-    	int portNumber;
-    	try {
-    		portNumber = Integer.parseInt(portField.getText());
-    	}	catch (NumberFormatException e) {
-    		portNumber = DEFAULT_PORT_NUMBER;
-    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+    	if (startButton.getText() == "Start") {
+	    	int portNumber;
+	    	try {
+	    		portNumber = Integer.parseInt(portField.getText());
+	    	}	catch (NumberFormatException e) {
+	    		portNumber = DEFAULT_PORT_NUMBER;
+	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+	    	}
+	    	
+	        task = new Receiver(taskOutput, portNumber);
+	        task.registerListener(field);
+	        task.execute();
+	        startButton.setText("Stop");
+    	} else {
+    		task.stop();
+    		startButton.setText("Start");
     	}
-    	
-        task = new Receiver(taskOutput, portNumber);
-        task.registerListener(field);
-        task.execute();
     }
 
     /**

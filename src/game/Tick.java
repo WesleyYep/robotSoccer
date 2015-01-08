@@ -32,7 +32,7 @@ public class Tick extends TimerTask {
 	}
 	
 	public void run() {
-		System.out.println("tick");
+	//	System.out.println("tick");
 		for (int i = 0; i < 5; i++) {
 			bots[i].moveLinear();
 		}
