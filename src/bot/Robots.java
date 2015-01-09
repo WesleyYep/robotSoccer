@@ -10,7 +10,6 @@ public class Robots {
     
     public Robots() {
         bots = new Robot[5];
-
     }
 
     public void makeRealRobots() {
@@ -35,6 +34,19 @@ public class Robots {
     	} 
     }
     
+	public void testRotate() {
+		for (int i = 0; i < 5; i++) {
+    		bots[i].angularVelocity = 10;
+    	} 
+	}
+	
+	public void stopAllMovement() {
+		for (int i = 0; i < 5; i++) {
+			bots[i].linearVelocity = 0;
+			bots[i].angularVelocity = 0;
+		}
+	}
+    
     public Robot getRobot(int id) {
     	return bots[id];
     }
@@ -54,6 +66,8 @@ public class Robots {
 	public void moveBots() {
 		for (int i = 0; i < 5; i++) {
 			bots[i].moveLinear();
+			bots[i].moveAngular();
 		}
 	}
+
 }

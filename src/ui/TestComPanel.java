@@ -28,6 +28,7 @@ public class TestComPanel extends JPanel {
 	private double[] angularVelocity;
 
 	private TestWorker currentWorker;
+	private SimulationWorker currentSimWorker;
 	private Robots robots;
 	
 	private SerialPortCommunicator serialCom;
@@ -74,18 +75,27 @@ public class TestComPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if (currentWorker != null ) {
-					currentWorker.cancel(true);
+				if (simulationCheckBox.isSelected()) {
+					if (currentSimWorker != null ) {
+						currentSimWorker.cancel(true);
+						currentSimWorker = null;
+					} else {
+						currentSimWorker = new SimulationWorker("rotate");
+						currentSimWorker.execute();
+					}
+				} 
+				else {
+					if (currentWorker != null ) {
+						currentWorker.cancel(true);
+					}
+					
+					for (int i = 0; i< 11; i++) {
+						linearVelocity[i] = 0;
+						angularVelocity[i] = (3.14159265358979323846) / 2;;
+					}
+					currentWorker = new TestWorker();
+					currentWorker.execute();
 				}
-				
-				for (int i = 0; i< 11; i++) {
-					linearVelocity[i] = 0;
-					angularVelocity[i] = (3.14159265358979323846) / 2;;
-				}
-				currentWorker = new TestWorker();
-				currentWorker.execute();
-				
 			}
 			
 		});
@@ -94,8 +104,12 @@ public class TestComPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (simulationCheckBox.isSelected()) {
-					for (int i = 0; i < 50; i++) {
-						robots.testForward();
+					if (currentSimWorker != null ) {
+						currentSimWorker.cancel(true);
+						currentSimWorker = null;
+					} else {
+						currentSimWorker = new SimulationWorker("forward");
+						currentSimWorker.execute();
 					}
 				} 
 				else {
@@ -142,6 +156,30 @@ public class TestComPanel extends JPanel {
 			while (!isCancelled() && System.currentTimeMillis() < endTime) {
 				controller.sendVelocity(linearVelocity, angularVelocity);
 			}
+			return null;
+		}
+
+	}
+	
+	class SimulationWorker extends SwingWorker<Integer,Integer> {
+		private String command;
+		
+		public SimulationWorker(String command) {
+			this.command = command;
+		}
+		@Override
+		protected Integer doInBackground() throws Exception {
+			long startTime = System.currentTimeMillis();
+			
+			long endTime = startTime +5000;
+			while (!isCancelled() && System.currentTimeMillis() < endTime) {
+				if (command.equals("forward")) {
+					robots.testForward();
+				} else {
+					robots.testRotate();
+				}
+			}
+			robots.stopAllMovement();
 			return null;
 		}
 

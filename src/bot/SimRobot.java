@@ -14,8 +14,7 @@ public class SimRobot extends Robot {
 
 	@Override
 	public void moveAngular() {
-		// TODO Auto-generated method stub
-		
+		setTheta(getTheta() + angularVelocity);
 	}
 
 	
