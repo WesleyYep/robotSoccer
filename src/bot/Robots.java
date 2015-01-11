@@ -3,13 +3,17 @@ package bot;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import communication.RobotController;
+import communication.SerialPortCommunicator;
 import ui.Field;
 
 public class Robots {
     private Robot[] bots;
-    
-    public Robots() {
-        bots = new Robot[5];
+    private SerialPortCommunicator serialCom;
+
+    public Robots(SerialPortCommunicator s) {
+		bots = new Robot[5];
+		serialCom = s;
     }
 
     public void makeRealRobots() {
@@ -30,13 +34,13 @@ public class Robots {
     
     public void testForward() {
     	for (int i = 0; i < 5; i++) {
-    		bots[i].linearVelocity = 1;
+    		bots[i].linearVelocity = 0.1;
     	} 
     }
     
 	public void testRotate() {
 		for (int i = 0; i < 5; i++) {
-    		bots[i].angularVelocity = 10;
+    		bots[i].angularVelocity = Math.PI/2;
     	} 
 	}
 	
@@ -68,6 +72,24 @@ public class Robots {
 			bots[i].moveLinear();
 			bots[i].moveAngular();
 		}
+	}
+
+	//will try using this after we check if the other way works first
+	public void send() {
+		double[] linearVelocity = new double[11];
+		double[] angularVelocity = new double[11];
+
+		for (int i = 0; i < 11; i++) {
+			if (i < 5) {
+				linearVelocity[i] = bots[i].linearVelocity;
+				angularVelocity[i] = bots[i].angularVelocity;
+			} else {
+				linearVelocity[i] = 0;
+				angularVelocity[i] = 0;
+			}
+		}
+		RobotController controller = new RobotController(serialCom);
+		controller.sendVelocity(linearVelocity, angularVelocity);
 	}
 
 }
