@@ -57,9 +57,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 		
 		// Show only up to two decimal places.
 		orientation.setText("theta= " + String.format("%.2f", o));
-		System.out.println(this.getHeight());
 		this.repaint();
-
 	}
 
 }

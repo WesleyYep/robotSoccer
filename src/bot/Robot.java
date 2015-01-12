@@ -2,10 +2,10 @@ package bot;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.util.ArrayList;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 
 import ui.Field;
@@ -21,6 +21,7 @@ public class Robot extends JPanel {
 	private int y;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
 	private double theta;
+	private int id;
 	
 	/*
 	 * Java theta
@@ -70,20 +71,39 @@ public class Robot extends JPanel {
 	public int getYPosition() {
 		return y;
 	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	/**
+	 * Renders the robot onto the field.
+	 * @param Graphics2D g
+	 */
+	
 	public void draw(Graphics2D g) {
 		int xPos = x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
 		int yPos = y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
 		int width = ROBOT_WIDTH*Field.SCALE_FACTOR;
 		int height = ROBOT_HEIGHT*Field.SCALE_FACTOR;
-		
-		/*
-		g.rotate(Math.toRadians(360-theta), xPos + width/2, yPos + height/2);
-	    g.fillRect(xPos, yPos, width, height);
-		g.rotate(Math.toRadians(-(360-theta)), xPos + width/2, yPos + height/2);
-		*/
+
+		// Convert id of robot to string value. Add 1 because id starts from 0 but on display, it should start from 1.
+		String id = String.valueOf(this.id + 1);
 		
 		// Get a copy of the current graphics object. Hence can manipulate the copy without affecting the original.
 		g = (Graphics2D)g.create();
+		
+		// Set the color for the robot.
+		// Assuming id is never less than 0, if id is between 0-4, black, 5-9 gray.
+		if (this.id < 5) {
+			g.setColor(Color.BLACK);
+		} else {
+			g.setColor(Color.GRAY);
+		}
 		
 		// Concatenates current graphics object affinetransform with a translated rotation transform.
 		g.rotate(Math.toRadians(360-theta), xPos + width/2, yPos + height/2);
@@ -91,6 +111,18 @@ public class Robot extends JPanel {
 		// Renders above transformation.
 		g.fillRect(xPos, yPos, width, height);
 		
+		// Text rotate 90 deg. Not too sure.
+		g.rotate(Math.toRadians(90), xPos + width/2, yPos + height/2);
+		
+		// Number colour is white.
+		g.setColor(Color.WHITE);
+		
+		FontMetrics fm = g.getFontMetrics();
+		int idX = (width - fm.stringWidth(id)) / 2;
+		int idY = (fm.getAscent() + (height - (fm.getAscent() + fm.getDescent())) / 2);
+		
+		g.drawString(id, xPos + idX, yPos + idY);
+
 		// Free up resources.
 		g.dispose();
     }

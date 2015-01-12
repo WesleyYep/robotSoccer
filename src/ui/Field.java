@@ -4,16 +4,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-import communication.ReceiverListener;
 import bot.Robot;
+import communication.ReceiverListener;
 
-public class Field extends JPanel implements ReceiverListener {
+public class Field extends JPanel implements ReceiverListener, MouseListener, MouseMotionListener {
 	
 	//actual measurement of miroSot Middle leagure playground (in cm);
 	final public static int OUTER_BOUNDARY_WIDTH = 220;
@@ -51,6 +52,10 @@ public class Field extends JPanel implements ReceiverListener {
     		bots[i] = new Robot();
     	}  
     	ball = new Ball();
+    	
+    	// Add mouse listeners
+    	addMouseListener(this);
+    	addMouseMotionListener(this);
     }
     
     @Override
@@ -222,8 +227,8 @@ public class Field extends JPanel implements ReceiverListener {
 		//draw robots
     	for (Robot r : bots) {
     		r.draw((Graphics2D) g);
-    	} 
-    	
+    	}
+
     	//draw ball
     	ball.draw(g);
     }
@@ -257,13 +262,12 @@ public class Field extends JPanel implements ReceiverListener {
 				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
 				double y = Double.parseDouble(s.substring(yIndex+2, thetaIndex-1));
 				double theta = Double.parseDouble(s.substring(thetaIndex+6, s.length()));
-				
+
 				bots[id].setX((int)Math.round(x*100));
 				bots[id].setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
 				bots[id].setTheta(theta);
+				bots[id].setId(id);
 				
-				
-				//System.out.println("Received: Robot " + id + " x=" + x + " y=" + y + " theta=" + theta);
 				
 			}
 			else if (s.indexOf("Ball") != -1) {
@@ -280,62 +284,32 @@ public class Field extends JPanel implements ReceiverListener {
 		
 		repaint();
 	}
-    
-   
-    /*@Override
-    public void action(List<Integer> chunks) {
-    	for (int i = 0; i < chunks.size(); i++) {
-    		//orientation
-    		if ( chunks.get(i) > 24000) {
-    			bots[4].setTheta(chunks.get(i) - 20000 - 4000);
-    		} else if ( chunks.get(i) > 23000) {
-    			bots[3].setTheta(chunks.get(i) - 20000 - 3000);
-    		} else if ( chunks.get(i) > 22000) {
-    			bots[2].setTheta(chunks.get(i) - 20000 - 2000);
-    		} else if ( chunks.get(i) > 21000) {
-    			bots[1].setTheta(chunks.get(i) - 20000 - 1000);
-    		} else if ( chunks.get(i) > 20000) {
-    			bots[0].setTheta(chunks.get(i) - 20000);
-    		}
-    		//ball
-    		else if ( chunks.get(i) > 11000) {
-    			ball.setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i)-11000));
-    		} else if (chunks.get(i) > 10000) {
-    			ball.setX(chunks.get(i)-10000);
-    		}
-    		//robots
-    		else if (chunks.get(i) > 9000) {
-				bots[4].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 9000));
-			} else if (chunks.get(i) > 8000) {
-				bots[3].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 8000) );
-			} else if (chunks.get(i) > 7000) {
-				bots[2].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 7000));
-			} else if (chunks.get(i) > 6000) {
-				bots[1].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 6000));
-			} else if (chunks.get(i) > 5000) {
-				bots[0].setY(OUTER_BOUNDARY_HEIGHT-(chunks.get(i) - 5000));
-			} else if (chunks.get(i) > 4000) {
-				bots[4].setX((chunks.get(i) - 4000));
-			} else if (chunks.get(i) > 3000) {
-				bots[3].setX((chunks.get(i) - 3000));
-			} else if (chunks.get(i) > 2000) {
-				bots[2].setX((chunks.get(i) - 2000));
-			} else if (chunks.get(i) > 1000) {
-				bots[1].setX((chunks.get(i) - 1000));
-			} else {
-				bots[0].setX((chunks.get(i) - 0000));
-			}
-			
-			
-			//for testing purposes
-			for (int j=0; j<5; j++) {
-		        	System.out.println("robot "  + (j+1) + "x=" + bots[j].getXPosition() +  " y=" + bots[j].getYPosition());
-		    }   
-		    //System.out.println(chunks.get(i));
-		    
-		}
-    	repaint();
-    } */
-	
-    
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
 }
