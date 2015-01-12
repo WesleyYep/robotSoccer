@@ -8,6 +8,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 
 import bot.Robot;
 import bot.RobotListener;
@@ -20,6 +22,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 	private JLabel xCoordinate;
 	private JLabel yCoordinate;
 	private JLabel orientation;
+	
 	private int robotNumber;
 	
 	public RobotInfoPanel(Robot r, int i) {
@@ -50,13 +53,18 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 		int y = robot.getYPosition();
 		double o = robot.getTheta();
 		
-		
-		
 		xCoordinate.setText("x= " + x);
 		yCoordinate.setText("y= " + y);
 		
 		// Show only up to two decimal places.
 		orientation.setText("theta= " + String.format("%.2f", o));
+		
+		if (robot.isSelected()) {
+			this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED), ((CompoundBorder)getBorder()).getInsideBorder()));
+		} else {
+			this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), ((CompoundBorder)getBorder()).getInsideBorder()));
+		}
+		
 		this.repaint();
 	}
 

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -43,8 +45,14 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
+	
     private Robot[] bots = new Robot[5];
     private Ball ball;
+    
+    private Point startPoint;
+    private Point endPoint;
+    
+    private boolean isMouseDrag;
     
     public Field() {
 		//draw robots
@@ -52,6 +60,8 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     		bots[i] = new Robot();
     	}  
     	ball = new Ball();
+    	
+    	isMouseDrag = false;
     	
     	// Add mouse listeners
     	addMouseListener(this);
@@ -223,14 +233,28 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 				   SCALE_FACTOR*INNER_GOAL_AREA_WIDTH,
 				   SCALE_FACTOR*INNER_GOAL_AREA_HEIGHT);
 		
+    	//draw ball
+    	ball.draw(g);
 		
 		//draw robots
     	for (Robot r : bots) {
     		r.draw((Graphics2D) g);
     	}
 
-    	//draw ball
-    	ball.draw(g);
+    	if (isMouseDrag) {
+    		// drawRect does not take negative values hence values need to be calculated so it doesn't fill the rectangle.
+    		// Rectangle co-ordinates.
+    		int x, y, w, h;
+    		
+    		x = Math.min(startPoint.x, endPoint.x);
+    		y = Math.min(startPoint.y, endPoint.y);
+    		
+    		w = Math.abs(endPoint.x - startPoint.x);
+    		h = Math.abs(endPoint.y - startPoint.y);
+    		
+    		g.setColor(Color.BLUE);
+    		g.drawRect(x, y, w, h);
+    	}
     }
     
     @Override
@@ -284,9 +308,38 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 		
 		repaint();
 	}
+	
+	/**
+	 * Updates the select boolean variable in Robot. GUI updates in subsequent paint calls. <br />
+	 * {@link bot.Robot}
+	 * @param Rectangle r
+	 */
+	
+	private void isRobotSelected(Rectangle r) {
+		Rectangle botRect;
+		
+		for (Robot element : bots) {
+			botRect = new Rectangle(
+					element.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2),
+					element.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2),
+					Robot.ROBOT_WIDTH*SCALE_FACTOR,
+					Robot.ROBOT_HEIGHT*SCALE_FACTOR
+					);
 
+			if (botRect.intersects(r) || botRect.contains(new Point(r.x, r.y))) {
+				element.setSelected(true);
+			} else {
+				element.setSelected(false);
+			}
+			
+		}
+	}
+	
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		isMouseDrag = true;
+		endPoint = e.getPoint();
+		repaint();
 	}
 
 	@Override
@@ -307,9 +360,18 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		startPoint = e.getPoint();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		endPoint = e.getPoint();
+		isMouseDrag = false;
+
+		Rectangle r = new Rectangle(startPoint);
+		r.add(endPoint);
+
+		isRobotSelected(r);
+		repaint();
 	}
 }

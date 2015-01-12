@@ -22,6 +22,11 @@ public class Robot extends JPanel {
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
 	private double theta;
 	private int id;
+	private boolean selected;
+	
+	public Robot() {
+		selected = false;
+	}
 	
 	/*
 	 * Java theta
@@ -80,6 +85,14 @@ public class Robot extends JPanel {
 		return id;
 	}
 	
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
+	
 	/**
 	 * Renders the robot onto the field.
 	 * @param Graphics2D g
@@ -114,8 +127,12 @@ public class Robot extends JPanel {
 		// Text rotate 90 deg. Not too sure.
 		g.rotate(Math.toRadians(90), xPos + width/2, yPos + height/2);
 		
-		// Number colour is white.
-		g.setColor(Color.WHITE);
+		// Number colour is white. Green if the robot is selected.
+		if (selected) {
+			g.setColor(Color.RED);
+		} else {
+			g.setColor(Color.WHITE);
+		}
 		
 		FontMetrics fm = g.getFontMetrics();
 		int idX = (width - fm.stringWidth(id)) / 2;
