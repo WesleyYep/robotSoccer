@@ -74,6 +74,7 @@ public class Robots {
 		}
 	}
 
+
 	//will try using this after we check if the other way works first
 	public void send() {
 		double[] linearVelocity = new double[11];

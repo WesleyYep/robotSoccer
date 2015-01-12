@@ -235,39 +235,33 @@ public class Field extends JPanel implements ReceiverListener {
 	@Override
 	public void action(List<String> chunks) {
 		for (String s : chunks) {
-			
+
 			if (s.indexOf("Robot") != -1) {
 				int idIndex = s.indexOf("id=");
 				int xIndex = s.indexOf("x=");
 				int yIndex = s.indexOf("y=");
 				int thetaIndex = s.indexOf("theta=");
-				
-				int id = Integer.parseInt(s.substring(idIndex+3,idIndex+4));
-				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
-				double y = Double.parseDouble(s.substring(yIndex+2, thetaIndex-1));
-				double theta = Double.parseDouble(s.substring(thetaIndex+6, s.length()));
-				
+
+				int id = Integer.parseInt(s.substring(idIndex + 3, idIndex + 4));
+				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
+				double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
+				double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
+
 				bots.setIndividualBotPosition(id, x, y, theta);
-				
-			}
-			else if (s.indexOf("Ball") != -1) {
+
+			} else if (s.indexOf("Ball") != -1) {
 				int xIndex = s.indexOf("x=");
 				int yIndex = s.indexOf("y=");
-				
-				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
-				double y = Double.parseDouble(s.substring(yIndex+2, s.length()));
-				
-				ball.setX((int)Math.round(x*100));
-				ball.setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
+
+				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
+				double y = Double.parseDouble(s.substring(yIndex + 2, s.length()));
+
+				ball.setX((int) Math.round(x * 100));
+				ball.setY(OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
 			}
 		}
-		
-		repaint();
-	}
 
-	public void setUpGame() {
-		Timer timer = new Timer();
-		timer.schedule(new Tick(this, bots), 0, 50);
+		repaint();
 	}
 	
     

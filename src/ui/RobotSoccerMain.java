@@ -2,13 +2,15 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.*;
 import javax.swing.*;
+import javax.swing.Timer;
 
 import communication.Receiver;
 import communication.SerialPortCommunicator;
 import bot.Robot;
 import bot.Robots;
+import game.Tick;
 
 public class RobotSoccerMain extends JPanel
                              implements ActionListener {
@@ -22,7 +24,7 @@ public class RobotSoccerMain extends JPanel
     private RobotInfoPanel[] robotInfoPanels;
     private TestComPanel testComPanel;
     private SerialPortCommunicator serialCom;
-    private Robots bots = new Robots();
+    private Robots bots;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -42,21 +44,23 @@ public class RobotSoccerMain extends JPanel
         
         //create serial port communicator;
         serialCom = new SerialPortCommunicator();
-        
+        bots = new Robots(serialCom);
+
         JPanel panel = new JPanel();
         panel.add(startButton);
         panel.add(portField);
         field = new Field(bots);
         field.setBackground(Color.green);
-        field.setUpGame();
-        
+
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
         
         testComPanel = new TestComPanel(serialCom, bots);
         infoPanel.add(testComPanel);
-        
+
+        setUpGame();
+
         for (int i = 0; i<5; i++) {
         	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
         	infoPanel.add(robotInfoPanels[i]);
@@ -70,6 +74,10 @@ public class RobotSoccerMain extends JPanel
         
     }
 
+    public void setUpGame() {
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new Tick(field, bots, testComPanel), 0, 50);
+    }
     /**
      * Invoked when the user presses the start button.
      */
