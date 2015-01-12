@@ -503,8 +503,8 @@ bool CRobotSoccerProgramDlg::Initialization(void)
 		return false;
 	}
 
-	//connectToHost(31000);
-
+	CEdit *Number = reinterpret_cast<CEdit *>(GetDlgItem(IDC_EDIT_PORT_NUMBER));
+	Number->SetWindowText( _T("31000") );
 
 	return false;
 }
@@ -683,6 +683,7 @@ void CRobotSoccerProgramDlg::Process(void)
 	{
 	}
 	*/
+
 	if( m_propGame.IsActive() )
 	{
 		m_VelocityInfo = m_SynchronousModule.VelocityData();
@@ -700,23 +701,26 @@ void CRobotSoccerProgramDlg::Process(void)
 			SendVelocity();
 	}
 
-
+	//Color setting page
 	if( m_propColorSetting.IsActive() )
 	{
 		m_propColorSetting.GenerateMaskInformation();
 	}
 	else
+	//vision setting page
 	if( m_propVision.IsActive() )
 	{
 		m_propVision.VisionRun();
 		m_propVision.GenerateDrawInformation();
 	}
 	else
+	//establish stratgy page
 	if( m_propStrategyGUI.IsActive() )
 	{
 		m_propStrategyGUI.GenerateDrawInformation();
 	}
 	else
+	//game operation stratgy exec page
 	if( m_propGame.IsActive() )
 	{
 		if( m_propGame.m_bCopyStrategyGUI )
