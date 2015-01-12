@@ -18,8 +18,8 @@ public abstract class Robot extends JPanel {
 	private double y;
 	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
 	private double theta;
-	public int linearVelocity;
-	public int angularVelocity;
+	public double linearVelocity;
+	public double angularVelocity;
 	
 	/*
 	 * Java theta

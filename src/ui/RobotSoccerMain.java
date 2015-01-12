@@ -22,7 +22,7 @@ public class RobotSoccerMain extends JPanel
     private RobotInfoPanel[] robotInfoPanels;
     private TestComPanel testComPanel;
     private SerialPortCommunicator serialCom;
-    private Robots bots = new Robots();
+    private Robots bots = new Robots(serialCom);
 
     public RobotSoccerMain() {
         super(new BorderLayout());
