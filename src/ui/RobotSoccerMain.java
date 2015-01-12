@@ -29,8 +29,6 @@ public class RobotSoccerMain extends JPanel
     public RobotSoccerMain() {
         super(new BorderLayout());
 
-        bots.makeRealRobots();
-        
         //Create the demo's UI.
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
@@ -45,6 +43,7 @@ public class RobotSoccerMain extends JPanel
         //create serial port communicator;
         serialCom = new SerialPortCommunicator();
         bots = new Robots(serialCom);
+        bots.makeRealRobots();
 
         JPanel panel = new JPanel();
         panel.add(startButton);
