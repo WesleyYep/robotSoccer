@@ -8,13 +8,16 @@ public class SimRobot extends Robot {
 	
 	@Override
 	public void moveLinear() {
-		setX(getXPosition() + (linearVelocity * Math.cos(Math.toRadians(getTheta()))));
-		setY(getYPosition() + (linearVelocity * -Math.sin(Math.toRadians(getTheta()))));
+		setX(getXPosition() + (51.39*2 / 18.52 * linearVelocity * Math.cos(Math.toRadians(getTheta()))));
+		setY(getYPosition() + (51.39*2 / 18.52 * linearVelocity * -Math.sin(Math.toRadians(getTheta()))));
 	}
 
 	@Override
 	public void moveAngular() {
-		setTheta(getTheta() + angularVelocity);
+		
+		//actual  (34.39sec/10 rotation)
+		//simulation(57.16 sec/5 rotation) 
+		setTheta(getTheta() + ((57.16/5)/(34.39/10))*angularVelocity);
 	}
 
 	

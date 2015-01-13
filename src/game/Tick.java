@@ -20,7 +20,7 @@ public class Tick extends TimerTask {
 	
 	public void run() {
 		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
-
+		
 		if (comPanel.isSimulation()) {
 			bots.moveBots();
 			field.repaint();
