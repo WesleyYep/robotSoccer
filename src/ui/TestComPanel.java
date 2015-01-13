@@ -18,6 +18,9 @@ import jssc.SerialPortList;
 
 public class TestComPanel extends JPanel {
 	
+	
+	//18.52 second from one side to another side actual
+	//51.39 second from one side to another side in simulation
 	private JComboBox<String> comboBox;
 	
 	private JButton testRotateBtn;
@@ -27,7 +30,7 @@ public class TestComPanel extends JPanel {
 	private double[] linearVelocity;
 	private double[] angularVelocity;
 
-	private TestWorker currentWorker;
+//	private TestWorker currentWorker;
 	private SimulationWorker currentSimWorker;
 	private Robots robots;
 	
@@ -75,7 +78,7 @@ public class TestComPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (simulationCheckBox.isSelected()) {
+		//		if (simulationCheckBox.isSelected()) {
 					if (currentSimWorker != null) {
 						currentSimWorker.cancel(true);
 						currentSimWorker = null;
@@ -83,19 +86,19 @@ public class TestComPanel extends JPanel {
 						currentSimWorker = new SimulationWorker("rotate");
 						currentSimWorker.execute();
 					}
-				} else {
-					if (currentWorker != null) {
-						currentWorker.cancel(true);
-					}
-
-					for (int i = 0; i < 11; i++) {
-						linearVelocity[i] = 0;
-						angularVelocity[i] = (3.14159265358979323846) / 2;
-						;
-					}
-					currentWorker = new TestWorker();
-					currentWorker.execute();
-				}
+		//		} else {
+//					if (currentWorker != null) {
+//						currentWorker.cancel(true);
+//					}
+//
+//					for (int i = 0; i < 11; i++) {
+//						linearVelocity[i] = 0;
+//						angularVelocity[i] = (3.14159265358979323846) / 2;
+//						;
+//					}
+//					currentWorker = new TestWorker();
+//					currentWorker.execute();
+//				}
 			}
 
 		});
@@ -103,7 +106,7 @@ public class TestComPanel extends JPanel {
 		testForwardBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (simulationCheckBox.isSelected()) {
+//				if (simulationCheckBox.isSelected()) {
 					if (currentSimWorker != null) {
 						currentSimWorker.cancel(true);
 						currentSimWorker = null;
@@ -111,18 +114,18 @@ public class TestComPanel extends JPanel {
 						currentSimWorker = new SimulationWorker("forward");
 						currentSimWorker.execute();
 					}
-				} else {
-					if (currentWorker != null) {
-						currentWorker.cancel(true);
-					}
-
-					for (int i = 0; i < 11; i++) {
-						linearVelocity[i] = 0.1;
-						angularVelocity[i] = 0;
-					}
-					currentWorker = new TestWorker();
-					currentWorker.execute();
-				}
+//				} else {
+//					if (currentWorker != null) {
+//						currentWorker.cancel(true);
+//					}
+//
+//					for (int i = 0; i < 11; i++) {
+//						linearVelocity[i] = 0.1;
+//						angularVelocity[i] = 0;
+//					}
+//					currentWorker = new TestWorker();
+//					currentWorker.execute();
+//				}
 			}
 
 		});
@@ -143,26 +146,28 @@ public class TestComPanel extends JPanel {
 			return simulationCheckBox.isSelected();
 		}
 	
-	class TestWorker extends SwingWorker<Integer,Integer> {
+//	class TestWorker extends SwingWorker<Integer,Integer> {
+//
+//		private RobotController controller;
+//
+//		public TestWorker () {
+//			controller = new RobotController(serialCom);
+//		}
+//		@Override
+//		protected Integer doInBackground() throws Exception {
+//			long startTime = System.currentTimeMillis();
+//
+//			long endTime = startTime +5000;
+//			while (!isCancelled() && System.currentTimeMillis() < endTime) {
+//				controller.sendVelocity(linearVelocity, angularVelocity);
+//			}
+//			return null;
+//		}
+//
+//	}
 
-		private RobotController controller;
-		
-		public TestWorker () {
-			controller = new RobotController(serialCom);
-		}	
-		@Override
-		protected Integer doInBackground() throws Exception {
-			long startTime = System.currentTimeMillis();
-			
-			long endTime = startTime +5000;
-			while (!isCancelled() && System.currentTimeMillis() < endTime) {
-				controller.sendVelocity(linearVelocity, angularVelocity);
-			}
-			return null;
-		}
 
-	}
-	
+	//may possibly not even need this worker
 	class SimulationWorker extends SwingWorker<Integer,Integer> {
 		private String command;
 		
@@ -171,14 +176,14 @@ public class TestComPanel extends JPanel {
 		}
 		@Override
 		protected Integer doInBackground() throws Exception {
-			while (!isCancelled()) {
+		//	while (!isCancelled()) {
 				if (command.equals("forward")) {
 					robots.testForward();
 				} else {
 					robots.testRotate();
 				}
-			}
-			robots.stopAllMovement();
+		//	}
+		//	robots.stopAllMovement();
 			return null;
 		}
 
