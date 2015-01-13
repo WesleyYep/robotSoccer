@@ -9,13 +9,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
 
 import bot.Robot;
 import bot.RobotListener;
 
-public class RobotInfoPanel extends JPanel implements RobotListener {
-	
+public class RobotInfoPanel extends JPanel implements RobotListener, FocusListener {
 	
 	private Robot robot;
 	private JLabel title;
@@ -23,15 +21,13 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 	private JLabel yCoordinate;
 	private JLabel orientation;
 	
-	private int robotNumber;
-	
 	public RobotInfoPanel(Robot r, int i) {
 		robot = r;
 		robot.addRobotListener(this);
+		robot.addFocusListener(this);
 		xCoordinate = new JLabel("x = 0");
 		yCoordinate = new JLabel("y = 0");
 		orientation = new JLabel("theta = 0");
-		robotNumber = i;
 		title = new JLabel("Robot " + (i+1));
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -41,7 +37,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 		this.add(orientation);
 		this.setPreferredSize(new Dimension(100, 80));
 		
-		// Create border.
+		// Create border. Initially black.
 		Border border = BorderFactory.createLineBorder(Color.black);
 		Border padding = BorderFactory.createEmptyBorder(5, 5, 5, 5);
 		this.setBorder(BorderFactory.createCompoundBorder(border, padding));
@@ -49,23 +45,26 @@ public class RobotInfoPanel extends JPanel implements RobotListener {
 
 	@Override
 	public void positionChanged() {
-		int x = robot.getXPosition();
-		int y = robot.getYPosition();
+		System.out.println("called");
+		double x = robot.getXPosition();
+		double y = robot.getYPosition();
 		double o = robot.getTheta();
-		
-		xCoordinate.setText("x= " + x);
-		yCoordinate.setText("y= " + y);
-		
+		System.out.println(x);
+		xCoordinate.setText("x= " + (int)x);
+		yCoordinate.setText("y= " + (int)y);
 		// Show only up to two decimal places.
 		orientation.setText("theta= " + String.format("%.2f", o));
 		
-		if (robot.isSelected()) {
+		this.repaint();
+	}
+
+	@Override
+	public void focusChanged() {
+		if (robot.isFocused()) {
 			this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED), ((CompoundBorder)getBorder()).getInsideBorder()));
 		} else {
 			this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK), ((CompoundBorder)getBorder()).getInsideBorder()));
 		}
-		
-		this.repaint();
 	}
 
 }

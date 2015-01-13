@@ -9,24 +9,18 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import ui.Field;
+import ui.FocusListener;
 
-/**
- * Properties associated to individual robot.
- * @author Chang Kon, Wesley, John
- *
- */
-
-public class Robot extends JPanel {
-	private int x;
-	private int y;
-	private ArrayList<RobotListener> listeners = new ArrayList<RobotListener>();
+public abstract class Robot extends JPanel {
+	private double x;
+	private double y;
+	private ArrayList<RobotListener> rListeners = new ArrayList<RobotListener>();
+	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private double theta;
 	private int id;
-	private boolean selected;
-	
-	public Robot() {
-		selected = false;
-	}
+	private boolean focused;
+	public double linearVelocity;
+	public double angularVelocity;
 	
 	/*
 	 * Java theta
@@ -47,15 +41,22 @@ public class Robot extends JPanel {
 	 */
 	
 	//still need to measure the actual size, just using 7cm for now
-	final public static int ROBOT_WIDTH =8;
+	final public static int ROBOT_WIDTH = 8;
 	final public static int ROBOT_HEIGHT = 8;
 	
-	public void setX (int x) {
+	public Robot (double x, double y, double theta, int id) {
+		setX(x);
+		setY(y);
+		setTheta(theta);
+		setId(id);
+	}
+	
+	public void setX (double x) {
 		this.x = x;
 		notifyRobotListeners();
 	}
 	
-	public void setY (int y) {
+	public void setY (double y) {
 		this.y = y;
 		notifyRobotListeners();
 	}
@@ -69,11 +70,11 @@ public class Robot extends JPanel {
 		return theta;
 	}
 	
-	public int getXPosition() {
+	public double getXPosition() {
 		return x;
 	}
 	
-	public int getYPosition() {
+	public double getYPosition() {
 		return y;
 	}
 	
@@ -85,12 +86,13 @@ public class Robot extends JPanel {
 		return id;
 	}
 	
-	public void setSelected(boolean selected) {
-		this.selected = selected;
+	public void setFocus(boolean focused) {
+		this.focused = focused;
+		notifyFocusListeners();
 	}
 	
-	public boolean isSelected() {
-		return selected;
+	public boolean isFocused() {
+		return focused;
 	}
 	
 	/**
@@ -99,8 +101,8 @@ public class Robot extends JPanel {
 	 */
 	
 	public void draw(Graphics2D g) {
-		int xPos = x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
-		int yPos = y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2);
+		int xPos = (int) (x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
+		int yPos = (int) (y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
 		int width = ROBOT_WIDTH*Field.SCALE_FACTOR;
 		int height = ROBOT_HEIGHT*Field.SCALE_FACTOR;
 
@@ -127,8 +129,8 @@ public class Robot extends JPanel {
 		// Text rotate 90 deg. Not too sure.
 		g.rotate(Math.toRadians(90), xPos + width/2, yPos + height/2);
 		
-		// Number colour is white. Green if the robot is selected.
-		if (selected) {
+		// Number colour is white. Red if the robot is selected.
+		if (focused) {
 			g.setColor(Color.RED);
 		} else {
 			g.setColor(Color.WHITE);
@@ -146,21 +148,40 @@ public class Robot extends JPanel {
 	
 	
 	public void addRobotListener(RobotListener l) {
-		listeners.add(l);
+		rListeners.add(l);
 	}
 	
 	public void removeRobotListener(RobotListener l) {
-		listeners.remove(l);
+		rListeners.remove(l);
 	}
     
+	public void addFocusListener(FocusListener l) {
+		fListeners.add(l);
+	}
+	
+	public void removeFocusListener(FocusListener l) {
+		fListeners.remove(l);
+	}
+	
 	/**
 	 * Notify all robotlisteners. Call positionChanged. <br />
 	 * {@link ui.RobotInfoPanel}
 	 */
 	
 	private void notifyRobotListeners() {
-		for (RobotListener l : listeners) {
+		for (RobotListener l : rListeners) {
 			l.positionChanged();
+		}
+	}
+	
+	/**
+	 * Notify all focuslisteners. Call focusChanged. <br />
+	 * {@link ui.RobotInfoPanel}
+	 */
+	
+	private void notifyFocusListeners() {
+		for (FocusListener l : fListeners) {
+			l.focusChanged();
 		}
 	}
 	
@@ -169,13 +190,8 @@ public class Robot extends JPanel {
         return new Dimension(ROBOT_WIDTH*Field.SCALE_FACTOR, ROBOT_WIDTH*Field.SCALE_FACTOR); // appropriate constants
     }
     
-    // Not sure if this method is being called.
-    /*
-    @Override
-    protected void paintComponent(Graphics g) {
-    	Graphics2D g2d = (Graphics2D) g;
-    	g2d.rotate(theta);
-    	super.paintComponent(g2d);
-    }
-    */
+    public abstract void moveLinear();
+    
+    public abstract void moveAngular();
+
 }

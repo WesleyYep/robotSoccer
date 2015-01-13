@@ -70,9 +70,20 @@ public class Receiver extends SwingWorker<Void, String> {
 		}
     }
     
+    public void stop() {
+    	try {
+    		this.cancel(true);
+			serverSocket.close();
+			output.append("Closed");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
     protected void process(List<String> chunks) {
     	for (ReceiverListener l : listeners) {
-			l.action(chunks);
+    		if (!this.isCancelled())
+    			l.action(chunks);
 		}
     }
 

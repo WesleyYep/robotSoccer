@@ -2,12 +2,15 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.*;
 import javax.swing.*;
+import javax.swing.Timer;
 
 import communication.Receiver;
 import communication.SerialPortCommunicator;
 import bot.Robot;
+import bot.Robots;
+import game.Tick;
 
 public class RobotSoccerMain extends JPanel
                              implements ActionListener {
@@ -20,8 +23,8 @@ public class RobotSoccerMain extends JPanel
     private JTextField portField;
     private RobotInfoPanel[] robotInfoPanels;
     private TestComPanel testComPanel;
-    
     private SerialPortCommunicator serialCom;
+    private Robots bots;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -39,22 +42,26 @@ public class RobotSoccerMain extends JPanel
         
         //create serial port communicator;
         serialCom = new SerialPortCommunicator();
-        
+        bots = new Robots(serialCom);
+        bots.makeRealRobots();
+
         JPanel panel = new JPanel();
         panel.add(startButton);
         panel.add(portField);
-        field = new Field();
+        field = new Field(bots);
         field.setBackground(Color.green);
-        
+
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
         
-        testComPanel = new TestComPanel(serialCom);
+        testComPanel = new TestComPanel(serialCom, bots);
         infoPanel.add(testComPanel);
-        
+
+        setUpGame();
+
         for (int i = 0; i<5; i++) {
-        	robotInfoPanels[i] = new RobotInfoPanel(field.getRobot()[i], i);
+        	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
         	infoPanel.add(robotInfoPanels[i]);
         }
         
@@ -63,26 +70,36 @@ public class RobotSoccerMain extends JPanel
         add(field, BorderLayout.CENTER);
         add(infoPanel,BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
+        
     }
 
+    public void setUpGame() {
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new Tick(field, bots, testComPanel), 0, 50);
+    }
     /**
      * Invoked when the user presses the start button.
      */
     public void actionPerformed(ActionEvent evt) {
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-    	int portNumber;
-    	try {
-    		portNumber = Integer.parseInt(portField.getText());
-    	}	catch (NumberFormatException e) {
-    		portNumber = DEFAULT_PORT_NUMBER;
-    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+    	if (startButton.getText() == "Start") {
+	    	int portNumber;
+	    	try {
+	    		portNumber = Integer.parseInt(portField.getText());
+	    	}	catch (NumberFormatException e) {
+	    		portNumber = DEFAULT_PORT_NUMBER;
+	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+	    	}
+	    	
+	        task = new Receiver(taskOutput, portNumber);
+	        task.registerListener(field);
+	        task.execute();
+	        startButton.setText("Stop");
+    	} else {
+    		task.stop();
+    		startButton.setText("Start");
     	}
-    	
-        task = new Receiver(taskOutput, portNumber);
-        task.registerListener(field);
-        task.execute();
     }
 
     /**

@@ -3,7 +3,6 @@ package ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -14,6 +13,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import bot.Robot;
+import bot.Robots;
 import communication.ReceiverListener;
 
 public class Field extends JPanel implements ReceiverListener, MouseListener, MouseMotionListener {
@@ -46,19 +46,17 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
 	
-    private Robot[] bots = new Robot[5];
     private Ball ball;
+    private Robots bots;
     
     private Point startPoint;
     private Point endPoint;
     
     private boolean isMouseDrag;
     
-    public Field() {
+    public Field(Robots bots) {
 		//draw robots
-    	for (int i = 0; i < 5; i++) {
-    		bots[i] = new Robot();
-    	}  
+    	this.bots = bots;
     	ball = new Ball();
     	
     	isMouseDrag = false;
@@ -237,9 +235,7 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     	ball.draw(g);
 		
 		//draw robots
-    	for (Robot r : bots) {
-    		r.draw((Graphics2D) g);
-    	}
+    	bots.draw(g);
 
     	if (isMouseDrag) {
     		// drawRect does not take negative values hence values need to be calculated so it doesn't fill the rectangle.
@@ -255,6 +251,7 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     		g.setColor(Color.BLUE);
     		g.drawRect(x, y, w, h);
     	}
+		
     }
     
     @Override
@@ -263,49 +260,35 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
         					 SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+10); // appropriate constants
     }
     
-    public Robot[] getRobot() {
-    	return bots;
-    }
 
 	@Override
 	public void action(List<String> chunks) {
 		for (String s : chunks) {
-			
+
 			if (s.indexOf("Robot") != -1) {
 				int idIndex = s.indexOf("id=");
 				int xIndex = s.indexOf("x=");
 				int yIndex = s.indexOf("y=");
 				int thetaIndex = s.indexOf("theta=");
-				
-				/*System.out.println(s.substring(idIndex+3,idIndex+4));
-				System.out.println(s.substring(xIndex+2, yIndex-1));
-				System.out.println(s.substring(yIndex+2, thetaIndex-1));
-				System.out.println(s.substring(thetaIndex+6, s.length()));*/
-				
-				int id = Integer.parseInt(s.substring(idIndex+3,idIndex+4));
-				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
-				double y = Double.parseDouble(s.substring(yIndex+2, thetaIndex-1));
-				double theta = Double.parseDouble(s.substring(thetaIndex+6, s.length()));
+				int id = Integer.parseInt(s.substring(idIndex + 3, idIndex + 4));
+				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
+				double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
+				double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
 
-				bots[id].setX((int)Math.round(x*100));
-				bots[id].setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
-				bots[id].setTheta(theta);
-				bots[id].setId(id);
-				
-				
-			}
-			else if (s.indexOf("Ball") != -1) {
+				bots.setIndividualBotPosition(id, x, y, theta);
+
+			} else if (s.indexOf("Ball") != -1) {
 				int xIndex = s.indexOf("x=");
 				int yIndex = s.indexOf("y=");
-				
-				double x = Double.parseDouble(s.substring(xIndex+2, yIndex-1));
-				double y = Double.parseDouble(s.substring(yIndex+2, s.length()));
-				
-				ball.setX((int)Math.round(x*100));
-				ball.setY(OUTER_BOUNDARY_HEIGHT-(int)Math.round(y*100));
+
+				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
+				double y = Double.parseDouble(s.substring(yIndex + 2, s.length()));
+
+				ball.setX((int) Math.round(x * 100));
+				ball.setY(OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
 			}
 		}
-		
+
 		repaint();
 	}
 	
@@ -315,24 +298,41 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	 * @param Rectangle r
 	 */
 	
-	private void isRobotSelected(Rectangle r) {
+	private void isRobotFocused(Rectangle r) {
 		Rectangle botRect;
 		
-		for (Robot element : bots) {
+		// Casts so it may not be super accurate.
+		for (Robot element : bots.getRobots()) {
 			botRect = new Rectangle(
-					element.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2),
-					element.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2),
+					(int)(element.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2)),
+					(int)(element.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2)),
 					Robot.ROBOT_WIDTH*SCALE_FACTOR,
 					Robot.ROBOT_HEIGHT*SCALE_FACTOR
 					);
 
 			if (botRect.intersects(r) || botRect.contains(new Point(r.x, r.y))) {
-				element.setSelected(true);
+				element.setFocus(true);
 			} else {
-				element.setSelected(false);
+				element.setFocus(false);
 			}
 			
 		}
+	}
+	
+	private void isBallFocused(Rectangle r) {
+		Rectangle ballRect = new Rectangle(
+				ball.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
+				ball.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
+				Ball.BALL_DIAMETER*SCALE_FACTOR,
+				Ball.BALL_DIAMETER*SCALE_FACTOR
+				);
+		
+		if (ballRect.intersects(r) || ballRect.contains(new Point(r.x, r.y))) {
+			ball.setFocus(true);
+		} else {
+			ball.setFocus(false);
+		}
+		
 	}
 	
 	@Override
@@ -371,7 +371,8 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 		Rectangle r = new Rectangle(startPoint);
 		r.add(endPoint);
 
-		isRobotSelected(r);
+		isRobotFocused(r);
+		isBallFocused(r);
 		repaint();
 	}
 }
