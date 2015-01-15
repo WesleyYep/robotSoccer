@@ -97,7 +97,7 @@ public abstract class Robot extends JPanel {
 	
 	/**
 	 * Renders the robot onto the field.
-	 * @param Graphics2D g
+	 * @param g
 	 */
 	
 	public void draw(Graphics2D g) {

@@ -291,7 +291,24 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 
 		repaint();
 	}
-	
+
+	public double getBallX() {
+		return ball.getXPosition();
+	}
+
+	public double getBallY() {
+		return ball.getYPosition();
+	}
+
+	public void kickBall(double linearVelocity, double theta) {
+		ball.setLinearVelocity(linearVelocity);
+		ball.setTheta(theta);
+	}
+
+	public void moveBall() {
+		ball.move();
+	}
+
 	/**
 	 * Updates the select boolean variable in Robot. GUI updates in subsequent paint calls. <br />
 	 * {@link bot.Robot}
@@ -321,8 +338,8 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	
 	private void isBallFocused(Rectangle r) {
 		Rectangle ballRect = new Rectangle(
-				ball.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
-				ball.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
+				(int)ball.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
+				(int)ball.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
 				Ball.BALL_DIAMETER*SCALE_FACTOR,
 				Ball.BALL_DIAMETER*SCALE_FACTOR
 				);
