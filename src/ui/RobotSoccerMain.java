@@ -25,50 +25,68 @@ public class RobotSoccerMain extends JPanel
     private TestComPanel testComPanel;
     private SerialPortCommunicator serialCom;
     private Robots bots;
+    
+    private SituationPanel situationPanel;
+    
+    private JTabbedPane tabPane;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
-
+        
         //Create the demo's UI.
+        //create start button and text field for port number
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
         startButton.addActionListener(this);
-
+        portField = new JTextField(10);
+        
+        JPanel panel = new JPanel();
+        panel.add(startButton);
+        panel.add(portField);
+        
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
-        taskOutput.setEditable(false);
-        
-        portField = new JTextField(10);
+        taskOutput.setEditable(false); 
+       
         
         //create serial port communicator;
         serialCom = new SerialPortCommunicator();
         bots = new Robots(serialCom);
         bots.makeRealRobots();
-
-        JPanel panel = new JPanel();
-        panel.add(startButton);
-        panel.add(portField);
         field = new Field(bots);
         field.setBackground(Color.green);
 
+        //creating panel holding robot informations
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
         
         testComPanel = new TestComPanel(serialCom, bots);
         infoPanel.add(testComPanel);
-
-        setUpGame();
-
+        
         for (int i = 0; i<5; i++) {
         	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
         	infoPanel.add(robotInfoPanels[i]);
         }
         
+        situationPanel = new SituationPanel(field);
+        
+        //create tab pane
+        tabPane = new JTabbedPane();
+        
+        tabPane.addTab("Output", new JScrollPane(taskOutput));
+        tabPane.addTab("Situation", situationPanel);
+        
+        setUpGame();
+        
         add(panel, BorderLayout.PAGE_START);
-        add(new JScrollPane(taskOutput), BorderLayout.LINE_END);
+        
+        add(tabPane, BorderLayout.LINE_END);
+        
         add(field, BorderLayout.CENTER);
+        
         add(infoPanel,BorderLayout.SOUTH);
+        
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
     }

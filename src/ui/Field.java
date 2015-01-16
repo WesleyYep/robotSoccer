@@ -16,7 +16,7 @@ import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
 
-public class Field extends JPanel implements ReceiverListener, MouseListener, MouseMotionListener {
+public class Field extends JPanel implements ReceiverListener, MouseListener, MouseMotionListener, AreaListener {
 	
 	//actual measurement of miroSot Middle leagure playground (in cm);
 	final public static int OUTER_BOUNDARY_WIDTH = 220;
@@ -54,6 +54,8 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     
     private boolean isMouseDrag;
     
+    private SituationArea selectedArea;
+    
     public Field(Robots bots) {
 		//draw robots
     	this.bots = bots;
@@ -64,6 +66,8 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     	// Add mouse listeners
     	addMouseListener(this);
     	addMouseMotionListener(this);
+    	
+    	setLayout(null);
     }
     
     @Override
@@ -375,4 +379,32 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 		isBallFocused(r);
 		repaint();
 	}
+	
+	@Override
+	public void moveArea(int x, int y) {
+		int newX = selectedArea.getX()-x;
+		int newY = selectedArea.getY()-y;
+		
+		
+		selectedArea.setBounds(newX, newY, selectedArea.getWidth(),selectedArea.getHeight());
+		this.repaint();
+	}
+
+	@Override
+	public void resizeArea(int w, int h, int x, int y) {
+		
+		//positive to the left
+		//negative to the right
+		int newWidth = selectedArea.getWidth() + w;
+		int newHeight = selectedArea.getHeight() + h;
+		
+		selectedArea.setBounds(x, y, newWidth, newHeight);
+		
+		this.repaint();
+	}
+	
+	public void setSelectedArea(SituationArea a) {
+		selectedArea = a;
+	}
+	
 }
