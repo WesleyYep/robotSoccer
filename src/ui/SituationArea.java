@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -11,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
@@ -50,6 +52,8 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	
 	private boolean active = false;
 	
+	private JLabel information;
+	
 	public SituationArea (int width, int height) {
 		this.addMouseMotionListener(this);
 		this.addMouseListener(this);
@@ -57,6 +61,9 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 		this.setBorder(BorderFactory.createLineBorder(Color.RED));
 		this.setOpaque(false);
 		
+		information = new JLabel("X: " + this.getX() + " Y: " + this.getY() + "W: " + this.getWidth() + " H: " + this.getHeight());
+		this.setLayout(new BorderLayout());
+		this.add(information, BorderLayout.CENTER);
 		baseWidth = width;
 		baseHeight = height;
 	}
@@ -160,10 +167,11 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 						
 					}
 				}
-				
+				information.setText("X: " + this.getX() + " Y: " + this.getY() + " W: " + this.getWidth() + " H: " + this.getHeight());
 				listener.resizeArea( newWidth, newHeight, newX, newY);		
 			} 
 			else if (draggingMode == MOVING) {
+				information.setText("X: " + this.getX() + " Y: " + this.getY() + " W: " + this.getWidth() + " H: " + this.getHeight());
 				listener.moveArea(diffX, diffY);
 			}
 		}	
@@ -210,20 +218,17 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
@@ -273,5 +278,8 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 		}
 	}
 	
+	public void setBorderColor(Color c) {
+		this.setBorder(BorderFactory.createLineBorder(c));
+	}
 	
 }

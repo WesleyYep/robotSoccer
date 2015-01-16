@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,10 +53,12 @@ public class SituationPanel extends JPanel {
                     } else {
                     	for (SituationArea a : listOfSituations) {
         					a.setActive(false);
+        					a.setBorderColor(Color.GRAY);
         				}
                         int selectedRow = lsm.getMinSelectionIndex();
                         
                         ((SituationArea)situationModel.getValueAt(selectedRow, 0)).setActive(true);
+                        ((SituationArea)situationModel.getValueAt(selectedRow, 0)).setBorderColor(Color.red);
                         SituationPanel.this.field.setSelectedArea((SituationArea)situationModel.getValueAt(selectedRow, 0));
                         System.out.println("Row " + selectedRow
                                 + " is now selected.");
