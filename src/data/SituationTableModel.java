@@ -34,5 +34,18 @@ public class SituationTableModel extends AbstractTableModel {
 		// TODO Auto-generated method stub
 		return listOfSituations.get(row);
 	}
+	
+	public String getColumnName(int col) {
+		if (col == 0) {
+			return "Situation Name";
+		}
+		else {
+			return "";
+		}
+    }
+	
+	public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
+    }
 
 }

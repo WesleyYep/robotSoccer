@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -76,7 +77,7 @@ public class SituationPanel extends JPanel {
 		buttonPanel.add(removeButton);
 		
 		this.add(buttonPanel, BorderLayout.NORTH);
-		this.add(tableOfSituations, BorderLayout.CENTER);
+		this.add(new JScrollPane(tableOfSituations), BorderLayout.CENTER);
 		
 		
 		
