@@ -3,7 +3,7 @@ package bot;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import communication.RobotController;
+import controllers.RobotController;
 import communication.SerialPortCommunicator;
 import ui.Field;
 
@@ -62,7 +62,7 @@ public class Robots {
     public void draw(Graphics g) {
     	for (Robot r : bots) {
     		r.draw((Graphics2D) g);
-    	} 
+    	}
     }
 
 	public void setIndividualBotPosition(int id, double x, double y, double theta) {

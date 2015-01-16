@@ -1,4 +1,6 @@
-package communication;
+package controllers;
+
+import communication.SerialPortCommunicator;
 
 public class RobotController {
 	
