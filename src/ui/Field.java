@@ -305,6 +305,10 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 		ball.setTheta(theta);
 	}
 
+	public void bounceBall() {
+		ball.bounce();
+	}
+
 	public void moveBall() {
 		ball.move();
 	}

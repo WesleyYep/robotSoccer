@@ -11,10 +11,14 @@ public class Physics {
 
     public void calculatePhysics(Field field, Robots bots) {
         for (Robot r : bots.getRobots()) {
-            if (((int)r.getXPosition() ==  (int)field.getBallX()) && ((int)r.getYPosition() == (int)field.getBallY())) {
+            if ((Math.abs(r.getXPosition() -  field.getBallX()) < 8) && ((Math.abs(r.getYPosition() -  field.getBallY()) < 8))) {
                 System.out.println("kicked!");
                 field.kickBall(r.linearVelocity, r.getTheta());
             }
+        }
+        if (field.getBallX() < 5) {
+            System.out.println(Field.ORIGIN_X);
+            field.bounceBall();
         }
     }
 

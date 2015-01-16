@@ -46,6 +46,10 @@ public class Ball extends JPanel{
 		x = (x + 10 * linearVelocity * Math.cos(Math.toRadians(theta)));
 		y = (y - 10 * linearVelocity * Math.sin(Math.toRadians(theta)));
 	}
+
+	public void bounce(){
+		theta = 90 - theta;
+	}
 	
 	public double getYPosition() {
 		return y;
