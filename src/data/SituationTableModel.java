@@ -11,9 +11,9 @@ public class SituationTableModel extends AbstractTableModel {
 	//for now the model we use the list of area, later on we could create
 	//situation object which contain the area and other information relate to the situations
 	
-	private ArrayList<SituationArea> listOfSituations;
+	private ArrayList<Situation> listOfSituations;
 	
-	public SituationTableModel(ArrayList<SituationArea> list) {
+	public SituationTableModel(ArrayList<Situation> list) {
 		listOfSituations = list;
 	}
 

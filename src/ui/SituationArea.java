@@ -6,19 +6,19 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Label;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
 public class SituationArea extends JPanel implements MouseMotionListener, MouseListener{
-	
-
 	
 	final static public int ORIGIN_X = 500;
 	final static public int ORIGIN_Y = 100;
@@ -52,7 +52,11 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	
 	private boolean active = false;
 	
-	private JLabel information;
+	private JLabel coordLbl;
+	private JLabel nameLbl;
+	private JLabel sizeLbl;
+	
+	private String situationName;
 	
 	public SituationArea (int width, int height) {
 		this.addMouseMotionListener(this);
@@ -60,12 +64,24 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 		this.setSize(width,height);
 		this.setBorder(BorderFactory.createLineBorder(Color.RED));
 		this.setOpaque(false);
+		situationName = "";
+				
+		nameLbl = new JLabel(situationName);
+		coordLbl = new JLabel("X: " + this.getX() + " Y: " + this.getY());
+		sizeLbl = new JLabel("W: " + this.getWidth() + " H: " + this.getHeight());
+		this.setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 		
-		information = new JLabel("X: " + this.getX() + " Y: " + this.getY() + "W: " + this.getWidth() + " H: " + this.getHeight());
-		this.setLayout(new BorderLayout());
-		this.add(information, BorderLayout.CENTER);
+		nameLbl.setAlignmentX(Label.CENTER_ALIGNMENT);
+		coordLbl.setAlignmentX(Label.CENTER_ALIGNMENT);
+		sizeLbl.setAlignmentX(Label.CENTER_ALIGNMENT);
+		
+		this.add(nameLbl);
+		this.add(coordLbl);
+		this.add(sizeLbl);
+		
 		baseWidth = width;
 		baseHeight = height;
+		
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -167,11 +183,18 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 						
 					}
 				}
-				information.setText("X: " + this.getX() + " Y: " + this.getY() + " W: " + this.getWidth() + " H: " + this.getHeight());
+				nameLbl.setText(situationName);
+				coordLbl.setText("X: " + this.getX() + " Y: " + this.getY());
+				sizeLbl.setText("W: " + this.getWidth() + " H: " + this.getHeight());
+				
+				
 				listener.resizeArea( newWidth, newHeight, newX, newY);		
 			} 
 			else if (draggingMode == MOVING) {
-				information.setText("X: " + this.getX() + " Y: " + this.getY() + " W: " + this.getWidth() + " H: " + this.getHeight());
+				nameLbl.setText(situationName);
+				coordLbl.setText("X: " + this.getX() + " Y: " + this.getY());
+				sizeLbl.setText("W: " + this.getWidth() + " H: " + this.getHeight());
+				
 				listener.moveArea(diffX, diffY);
 			}
 		}	
@@ -280,6 +303,10 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	
 	public void setBorderColor(Color c) {
 		this.setBorder(BorderFactory.createLineBorder(c));
+	}
+	
+	public void setName(String s) {
+		situationName = s;
 	}
 	
 }

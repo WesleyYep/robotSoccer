@@ -2,6 +2,7 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,11 +19,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import data.Situation;
 import data.SituationTableModel;
 
 public class SituationPanel extends JPanel {
 	
-	private ArrayList<SituationArea> listOfSituations;
+	private ArrayList<Situation> listOfSituations;
 	
 	private JButton addButton;
 	private JButton removeButton;
@@ -31,13 +33,15 @@ public class SituationPanel extends JPanel {
 	
 	private SituationTableModel situationModel;
 	
+	private JScrollPane scrollTable;
+	
 	private Field field;;
 	
 	public SituationPanel(Field field) {
 		this.field = field;
 		this.setLayout(new BorderLayout());
 		
-		listOfSituations = new ArrayList<SituationArea>();
+		listOfSituations = new ArrayList<Situation>();
 		situationModel = new SituationTableModel(listOfSituations);
 		tableOfSituations = new JTable(situationModel);
 		
@@ -50,25 +54,25 @@ public class SituationPanel extends JPanel {
  
                     ListSelectionModel lsm = (ListSelectionModel)e.getSource();
                     if (lsm.isSelectionEmpty()) {
-                        System.out.println("No rows are selected.");
+                       
                     } else {
-                    	for (SituationArea a : listOfSituations) {
-        					a.setActive(false);
-        					a.setBorderColor(Color.GRAY);
+                    	for (Situation s : listOfSituations) {
+        					s.setAreaActive(false);
         				}
                         int selectedRow = lsm.getMinSelectionIndex();
                         
-                        ((SituationArea)situationModel.getValueAt(selectedRow, 0)).setActive(true);
-                        ((SituationArea)situationModel.getValueAt(selectedRow, 0)).setBorderColor(Color.red);
-                        SituationPanel.this.field.setSelectedArea((SituationArea)situationModel.getValueAt(selectedRow, 0));
-                        System.out.println("Row " + selectedRow
-                                + " is now selected.");
+                        ((Situation)situationModel.getValueAt(selectedRow, 0)).setAreaActive(true);
+                        
+                        SituationPanel.this.field.setSelectedArea(((Situation)situationModel.getValueAt(selectedRow, 0)).getArea());
                     }
                 }
        });
 		
 		removeButton = new JButton("Remove");
 		addButton = new JButton("Add");
+		
+		scrollTable = new JScrollPane(tableOfSituations);
+		scrollTable.setPreferredSize(new Dimension(300, scrollTable.getPreferredSize().height));
 		
 		JPanel buttonPanel = new JPanel();
 		
@@ -77,7 +81,7 @@ public class SituationPanel extends JPanel {
 		buttonPanel.add(removeButton);
 		
 		this.add(buttonPanel, BorderLayout.NORTH);
-		this.add(new JScrollPane(tableOfSituations), BorderLayout.CENTER);
+		this.add(scrollTable, BorderLayout.CENTER);
 		
 		
 		
@@ -87,20 +91,24 @@ public class SituationPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				//making the other 
 				
-				
 				SituationArea newArea = new SituationArea(100,100);
+				Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
 				
-				listOfSituations.add(newArea);
+				listOfSituations.add(newSituation);
 				
 				SituationPanel.this.field.add(newArea);
 				newArea.addAreaListener(SituationPanel.this.field);
 				
+				situationModel.fireTableDataChanged();
+				tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
+				
+				newArea.setBounds(Field.OUTER_BOUNDARY_HEIGHT/2*Field.SCALE_FACTOR, Field.OUTER_BOUNDARY_WIDTH/2*Field.SCALE_FACTOR,newArea.getWidth(), newArea.getHeight());
+				
 				SituationPanel.this.field.repaint();	
 				SituationPanel.this.field.setSelectedArea(newArea);
 				SituationPanel.this.field.setComponentZOrder(newArea, 0);
-
-				situationModel.fireTableDataChanged();
-				tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
+				
+				
 			}
 			
 		});
@@ -114,9 +122,11 @@ public class SituationPanel extends JPanel {
 				
 				if (listOfSituations.size() > 0 && selectedRow >= 0  && selectedRow < listOfSituations.size()) {
 					
-					SituationArea removeArea= ((SituationArea)situationModel.getValueAt(selectedRow, 0));
-					listOfSituations.remove(removeArea);
-					SituationPanel.this.field.remove(removeArea);
+					Situation removeSituation= ((Situation)situationModel.getValueAt(selectedRow, 0));
+					
+					listOfSituations.remove(removeSituation);
+					
+					SituationPanel.this.field.remove(removeSituation.getArea());
 					
 					SituationPanel.this.field.repaint();
 					situationModel.fireTableDataChanged();
