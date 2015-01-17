@@ -37,11 +37,17 @@ public class SituationPanel extends JPanel {
 	
 	private JScrollPane scrollTable;
 	
-	private Field field;;
+	private Field field;
+	
+	private DrawAreaGlassPanel glassPanel;
 	
 	public SituationPanel(Field field) {
 		this.field = field;
 		this.setLayout(new BorderLayout());
+		
+		glassPanel = new DrawAreaGlassPanel(field, this);
+		glassPanel.setVisible(false);
+		field.add(glassPanel);
 		
 		listOfSituations = new ArrayList<Situation>();
 		situationModel = new SituationTableModel(listOfSituations);
@@ -92,7 +98,14 @@ public class SituationPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				SituationPanel.this.field.setCreatingArea(true);
+				for (Component c : SituationPanel.this.field.getComponents()) {
+					SituationPanel.this.field.setComponentZOrder(c, SituationPanel.this.field.getComponentCount()-1);
+				}
+				
+				SituationPanel.this.field.setComponentZOrder(glassPanel, 0);
+				glassPanel.setVisible(true);
+				
+				//SituationPanel.this.field.setCreatingArea(true);
 				//making the other 
 				
 				/*SituationArea newArea = new SituationArea(100,100);

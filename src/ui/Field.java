@@ -58,11 +58,6 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     
     private SituationArea selectedArea;
     
-    private boolean creatingArea = false;
-    private int mouseClicked = 0;
-    
-    private SituationPanel sPanel;
-    
     public Field(Robots bots) {
 		//draw robots
     	this.bots = bots;
@@ -259,12 +254,7 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     		w = Math.abs(endPoint.x - startPoint.x);
     		h = Math.abs(endPoint.y - startPoint.y);
     		
-    		if ( creatingArea ) {
-    			g.setColor(Color.RED);
-    		}
-    		else {
-	    		g.setColor(Color.BLUE);
-    		}
+	    	g.setColor(Color.BLUE);
     		
     		g.drawRect(x, y, w, h);
     	}
@@ -356,19 +346,13 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	public void mouseDragged(MouseEvent e) {
 		isMouseDrag = true;
 		endPoint = e.getPoint();
-		if (mouseClicked == MouseEvent.BUTTON1) {
-			repaint();
-		}
+		
+		repaint();
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if (creatingArea) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		}
-		else {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
+		
 	}
 
 	@Override
@@ -386,7 +370,6 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	@Override
 	public void mousePressed(MouseEvent e) {
 		startPoint = e.getPoint();
-		mouseClicked = e.getButton();
 	}
 
 	@Override
@@ -394,25 +377,12 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 		endPoint = e.getPoint();
 		isMouseDrag = false;
 
-		if (creatingArea) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				Rectangle area = new Rectangle(startPoint);
-				area.add(endPoint);
-				
-				if (sPanel != null) {
-					sPanel.addSituations(area);
-				}
-			}
-			creatingArea = false;
-		}
-		else {
-			Rectangle r = new Rectangle(startPoint);
-			r.add(endPoint);
+		Rectangle r = new Rectangle(startPoint);
+		r.add(endPoint);
 	
-			isRobotFocused(r);
-			isBallFocused(r);
+		isRobotFocused(r);
+		isBallFocused(r);
 		
-		}
 		repaint();
 		
 	}
@@ -454,12 +424,5 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 		this.repaint();
 	}
 	
-	public void setSituationPanel(SituationPanel panel) {
-		sPanel = panel;
-	}
-	
-	public void setCreatingArea(boolean active) {
-		creatingArea = active;
-	}
 	
 }

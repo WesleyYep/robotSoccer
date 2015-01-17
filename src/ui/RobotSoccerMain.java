@@ -70,7 +70,7 @@ public class RobotSoccerMain extends JPanel
         }
         
         situationPanel = new SituationPanel(field);
-        field.setSituationPanel(situationPanel);
+
         //create tab pane
         tabPane = new JTabbedPane();
         
