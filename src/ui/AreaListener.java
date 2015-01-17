@@ -6,4 +6,5 @@ public interface AreaListener {
 	
 	public void resizeArea(int w, int h, int x, int y);
 
+	public void redrawArea();
 }

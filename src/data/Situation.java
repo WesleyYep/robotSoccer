@@ -16,10 +16,12 @@ public class Situation {
 		situationName = name;
 		area = a;
 		area.setName(situationName);
+		area.repaint();
 	}
 	
 	public void setSituationName(String name) {
 		situationName = name;
+		area.setName(name);
 	}
 	
 	@Override

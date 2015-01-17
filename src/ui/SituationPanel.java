@@ -92,23 +92,23 @@ public class SituationPanel extends JPanel {
 				//making the other 
 				
 				SituationArea newArea = new SituationArea(100,100);
+				newArea.addAreaListener(SituationPanel.this.field);
 				Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
 				
 				listOfSituations.add(newSituation);
 				
 				SituationPanel.this.field.add(newArea);
-				newArea.addAreaListener(SituationPanel.this.field);
+				
 				
 				situationModel.fireTableDataChanged();
 				tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
 				
 				newArea.setBounds(Field.OUTER_BOUNDARY_HEIGHT/2*Field.SCALE_FACTOR, Field.OUTER_BOUNDARY_WIDTH/2*Field.SCALE_FACTOR,newArea.getWidth(), newArea.getHeight());
 				
-				SituationPanel.this.field.repaint();	
+					
 				SituationPanel.this.field.setSelectedArea(newArea);
 				SituationPanel.this.field.setComponentZOrder(newArea, 0);
-				
-				
+				SituationPanel.this.field.repaint();
 			}
 			
 		});

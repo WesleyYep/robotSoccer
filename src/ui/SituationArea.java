@@ -307,6 +307,8 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	
 	public void setName(String s) {
 		situationName = s;
+		nameLbl.setText(situationName);
+		listener.redrawArea();
 	}
 	
 }

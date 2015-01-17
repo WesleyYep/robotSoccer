@@ -406,5 +406,11 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	public void setSelectedArea(SituationArea a) {
 		selectedArea = a;
 	}
+
+	@Override
+	public void redrawArea() {
+		this.revalidate();
+		this.repaint();
+	}
 	
 }
