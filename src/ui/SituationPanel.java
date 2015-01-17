@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -89,9 +90,11 @@ public class SituationPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				
+				SituationPanel.this.field.setCreatingArea(true);
 				//making the other 
 				
-				SituationArea newArea = new SituationArea(100,100);
+				/*SituationArea newArea = new SituationArea(100,100);
 				newArea.addAreaListener(SituationPanel.this.field);
 				Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
 				
@@ -108,7 +111,7 @@ public class SituationPanel extends JPanel {
 					
 				SituationPanel.this.field.setSelectedArea(newArea);
 				SituationPanel.this.field.setComponentZOrder(newArea, 0);
-				SituationPanel.this.field.repaint();
+				SituationPanel.this.field.repaint();*/
 			}
 			
 		});
@@ -135,5 +138,27 @@ public class SituationPanel extends JPanel {
 			
 		});
 	}
+	
+	
+	public void addSituations(Rectangle r) {
+				
+		SituationArea newArea = new SituationArea((int)r.getWidth(),(int)r.getHeight());
+		newArea.addAreaListener(SituationPanel.this.field);
+		Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
+		
+		listOfSituations.add(newSituation);
+		SituationPanel.this.field.add(newArea);
+		
+		situationModel.fireTableDataChanged();
+		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
+		
+		newArea.setBounds((int)r.getX(), (int)r.getY(),newArea.getWidth(), newArea.getHeight());
+		
+		SituationPanel.this.field.setSelectedArea(newArea);
+		SituationPanel.this.field.setComponentZOrder(newArea,0);
+		SituationPanel.this.field.repaint();
+		
+	}
+	
 
 }
