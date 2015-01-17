@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -440,6 +441,10 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	}
 	
 	public void setSelectedArea(SituationArea a) {
+		for (Component c : this.getComponents()) {
+			this.setComponentZOrder(c, this.getComponentCount()-1);
+		}
+		this.setComponentZOrder(a, 0);
 		selectedArea = a;
 	}
 

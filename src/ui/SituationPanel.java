@@ -2,6 +2,7 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
@@ -154,9 +155,9 @@ public class SituationPanel extends JPanel {
 		
 		newArea.setBounds((int)r.getX(), (int)r.getY(),newArea.getWidth(), newArea.getHeight());
 		
-		SituationPanel.this.field.setSelectedArea(newArea);
-		SituationPanel.this.field.setComponentZOrder(newArea,0);
-		SituationPanel.this.field.repaint();
+		
+		field.setSelectedArea(newArea);
+		field.repaint();
 		
 	}
 	
