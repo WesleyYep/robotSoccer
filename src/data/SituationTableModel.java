@@ -44,8 +44,16 @@ public class SituationTableModel extends AbstractTableModel {
 		}
     }
 	
-	public Class getColumnClass(int c) {
-        return getValueAt(0, c).getClass();
-    }
+	
+	public boolean isCellEditable(int row, int col) { 
+	    return true; 
+	}
+	
+	public void setValueAt(Object value, int row, int col) {
+	    Situation s = listOfSituations.get(row);   
+	    s.setSituationName((String)value);
+	    fireTableCellUpdated(row, col);
+	    
+	 }
 
 }
