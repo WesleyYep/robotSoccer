@@ -2,14 +2,13 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
-import javax.swing.Timer;
 
 import communication.Receiver;
 import communication.SerialPortCommunicator;
-import bot.Robot;
 import bot.Robots;
+import controllers.BallController;
+import controllers.FieldController;
 import game.Tick;
 
 public class RobotSoccerMain extends JPanel
@@ -19,7 +18,10 @@ public class RobotSoccerMain extends JPanel
     private JButton startButton;
     private JTextArea taskOutput;
     private Receiver task;
-    private Field field;    
+    private FieldController fieldController;
+    private BallController ballController;
+    private Field field;
+    private Ball ball;
     private JTextField portField;
     private RobotInfoPanel[] robotInfoPanels;
     private TestComPanel testComPanel;
@@ -53,8 +55,11 @@ public class RobotSoccerMain extends JPanel
         serialCom = new SerialPortCommunicator();
         bots = new Robots(serialCom);
         bots.makeRealRobots();
-        field = new Field(bots);
-        field.setBackground(Color.green);
+
+        ball = new Ball();
+        field = new Field(bots, ball);
+        ballController = new BallController(ball);
+        fieldController = new FieldController(field, bots, ball);
 
         //creating panel holding robot informations
         JPanel infoPanel = new JPanel();
@@ -111,7 +116,7 @@ public class RobotSoccerMain extends JPanel
 	    	}
 	    	
 	        task = new Receiver(taskOutput, portNumber);
-	        task.registerListener(field);
+	        task.registerListener(fieldController);
 	        task.execute();
 	        startButton.setText("Stop");
     	} else {

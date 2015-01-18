@@ -2,7 +2,6 @@ package ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -10,15 +9,14 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.List;
 
 import javax.swing.JPanel;
 
 import bot.Robot;
 import bot.Robots;
-import communication.ReceiverListener;
 
-public class Field extends JPanel implements ReceiverListener, MouseListener, MouseMotionListener, AreaListener {
+public class Field extends JPanel implements MouseListener, MouseMotionListener, AreaListener {
+
 	
 	//actual measurement of miroSot Middle league playground (in cm);
 	final public static int OUTER_BOUNDARY_WIDTH = 220;
@@ -47,7 +45,7 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
-	
+
     private Ball ball;
     private Robots bots;
     
@@ -58,10 +56,10 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
     
     private SituationArea selectedArea;
     
-    public Field(Robots bots) {
-		//draw robots
+
+    public Field(Robots bots, Ball ball) {
     	this.bots = bots;
-    	ball = new Ball();
+    	this.ball = ball;
     	
     	isMouseDrag = false;
     	
@@ -266,39 +264,28 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
         return new Dimension(SCALE_FACTOR*(OUTER_BOUNDARY_WIDTH+INNER_GOAL_AREA_WIDTH*2)+10, 
         					 SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+10); // appropriate constants
     }
-    
 
-	@Override
-	public void action(List<String> chunks) {
-		for (String s : chunks) {
-
-			if (s.indexOf("Robot") != -1) {
-				int idIndex = s.indexOf("id=");
-				int xIndex = s.indexOf("x=");
-				int yIndex = s.indexOf("y=");
-				int thetaIndex = s.indexOf("theta=");
-				int id = Integer.parseInt(s.substring(idIndex + 3, idIndex + 4));
-				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
-				double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
-				double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
-
-				bots.setIndividualBotPosition(id, x, y, theta);
-
-			} else if (s.indexOf("Ball") != -1) {
-				int xIndex = s.indexOf("x=");
-				int yIndex = s.indexOf("y=");
-
-				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
-				double y = Double.parseDouble(s.substring(yIndex + 2, s.length()));
-
-				ball.setX((int) Math.round(x * 100));
-				ball.setY(OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
-			}
-		}
-
-		repaint();
+	public double getBallX() {
+		return ball.getXPosition();
 	}
-	
+
+	public double getBallY() {
+		return ball.getYPosition();
+	}
+
+	public void kickBall(double linearVelocity, double theta) {
+		ball.setLinearVelocity(linearVelocity);
+		ball.setTheta(theta);
+	}
+
+	public void bounceBall() {
+		ball.bounce();
+	}
+
+	public void moveBall() {
+		ball.move();
+	}
+
 	/**
 	 * Updates the select boolean variable in Robot. GUI updates in subsequent paint calls. <br />
 	 * {@link bot.Robot}
@@ -328,8 +315,8 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	
 	private void isBallFocused(Rectangle r) {
 		Rectangle ballRect = new Rectangle(
-				ball.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
-				ball.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
+				(int)ball.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
+				(int)ball.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Ball.BALL_DIAMETER*SCALE_FACTOR/2),
 				Ball.BALL_DIAMETER*SCALE_FACTOR,
 				Ball.BALL_DIAMETER*SCALE_FACTOR
 				);

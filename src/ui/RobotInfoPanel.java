@@ -45,11 +45,11 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 
 	@Override
 	public void positionChanged() {
-		System.out.println("called");
+	//	System.out.println("called");
 		double x = robot.getXPosition();
 		double y = robot.getYPosition();
 		double o = robot.getTheta();
-		System.out.println(x);
+	//	System.out.println(x);
 		xCoordinate.setText("x= " + (int)x);
 		yCoordinate.setText("y= " + (int)y);
 		// Show only up to two decimal places.

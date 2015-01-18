@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import bot.Robots;
-import communication.RobotController;
 import communication.SerialPortCommunicator;
 import jssc.SerialPortList;
 

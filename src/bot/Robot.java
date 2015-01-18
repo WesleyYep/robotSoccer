@@ -97,9 +97,9 @@ public abstract class Robot extends JPanel {
 	
 	/**
 	 * Renders the robot onto the field.
-	 * @param Graphics2D g
+	 * @param g
 	 */
-	
+
 	public void draw(Graphics2D g) {
 		int xPos = (int) (x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
 		int yPos = (int) (y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));

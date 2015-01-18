@@ -14,13 +14,15 @@ public class Ball extends JPanel{
 	//actual ball diameter is 42.7mm;
 	final public static int BALL_DIAMETER = 4;
 	
-	private int x;
-	private int y;
+	private double x;
+	private double y;
+	private double theta;
+	private double linearVelocity;
 	
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private boolean focused;
 	
-	public int getXPosition() {
+	public double getXPosition() {
 		return x;
 	}
 	
@@ -31,8 +33,25 @@ public class Ball extends JPanel{
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	public void setLinearVelocity( double linearVelocity) {
+		this.linearVelocity = linearVelocity;
+	}
+
+	public void setTheta(double theta) {
+		this.theta = theta;
+	}
+
+	public void move() {
+		x = (x + 10 * linearVelocity * Math.cos(Math.toRadians(theta)));
+		y = (y - 10 * linearVelocity * Math.sin(Math.toRadians(theta)));
+	}
+
+	public void bounce(){
+		theta = 90 - theta;
+	}
 	
-	public int getYPosition() {
+	public double getYPosition() {
 		return y;
 	}
 	
@@ -71,8 +90,8 @@ public class Ball extends JPanel{
 			g.setColor(Color.BLACK);
 		}
 		
-	    g.fillOval(x*Field.SCALE_FACTOR+Field.ORIGIN_X-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
-	    		    y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
+	    g.fillOval((int)x*Field.SCALE_FACTOR+Field.ORIGIN_X-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
+				(int)y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
 	    		    BALL_DIAMETER*Field.SCALE_FACTOR,
 	    		    BALL_DIAMETER*Field.SCALE_FACTOR);  
    }

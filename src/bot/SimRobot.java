@@ -1,4 +1,5 @@
 package bot;
+import org.jbox2d.collision.shapes.PolygonShape;
 
 public class SimRobot extends Robot {
 
@@ -20,5 +21,4 @@ public class SimRobot extends Robot {
 		setTheta(getTheta() + ((57.16/5)/(34.39/10))*angularVelocity);
 	}
 
-	
 }
