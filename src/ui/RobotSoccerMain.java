@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import communication.Receiver;
 import communication.SerialPortCommunicator;
@@ -91,6 +93,22 @@ public class RobotSoccerMain extends JPanel
         
         tabPane.addTab("Output", new JScrollPane(taskOutput));
         tabPane.addTab("Situation", situationPanel);
+        
+        tabPane.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				if (tabPane.getTitleAt(tabPane.getSelectedIndex()).equals("Situation")){
+					fieldController.showArea(true);
+				}
+				else {
+					fieldController.showArea(false);
+				}
+				fieldController.repaintField();
+			}
+			
+        	
+        });
         
         setUpGame();
         

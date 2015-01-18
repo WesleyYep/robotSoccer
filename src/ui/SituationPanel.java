@@ -148,5 +148,9 @@ public class SituationPanel extends JPanel {
 		glassPanel = panel;
 	}
 	
+	public void updateSituationTable () {
+		situationModel.fireTableDataChanged();
+		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
+	}
 
 }

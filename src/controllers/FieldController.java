@@ -146,5 +146,13 @@ public class FieldController implements ReceiverListener, AreaListener {
 			field.setComponentZOrder(comp, 0);
 		}
 	}
+	
+	public void showArea(boolean show) {
+			for (Component c : field.getComponents()) {
+				if (c.getClass().equals(SituationArea.class)){
+					c.setVisible(show);
+				}
+			}
+	}
 
 }

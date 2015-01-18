@@ -54,8 +54,6 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
     
     private boolean isMouseDrag;
     
-    private SituationArea selectedArea;
-    
 
     public Field(Robots bots, Ball ball) {
     	this.bots = bots;
