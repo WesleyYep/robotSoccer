@@ -2,6 +2,7 @@ package ui;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import communication.Receiver;
@@ -31,6 +32,7 @@ public class RobotSoccerMain extends JPanel
     private SituationPanel situationPanel;
     
     private JTabbedPane tabPane;
+	private DrawAreaGlassPanel glassPanel;
 
     public RobotSoccerMain() {
         super(new BorderLayout());
@@ -60,6 +62,8 @@ public class RobotSoccerMain extends JPanel
         field = new Field(bots, ball);
         ballController = new BallController(ball);
         fieldController = new FieldController(field, bots, ball);
+        
+        
 
         //creating panel holding robot informations
         JPanel infoPanel = new JPanel();
@@ -74,8 +78,14 @@ public class RobotSoccerMain extends JPanel
         	infoPanel.add(robotInfoPanels[i]);
         }
         
-        situationPanel = new SituationPanel(field);
+        
+        situationPanel = new SituationPanel(fieldController);
 
+        glassPanel = new DrawAreaGlassPanel(field, situationPanel);
+		glassPanel.setVisible(false);
+		field.add(glassPanel);
+		situationPanel.setGlassPanel(glassPanel);
+		
         //create tab pane
         tabPane = new JTabbedPane();
         

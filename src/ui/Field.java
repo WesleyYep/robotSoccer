@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import bot.Robot;
 import bot.Robots;
 
-public class Field extends JPanel implements MouseListener, MouseMotionListener, AreaListener {
+public class Field extends JPanel implements MouseListener, MouseMotionListener {
 
 	
 	//actual measurement of miroSot Middle league playground (in cm);
@@ -366,45 +366,6 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 		isBallFocused(r);
 		
 		repaint();
-		
 	}
-	
-	@Override
-	public void moveArea(int x, int y) {
-		int newX = selectedArea.getX()-x;
-		int newY = selectedArea.getY()-y;
 		
-		
-		selectedArea.setBounds(newX, newY, selectedArea.getWidth(),selectedArea.getHeight());
-		this.repaint();
-	}
-
-	@Override
-	public void resizeArea(int w, int h, int x, int y) {
-		
-		//positive to the left
-		//negative to the right
-		int newWidth = selectedArea.getWidth() + w;
-		int newHeight = selectedArea.getHeight() + h;
-		
-		selectedArea.setBounds(x, y, newWidth, newHeight);
-		
-		this.repaint();
-	}
-	
-	public void setSelectedArea(SituationArea a) {
-		for (Component c : this.getComponents()) {
-			this.setComponentZOrder(c, this.getComponentCount()-1);
-		}
-		this.setComponentZOrder(a, 0);
-		selectedArea = a;
-	}
-
-	@Override
-	public void redrawArea() {
-		this.revalidate();
-		this.repaint();
-	}
-	
-	
 }

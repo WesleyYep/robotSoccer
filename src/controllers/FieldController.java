@@ -1,6 +1,7 @@
 package controllers;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -9,13 +10,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
+
 import javax.swing.JPanel;
+
 import ui.*;
 import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
 
-public class FieldController implements ReceiverListener {
+public class FieldController implements ReceiverListener, AreaListener {
 
     private Field field;
 
@@ -26,6 +29,8 @@ public class FieldController implements ReceiverListener {
     private Point endPoint;
 
     private boolean isMouseDrag;
+    
+    private SituationArea selectedArea;
 
     public FieldController(Field field, Robots bots, Ball ball) {
         this.bots = bots;
@@ -85,5 +90,61 @@ public class FieldController implements ReceiverListener {
     public void moveBall() {
         ball.move();
     }
+    
+    
+    @Override
+	public void moveArea(int x, int y) {
+		int newX = selectedArea.getX()-x;
+		int newY = selectedArea.getY()-y;
+		
+		
+		selectedArea.setBounds(newX, newY, selectedArea.getWidth(),selectedArea.getHeight());
+		field.repaint();
+	}
+
+	@Override
+	public void resizeArea(int w, int h, int x, int y) {
+		
+		//positive to the left
+		//negative to the right
+		int newWidth = selectedArea.getWidth() + w;
+		int newHeight = selectedArea.getHeight() + h;
+		
+		selectedArea.setBounds(x, y, newWidth, newHeight);
+		
+		field.repaint();
+	}
+
+	@Override
+	public void redrawArea() {
+		field.revalidate();
+		field.repaint();
+	}
+	
+	public void setSelectedArea(SituationArea a) {
+		bringComponentToTheTop(a);
+		selectedArea = a;
+	}
+	
+	public void addArea(SituationArea area) {
+		field.add(area);
+	}
+	
+	public void removeArea(SituationArea area) {
+		field.remove(area);
+	}
+	
+	public void repaintField() {
+		field.repaint();
+	}
+	
+	public void bringComponentToTheTop(Component comp) {
+		if (comp != null  && field.getComponentZOrder(comp) != -1) {
+			for (Component c : field.getComponents()) {
+				field.setComponentZOrder(c, field.getComponentCount()-1);
+			}
+			field.setComponentZOrder(comp, 0);
+		}
+	}
 
 }

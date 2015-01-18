@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import controllers.FieldController;
 import data.Situation;
 import data.SituationTableModel;
 
@@ -37,17 +38,14 @@ public class SituationPanel extends JPanel {
 	
 	private JScrollPane scrollTable;
 	
-	private Field field;
+	private FieldController fieldController;
 	
 	private DrawAreaGlassPanel glassPanel;
+
 	
-	public SituationPanel(Field field) {
-		this.field = field;
+	public SituationPanel(FieldController fieldController) {
+		this.fieldController = fieldController;
 		this.setLayout(new BorderLayout());
-		
-		glassPanel = new DrawAreaGlassPanel(field, this);
-		glassPanel.setVisible(false);
-		field.add(glassPanel);
 		
 		listOfSituations = new ArrayList<Situation>();
 		situationModel = new SituationTableModel(listOfSituations);
@@ -71,7 +69,7 @@ public class SituationPanel extends JPanel {
                         
                         ((Situation)situationModel.getValueAt(selectedRow, 0)).setAreaActive(true);
                         
-                        SituationPanel.this.field.setSelectedArea(((Situation)situationModel.getValueAt(selectedRow, 0)).getArea());
+                        SituationPanel.this.fieldController.setSelectedArea(((Situation)situationModel.getValueAt(selectedRow, 0)).getArea());
                     }
                 }
        });
@@ -98,34 +96,8 @@ public class SituationPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				for (Component c : SituationPanel.this.field.getComponents()) {
-					SituationPanel.this.field.setComponentZOrder(c, SituationPanel.this.field.getComponentCount()-1);
-				}
-				
-				SituationPanel.this.field.setComponentZOrder(glassPanel, 0);
+				SituationPanel.this.fieldController.bringComponentToTheTop(glassPanel);
 				glassPanel.setVisible(true);
-				
-				//SituationPanel.this.field.setCreatingArea(true);
-				//making the other 
-				
-				/*SituationArea newArea = new SituationArea(100,100);
-				newArea.addAreaListener(SituationPanel.this.field);
-				Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
-				
-				listOfSituations.add(newSituation);
-				
-				SituationPanel.this.field.add(newArea);
-				
-				
-				situationModel.fireTableDataChanged();
-				tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
-				
-				newArea.setBounds(Field.OUTER_BOUNDARY_HEIGHT/2*Field.SCALE_FACTOR, Field.OUTER_BOUNDARY_WIDTH/2*Field.SCALE_FACTOR,newArea.getWidth(), newArea.getHeight());
-				
-					
-				SituationPanel.this.field.setSelectedArea(newArea);
-				SituationPanel.this.field.setComponentZOrder(newArea, 0);
-				SituationPanel.this.field.repaint();*/
 			}
 			
 		});
@@ -143,9 +115,9 @@ public class SituationPanel extends JPanel {
 					
 					listOfSituations.remove(removeSituation);
 					
-					SituationPanel.this.field.remove(removeSituation.getArea());
+					SituationPanel.this.fieldController.removeArea(removeSituation.getArea());
 					
-					SituationPanel.this.field.repaint();
+					SituationPanel.this.fieldController.repaintField();
 					situationModel.fireTableDataChanged();
 				}
 			}
@@ -157,20 +129,23 @@ public class SituationPanel extends JPanel {
 	public void addSituations(Rectangle r) {
 				
 		SituationArea newArea = new SituationArea((int)r.getWidth(),(int)r.getHeight());
-		newArea.addAreaListener(SituationPanel.this.field);
+		newArea.addAreaListener(SituationPanel.this.fieldController);
 		Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
 		
 		listOfSituations.add(newSituation);
-		SituationPanel.this.field.add(newArea);
+		SituationPanel.this.fieldController.addArea(newArea);
 		
 		situationModel.fireTableDataChanged();
 		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
 		
 		newArea.setBounds((int)r.getX(), (int)r.getY(),newArea.getWidth(), newArea.getHeight());
 		
-		field.setSelectedArea(newArea);
-		field.repaint();
+		fieldController.setSelectedArea(newArea);
 		
+	}
+	
+	public void setGlassPanel(DrawAreaGlassPanel panel) {
+		glassPanel = panel;
 	}
 	
 
