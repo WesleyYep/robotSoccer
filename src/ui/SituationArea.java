@@ -85,6 +85,10 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	}
 	
 	protected void paintComponent(Graphics g) {
+		nameLbl.setText(situationName);
+		coordLbl.setText("X: " + this.getX() + " Y: " + this.getY());
+		sizeLbl.setText("W: " + this.getWidth() + " H: " + this.getHeight());
+		
 		super.paintComponent(g);
 	    Graphics2D g2d = (Graphics2D) g;
 	    g2d.setRenderingHint(
@@ -183,17 +187,11 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 						
 					}
 				}
-				nameLbl.setText(situationName);
-				coordLbl.setText("X: " + this.getX() + " Y: " + this.getY());
-				sizeLbl.setText("W: " + this.getWidth() + " H: " + this.getHeight());
-				
-				
+								
 				listener.resizeArea( newWidth, newHeight, newX, newY);		
 			} 
 			else if (draggingMode == MOVING) {
-				nameLbl.setText(situationName);
-				coordLbl.setText("X: " + this.getX() + " Y: " + this.getY());
-				sizeLbl.setText("W: " + this.getWidth() + " H: " + this.getHeight());
+				
 				
 				listener.moveArea(diffX, diffY);
 			}

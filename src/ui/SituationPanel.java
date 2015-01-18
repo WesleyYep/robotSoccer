@@ -168,7 +168,6 @@ public class SituationPanel extends JPanel {
 		
 		newArea.setBounds((int)r.getX(), (int)r.getY(),newArea.getWidth(), newArea.getHeight());
 		
-		
 		field.setSelectedArea(newArea);
 		field.repaint();
 		

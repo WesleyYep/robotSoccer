@@ -20,7 +20,7 @@ import communication.ReceiverListener;
 
 public class Field extends JPanel implements ReceiverListener, MouseListener, MouseMotionListener, AreaListener {
 	
-	//actual measurement of miroSot Middle leagure playground (in cm);
+	//actual measurement of miroSot Middle league playground (in cm);
 	final public static int OUTER_BOUNDARY_WIDTH = 220;
 	final public static int OUTER_BOUNDARY_HEIGHT = 180;
 	
@@ -351,21 +351,16 @@ public class Field extends JPanel implements ReceiverListener, MouseListener, Mo
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
-		
-	}
+	public void mouseMoved(MouseEvent e) {}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-	}
+	public void mouseExited(MouseEvent e) {}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
