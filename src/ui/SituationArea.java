@@ -202,29 +202,29 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	public void mouseMoved(MouseEvent arg0) {
 		if (active) {
 			//diagonal
-			if ( arg0.getX() >=0 && arg0.getX() < MOUSE_AREA && arg0.getY() >=0 && arg0.getY() < MOUSE_AREA) {
+			if ( isMouseLeft(arg0) && isMouseTop(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
 			} 
-			else if (arg0.getX() < this.getWidth() && arg0.getX() >= this.getWidth()-MOUSE_AREA && arg0.getY() < this.getHeight() && arg0.getY() >= this.getHeight()-MOUSE_AREA) {
+			else if (isMouseRight(arg0) && isMouseBottom(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
 			}
-			else if (arg0.getY() >=0 && arg0.getY() < MOUSE_AREA && arg0.getX() < this.getWidth() && arg0.getX() >= this.getWidth()-MOUSE_AREA) {
+			else if (isMouseTop(arg0) && isMouseRight(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
 			}
-			else if (arg0.getY() < this.getHeight() && arg0.getY() >= this.getHeight()-MOUSE_AREA && arg0.getX() >=0 && arg0.getX() < MOUSE_AREA) {
+			else if (isMouseBottom(arg0) && isMouseLeft(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
 			}
 			//straight
-			else if ( arg0.getX() >=0 && arg0.getX() < MOUSE_AREA) {
+			else if ( isMouseLeft(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 			} 
-			else if (arg0.getX() < this.getWidth() && arg0.getX() >= this.getWidth()-MOUSE_AREA) {
+			else if (isMouseRight(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 			}
-			else if (arg0.getY() >=0 && arg0.getY() < MOUSE_AREA) {
+			else if (isMouseTop(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
 			}
-			else if (arg0.getY() < this.getHeight() && arg0.getY() >= this.getHeight()-MOUSE_AREA) {
+			else if (isMouseBottom(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
 			}
 			else {
@@ -260,25 +260,25 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 			
 			draggingMode = MOVING;
 			
-			if ( (arg0.getX() >=0 && arg0.getX() < MOUSE_AREA))  {
+			if ( isMouseLeft(arg0))  {
 				draggingMode = RESIZING;
 				clickLeft = true;
 				pivotX = this.getX()+this.getWidth()-1;
 			}
 			
-			if  (arg0.getX() < this.getWidth() && arg0.getX() >= this.getWidth()-MOUSE_AREA) {
+			if  (isMouseRight(arg0)) {
 				draggingMode = RESIZING;
 				clickRight = true;
 				pivotX= this.getX();
 			}
 			
-			if ( (arg0.getY() >=0 && arg0.getY() < MOUSE_AREA))  {
+			if ( isMouseTop(arg0))  {
 				draggingMode = RESIZING;
 				clickTop = true;
 				pivotY = this.getY()+this.getHeight()-1;
 			}
 			
-			if  (arg0.getY() < this.getHeight() && arg0.getY() >= this.getHeight()-MOUSE_AREA) {
+			if  (isMouseBottom(arg0)) {
 				draggingMode = RESIZING;
 				clickBottom = true;
 				pivotY = this.getY();
@@ -309,4 +309,19 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 		listener.redrawArea();
 	}
 	
+	private boolean isMouseTop(MouseEvent arg0) {
+		return arg0.getY() >=0 && arg0.getY() < MOUSE_AREA;
+	}
+	
+	private boolean isMouseBottom(MouseEvent arg0) {
+		return arg0.getY() < this.getHeight() && arg0.getY() >= this.getHeight()-MOUSE_AREA;
+	}
+	
+	private boolean isMouseLeft(MouseEvent arg0) {
+		return arg0.getX() >=0 && arg0.getX() < MOUSE_AREA;
+	}
+	
+	private boolean isMouseRight(MouseEvent arg0) {
+		return arg0.getX() < this.getWidth() && arg0.getX() >= this.getWidth()-MOUSE_AREA;
+	}
 }
