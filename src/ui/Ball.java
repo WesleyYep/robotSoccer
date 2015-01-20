@@ -14,8 +14,8 @@ public class Ball extends JPanel{
 	//actual ball diameter is 42.7mm;
 	final public static int BALL_DIAMETER = 4;
 	
-	private double x;
-	private double y;
+	private double x = 70;
+	private double y = 70;
 	private double theta;
 	private double linearVelocity;
 	

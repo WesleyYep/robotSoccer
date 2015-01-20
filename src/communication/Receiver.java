@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,7 +29,7 @@ public class Receiver extends SwingWorker<Void, String> {
 	private int portNumber;
 	private String errorMessage = "";
 	private List<ReceiverListener> listeners = new ArrayList<ReceiverListener>();
-	
+
 	public Receiver(JTextArea output, int portNumber) {
 		this.output =output;
 		this.portNumber = portNumber;
@@ -37,23 +39,23 @@ public class Receiver extends SwingWorker<Void, String> {
      */
     @Override
     public Void doInBackground() {
-        Random random = new Random();
 		try {
 			serverSocket = new ServerSocket(portNumber);
 			output.append("Started!\n");
 			clientSocket = serverSocket.accept();
 			output.append("Connected!");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-	        //Initialize progress property.
-			while (true){
+			//Initialize progress property.
+			while (true) {
+
 				String message = reader.readLine();
-				
+
 				if (message != null) {
 					publish(message);
 				}
-				
+
 			}
-		}catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			errorMessage = e.getMessage();
 			return null;
@@ -68,7 +70,7 @@ public class Receiver extends SwingWorker<Void, String> {
 				e.printStackTrace();
 			}
 		}
-    }
+	}
     
     public void stop() {
     	try {

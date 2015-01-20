@@ -8,6 +8,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import communication.Receiver;
+import communication.Sender;
 import communication.SerialPortCommunicator;
 import bot.Robots;
 import controllers.BallController;
@@ -146,6 +147,9 @@ public class RobotSoccerMain extends JPanel
 	        task = new Receiver(taskOutput, portNumber);
 	        task.registerListener(fieldController);
 	        task.execute();
+
+            Sender.connect();
+
 	        startButton.setText("Stop");
     	} else {
     		task.stop();
