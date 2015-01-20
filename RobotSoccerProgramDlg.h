@@ -129,6 +129,8 @@ public:
 	void sendStuff(int data);
 	void sendStuff(std::string data);
 	bool connectToHost(int  portNumber);
+	bool connectToHost2(int  portNumber);
+	std::string receiveStuff();
 
 	bool has_only_digit;
 
@@ -136,6 +138,7 @@ public:
 	CString m_connectionStatus;
 
 	SOCKET s;
+	SOCKET s2;
 
 	afx_msg void OnBnClickedConnectToHost();
 	afx_msg void OnBnClickedOpenRobotsoccerSystem();

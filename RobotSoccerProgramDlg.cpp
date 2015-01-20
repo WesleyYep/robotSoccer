@@ -553,6 +553,12 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	}else {
 		Display->SetWindowText( _T("Error") );
 	}
+		//connect to the host and display the status 
+	if (connectToHost2(portNumber + 1000) == true) {
+		Display->SetWindowText( _T("Connected") );
+	}else {
+		Display->SetWindowText( _T("Error") );
+	}
 }
 
 bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
@@ -585,6 +591,7 @@ bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 	//check if the socket is valid
 	if (s == INVALID_SOCKET) {
 		WSACleanup();
+		s = -1;
 		return false;
 	}
 
@@ -597,6 +604,57 @@ bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 	}
 
 	error = send(s, "hi", sizeof("hi"), 0);
+	if (error == SOCKET_ERROR) {
+		closeConnection();
+		return false;
+	}
+
+	return true;
+}
+
+bool CRobotSoccerProgramDlg::connectToHost2(int portNumber)
+{
+	//Start up Winsock…
+	WSADATA wsadata;
+
+	int error = WSAStartup(0x0202, &wsadata);
+
+	//Did something happen?
+	if (error)
+		return false;
+
+	//Did we get the right Winsock version?
+	if (wsadata.wVersion != 0x0202)
+	{
+		WSACleanup(); //Clean up Winsock
+		return false;
+	}
+
+	//Fill out the information needed to initialize a socket…
+	SOCKADDR_IN target; //Socket address information
+
+	target.sin_family = AF_INET; // address family Internet
+	target.sin_port = htons (portNumber); //Port to connect on
+	target.sin_addr.s_addr = inet_addr ("127.0.0.1"); //Target IP
+
+	s2 = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP); //Create socket
+	
+	//check if the socket is valid
+	if (s2 == INVALID_SOCKET) {
+		WSACleanup();
+		s2 = -1;
+		return false;
+	}
+
+	error = connect(s2, (SOCKADDR *)&target, sizeof(target));
+	
+	//check if the socket is able to the server
+	if (error == SOCKET_ERROR) {
+		closeConnection();
+		return false;
+	}
+
+	error = send(s2, "hi", sizeof("hi"), 0);
 	if (error == SOCKET_ERROR) {
 		closeConnection();
 		return false;
@@ -618,6 +676,21 @@ void CRobotSoccerProgramDlg::sendStuff(int data){
 			Display->SetWindowText( _T("send fail with error") );
 			closeConnection();
 		}
+	}
+}
+
+std::string CRobotSoccerProgramDlg::receiveStuff() {
+	//creating char* buffer
+	char buffer[512];
+//	buffer[0] = 0;
+	int len = 512;
+	int iResult = recv(s2, buffer,  len, 0);
+	if (iResult > 0) {
+		char* lol = buffer;
+		std::string hello(lol);
+		return hello;
+	} else {
+		return "";
 	}
 }
 
@@ -773,6 +846,36 @@ void CRobotSoccerProgramDlg::Process(void)
 
 		CObjectPositionInfo info;
 		info = m_propGame.GetObjectInfomation();
+
+		//adding stuff randomly
+		if (s < 100000) {
+			std::string hello = receiveStuff();
+			std::size_t pos = hello.find("ballX:");
+			if (pos != std::string::npos) {
+				std::string ballXStr = hello.substr(pos+6, 3);
+				info.m_Ball.pos.x = stoi(ballXStr)/100.00;
+			}
+			pos = hello.find("ballY:");
+			if (pos != std::string::npos) {
+				std::string ballYStr = hello.substr(pos+6, 3);
+				info.m_Ball.pos.y = stoi(ballYStr)/100.00;
+			}
+			for (int i = 0; i < 5; i++) {
+				pos = hello.find("botX" + std::to_string(static_cast<long long>(i)));
+				if (pos != std::string::npos) {
+					std::string botXStr = hello.substr(pos+6, 3);
+					info.m_Robot[i].pos.x = stoi(botXStr)/100.00;
+				}
+			}
+			for (int i = 0; i < 5; i++) {
+				pos = hello.find("botY" + std::to_string(static_cast<long long>(i)));
+				if (pos != std::string::npos) {
+					std::string botYStr = hello.substr(pos+6, 3);
+					info.m_Robot[i].pos.y = stoi(botYStr)/100.00;
+				}
+			}
+		}
+
 		m_SynchronousModule.UpdatePositionData( m_ObjectInfo, info );
 
 		if( m_bBallSimulation == TRUE || m_bSimulationMode == TRUE )
@@ -806,7 +909,7 @@ void CRobotSoccerProgramDlg::Process(void)
 		int ball_yPos = (m_ObjectInfo.m_Ball.pos.y*100+11000);
 		sendStuff(ball_yPos);  */
 
-		sendStuff("Working\n");
+		//sendStuff("Working\n");
 		double x, y, theta;
 		for (int i = 0; i < 5; i++) {
 			x = current.m_Robot[i].pos.x;
