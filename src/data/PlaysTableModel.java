@@ -35,12 +35,7 @@ public class PlaysTableModel extends AbstractTableModel {
 	}
 	
 	public String getColumnName(int col) {
-		if (col == 0) {
-			return "Plays";
-		}
-		else {
 			return "";
-		}
     }
 	
 	

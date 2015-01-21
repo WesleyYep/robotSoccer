@@ -20,6 +20,7 @@ import controllers.FieldController;
 import data.PlaysTableModel;
 import data.Situation;
 import data.SituationTableModel;
+import net.miginfocom.swing.MigLayout;
 import strategy.Play;
 
 public class SituationPanel extends JPanel {
@@ -28,16 +29,19 @@ public class SituationPanel extends JPanel {
 	
 	private JButton addButton;
 	private JButton removeButton;
-	private JButton addPlayButton = new JButton("Add Play");
+	private JButton addPlayButton = new JButton("Add play to situation");
 
 	private JTable tableOfSituations;
 	private JTable tableOfPlays;
+	private JTable tableOfAllPlays;
 
 	private SituationTableModel situationModel;
 	private PlaysTableModel playsModel;
+	private PlaysTableModel allPlaysModel;
 
 	private JScrollPane scrollTable;
 	private JScrollPane scrollTablePlays;
+	private JScrollPane scrollTableAllPlays;
 
 	private FieldController fieldController;
 	
@@ -79,32 +83,36 @@ public class SituationPanel extends JPanel {
 		addButton = new JButton("Add");
 		
 		scrollTable = new JScrollPane(tableOfSituations);
-		scrollTable.setPreferredSize(new Dimension(300, scrollTable.getPreferredSize().height));
+		scrollTable.setPreferredSize(new Dimension(300, 100));
 		
 		JPanel buttonPanel = new JPanel();
 		
 		buttonPanel.setLayout(new FlowLayout());
 		buttonPanel.add(addButton);
 		buttonPanel.add(removeButton);
-		
-		this.add(buttonPanel, BorderLayout.NORTH);
-		this.add(scrollTable, BorderLayout.CENTER);
 
-		JPanel playsPanel = new JPanel(new BorderLayout());
+		JPanel playsPanel = new JPanel(new MigLayout());
 		playsModel = new PlaysTableModel(new ArrayList<Play>());
 		tableOfPlays = new JTable(playsModel);
+		tableOfAllPlays = new JTable(allPlaysModel);
 		scrollTablePlays = new JScrollPane((tableOfPlays));
 		scrollTablePlays.setPreferredSize(new Dimension(300, 100));
-		playsPanel.add(scrollTablePlays, BorderLayout.NORTH);
-		playsPanel.add(addPlayButton, BorderLayout.SOUTH);
+		scrollTableAllPlays = new JScrollPane((tableOfAllPlays));
+		scrollTableAllPlays.setPreferredSize(new Dimension(300, 100));
+		playsPanel.add(new JLabel("Plays in situation"), "wrap");
+		playsPanel.add(scrollTablePlays, "wrap");
+		playsPanel.add(new JLabel("All Plays"), "wrap");
+		playsPanel.add(scrollTableAllPlays, "wrap");
+		playsPanel.add(addPlayButton, "wrap");
 
+		this.add(buttonPanel, BorderLayout.NORTH);
+		this.add(scrollTable, BorderLayout.CENTER);
 		this.add(playsPanel, BorderLayout.SOUTH);
 		
 		addButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
 				SituationPanel.this.fieldController.bringComponentToTheTop(glassPanel);
 				glassPanel.setVisible(true);
 			}
