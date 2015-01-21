@@ -11,19 +11,16 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import controllers.FieldController;
+import data.PlaysTableModel;
 import data.Situation;
 import data.SituationTableModel;
+import strategy.Play;
 
 public class SituationPanel extends JPanel {
 	
@@ -31,13 +28,17 @@ public class SituationPanel extends JPanel {
 	
 	private JButton addButton;
 	private JButton removeButton;
-	
+	private JButton addPlayButton = new JButton("Add Play");
+
 	private JTable tableOfSituations;
-	
+	private JTable tableOfPlays;
+
 	private SituationTableModel situationModel;
-	
+	private PlaysTableModel playsModel;
+
 	private JScrollPane scrollTable;
-	
+	private JScrollPane scrollTablePlays;
+
 	private FieldController fieldController;
 	
 	private DrawAreaGlassPanel glassPanel;
@@ -88,8 +89,16 @@ public class SituationPanel extends JPanel {
 		
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(scrollTable, BorderLayout.CENTER);
-		
-		
+
+		JPanel playsPanel = new JPanel(new BorderLayout());
+		playsModel = new PlaysTableModel(new ArrayList<Play>());
+		tableOfPlays = new JTable(playsModel);
+		scrollTablePlays = new JScrollPane((tableOfPlays));
+		scrollTablePlays.setPreferredSize(new Dimension(300, 100));
+		playsPanel.add(scrollTablePlays, BorderLayout.NORTH);
+		playsPanel.add(addPlayButton, BorderLayout.SOUTH);
+
+		this.add(playsPanel, BorderLayout.SOUTH);
 		
 		addButton.addActionListener(new ActionListener() {
 
