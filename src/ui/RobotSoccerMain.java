@@ -13,6 +13,7 @@ import bot.Robots;
 import controllers.BallController;
 import controllers.FieldController;
 import game.Tick;
+import strategy.Role;
 
 public class RobotSoccerMain extends JPanel
                              implements ActionListener {
@@ -32,6 +33,8 @@ public class RobotSoccerMain extends JPanel
     private Robots bots;
     
     private SituationPanel situationPanel;
+    private PlaysPanel playsPanel;
+    private RolesPanel rolesPanel;
     
     private JTabbedPane tabPane;
 	private DrawAreaGlassPanel glassPanel;
@@ -82,6 +85,8 @@ public class RobotSoccerMain extends JPanel
         
         
         situationPanel = new SituationPanel(fieldController);
+        playsPanel = new PlaysPanel();
+        rolesPanel = new RolesPanel();
 
         glassPanel = new DrawAreaGlassPanel(field, situationPanel);
 		glassPanel.setVisible(false);
@@ -93,7 +98,9 @@ public class RobotSoccerMain extends JPanel
         
         tabPane.addTab("Output", new JScrollPane(taskOutput));
         tabPane.addTab("Situation", situationPanel);
-        
+        tabPane.addTab("Plays", playsPanel);
+        tabPane.addTab("Roles", rolesPanel);
+
         tabPane.addChangeListener(new ChangeListener() {
 
 			@Override

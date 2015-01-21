@@ -100,9 +100,9 @@ public class SituationPanel extends JPanel {
 		scrollTableAllPlays = new JScrollPane((tableOfAllPlays));
 		scrollTableAllPlays.setPreferredSize(new Dimension(300, 100));
 		playsPanel.add(new JLabel("Plays in situation"), "wrap");
-		playsPanel.add(scrollTablePlays, "wrap");
+		playsPanel.add(scrollTablePlays, "wrap, span");
 		playsPanel.add(new JLabel("All Plays"), "wrap");
-		playsPanel.add(scrollTableAllPlays, "wrap");
+		playsPanel.add(scrollTableAllPlays, "wrap, span");
 		playsPanel.add(addPlayButton, "wrap");
 
 		this.add(buttonPanel, BorderLayout.NORTH);
