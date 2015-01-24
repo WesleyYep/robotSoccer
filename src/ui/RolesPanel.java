@@ -3,13 +3,19 @@ package ui;
 import actions.Actions;
 import criteria.Criterias;
 import data.RolesTableModel;
+import data.Situation;
 import net.miginfocom.swing.MigLayout;
 import strategy.*;
 import strategy.Action;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -30,12 +36,19 @@ public class RolesPanel extends JPanel {
     private JComboBox<Action> action3;
     private JComboBox<Action> action4;
     private JComboBox<Action> action5;
+    private JButton saveButton = new JButton("Save");
+    private List<Role> rolesList = new ArrayList<Role>();
+    private CurrentStrategy currentStrategy;
 
-    public RolesPanel() {
+    private Role lastSelectedRole;
+
+    public RolesPanel(final CurrentStrategy currentStrategy) {
+
+        this.currentStrategy = currentStrategy;
 
         this.setLayout(new MigLayout());
 
-        rolesTableModel = new RolesTableModel(new ArrayList<Role>());
+        rolesTableModel = new RolesTableModel(rolesList);
         rolesTable = new JTable(rolesTableModel);
         scrollRoles = new JScrollPane(rolesTable);
         scrollRoles.setPreferredSize(new Dimension(300, 100));
@@ -86,7 +99,72 @@ public class RolesPanel extends JPanel {
         add(action4, "wrap");
         add(criteria5, "split 2");
         add(action5, "wrap");
+        add(saveButton);
 
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Role role = new Role();
+                role.setRoleName("test");
+                rolesList.add(role);
+                lastSelectedRole = role;
+                currentStrategy.setRoles(rolesList);
+                rolesTableModel.fireTableDataChanged();
+            }
+        });
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Role role = lastSelectedRole;
+                if (criteria1.getSelectedItem() != null && action1.getSelectedItem() != null) {
+                    role.setPair((Criteria) criteria1.getSelectedItem(), (Action) action1.getSelectedItem(), 0);
+                }
+                if (criteria2.getSelectedItem() != null && action2.getSelectedItem() != null) {
+                    role.setPair((Criteria) criteria2.getSelectedItem(), (Action) action2.getSelectedItem(), 1);
+                }
+                if (criteria3.getSelectedItem() != null && action3.getSelectedItem() != null) {
+                    role.setPair((Criteria) criteria3.getSelectedItem(), (Action) action3.getSelectedItem(), 2);
+                }
+                if (criteria4.getSelectedItem() != null && action4.getSelectedItem() != null) {
+                    role.setPair((Criteria) criteria4.getSelectedItem(), (Action) action4.getSelectedItem(), 3);
+                }
+                if (criteria5.getSelectedItem() != null && action5.getSelectedItem() != null) {
+                    role.setPair((Criteria) criteria5.getSelectedItem(), (Action) action5.getSelectedItem(), 4);
+                }
+            }
+        });
+
+        ListSelectionModel rolesRows = rolesTable.getSelectionModel();
+        rolesRows.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //ignore extra messages
+                if (e.getValueIsAdjusting()) return;
+
+                ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                if (lsm.isSelectionEmpty()) {
+
+                } else {
+                    int selectedRow = lsm.getMinSelectionIndex();
+                    Role role = (Role)rolesTableModel.getValueAt(selectedRow, 0);
+                    lastSelectedRole = role;
+                    for (int i = 0; i < role.getActions().length; i++){
+                        action1.setSelectedItem(role.getActions()[0]);
+                        action2.setSelectedItem(role.getActions()[1]);
+                        action3.setSelectedItem(role.getActions()[2]);
+                        action4.setSelectedItem(role.getActions()[3]);
+                        action5.setSelectedItem(role.getActions()[4]);
+                        criteria1.setSelectedItem(role.getCriterias()[0]);
+                        criteria2.setSelectedItem(role.getCriterias()[1]);
+                        criteria3.setSelectedItem(role.getCriterias()[2]);
+                        criteria4.setSelectedItem(role.getCriterias()[3]);
+                        criteria5.setSelectedItem(role.getCriterias()[4]);
+                    }
+                }
+
+            }
+        });
 
     }
 

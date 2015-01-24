@@ -1,6 +1,7 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -9,9 +10,9 @@ import ui.SituationArea;
 
 public class RolesTableModel extends AbstractTableModel {
 
-    private ArrayList<Role> listOfRoles;
+    private List<Role> listOfRoles;
 
-    public RolesTableModel(ArrayList<Role> list) {
+    public RolesTableModel(List<Role> list) {
         listOfRoles = list;
     }
 

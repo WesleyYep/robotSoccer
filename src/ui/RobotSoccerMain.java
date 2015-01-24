@@ -13,6 +13,7 @@ import bot.Robots;
 import controllers.BallController;
 import controllers.FieldController;
 import game.Tick;
+import strategy.CurrentStrategy;
 import strategy.Role;
 
 public class RobotSoccerMain extends JPanel
@@ -35,6 +36,7 @@ public class RobotSoccerMain extends JPanel
     private SituationPanel situationPanel;
     private PlaysPanel playsPanel;
     private RolesPanel rolesPanel;
+    private CurrentStrategy currentStrategy;
     
     private JTabbedPane tabPane;
 	private DrawAreaGlassPanel glassPanel;
@@ -82,11 +84,11 @@ public class RobotSoccerMain extends JPanel
         	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
         	infoPanel.add(robotInfoPanels[i]);
         }
-        
-        
-        situationPanel = new SituationPanel(fieldController);
-        playsPanel = new PlaysPanel();
-        rolesPanel = new RolesPanel();
+
+        currentStrategy = new CurrentStrategy();
+        situationPanel = new SituationPanel(fieldController, currentStrategy);
+        playsPanel = new PlaysPanel(currentStrategy);
+        rolesPanel = new RolesPanel(currentStrategy);
 
         glassPanel = new DrawAreaGlassPanel(field, situationPanel);
 		glassPanel.setVisible(false);

@@ -21,6 +21,7 @@ import data.PlaysTableModel;
 import data.Situation;
 import data.SituationTableModel;
 import net.miginfocom.swing.MigLayout;
+import strategy.CurrentStrategy;
 import strategy.Play;
 
 public class SituationPanel extends JPanel {
@@ -47,10 +48,13 @@ public class SituationPanel extends JPanel {
 	
 	private DrawAreaGlassPanel glassPanel;
 
+	private CurrentStrategy currentStrategy;
+
 	
-	public SituationPanel(FieldController fieldController) {
+	public SituationPanel(FieldController fieldController, CurrentStrategy currentStrategy) {
 		this.fieldController = fieldController;
 		this.setLayout(new BorderLayout());
+		this.currentStrategy = currentStrategy;
 		
 		listOfSituations = new ArrayList<Situation>();
 		situationModel = new SituationTableModel(listOfSituations);
@@ -169,5 +173,6 @@ public class SituationPanel extends JPanel {
 		situationModel.fireTableDataChanged();
 		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
 	}
+
 
 }
