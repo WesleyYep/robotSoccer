@@ -1,13 +1,18 @@
 package communication;
 
 import javax.swing.*;
+
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -23,9 +28,13 @@ public class Sender {
 	private String errorMessage = "";
 	public static String ballX = "ballX:070";
 	public static String ballY = "ballY:070";
-	public static String[] botXs = {"botX0:050", "botX1:060", "botX2:080","botX3:090","botX4:100"};
-	public static String[] botYs = {"botY0:050", "botY1:060", "botY2:080","botY3:090","botY4:100"};
+//	public static String[] botXs = {"botX0:050", "botX1:060", "botX2:080","botX3:090","botX4:100"};
+//	public static String[] botYs = {"botY0:050", "botY1:060", "botY2:080","botY3:090","botY4:100"};
+	public static String[] botXs = {"", "", "","",""};
+	public static String[] botYs = {"", "", "","",""};
 
+	public static BufferedWriter os = null;
+	
 	public static void connect() {
 		portNumber = 32000;
 		try {
@@ -33,7 +42,7 @@ public class Sender {
 			System.out.println("Started!\n");
 			clientSocket = serverSocket.accept();
 			System.out.println("Connected!");
-
+			os = new BufferedWriter(new OutputStreamWriter( clientSocket.getOutputStream()) );
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -41,11 +50,22 @@ public class Sender {
 
 	public static void sendStuff() {
 		try {
-			clientSocket.getOutputStream().write(ballY.getBytes());
-			clientSocket.getOutputStream().write(ballX.getBytes());
+			os.write(ballY,0, ballY.length());
+			os.newLine();
+			os.flush();
+			os.write(ballX,0,ballX.length());
+			os.newLine();
+			os.flush();
 			for (int i = 0; i < 5; i++) {
-				clientSocket.getOutputStream().write(botXs[i].getBytes());
-				clientSocket.getOutputStream().write(botYs[i].getBytes());
+				if (i == 4 ) {
+					System.out.println("x: " + botXs[i] + " y: " + botYs[i] + " Send Timestamp: " + Calendar.getInstance().getTime());
+				}
+				os.write(botXs[i],0, botXs[i].length());
+				os.newLine();
+				os.flush();
+				os.write(botYs[i],0, botYs[i].length());
+				os.newLine();
+				os.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

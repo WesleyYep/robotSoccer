@@ -74,6 +74,7 @@ public class RobotSoccerMain extends JPanel
         robotInfoPanels = new RobotInfoPanel[5];
         
         testComPanel = new TestComPanel(serialCom, bots);
+        fieldController.setComPanel(testComPanel);
         infoPanel.add(testComPanel);
         
         for (int i = 0; i<5; i++) {

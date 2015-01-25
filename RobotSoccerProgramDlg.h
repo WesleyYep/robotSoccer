@@ -30,6 +30,8 @@
 #include "CommThread.h"
 #include "dualslider.h"
 
+//#include "DataListener.h"
+
 // CRobotSoccerProgramDlg dialog
 class CRobotSoccerProgramDlg : public CDialogEx
 {
@@ -57,6 +59,8 @@ protected:
 
 
 protected:
+	LRESULT OnThreadMessage(WPARAM, LPARAM);
+
 	int m_RobotTestBehavior;
 	CCommThread m_ComPort;
 
@@ -132,7 +136,10 @@ public:
 	bool connectToHost2(int  portNumber);
 	std::string receiveStuff();
 
+	CObjectVelocityInfo javaVelocityInfo;
+
 	bool has_only_digit;
+	bool isSending;
 
 	CString m_portNumber;
 	CString m_connectionStatus;

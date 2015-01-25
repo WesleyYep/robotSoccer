@@ -25,9 +25,10 @@ public class Tick extends TimerTask {
 	public void run() {
 		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
 		if (comPanel.isSimulation()) {
-			bots.moveBots();
+			//System.out.println("send1 Xosition: " + bots.getRobots()[0].getXPosition());
+			//bots.moveBots();
 //			physics.calculatePhysics(field, bots);
-			field.moveBall(); //do we need this?
+			//field.moveBall(); //do we need this?
 			field.repaint();
 
 			setBallCoordinates();
@@ -40,8 +41,9 @@ public class Tick extends TimerTask {
 
 	private void setBotCoordinates() {
 		Robot[] botArray = bots.getRobots();
-
+		//System.out.println("send2 Xosition: " + bots.getRobots()[0].getXPosition());
 		for (int i = 0; i < 5; i++) {
+			/*
 			double botX = botArray[i].getXPosition();
 			double botY = Field.OUTER_BOUNDARY_HEIGHT - botArray[i].getYPosition();
 
@@ -58,7 +60,11 @@ public class Tick extends TimerTask {
 				Sender.botYs[i] = "botY" + i + ":0" + botY;
 			} else {
 				Sender.botYs[i] = "botY" + i + ":" + botY;
-			}
+			} 
+			*/
+			
+			Sender.botXs[i] ="lin bot" + i + ": " + botArray[i].linearVelocity;
+			Sender.botYs[i] ="ang bot" + i + ": " + botArray[i].angularVelocity;
 		}
 	}
 
