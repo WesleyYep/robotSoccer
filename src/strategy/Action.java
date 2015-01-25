@@ -10,4 +10,9 @@ public abstract class Action {
     public String toString() {
         return getName();
     }
+
+//    @Override
+//    public boolean equals(Object action) {
+//        return (((Action)action).toString().equals(toString()));
+//    }
 }

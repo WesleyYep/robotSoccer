@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by Wesley on 21/01/2015.
  */
-public class RolesPanel extends JPanel {
+public class RolesPanel extends JPanel implements StrategyListener {
 
     private RolesTableModel rolesTableModel;
     private JTable rolesTable;
@@ -46,6 +46,7 @@ public class RolesPanel extends JPanel {
     public RolesPanel(final CurrentStrategy currentStrategy) {
 
         this.currentStrategy = currentStrategy;
+        currentStrategy.addListener(this);
 
         this.setLayout(new MigLayout());
 
@@ -66,22 +67,7 @@ public class RolesPanel extends JPanel {
         (action4 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
         (action5 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
 
-        Criterias criterias = new Criterias();
-        for (int i = 0; i < criterias.getLength(); i++) {
-            criteria1.addItem(criterias.getAction(i));
-            criteria2.addItem(criterias.getAction(i));
-            criteria3.addItem(criterias.getAction(i));
-            criteria4.addItem(criterias.getAction(i));
-            criteria5.addItem(criterias.getAction(i));
-        }
-        Actions actions = new Actions();
-        for (int i = 0; i < actions.getLength(); i++) {
-            action1.addItem(actions.getAction(i));
-            action2.addItem(actions.getAction(i));
-            action3.addItem(actions.getAction(i));
-            action4.addItem(actions.getAction(i));
-            action5.addItem(actions.getAction(i));
-        }
+        setComboBoxes();
 
         add(new JLabel("Roles"), "wrap");
         add(scrollRoles, "wrap");
@@ -155,14 +141,14 @@ public class RolesPanel extends JPanel {
                 //ignore extra messages
                 if (e.getValueIsAdjusting()) return;
 
-                ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 if (lsm.isSelectionEmpty()) {
 
                 } else {
                     int selectedRow = lsm.getMinSelectionIndex();
-                    Role role = (Role)rolesTableModel.getValueAt(selectedRow, 0);
+                    Role role = (Role) rolesTableModel.getValueAt(selectedRow, 0);
                     lastSelectedRole = role;
-                    for (int i = 0; i < role.getActions().length; i++){
+                    for (int i = 0; i < role.getActions().length; i++) {
                         action1.setSelectedItem(role.getActions()[0]);
                         action2.setSelectedItem(role.getActions()[1]);
                         action3.setSelectedItem(role.getActions()[2]);
@@ -178,7 +164,32 @@ public class RolesPanel extends JPanel {
 
             }
         });
+    }
 
+    private void setComboBoxes() {
+        Criterias criterias = new Criterias();
+        for (int i = 0; i < criterias.getLength(); i++) {
+            criteria1.addItem(criterias.getAction(i));
+            criteria2.addItem(criterias.getAction(i));
+            criteria3.addItem(criterias.getAction(i));
+            criteria4.addItem(criterias.getAction(i));
+            criteria5.addItem(criterias.getAction(i));
+        }
+        Actions actions = new Actions();
+        for (int i = 0; i < actions.getLength(); i++) {
+            action1.addItem(actions.getAction(i));
+            action2.addItem(actions.getAction(i));
+            action3.addItem(actions.getAction(i));
+            action4.addItem(actions.getAction(i));
+            action5.addItem(actions.getAction(i));
+        }
+    }
+
+    @Override
+    public void strategyChanged() {
+        rolesList = currentStrategy.getRoles();
+        rolesTableModel.setListOfRoles(rolesList);
+        rolesTableModel.fireTableDataChanged();
     }
 
 }

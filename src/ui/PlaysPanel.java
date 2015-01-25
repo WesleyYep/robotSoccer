@@ -5,6 +5,7 @@ import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import strategy.Play;
 import strategy.Role;
+import strategy.StrategyListener;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by Wesley on 21/01/2015.
  */
-public class PlaysPanel extends JPanel{
+public class PlaysPanel extends JPanel implements StrategyListener{
 
     private PlaysTableModel playsTableModel;
     private JTable allPlaysTable;
@@ -39,6 +40,7 @@ public class PlaysPanel extends JPanel{
         this.setLayout(new MigLayout());
 
         this.currentStrategy = currentStrategy;
+        currentStrategy.addListener(this);
 
         playsTableModel = new PlaysTableModel(playsList);
         allPlaysTable = new JTable(playsTableModel);
@@ -115,8 +117,8 @@ public class PlaysPanel extends JPanel{
 
         ListSelectionModel playsRows = allPlaysTable.getSelectionModel();
         playsRows.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
                 //ignore extra messages
                 if (e.getValueIsAdjusting()) return;
 
@@ -178,4 +180,10 @@ public class PlaysPanel extends JPanel{
         }
     }
 
+    @Override
+    public void strategyChanged() {
+        playsList = currentStrategy.getPlays();
+        playsTableModel.setListOfPlays(playsList);
+        playsTableModel.fireTableDataChanged();
+    }
 }

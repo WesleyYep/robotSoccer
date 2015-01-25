@@ -13,6 +13,7 @@ import bot.Robots;
 import controllers.BallController;
 import controllers.FieldController;
 import game.Tick;
+import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import strategy.Role;
 
@@ -21,6 +22,8 @@ public class RobotSoccerMain extends JPanel
 
 	public static final int DEFAULT_PORT_NUMBER = 31000;
     private JButton startButton;
+    private JButton saveButton = new JButton("Save to File");
+    private JButton openButton = new JButton("Open");
     private JTextArea taskOutput;
     private Receiver task;
     private FieldController fieldController;
@@ -51,9 +54,11 @@ public class RobotSoccerMain extends JPanel
         startButton.addActionListener(this);
         portField = new JTextField(10);
         
-        JPanel panel = new JPanel();
-        panel.add(startButton);
+        JPanel panel = new JPanel(new MigLayout());
+        panel.add(startButton, "gapx 250");
         panel.add(portField);
+        panel.add(saveButton);
+        panel.add(openButton);
         
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
@@ -70,8 +75,6 @@ public class RobotSoccerMain extends JPanel
         ballController = new BallController(ball);
         fieldController = new FieldController(field, bots, ball);
         
-        
-
         //creating panel holding robot informations
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
@@ -130,6 +133,20 @@ public class RobotSoccerMain extends JPanel
         add(infoPanel,BorderLayout.SOUTH);
         
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentStrategy.saveToFile();
+            }
+        });
+
+        openButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentStrategy.readFromFile();
+            }
+        });
         
     }
 

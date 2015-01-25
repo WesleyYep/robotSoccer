@@ -23,8 +23,9 @@ import data.SituationTableModel;
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import strategy.Play;
+import strategy.StrategyListener;
 
-public class SituationPanel extends JPanel {
+public class SituationPanel extends JPanel implements StrategyListener{
 	
 	private ArrayList<Situation> listOfSituations;
 	
@@ -54,10 +55,11 @@ public class SituationPanel extends JPanel {
 	private Play lastSelectedPlay;
 
 	
-	public SituationPanel(FieldController fieldController, CurrentStrategy currentStrategy) {
+	public SituationPanel(FieldController fieldController, final CurrentStrategy currentStrategy) {
 		this.fieldController = fieldController;
 		this.setLayout(new BorderLayout());
 		this.currentStrategy = currentStrategy;
+		currentStrategy.addListener(this);
 		
 		listOfSituations = new ArrayList<Situation>();
 		situationModel = new SituationTableModel(listOfSituations);
@@ -163,6 +165,7 @@ public class SituationPanel extends JPanel {
 					
 					SituationPanel.this.fieldController.repaintField();
 					situationModel.fireTableDataChanged();
+					currentStrategy.setSituations(listOfSituations);
 				}
 			}
 			
@@ -198,7 +201,7 @@ public class SituationPanel extends JPanel {
 		newArea.setBounds((int)r.getX(), (int)r.getY(),newArea.getWidth(), newArea.getHeight());
 		
 		fieldController.setSelectedArea(newArea);
-		
+		currentStrategy.setSituations(listOfSituations);
 	}
 	
 	public void setGlassPanel(DrawAreaGlassPanel panel) {
@@ -221,4 +224,10 @@ public class SituationPanel extends JPanel {
 	}
 
 
+	@Override
+	public void strategyChanged() {
+		allPlaysModel.setListOfPlays(currentStrategy.getPlays());
+		allPlaysModel.fireTableDataChanged();
+		//add anything else here?
+	}
 }

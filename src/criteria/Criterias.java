@@ -6,7 +6,7 @@ import strategy.Criteria;
  * Created by Wesley on 21/01/2015.
  */
 public class Criterias {
-    private Criteria[] criterias = new Criteria[] { null, new NearBallCriterion() };
+    private static Criteria[] criterias = new Criteria[] { null, new NearBallCriterion() };
 
     public Criteria getAction(int index) {
         return criterias[index];
@@ -14,6 +14,18 @@ public class Criterias {
 
     public int getLength() {
         return criterias.length;
+    }
+
+    public Criteria findCriteria(String name) {
+        for (Criteria c : criterias) {
+            if (c == null) {
+                continue;
+            }
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
     }
 
 }

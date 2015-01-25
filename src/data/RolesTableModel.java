@@ -47,7 +47,11 @@ public class RolesTableModel extends AbstractTableModel {
         Role r = listOfRoles.get(row);
         r.setRoleName((String)value);
         fireTableCellUpdated(row, col);
-
     }
+
+    public void setListOfRoles(List<Role> roles) {
+        listOfRoles = roles;
+    }
+
 
 }
