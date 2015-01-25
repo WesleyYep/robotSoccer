@@ -4,6 +4,7 @@ import strategy.Play;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PlaysTableModel extends AbstractTableModel {
@@ -48,5 +49,11 @@ public class PlaysTableModel extends AbstractTableModel {
 	    fireTableCellUpdated(row, col);
 	    
 	 }
+
+
+
+	public void setListOfPlays(List<Play> plays) {
+		listOfPlays = plays;
+	}
 
 }

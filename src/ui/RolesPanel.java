@@ -26,6 +26,7 @@ public class RolesPanel extends JPanel {
     private JTable rolesTable;
     private JScrollPane scrollRoles;
     private JButton addButton = new JButton("Add");
+    private JButton removeButton = new JButton("Remove");
     private JComboBox<Criteria> criteria1;
     private JComboBox<Criteria> criteria2;
     private JComboBox<Criteria> criteria3;
@@ -84,7 +85,8 @@ public class RolesPanel extends JPanel {
 
         add(new JLabel("Roles"), "wrap");
         add(scrollRoles, "wrap");
-        add(addButton, "wrap");
+        add(addButton, "split 2");
+        add(removeButton, "wrap");
 
         add(new JLabel("Criteria"), "split 2");
         add(new JLabel("Action"), "gapleft 100, wrap");
@@ -101,6 +103,8 @@ public class RolesPanel extends JPanel {
         add(action5, "wrap");
         add(saveButton);
 
+        rolesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -108,6 +112,15 @@ public class RolesPanel extends JPanel {
                 role.setRoleName("test");
                 rolesList.add(role);
                 lastSelectedRole = role;
+                currentStrategy.setRoles(rolesList);
+                rolesTableModel.fireTableDataChanged();
+            }
+        });
+
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rolesList.remove(lastSelectedRole);
                 currentStrategy.setRoles(rolesList);
                 rolesTableModel.fireTableDataChanged();
             }

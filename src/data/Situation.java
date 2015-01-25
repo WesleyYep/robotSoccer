@@ -1,18 +1,21 @@
 package data;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.JPanel;
-
+import strategy.Play;
+import strategy.Role;
 import ui.SituationArea;
 
 public class Situation {
 	
 	private String situationName;
 	private SituationArea area;
-	
+	private List<Play> plays;
 	
 	public Situation(SituationArea a, String name) {
+		plays = new ArrayList<Play>();
 		situationName = name;
 		area = a;
 		area.setName(situationName);
@@ -44,5 +47,14 @@ public class Situation {
 	public SituationArea getArea() {
 		return area;
 	}
+
+	public void addPlay(Play play) {
+		plays.add(play);
+	}
+
+	public List<Play> getPlays() {
+		return plays;
+	}
+
 
 }
