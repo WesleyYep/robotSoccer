@@ -53,7 +53,7 @@ public class Receiver extends SwingWorker<Void, String> {
 				}
 				
 			}
-		}catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			errorMessage = e.getMessage();
 			return null;
