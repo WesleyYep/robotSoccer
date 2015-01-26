@@ -1,23 +1,37 @@
 package ui;
 
-import java.awt.*;
-import java.awt.event.*;
+import game.Tick;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.miginfocom.swing.MigLayout;
+import strategy.CurrentStrategy;
+import bot.Robots;
+
 import communication.Receiver;
 import communication.SerialPortCommunicator;
-import bot.Robots;
+
 import controllers.BallController;
 import controllers.FieldController;
-import game.Tick;
-import strategy.CurrentStrategy;
-import strategy.Role;
 
-public class RobotSoccerMain extends JPanel
-                             implements ActionListener {
+public class RobotSoccerMain extends JPanel implements ActionListener {
 
 	public static final int DEFAULT_PORT_NUMBER = 31000;
     private JButton startButton;
@@ -40,26 +54,28 @@ public class RobotSoccerMain extends JPanel
     
     private JTabbedPane tabPane;
 	private DrawAreaGlassPanel glassPanel;
-
+	
     public RobotSoccerMain() {
-        super(new BorderLayout());
+    	// Auto wrap after 12 columns.
+    	// https://www.youtube.com/watch?v=U6xJfP7-HCc
+    	// Layout constraint, column constraint
+        super(new MigLayout("wrap 12"));
         
         //Create the demo's UI.
         //create start button and text field for port number
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
         startButton.addActionListener(this);
-        portField = new JTextField(10);
+        portField = new JTextField();
         
-        JPanel panel = new JPanel();
-        panel.add(startButton);
-        panel.add(portField);
+        JPanel portPanel = new JPanel(new MigLayout());
+        portPanel.add(startButton);
+        portPanel.add(portField, "push, grow");
         
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
         taskOutput.setEditable(false); 
-       
-        
+
         //create serial port communicator;
         serialCom = new SerialPortCommunicator();
         bots = new Robots(serialCom);
@@ -70,15 +86,14 @@ public class RobotSoccerMain extends JPanel
         ballController = new BallController(ball);
         fieldController = new FieldController(field, bots, ball);
         
+        JPanel testComContainerPanel = new JPanel();
+        testComPanel = new TestComPanel(serialCom, bots);
+        testComContainerPanel.add(testComPanel);
         
-
         //creating panel holding robot informations
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
-        
-        testComPanel = new TestComPanel(serialCom, bots);
-        infoPanel.add(testComPanel);
         
         for (int i = 0; i<5; i++) {
         	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
@@ -97,8 +112,6 @@ public class RobotSoccerMain extends JPanel
 		
         //create tab pane
         tabPane = new JTabbedPane();
-        
-        tabPane.addTab("Output", new JScrollPane(taskOutput));
         tabPane.addTab("Situation", situationPanel);
         tabPane.addTab("Plays", playsPanel);
         tabPane.addTab("Roles", rolesPanel);
@@ -115,19 +128,17 @@ public class RobotSoccerMain extends JPanel
 				}
 				fieldController.repaintField();
 			}
-			
-        	
+				
         });
         
         setUpGame();
         
-        add(panel, BorderLayout.PAGE_START);
-        
-        add(tabPane, BorderLayout.LINE_END);
-        
-        add(field, BorderLayout.CENTER);
-        
-        add(infoPanel,BorderLayout.SOUTH);
+        add(field, "span 6, width 600:600:600");
+        add(tabPane, "span 6 4, width 600:600:600, pushy, growy, wrap");
+        add(infoPanel, "span 6, width 600:600:600, wrap");
+        add(portPanel, "span 2, width 200:200:200");
+        add(new JScrollPane(taskOutput), "span 4 2, width 400:400:400, pushy, growy, wrap");
+        add(testComContainerPanel, "span 2, width 200:200:200");
         
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         

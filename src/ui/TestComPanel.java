@@ -1,19 +1,20 @@
 package ui;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
-import bot.Robots;
-import communication.SerialPortCommunicator;
 import jssc.SerialPortList;
+import net.miginfocom.swing.MigLayout;
+import bot.Robots;
+
+import communication.SerialPortCommunicator;
 
 public class TestComPanel extends JPanel {
 	
@@ -51,15 +52,15 @@ public class TestComPanel extends JPanel {
 
 		JPanel buttonPanel = new JPanel();
 
-		buttonPanel.setLayout(new FlowLayout());
-		buttonPanel.add(testRotateBtn);
-		buttonPanel.add(testForwardBtn);
+		buttonPanel.setLayout(new MigLayout());
+		buttonPanel.add(testRotateBtn, "pushx, growx");
+		buttonPanel.add(testForwardBtn, "wrap");
 		buttonPanel.add(simulationCheckBox);
 
-		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		this.add(comboBox);
-		this.add(buttonPanel);
-
+		this.setLayout(new BorderLayout());
+		this.add(comboBox, BorderLayout.NORTH);
+		this.add(buttonPanel, BorderLayout.SOUTH);
+		
 		//open the port;
 		serialCom.openPort((String) comboBox.getSelectedItem());
 
