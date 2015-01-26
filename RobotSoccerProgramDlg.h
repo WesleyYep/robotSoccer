@@ -35,6 +35,7 @@
 // CRobotSoccerProgramDlg dialog
 class CRobotSoccerProgramDlg : public CDialogEx
 {
+		CCriticalSection m_cs;
 // Construction
 public:
 	CRobotSoccerProgramDlg(CWnd* pParent = NULL);	// standard constructor
@@ -143,6 +144,8 @@ public:
 
 	CString m_portNumber;
 	CString m_connectionStatus;
+
+	int number;
 
 	SOCKET s;
 	SOCKET s2;

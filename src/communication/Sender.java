@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,6 +51,26 @@ public class Sender {
 
 	public static void sendStuff() {
 		try {
+			
+			StringBuilder outputBuffer = new StringBuilder();
+			
+			outputBuffer.append(ballY + System.lineSeparator());
+			outputBuffer.append(ballX + System.lineSeparator());
+			
+			for (int i = 0; i<5; i++) {
+				outputBuffer.append(botXs[i]+ System.lineSeparator());
+				outputBuffer.append(botYs[i]+ System.lineSeparator());
+			}
+			
+			while (outputBuffer.length() <=512 ) {
+				outputBuffer.append(" ");
+			}
+			
+			System.out.println(outputBuffer.toString());
+			os.write(outputBuffer.toString(),0, outputBuffer.length());
+			os.flush();
+
+			/*
 			os.write(ballY,0, ballY.length());
 			os.newLine();
 			os.flush();
@@ -67,6 +88,13 @@ public class Sender {
 				os.newLine();
 				os.flush();
 			}
+			java.util.Date date= new java.util.Date();
+			os.write("Timestamp: " + new Timestamp(date.getTime()));
+			os.newLine();
+			os.flush();
+			
+			*/
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

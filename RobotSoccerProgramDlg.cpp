@@ -7,8 +7,10 @@
 #include "RobotSoccerProgramDlg.h"
 #include "afxdialogex.h"
 #include <cctype>
+#include <string>
 
 #define _USE_MATH_DEFINES
+#define WM_MY_THREAD_MESSAGE	WM_APP+100
 #include <math.h>
 
 #ifdef _DEBUG
@@ -20,6 +22,7 @@
 
 class CAboutDlg : public CDialogEx
 {
+
 public:
 	CAboutDlg();
 
@@ -122,7 +125,7 @@ void CRobotSoccerProgramDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CRobotSoccerProgramDlg, CDialogEx)
 
-	ON_MESSAGE(WM_APP+100, OnThreadMessage)
+	ON_MESSAGE(WM_MY_THREAD_MESSAGE, OnThreadMessage)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -388,16 +391,7 @@ UINT DrawDisplay_callback(LPVOID pParam)
 
 bool CRobotSoccerProgramDlg::Initialization(void)
 {
-	for( int i=0 ; i<POSITION_INFO_ROBOT_N ; i++ ){
-
-		javaVelocityInfo.m_LinearVelocity[i] = 0;
-		javaVelocityInfo.m_AngularVelocity[i] = 0;
-
-		javaVelocityInfo.m_VelocityLeft[i] = 0;
-		javaVelocityInfo.m_VelocityRight[i] = 0;
-
-		javaVelocityInfo.m_Behavior[i] = ROBOT_BEHAVIOR_STOP;
-	}
+	number = 0;
 
 	isSending = false;
 	m_comboCameraID.SetCurSel(0);
@@ -954,7 +948,8 @@ void CRobotSoccerProgramDlg::Process(void)
 					m_VelocityInfo.m_AngularVelocity[i] = v_angular;
 
 					m_VelocityInfo.m_Behavior[i] = m_RobotTestBehavior;
-						*/				
+						*/		
+					m_cs.Lock();
 					for( int i=0 ; i<11 ; i++ ){
 
 							m_VelocityInfo.m_LinearVelocity[i] = javaVelocityInfo.m_LinearVelocity[i];
@@ -964,7 +959,8 @@ void CRobotSoccerProgramDlg::Process(void)
 							m_VelocityInfo.m_VelocityRight[i] = javaVelocityInfo.m_LinearVelocity[i] + javaVelocityInfo.m_AngularVelocity[i] * 0.0675 / 2.;
 
 							m_VelocityInfo.m_Behavior[i] = 0;
-					} 
+					}
+					m_cs.Unlock();
 
 				}
 				else
@@ -2036,11 +2032,55 @@ void CRobotSoccerProgramDlg::OnBnClickedCheckCameraImageOnGame()
 }
 
 //kinda like process method for swing worker which will run in the main window thread
-LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM)
+LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM lParam)
 {
 	UpdateData(true);
-	javaVelocityInfo = *(reinterpret_cast<CObjectVelocityInfo*>(wParam));
+	CEdit* Display;
+	CListBox* bigBox;
+	number++;
+	if (number >9) {
+		number =0;
+	}
+	
+	
+	CObjectVelocityInfo object = *(reinterpret_cast<CObjectVelocityInfo*>(wParam));
+	std::vector<std::string> y = *(reinterpret_cast<std::vector<std::string>*>(lParam));
+	// debugging output start
+	bigBox = reinterpret_cast<CListBox *>(GetDlgItem(IDC_DEBUG_BIG_BOX));
+	bigBox->ResetContent();
 
+	for (size_t i=0; i<y.size(); i++) {
+		std::wstring ws;
+		ws.assign(y.at(i).begin(),y.at(i).end());
+		bigBox->InsertString(-1, ws.c_str());
+	}
+
+    //bigBox->InsertString(-1,_T("dasdf"));
+	Display = reinterpret_cast<CEdit *>(GetDlgItem(IDC_DEBUG_BOX));
+	
+	//std::string timestamp = *(reinterpret_cast<std::string*>(lParam));
+	std::wstringstream ss;
+	ss <<  object.m_LinearVelocity[0];
+	ss << " ";
+	ss << number;
+	ss << " ";
+
+	//std::wstring ws;
+	//ws.assign(timestamp.begin(),timestamp.end());
+
+	//ss << ws;
+
+	//Display->SetWindowText(ss.str().c_str()); 
+	//Display->SetWindowText(ws.c_str());
+
+	//debuggin output end
+	m_cs.Lock();
+	for( int i=0 ; i<11 ; i++ ){
+
+		javaVelocityInfo.m_LinearVelocity[i] = object.m_LinearVelocity[i];
+		javaVelocityInfo.m_AngularVelocity[i] = object.m_AngularVelocity[i];
+	}
+	m_cs.Unlock();
 	return 0;
 	
 }
@@ -2090,21 +2130,29 @@ UINT DataReceivingThread(void *pParam)
 
 	bool listening = true;
 	std::string outputResult;
+	std::string timestamp;
+	
+	std::string message;
 	std::vector<std::string> x;
-	std::string stringResult;
 	CObjectVelocityInfo velocityObject;
 
-	double doubleResult;
 	bool found = false;
+	char buffer[512];
+	int len = 512;
+
+	std::string stringResult;
+
+	double doubleResult;
+
 	while ( listening ) {
-		char buffer[512];
+		
 		//	buffer[0] = 0;
-		int len = 512;
+		
 		int iResult = recv(s2, buffer,  len, 0);
 		if (iResult > 0) {
 				std::string hello(buffer, 512);
 				outputResult = hello;
-
+				x.clear();
 				std::vector<std::string> elems;
 				std::stringstream ss(outputResult);
 				std::string item;
@@ -2113,6 +2161,7 @@ UINT DataReceivingThread(void *pParam)
 				}
 				x = elems;
 				
+
 				for (size_t index=0; index<x.size(); index++) {
 					std::vector<char> writable(x.at(index).begin(), x.at(index).end());
 					writable.push_back('\0');
@@ -2122,56 +2171,49 @@ UINT DataReceivingThread(void *pParam)
 					else if ( pos = x.at(index).find("lin bot0:" ) != std::string::npos) {
 						stringResult = x.at(index).substr(pos+10);
 						doubleResult = stod(stringResult);
-						velocityObject.m_LinearVelocity[0] = doubleResult;
+						velocityObject.m_LinearVelocity[0] = stod(x.at(index).substr(pos+10));
+
+						std::ostringstream strs;
+						strs << velocityObject.m_LinearVelocity[0];
+						pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), reinterpret_cast<LPARAM>(&elems));
 					}
 					else if ( pos = x.at(index).find("lin bot1:" ) != std::string::npos ) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_LinearVelocity[1] = doubleResult;
+
+						velocityObject.m_LinearVelocity[1] = stod(x.at(index).substr(pos+10));
 					}
 					else if (pos = x.at(index).find("lin bot2:" ) != std::string::npos ) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_LinearVelocity[2] = doubleResult;
+
+						velocityObject.m_LinearVelocity[2] = stod(x.at(index).substr(pos+10));
 					}
 					else if ( pos = x.at(index).find("lin bot3:" ) != std::string::npos) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_LinearVelocity[3] = doubleResult;
+
+						velocityObject.m_LinearVelocity[3] = stod(x.at(index).substr(pos+10));
 					}
 					else if ( pos = x.at(index).find("lin bot4:" ) != std::string::npos) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_LinearVelocity[4] = doubleResult;
+
+						velocityObject.m_LinearVelocity[4] = stod(x.at(index).substr(pos+10));
 					}
 					else if ( pos = x.at(index).find("ang bot0:" ) != std::string::npos ) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_AngularVelocity[0] = doubleResult;
+						velocityObject.m_AngularVelocity[0] = stod(x.at(index).substr(pos+10));
 					}
 					else if (pos = x.at(index).find("ang bot1:" ) != std::string::npos ) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_AngularVelocity[1] = doubleResult;
+						velocityObject.m_AngularVelocity[1] = stod(x.at(index).substr(pos+10));
 					}
 					else if ( pos = x.at(index).find("ang bot2:" ) != std::string::npos) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_AngularVelocity[2] = doubleResult;
+						velocityObject.m_AngularVelocity[2] = stod(x.at(index).substr(pos+10));
 					}
 					else if ( pos = x.at(index).find("ang bot3:" ) != std::string::npos) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_AngularVelocity[3] = doubleResult;
+						velocityObject.m_AngularVelocity[3] = stod(x.at(index).substr(pos+10));
 					}
 					else if ( pos = x.at(index).find("ang bot4:" ) != std::string::npos) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_AngularVelocity[4] = doubleResult;
+						velocityObject.m_AngularVelocity[4] = stod(x.at(index).substr(pos+10));;
+					}
+					else if ( pos = x.at(index).find("Timestamp" ) != std::string::npos) {
+						timestamp = x.at(index);
 					}
 					
 				}
-				pThis->SendMessage(WM_APP+100,reinterpret_cast<WPARAM>(&velocityObject));
+				
 		} 
 	}
 	
