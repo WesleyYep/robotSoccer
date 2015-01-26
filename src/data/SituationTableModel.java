@@ -1,6 +1,7 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -11,9 +12,9 @@ public class SituationTableModel extends AbstractTableModel {
 	//for now the model we use the list of area, later on we could create
 	//situation object which contain the area and other information relate to the situations
 	
-	private ArrayList<Situation> listOfSituations;
+	private List<Situation> listOfSituations;
 	
-	public SituationTableModel(ArrayList<Situation> list) {
+	public SituationTableModel(List<Situation> list) {
 		listOfSituations = list;
 	}
 
@@ -55,5 +56,9 @@ public class SituationTableModel extends AbstractTableModel {
 	    fireTableCellUpdated(row, col);
 	    
 	 }
+
+	public void setListOfSituations(List<Situation> situations) {
+		listOfSituations = situations;
+	}
 
 }

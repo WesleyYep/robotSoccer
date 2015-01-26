@@ -52,6 +52,10 @@ public class Situation {
 		plays.add(play);
 	}
 
+	public void removePlay (Play play) {
+		plays.remove(play);
+	}
+
 	public List<Play> getPlays() {
 		return plays;
 	}

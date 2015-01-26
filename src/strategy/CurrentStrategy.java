@@ -1,9 +1,11 @@
 package strategy;
 
 import actions.Actions;
+import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
 import ui.RobotSoccerMain;
+import ui.SituationArea;
 import ui.SituationPanel;
 
 import javax.swing.*;
@@ -19,11 +21,13 @@ public class CurrentStrategy {
     private List<Play> plays;
     private List<Situation> situations;
     private List<StrategyListener> listeners = new ArrayList<StrategyListener>();
+    private FieldController fieldController;
 
-    public CurrentStrategy () {
+    public CurrentStrategy (FieldController fieldController) {
         roles = new ArrayList<Role>();
         plays = new ArrayList<Play>();
         situations = new ArrayList<Situation>();
+        this.fieldController = fieldController;
     }
 
     public void addListener(StrategyListener listener) {
@@ -90,7 +94,7 @@ public class CurrentStrategy {
                     }
                     bufferedWriter.write(r.getCriterias()[i].toString() + "-" + r.getActions()[i].toString() + "\n");
                 }
-                bufferedWriter.write("-----");
+                bufferedWriter.write("-----\n");
             }
 
             for (Play p : getPlays()) {
@@ -101,16 +105,17 @@ public class CurrentStrategy {
                         continue;
                     }
                     bufferedWriter.write(r.toString() + "\n");
-                    bufferedWriter.write("-----");
+                    bufferedWriter.write("-----\n");
                 }
             }
 
             for (Situation s : situations) {
-                bufferedWriter.write("Situation:" + s.toString() + "\n");
+                bufferedWriter.write("Situation:" + s.toString() + ":" + s.getArea().getX() + ":" + s.getArea().getY()
+                                        + ":" + s.getArea().getWidth() + ":" + s.getArea().getHeight() +  "\n");
                 for (Play p : s.getPlays()) {
                     bufferedWriter.write(p.toString() + "\n");
                 }
-                bufferedWriter.write("-----");
+                bufferedWriter.write("-----\n");
             }
 
             bufferedWriter.close();
@@ -157,12 +162,19 @@ public class CurrentStrategy {
                     }
                     plays.add(play);
                 } else if (line.startsWith("Situation:")) {
-//                    Situation situation = new Situation(null, line.split(":")[1]);
-
-//                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-//                        situation.addPlay(getPlayByName(line));
-//                    }
-//                    situations.add(situation);
+                    String[] splitLine = line.split(":");
+                    SituationArea area = new SituationArea(0,0);
+                    area.addAreaListener(fieldController);
+                    fieldController.setSelectedArea(area);
+                    fieldController.resizeArea(Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]),
+                                                Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
+                    Situation situation = new Situation(area, splitLine[1]);
+                    //why does area not show up when row selected?
+                    fieldController.repaintField();
+                    while (!(line = bufferedReader.readLine()).equals("-----")) {
+                        situation.addPlay(getPlayByName(line));
+                    }
+                    situations.add(situation);
                 }
             }
             for (StrategyListener listener : listeners) {

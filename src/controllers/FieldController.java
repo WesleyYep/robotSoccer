@@ -109,8 +109,7 @@ public class FieldController implements ReceiverListener, AreaListener {
 		//negative to the right
 		int newWidth = selectedArea.getWidth() + w;
 		int newHeight = selectedArea.getHeight() + h;
-		
-		selectedArea.setBounds(x, y, newWidth, newHeight);
+        selectedArea.setBounds(x, y, newWidth, newHeight);
 		
 		field.repaint();
 	}

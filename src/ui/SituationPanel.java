@@ -9,6 +9,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.*;
@@ -27,12 +29,14 @@ import strategy.StrategyListener;
 
 public class SituationPanel extends JPanel implements StrategyListener{
 	
-	private ArrayList<Situation> listOfSituations;
+	private List<Situation> listOfSituations;
 	
 	private JButton addButton;
 	private JButton removeButton;
-	private JButton addPlayButton = new JButton("Add play to situation");
-
+	private JButton addPlayButton = new JButton("Add play");
+	private JButton removePlayButton = new JButton("Remove play");
+	private JButton upButton = new JButton("▲");
+	private JButton downButton = new JButton("▼");
 	private JTable tableOfSituations;
 	private JTable tableOfPlays;
 	private JTable tableOfAllPlays;
@@ -53,6 +57,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 
 	private Situation lastSelectedSituation;
 	private Play lastSelectedPlay;
+	private Play lastSelectedAddedPlay;
 
 	
 	public SituationPanel(FieldController fieldController, final CurrentStrategy currentStrategy) {
@@ -104,6 +109,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 
 		JPanel playsPanel = new JPanel(new MigLayout());
 		playsModel = new PlaysTableModel(new ArrayList<Play>());
+		playsModel.setEditable(false);
 		allPlaysModel = new PlaysTableModel(currentStrategy.getPlays());
 		tableOfPlays = new JTable(playsModel);
 		tableOfAllPlays = new JTable(allPlaysModel);
@@ -113,9 +119,12 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		scrollTableAllPlays.setPreferredSize(new Dimension(300, 100));
 		playsPanel.add(new JLabel("Plays in situation"), "wrap");
 		playsPanel.add(scrollTablePlays, "wrap, span");
+		playsPanel.add(upButton, "split 2");
+		playsPanel.add(downButton, "wrap");
 		playsPanel.add(new JLabel("All Plays"), "wrap");
 		playsPanel.add(scrollTableAllPlays, "wrap, span");
-		playsPanel.add(addPlayButton, "wrap");
+		playsPanel.add(addPlayButton, "split 2");
+		playsPanel.add(removePlayButton, "wrap");
 
 		tableOfAllPlays.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		ListSelectionModel rowSM2 = tableOfAllPlays.getSelectionModel();
@@ -133,6 +142,24 @@ public class SituationPanel extends JPanel implements StrategyListener{
 				}
 			}
 		});
+
+		tableOfPlays.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		ListSelectionModel rowSM3 = tableOfPlays.getSelectionModel();
+		rowSM3.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				//Ignore extra messages.
+				if (e.getValueIsAdjusting()) return;
+
+				ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+				if (lsm.isSelectionEmpty()) {}
+				else {
+					int selectedRow = lsm.getMinSelectionIndex();
+					Play p = ((Play) playsModel.getValueAt(selectedRow, 0));
+					lastSelectedAddedPlay = p;
+				}
+			}
+		});
+
 
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(scrollTable, BorderLayout.CENTER);
@@ -182,6 +209,42 @@ public class SituationPanel extends JPanel implements StrategyListener{
 				playsModel.fireTableDataChanged();
 			}
 		});
+
+		removePlayButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (lastSelectedSituation == null) {
+					return;
+				}
+				lastSelectedSituation.removePlay(lastSelectedAddedPlay);
+				playsModel.setListOfPlays(lastSelectedSituation.getPlays());
+				playsModel.fireTableDataChanged();
+			}
+		});
+
+		upButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int index = lastSelectedSituation.getPlays().indexOf(lastSelectedAddedPlay);
+				if (index != 0) {
+					Collections.swap(lastSelectedSituation.getPlays(), index, index -1);
+				}
+				playsModel.setListOfPlays(lastSelectedSituation.getPlays());
+				playsModel.fireTableDataChanged();
+			}
+		});
+
+		downButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int index = lastSelectedSituation.getPlays().indexOf(lastSelectedAddedPlay);
+				if (index != lastSelectedSituation.getPlays().size() - 1) {
+					Collections.swap(lastSelectedSituation.getPlays(), index, index + 1);
+				}
+				playsModel.setListOfPlays(lastSelectedSituation.getPlays());
+				playsModel.fireTableDataChanged();
+			}
+		});
 	}
 	
 	
@@ -226,8 +289,14 @@ public class SituationPanel extends JPanel implements StrategyListener{
 
 	@Override
 	public void strategyChanged() {
+
 		allPlaysModel.setListOfPlays(currentStrategy.getPlays());
 		allPlaysModel.fireTableDataChanged();
+		listOfSituations = currentStrategy.getSituations();
+		situationModel.setListOfSituations(listOfSituations);
+		situationModel.fireTableDataChanged();
+		System.out.println(listOfSituations.get(0).getPlays().size());
+		playsModel.setListOfPlays(listOfSituations.get(0).getPlays());
 		//add anything else here?
 	}
 }

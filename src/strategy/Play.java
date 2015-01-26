@@ -26,4 +26,9 @@ public class Play {
     public Role[] getRoles() {
         return roles;
     }
+
+    @Override
+    public boolean equals (Object other) {
+        return (toString().equals(((Play)other).toString()));
+    }
 }
