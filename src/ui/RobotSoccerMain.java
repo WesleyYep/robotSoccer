@@ -2,16 +2,20 @@ package ui;
 
 import game.Tick;
 
-import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,14 +29,26 @@ import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import bot.Robots;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.ds.ipcam.IpCamAuth;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
+import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 import communication.Receiver;
 import communication.SerialPortCommunicator;
 
 import controllers.BallController;
 import controllers.FieldController;
 
+
 public class RobotSoccerMain extends JPanel implements ActionListener {
 
+	static {
+	    Webcam.setDriver(new IpCamDriver());
+	}
+	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
     private JButton startButton;
     private JTextArea taskOutput;
@@ -55,7 +71,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     private JTabbedPane tabPane;
 	private DrawAreaGlassPanel glassPanel;
 	
-    public RobotSoccerMain() {
+	// Constant string so that you can switch between cards.
+	final static String FIELDSTRING = "Card with Field";
+	final static String CAMSTRING = "Card with Cam";
+	
+    public RobotSoccerMain() throws MalformedURLException {
     	// Auto wrap after 12 columns.
     	// https://www.youtube.com/watch?v=U6xJfP7-HCc
     	// Layout constraint, column constraint
@@ -130,10 +150,21 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
 			}
 				
         });
+//        WebcamLogConfigurator.configure("logback.xml");
+        // Create the cards.
+        JPanel cards = new JPanel(new CardLayout());
+//        cards.add(field, FIELDSTRING);
+        // Set up webcam.
+        IpCamDevice camDevice = new IpCamDevice("BLAZE", "http://192.168.1.78:9000/video", IpCamMode.PUSH);
+        IpCamDeviceRegistry.register(camDevice);
+        Webcam webcam = Webcam.getDefault();
+
+        WebcamPanel webcamPanel = new WebcamPanel(webcam);
         
+        cards.add(webcamPanel, CAMSTRING);
         setUpGame();
         
-        add(field, "span 6, width 600:600:600");
+        add(cards, "span 6, width 600:600:600");
         add(tabPane, "span 6 4, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
         add(portPanel, "span 2, width 200:200:200");
@@ -141,7 +172,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
         add(testComContainerPanel, "span 2, width 200:200:200");
         
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
     }
 
     public void setUpGame() {
@@ -176,8 +206,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     /**
      * Create the GUI and show it. As with all GUI code, this must run
      * on the event-dispatching thread.
+     * @throws MalformedURLException 
      */
-    private static void createAndShowGUI() {
+    private static void createAndShowGUI() throws MalformedURLException {
         //Create and set up the window.
         JFrame frame = new JFrame("Robot Soccer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -196,7 +227,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                try {
+					createAndShowGUI();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
             }
         });
     }
