@@ -4,15 +4,18 @@ import java.util.TimerTask;
 
 import communication.Receiver;
 import communication.Sender;
+import communication.SenderListener;
 import ui.Field;
 import bot.Robot;
 import bot.Robots;
 import ui.TestComPanel;
 
-public class Tick extends TimerTask {
+public class Tick extends TimerTask implements SenderListener{
 	private Field field;
 	private Robots bots;
 	private TestComPanel comPanel;
+	
+	private Sender sender;
 //	private Physics physics;
 	
 	public Tick(Field field, Robots bots, TestComPanel comPanel) {
@@ -33,7 +36,9 @@ public class Tick extends TimerTask {
 
 			setBallCoordinates();
 			setBotCoordinates();
-			Sender.sendStuff();
+			if (sender != null) {
+				sender.sendStuff();
+			}
 		} else {
 			bots.send();
 		}
@@ -86,6 +91,10 @@ public class Tick extends TimerTask {
 		} else {
 			Sender.ballY = "ballY:" + ballY;
 		}
+	}
+	
+	public void setSender(Sender sender) {
+		this.sender = sender;
 	}
 
 }

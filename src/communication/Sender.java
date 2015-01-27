@@ -23,10 +23,7 @@ import java.util.Random;
  *
  */
 public class Sender {
-	private static ServerSocket serverSocket;
 	private static Socket clientSocket;
-	private static int portNumber;
-	private String errorMessage = "";
 	public static String ballX = "ballX:070";
 	public static String ballY = "ballY:070";
 //	public static String[] botXs = {"botX0:050", "botX1:060", "botX2:080","botX3:090","botX4:100"};
@@ -36,20 +33,17 @@ public class Sender {
 
 	public static BufferedWriter os = null;
 	
-	public static void connect() {
-		portNumber = 32000;
+	public Sender(Socket s) {
+		clientSocket = s;
 		try {
-			serverSocket = new ServerSocket(portNumber);
-			System.out.println("Started!\n");
-			clientSocket = serverSocket.accept();
-			System.out.println("Connected!");
 			os = new BufferedWriter(new OutputStreamWriter( clientSocket.getOutputStream()) );
-		}catch (IOException e) {
+		} catch (IOException e) {
+			os = null;
 			e.printStackTrace();
 		}
 	}
 
-	public static void sendStuff() {
+	public void sendStuff() {
 		try {
 			
 			StringBuilder outputBuffer = new StringBuilder();
@@ -70,32 +64,17 @@ public class Sender {
 			os.write(outputBuffer.toString(),0, outputBuffer.length());
 			os.flush();
 
-			/*
-			os.write(ballY,0, ballY.length());
-			os.newLine();
-			os.flush();
-			os.write(ballX,0,ballX.length());
-			os.newLine();
-			os.flush();
-			for (int i = 0; i < 5; i++) {
-				if (i == 4 ) {
-					System.out.println("x: " + botXs[i] + " y: " + botYs[i] + " Send Timestamp: " + Calendar.getInstance().getTime());
-				}
-				os.write(botXs[i],0, botXs[i].length());
-				os.newLine();
-				os.flush();
-				os.write(botYs[i],0, botYs[i].length());
-				os.newLine();
-				os.flush();
-			}
-			java.util.Date date= new java.util.Date();
-			os.write("Timestamp: " + new Timestamp(date.getTime()));
-			os.newLine();
-			os.flush();
-			
-			*/
 			
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void close() {
+		try {
+			os.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

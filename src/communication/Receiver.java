@@ -3,6 +3,7 @@ package communication;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.BindException;
 import java.net.ServerSocket;
@@ -22,17 +23,16 @@ import javax.swing.SwingWorker;
  *
  */
 public class Receiver extends SwingWorker<Void, String> {
-	private JTextArea output;
-	private ServerSocket serverSocket;
 	private Socket clientSocket;
-	private DataInputStream in;
-	private int portNumber;
+	private BufferedReader bReader;
+	private InputStreamReader iReader;
+	private InputStream in;
 	private String errorMessage = "";
 	private List<ReceiverListener> listeners = new ArrayList<ReceiverListener>();
+	private ServerSocket serverSocket;
 
-	public Receiver(JTextArea output, int portNumber) {
-		this.output =output;
-		this.portNumber = portNumber;
+	public Receiver(Socket s) {
+		clientSocket = s;
 	}
     /*
      * Main task. Executed in background thread.
@@ -40,15 +40,13 @@ public class Receiver extends SwingWorker<Void, String> {
     @Override
     public Void doInBackground() {
 		try {
-			serverSocket = new ServerSocket(portNumber);
-			output.append("Started!\n");
-			clientSocket = serverSocket.accept();
-			output.append("Connected!");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			in = clientSocket.getInputStream();
+			iReader = new InputStreamReader(in);
+			bReader = new BufferedReader(iReader);
 			//Initialize progress property.
-			while (true) {
-
-				String message = reader.readLine();
+			while (!isCancelled()) {
+				
+				String message = bReader.readLine();
 
 				if (message != null) {
 					publish(message);
@@ -60,27 +58,11 @@ public class Receiver extends SwingWorker<Void, String> {
 			errorMessage = e.getMessage();
 			return null;
 		} finally {
-			// Could do this in try-with resources but w/e. Close the resources when finished reading. Close in reverse
-			// order that they were created.
-			try {
-				in.close();
-				clientSocket.close();
-				serverSocket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			
 		}
+		return null;
 	}
     
-    public void stop() {
-    	try {
-    		this.cancel(true);
-			serverSocket.close();
-			output.append("Closed");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
     
     protected void process(List<String> chunks) {
     	for (ReceiverListener l : listeners) {
@@ -94,18 +76,21 @@ public class Receiver extends SwingWorker<Void, String> {
      */
     @Override
     public void done() {
-    	if (errorMessage.equals("")) {
-    		output.append("Done!\n");
-    	}
-    	else if ( errorMessage.equals("Address already in use: JVM_Bind")) {
-    		output.append("Please choose another port number as port " + portNumber + " is unavailable");
-    	}
-    	else {
-    		output.append("Unknown error\n");
-    	}
+    	try {
+			if (bReader != null) bReader.close();
+			if (iReader != null) iReader.close();
+			if (in != null)  in.close();
+
+			bReader = null;
+			iReader = null;
+			in = null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     public void registerListener(ReceiverListener listener) {
     	listeners.add(listener);
     }
+    
 }

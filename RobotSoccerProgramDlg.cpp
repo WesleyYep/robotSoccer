@@ -535,9 +535,6 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	//checking if the string is number only
 	has_only_digit = true;
 
-
-
-
 	for (int n = 0; n < m_portNumber.GetLength(); n++) {
 		if (!std::isdigit( m_portNumber[ n ] )) {
 			has_only_digit = false;
@@ -562,11 +559,12 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	}else {
 		Display->SetWindowText( _T("Error") );
 	}
-		//connect to the host and display the status 
-	if (connectToHost2(portNumber + 1000) == true) {
-		Display->SetWindowText( _T("Connected") );
-	}else {
-		Display->SetWindowText( _T("Error") );
+}
+
+
+SOCKET CRobotSoccerProgramDlg::getSocket() {
+	if (s != NULL) {
+		return s;
 	}
 }
 
@@ -611,28 +609,7 @@ bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 		closeConnection();
 		return false;
 	}
-
-	error = send(s, "hi", sizeof("hi"), 0);
-	if (error == SOCKET_ERROR) {
-		closeConnection();
-		return false;
-	}
-
-	return true;
-}
-
-bool CRobotSoccerProgramDlg::connectToHost2(int portNumber)
-{
-
-	//error = send(s2, "hi", sizeof("hi"), 0);
 	AfxBeginThread(DataReceivingThread, this);
-
-
-	/*
-	if (error == SOCKET_ERROR) {
-		closeConnection();
-		return false;
-	} */
 
 	return true;
 }
@@ -2089,45 +2066,7 @@ LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM lParam)
 UINT DataReceivingThread(void *pParam)
 {
 	CRobotSoccerProgramDlg* pThis= (CRobotSoccerProgramDlg*)pParam;
-	//Start up Winsock…
-	WSADATA wsadata;
-
-	int error = WSAStartup(0x0202, &wsadata);
-
-	//Did something happen?
-	if (error)
-		return false;
-
-	//Did we get the right Winsock version?
-	if (wsadata.wVersion != 0x0202)
-	{
-		WSACleanup(); //Clean up Winsock
-		return false;
-	}
-
-	//Fill out the information needed to initialize a socket…
-	SOCKADDR_IN target; //Socket address information
-
-	target.sin_family = AF_INET; // address family Internet
-	target.sin_port = htons (32000); //Port to connect on
-	target.sin_addr.s_addr = inet_addr ("127.0.0.1"); //Target IP
-
-	SOCKET s2 = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP); //Create socket
 	
-	//check if the socket is valid
-	if (s2 == INVALID_SOCKET) {
-		WSACleanup();
-		s2 = -1;
-		return false;
-	}
-
-	error = connect(s2, (SOCKADDR *)&target, sizeof(target));
-	
-	//check if the socket is able to the server
-	if (error == SOCKET_ERROR) {
-	
-	}
-
 	bool listening = true;
 	std::string outputResult;
 	std::string timestamp;
@@ -2146,9 +2085,7 @@ UINT DataReceivingThread(void *pParam)
 
 	while ( listening ) {
 		
-		//	buffer[0] = 0;
-		
-		int iResult = recv(s2, buffer,  len, 0);
+		int iResult = recv(pThis->getSocket(), buffer,  len, 0);
 		if (iResult > 0) {
 				std::string hello(buffer, 512);
 				outputResult = hello;

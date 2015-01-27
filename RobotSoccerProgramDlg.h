@@ -134,7 +134,8 @@ public:
 	void sendStuff(int data);
 	void sendStuff(std::string data);
 	bool connectToHost(int  portNumber);
-	bool connectToHost2(int  portNumber);
+
+	SOCKET getSocket();
 	std::string receiveStuff();
 
 	CObjectVelocityInfo javaVelocityInfo;

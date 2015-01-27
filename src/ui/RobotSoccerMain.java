@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import communication.NetworkSocket;
 import communication.Receiver;
 import communication.Sender;
 import communication.SerialPortCommunicator;
@@ -21,7 +22,8 @@ public class RobotSoccerMain extends JPanel
 	public static final int DEFAULT_PORT_NUMBER = 31000;
     private JButton startButton;
     private JTextArea taskOutput;
-    private Receiver task;
+
+    private NetworkSocket serverSocket;
     private FieldController fieldController;
     private BallController ballController;
     private Field field;
@@ -31,6 +33,8 @@ public class RobotSoccerMain extends JPanel
     private TestComPanel testComPanel;
     private SerialPortCommunicator serialCom;
     private Robots bots;
+    
+    private Tick gameTick;
     
     private SituationPanel situationPanel;
     
@@ -111,9 +115,7 @@ public class RobotSoccerMain extends JPanel
 			
         	
         });
-        
-        setUpGame();
-        
+         
         add(panel, BorderLayout.PAGE_START);
         
         add(tabPane, BorderLayout.LINE_END);
@@ -124,11 +126,13 @@ public class RobotSoccerMain extends JPanel
         
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
+        gameTick = new Tick(field, bots, testComPanel);
+        setUpGame();
     }
 
     public void setUpGame() {
         java.util.Timer timer = new java.util.Timer();
-        timer.schedule(new Tick(field, bots, testComPanel), 0, 50);
+        timer.schedule(gameTick, 0, 50);
     }
     /**
      * Invoked when the user presses the start button.
@@ -144,16 +148,14 @@ public class RobotSoccerMain extends JPanel
 	    		portNumber = DEFAULT_PORT_NUMBER;
 	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
 	    	}
-	    	
-	        task = new Receiver(taskOutput, portNumber);
-	        task.registerListener(fieldController);
-	        task.execute();
-
-            Sender.connect();
-
+	    	serverSocket = new NetworkSocket(portNumber, taskOutput);
+	    	serverSocket.execute();
+	    	serverSocket.addReceiverListener(fieldController);
+	    	serverSocket.addSenderListener(gameTick);
 	        startButton.setText("Stop");
     	} else {
-    		task.stop();
+    		serverSocket.cancel(true);
+    		serverSocket.stop();
     		startButton.setText("Start");
     	}
     }
