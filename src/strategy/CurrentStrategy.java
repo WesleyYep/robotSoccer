@@ -127,7 +127,7 @@ public class CurrentStrategy {
 
     public void readFromFile() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.showSaveDialog(null);
+        fileChooser.showOpenDialog(null);
         String fileName = fileChooser.getSelectedFile().getAbsolutePath();
         String line = null;
         try {
