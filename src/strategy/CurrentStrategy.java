@@ -11,7 +11,9 @@ import ui.SituationPanel;
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Wesley on 23/01/2015.
@@ -22,12 +24,26 @@ public class CurrentStrategy {
     private List<Situation> situations;
     private List<StrategyListener> listeners = new ArrayList<StrategyListener>();
     private FieldController fieldController;
+    private Map<String, Integer> robotMapping = new HashMap<String, Integer>();
 
     public CurrentStrategy (FieldController fieldController) {
         roles = new ArrayList<Role>();
         plays = new ArrayList<Play>();
         situations = new ArrayList<Situation>();
         this.fieldController = fieldController;
+        robotMapping.put("A", 1);
+        robotMapping.put("B", 2);
+        robotMapping.put("C", 3);
+        robotMapping.put("D", 4);
+        robotMapping.put("E", 5);
+    }
+
+    public void changeMapping(int a, int b, int c, int d, int e) {
+        robotMapping.put("a", a);
+        robotMapping.put("b", b);
+        robotMapping.put("c", c);
+        robotMapping.put("d", d);
+        robotMapping.put("e", e);
     }
 
     public void addListener(StrategyListener listener) {
@@ -166,7 +182,7 @@ public class CurrentStrategy {
                     SituationArea area = new SituationArea(0,0);
                     area.addAreaListener(fieldController);
                     area.setBounds(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]),
-                                                Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
+                            Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
                     fieldController.addArea(area); 
                     fieldController.setSelectedArea(area);
                     

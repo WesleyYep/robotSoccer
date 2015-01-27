@@ -27,11 +27,17 @@ public class PlaysPanel extends JPanel implements StrategyListener{
     private JButton addButton = new JButton("New");
     private JButton removeButton = new JButton("Remove");
     private JButton saveButton = new JButton("Save");
-    private JComboBox role1 = new JComboBox();
-    private JComboBox role2 = new JComboBox();
-    private JComboBox role3 = new JComboBox();
-    private JComboBox role4 = new JComboBox();
-    private JComboBox role5 = new JComboBox();
+    private JButton saveMappingButton = new JButton("Save Mapping");
+    private JComboBox roleA = new JComboBox();
+    private JComboBox roleB = new JComboBox();
+    private JComboBox roleC = new JComboBox();
+    private JComboBox roleD = new JComboBox();
+    private JComboBox roleE = new JComboBox();
+    JTextField robotAField = new JTextField("1");
+    JTextField robotBField = new JTextField("2");
+    JTextField robotCField = new JTextField("3");
+    JTextField robotDField = new JTextField("4");
+    JTextField robotEField = new JTextField("5");
     private List<Play> playsList = new ArrayList<Play>();
     private CurrentStrategy currentStrategy;
     private Play lastSelectedPlay;
@@ -46,27 +52,39 @@ public class PlaysPanel extends JPanel implements StrategyListener{
         allPlaysTable = new JTable(playsTableModel);
         playsScrollPane = new JScrollPane(allPlaysTable);
         playsScrollPane.setPreferredSize(new Dimension(300, 100));
-        role1.setPreferredSize(new Dimension(200, 10));
-        role2.setPreferredSize(new Dimension(200, 10));
-        role3.setPreferredSize(new Dimension(200, 10));
-        role4.setPreferredSize(new Dimension(200, 10));
-        role5.setPreferredSize(new Dimension(200, 10));
+        roleA.setPreferredSize(new Dimension(200, 10));
+        roleB.setPreferredSize(new Dimension(200, 10));
+        roleC.setPreferredSize(new Dimension(200, 10));
+        roleD.setPreferredSize(new Dimension(200, 10));
+        roleE.setPreferredSize(new Dimension(200, 10));
 
         add(new JLabel("Plays"), "wrap");
         add(playsScrollPane, "wrap");
         add(addButton, "split 2");
         add(removeButton, "wrap");
-        add(new JLabel("Role 1:"), "split 2");
-        add(role1, "wrap, span");
-        add(new JLabel("Role 2:"), "split 2");
-        add(role2, "wrap, span");
-        add(new JLabel("Role 3:"), "split 2");
-        add(role3, "wrap, span");
-        add(new JLabel("Role 4:"), "split 2");
-        add(role4, "wrap, span");
-        add(new JLabel("Role 5:"), "split 2");
-        add(role5, "wrap, span");
+        add(new JLabel("Robot A:"), "split 2");
+        add(roleA, "wrap, span");
+        add(new JLabel("Robot B:"), "split 2");
+        add(roleB, "wrap, span");
+        add(new JLabel("Robot C:"), "split 2");
+        add(roleC, "wrap, span");
+        add(new JLabel("Robot D:"), "split 2");
+        add(roleD, "wrap, span");
+        add(new JLabel("Robot E:"), "split 2");
+        add(roleE, "wrap, span");
         add(saveButton, "wrap");
+        add(new JLabel("Robot Mapping"), "wrap");
+        add(new JLabel("A: "), "split 4");
+        add(robotAField, "width 100");
+        add(new JLabel("B: "));
+        add(robotBField, "width 100, wrap");
+        add(new JLabel("C: "), "split 4");
+        add(robotCField, "width 100");
+        add(new JLabel("D: "));
+        add(robotDField, "width 100, wrap");
+        add(new JLabel("E: "), "split 4");
+        add(robotEField, "width 100");
+        add(saveMappingButton, "span 2");
 
         allPlaysTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
@@ -96,22 +114,35 @@ public class PlaysPanel extends JPanel implements StrategyListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 Play play = lastSelectedPlay;
-                if (role1.getSelectedItem() != null) {
-                    play.addRole(0, (Role)role1.getSelectedItem());
+                if (roleA.getSelectedItem() != null) {
+                    play.addRole(0, (Role) roleA.getSelectedItem());
                 }
-                if (role1.getSelectedItem() != null) {
-                    play.addRole(1, (Role)role2.getSelectedItem());
+                if (roleA.getSelectedItem() != null) {
+                    play.addRole(1, (Role) roleB.getSelectedItem());
                 }
-                if (role1.getSelectedItem() != null) {
-                    play.addRole(2, (Role)role3.getSelectedItem());
+                if (roleA.getSelectedItem() != null) {
+                    play.addRole(2, (Role) roleC.getSelectedItem());
                 }
-                if (role1.getSelectedItem() != null) {
-                    play.addRole(3, (Role)role4.getSelectedItem());
+                if (roleA.getSelectedItem() != null) {
+                    play.addRole(3, (Role) roleD.getSelectedItem());
                 }
-                if (role1.getSelectedItem() != null) {
-                    play.addRole(4, (Role)role5.getSelectedItem());
+                if (roleA.getSelectedItem() != null) {
+                    play.addRole(4, (Role) roleE.getSelectedItem());
                 }
 
+            }
+        });
+
+        saveMappingButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ex) {
+                int a = Integer.parseInt(robotAField.getText());
+                int b = Integer.parseInt(robotBField.getText());
+                int c = Integer.parseInt(robotCField.getText());
+                int d = Integer.parseInt(robotDField.getText());
+                int e = Integer.parseInt(robotEField.getText());
+
+                currentStrategy.changeMapping(a, b, c, d, e);
             }
         });
 
@@ -130,11 +161,11 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                     Play play = (Play)playsTableModel.getValueAt(selectedRow, 0);
                     lastSelectedPlay = play;
                     for (int i = 0; i < play.getRoles().length; i++){
-                        role1.setSelectedItem(play.getRoles()[0]);
-                        role2.setSelectedItem(play.getRoles()[1]);
-                        role3.setSelectedItem(play.getRoles()[2]);
-                        role4.setSelectedItem(play.getRoles()[3]);
-                        role5.setSelectedItem(play.getRoles()[4]);
+                        roleA.setSelectedItem(play.getRoles()[0]);
+                        roleB.setSelectedItem(play.getRoles()[1]);
+                        roleC.setSelectedItem(play.getRoles()[2]);
+                        roleD.setSelectedItem(play.getRoles()[3]);
+                        roleE.setSelectedItem(play.getRoles()[4]);
                     }
                 }
 
@@ -148,35 +179,35 @@ public class PlaysPanel extends JPanel implements StrategyListener{
         if (currentStrategy == null) {
             return;
         }
-        role1.removeAllItems();
+        roleA.removeAllItems();
         for (int i = 0; i < currentStrategy.getRoles().size(); i++) {
-            role1.addItem(currentStrategy.getRoles().get(i));
+            roleA.addItem(currentStrategy.getRoles().get(i));
         }
-        role2.removeAllItems();
+        roleB.removeAllItems();
         for (int i = 0; i < currentStrategy.getRoles().size(); i++) {
-            role2.addItem(currentStrategy.getRoles().get(i));
+            roleB.addItem(currentStrategy.getRoles().get(i));
         }
-        role3.removeAllItems();
+        roleC.removeAllItems();
         for (int i = 0; i < currentStrategy.getRoles().size(); i++) {
-            role3.addItem(currentStrategy.getRoles().get(i));
+            roleC.addItem(currentStrategy.getRoles().get(i));
         }
-        role4.removeAllItems();
+        roleD.removeAllItems();
         for (int i = 0; i < currentStrategy.getRoles().size(); i++) {
-            role4.addItem(currentStrategy.getRoles().get(i));
+            roleD.addItem(currentStrategy.getRoles().get(i));
         }
-        role5.removeAllItems();
+        roleE.removeAllItems();
         for (int i = 0; i < currentStrategy.getRoles().size(); i++) {
-            role5.addItem(currentStrategy.getRoles().get(i));
+            roleE.addItem(currentStrategy.getRoles().get(i));
         }
         if (lastSelectedPlay == null) {
             return;
         }
         for (int i = 0; i < lastSelectedPlay.getRoles().length; i++){
-            role1.setSelectedItem(lastSelectedPlay.getRoles()[0]);
-            role2.setSelectedItem(lastSelectedPlay.getRoles()[1]);
-            role3.setSelectedItem(lastSelectedPlay.getRoles()[2]);
-            role4.setSelectedItem(lastSelectedPlay.getRoles()[3]);
-            role5.setSelectedItem(lastSelectedPlay.getRoles()[4]);
+            roleA.setSelectedItem(lastSelectedPlay.getRoles()[0]);
+            roleB.setSelectedItem(lastSelectedPlay.getRoles()[1]);
+            roleC.setSelectedItem(lastSelectedPlay.getRoles()[2]);
+            roleD.setSelectedItem(lastSelectedPlay.getRoles()[3]);
+            roleE.setSelectedItem(lastSelectedPlay.getRoles()[4]);
         }
     }
 
