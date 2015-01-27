@@ -294,9 +294,12 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		allPlaysModel.fireTableDataChanged();
 		listOfSituations = currentStrategy.getSituations();
 		situationModel.setListOfSituations(listOfSituations);
+				
 		situationModel.fireTableDataChanged();
 		System.out.println(listOfSituations.get(0).getPlays().size());
 		playsModel.setListOfPlays(listOfSituations.get(0).getPlays());
 		//add anything else here?
+		
+		((JTabbedPane)this.getParent()).setSelectedComponent(this);
 	}
 }

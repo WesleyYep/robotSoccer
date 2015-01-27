@@ -144,6 +144,7 @@ public class FieldController implements ReceiverListener, AreaListener {
 			}
 			field.setComponentZOrder(comp, 0);
 		}
+		
 	}
 	
 	public void showArea(boolean show) {

@@ -165,16 +165,21 @@ public class CurrentStrategy {
                     String[] splitLine = line.split(":");
                     SituationArea area = new SituationArea(0,0);
                     area.addAreaListener(fieldController);
+                    area.setBounds(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]),
+                                                Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
+                    fieldController.addArea(area); 
                     fieldController.setSelectedArea(area);
-                    fieldController.resizeArea(Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]),
-                                                Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
+                    
+                    for (Situation s : situations) {
+                    	s.setAreaActive(false);
+                    }
                     Situation situation = new Situation(area, splitLine[1]);
                     //why does area not show up when row selected?
-                    fieldController.repaintField();
                     while (!(line = bufferedReader.readLine()).equals("-----")) {
                         situation.addPlay(getPlayByName(line));
                     }
                     situations.add(situation);
+                    situation.setAreaActive(true);
                 }
             }
             for (StrategyListener listener : listeners) {
