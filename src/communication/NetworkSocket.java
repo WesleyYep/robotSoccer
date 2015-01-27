@@ -33,6 +33,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("error");
 		}
 	}
 	
