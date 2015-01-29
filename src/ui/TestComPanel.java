@@ -81,6 +81,7 @@ public class TestComPanel extends JPanel {
 					if (currentSimWorker != null) {
 						currentSimWorker.cancel(true);
 						currentSimWorker = null;
+						robots.stopAllMovement();
 					} else {
 						currentSimWorker = new SimulationWorker("rotate");
 						currentSimWorker.execute();
@@ -109,10 +110,11 @@ public class TestComPanel extends JPanel {
 					if (currentSimWorker != null) {
 						currentSimWorker.cancel(true);
 						currentSimWorker = null;
+						robots.stopAllMovement();
 					} else {
 						currentSimWorker = new SimulationWorker("forward");
 						currentSimWorker.execute();
-					}
+					} 
 //				} else {
 //					if (currentWorker != null) {
 //						currentWorker.cancel(true);
