@@ -6,7 +6,7 @@ import strategy.Criteria;
  * Created by Wesley on 21/01/2015.
  */
 public class Criterias {
-    private static Criteria[] criterias = new Criteria[] { null, new NearBallCriterion() };
+    private static Criteria[] criterias = new Criteria[] { null, new closestToBall() };
 
     public Criteria getAction(int index) {
         return criterias[index];

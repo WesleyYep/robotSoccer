@@ -2,13 +2,11 @@ package actions;
 
 import strategy.Action;
 
-import java.util.List;
-
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class Actions {
-    private static Action[] actions = new Action[] { null, new KickAction() };
+    private static Action[] actions = new Action[] { null, new chaseBall() };
 
     public Action getAction(int index) {
         return actions[index];

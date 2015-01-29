@@ -324,4 +324,8 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	private boolean isMouseRight(MouseEvent arg0) {
 		return arg0.getX() < this.getWidth() && arg0.getX() >= this.getWidth()-MOUSE_AREA;
 	}
+
+	public boolean containsPoint(double x, double y) {
+		return (x > getX() && y > getY() && x < getX() - getWidth() && y < getY() - getHeight());
+	}
 }
