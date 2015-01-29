@@ -630,21 +630,6 @@ void CRobotSoccerProgramDlg::sendStuff(int data){
 	}
 }
 
-std::string CRobotSoccerProgramDlg::receiveStuff() {
-	//creating char* buffer
-	char buffer[512];
-//	buffer[0] = 0;
-	int len = 512;
-	int iResult = recv(s2, buffer,  len, 0);
-	if (iResult > 0) {
-		char* lol = buffer;
-		std::string hello(lol);
-		return hello;
-	} else {
-		return "";
-	}
-}
-
 void CRobotSoccerProgramDlg::sendStuff(std::string data) {
 
 	//creating char* buffer
@@ -1597,6 +1582,7 @@ void CRobotSoccerProgramDlg::OnBnClickedCancel()
 		
 		if( AfxMessageBox(_T("Are you sure you want to exit the program?"), MB_YESNO|MB_ICONQUESTION) == IDYES )
 		{
+			sendStuff("closing");
 			m_bExit = true;
 		}
 	}
@@ -2079,10 +2065,6 @@ UINT DataReceivingThread(void *pParam)
 	char buffer[512];
 	int len = 512;
 
-	std::string stringResult;
-
-	double doubleResult;
-
 	while ( listening ) {
 		
 		int iResult = recv(pThis->getSocket(), buffer,  len, 0);
@@ -2105,53 +2087,55 @@ UINT DataReceivingThread(void *pParam)
 					size_t pos = 0;
 					if (x.at(index).length() < 14) {
 					}
-					else if ( pos = x.at(index).find("lin bot0:" ) != std::string::npos) {
-						stringResult = x.at(index).substr(pos+10);
-						doubleResult = stod(stringResult);
-						velocityObject.m_LinearVelocity[0] = stod(x.at(index).substr(pos+10));
+					else if ( pos =x.at(index).find("lin") != std::string::npos) {
+						if ( pos = x.at(index).find("lin bot0:" ) != std::string::npos) {
+							velocityObject.m_LinearVelocity[0] = stod(x.at(index).substr(pos+10));	
+						}
+						else if ( pos = x.at(index).find("lin bot1:" ) != std::string::npos ) {
 
-						std::ostringstream strs;
-						strs << velocityObject.m_LinearVelocity[0];
-						pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), reinterpret_cast<LPARAM>(&elems));
-					}
-					else if ( pos = x.at(index).find("lin bot1:" ) != std::string::npos ) {
+							velocityObject.m_LinearVelocity[1] = stod(x.at(index).substr(pos+10));
+						}
+						else if (pos = x.at(index).find("lin bot2:" ) != std::string::npos ) {
 
-						velocityObject.m_LinearVelocity[1] = stod(x.at(index).substr(pos+10));
-					}
-					else if (pos = x.at(index).find("lin bot2:" ) != std::string::npos ) {
+							velocityObject.m_LinearVelocity[2] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("lin bot3:" ) != std::string::npos) {
 
-						velocityObject.m_LinearVelocity[2] = stod(x.at(index).substr(pos+10));
-					}
-					else if ( pos = x.at(index).find("lin bot3:" ) != std::string::npos) {
+							velocityObject.m_LinearVelocity[3] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("lin bot4:" ) != std::string::npos) {
 
-						velocityObject.m_LinearVelocity[3] = stod(x.at(index).substr(pos+10));
+							velocityObject.m_LinearVelocity[4] = stod(x.at(index).substr(pos+10));
+						}
 					}
-					else if ( pos = x.at(index).find("lin bot4:" ) != std::string::npos) {
-
-						velocityObject.m_LinearVelocity[4] = stod(x.at(index).substr(pos+10));
-					}
-					else if ( pos = x.at(index).find("ang bot0:" ) != std::string::npos ) {
-						velocityObject.m_AngularVelocity[0] = stod(x.at(index).substr(pos+10));
-					}
-					else if (pos = x.at(index).find("ang bot1:" ) != std::string::npos ) {
-						velocityObject.m_AngularVelocity[1] = stod(x.at(index).substr(pos+10));
-					}
-					else if ( pos = x.at(index).find("ang bot2:" ) != std::string::npos) {
-						velocityObject.m_AngularVelocity[2] = stod(x.at(index).substr(pos+10));
-					}
-					else if ( pos = x.at(index).find("ang bot3:" ) != std::string::npos) {
-						velocityObject.m_AngularVelocity[3] = stod(x.at(index).substr(pos+10));
-					}
-					else if ( pos = x.at(index).find("ang bot4:" ) != std::string::npos) {
-						velocityObject.m_AngularVelocity[4] = stod(x.at(index).substr(pos+10));;
+					else if  ( pos =x.at(index).find("ang") != std::string::npos) {
+						if ( pos = x.at(index).find("ang bot0:" ) != std::string::npos ) {
+							velocityObject.m_AngularVelocity[0] = stod(x.at(index).substr(pos+10));
+						}
+						else if (pos = x.at(index).find("ang bot1:" ) != std::string::npos ) {
+							velocityObject.m_AngularVelocity[1] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("ang bot2:" ) != std::string::npos) {
+							velocityObject.m_AngularVelocity[2] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("ang bot3:" ) != std::string::npos) {
+							velocityObject.m_AngularVelocity[3] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("ang bot4:" ) != std::string::npos) {
+							velocityObject.m_AngularVelocity[4] = stod(x.at(index).substr(pos+10));;
+						}
 					}
 					else if ( pos = x.at(index).find("Timestamp" ) != std::string::npos) {
 						timestamp = x.at(index);
 					}
+					pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), reinterpret_cast<LPARAM>(&elems));
 					
-				}
-				
+				}		
 		} 
+		else {
+			listening = false;
+			closesocket(pThis->getSocket());
+		}
 	}
 	
     return 0;

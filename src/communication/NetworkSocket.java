@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
@@ -20,10 +21,12 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 	private JTextArea output;
 	private List<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
 	private List<SenderListener> senderListeners = new ArrayList<SenderListener>();
+	private JButton toggleButton;
 	
-	public NetworkSocket(int portNumber, JTextArea o) {
+	public NetworkSocket(int portNumber, JTextArea o, JButton button) {
 		try {
-			
+			toggleButton = button;
+	        toggleButton.setText("Stop");
 			output = o;
 			serverSocket = new ServerSocket(portNumber);
 			sender = null;
@@ -44,7 +47,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 		clientSocket = serverSocket.accept();
 		output.append("connected\n");
 		publish(new Sender(clientSocket));
-		receiver = new Receiver(clientSocket);
+		receiver = new Receiver(clientSocket, this);
 		for (ReceiverListener l : receiverListeners) {
 			receiver.registerListener(l);
 		}
@@ -69,7 +72,9 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 	 }
 	 
 	 public void stop() {
-		 
+		 if (receiver != null && !receiver.isCancelled()) {
+			 receiver.cancel(false);
+		 }
 		 
 		 
 		 if (sender != null) {
@@ -80,19 +85,14 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 			 l.setSender(null);
 		 }
 
-		 if (receiver != null) {
-			 receiver.cancel(false);
-		 }
-		 
 		try {
 				if (clientSocket != null) clientSocket.close();
 				if (serverSocket != null) serverSocket.close();
 
 		} catch (IOException e) {
 				e.printStackTrace();
-		}
-		
-		 
+		} 
+		toggleButton.setText("Start");
 	 }
 	 
 	 public Sender getSender() {

@@ -23,11 +23,7 @@ import java.util.Random;
  *
  */
 public class Sender {
-	private static Socket clientSocket;
-	public static String ballX = "ballX:070";
-	public static String ballY = "ballY:070";
-//	public static String[] botXs = {"botX0:050", "botX1:060", "botX2:080","botX3:090","botX4:100"};
-//	public static String[] botYs = {"botY0:050", "botY1:060", "botY2:080","botY3:090","botY4:100"};
+	private Socket clientSocket;
 	public static String[] botXs = {"", "", "","",""};
 	public static String[] botYs = {"", "", "","",""};
 
@@ -48,9 +44,7 @@ public class Sender {
 			
 			StringBuilder outputBuffer = new StringBuilder();
 			
-			outputBuffer.append(ballY + System.lineSeparator());
-			outputBuffer.append(ballX + System.lineSeparator());
-			
+			outputBuffer.append("Ignore first line" + System.lineSeparator());
 			for (int i = 0; i<5; i++) {
 				outputBuffer.append(botXs[i]+ System.lineSeparator());
 				outputBuffer.append(botYs[i]+ System.lineSeparator());
@@ -59,7 +53,6 @@ public class Sender {
 			while (outputBuffer.length() <=512 ) {
 				outputBuffer.append(" ");
 			}
-			
 			System.out.println(outputBuffer.toString());
 			os.write(outputBuffer.toString(),0, outputBuffer.length());
 			os.flush();
@@ -74,7 +67,6 @@ public class Sender {
 		try {
 			os.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -136,7 +136,6 @@ public:
 	bool connectToHost(int  portNumber);
 
 	SOCKET getSocket();
-	std::string receiveStuff();
 
 	CObjectVelocityInfo javaVelocityInfo;
 
@@ -149,7 +148,6 @@ public:
 	int number;
 
 	SOCKET s;
-	SOCKET s2;
 
 	afx_msg void OnBnClickedConnectToHost();
 	afx_msg void OnBnClickedOpenRobotsoccerSystem();

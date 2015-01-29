@@ -24,30 +24,33 @@ import javax.swing.SwingWorker;
  */
 public class Receiver extends SwingWorker<Void, String> {
 	private Socket clientSocket;
-	private BufferedReader bReader;
-	private InputStreamReader iReader;
-	private InputStream in;
-	private String errorMessage = "";
 	private List<ReceiverListener> listeners = new ArrayList<ReceiverListener>();
-	private ServerSocket serverSocket;
+	private NetworkSocket serverSocket;
+	private boolean isClientClosing = false;
 
-	public Receiver(Socket s) {
+	public Receiver(Socket s, NetworkSocket nS) {
 		clientSocket = s;
+		serverSocket = nS;
+
 	}
     /*
      * Main task. Executed in background thread.
      */
     @Override
     public Void doInBackground() {
-		try {
-			in = clientSocket.getInputStream();
-			iReader = new InputStreamReader(in);
-			bReader = new BufferedReader(iReader);
+		try (InputStream inputStream = clientSocket.getInputStream();
+			 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 			//Initialize progress property.
 			while (!isCancelled()) {
 				
-				String message = bReader.readLine();
-
+				String message = bufferedReader.readLine();
+				
+				if (message.equals("closing")) {
+					this.cancel(false);
+					isClientClosing = true;
+				}
+				
 				if (message != null) {
 					publish(message);
 				}
@@ -55,11 +58,8 @@ public class Receiver extends SwingWorker<Void, String> {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			errorMessage = e.getMessage();
 			return null;
-		} finally {
-			
-		}
+		} 
 		return null;
 	}
     
@@ -76,17 +76,11 @@ public class Receiver extends SwingWorker<Void, String> {
      */
     @Override
     public void done() {
-    	try {
-			if (bReader != null) bReader.close();
-			if (iReader != null) iReader.close();
-			if (in != null)  in.close();
-
-			bReader = null;
-			iReader = null;
-			in = null;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    	if (isClientClosing) {
+    		serverSocket.stop();
+    		System.out.println("client has closed connection");
+    	}
+    	
     }
     
     public void registerListener(ReceiverListener listener) {
