@@ -1,11 +1,17 @@
 package strategy;
 
+import bot.Robots;
+
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class Role {
     private String roleName;
     private CriteriaActionPair[] pairs = {null, null, null, null, null};
+    private Robots bots;
+    private int index;
+    private double ballX;
+    private double ballY;
 
     public void setRoleName(String value) {
         this.roleName = value;
@@ -44,9 +50,34 @@ public class Role {
         return criterias;
     }
 
+    public void execute() {
+        for (CriteriaActionPair cap : pairs) {
+            Criteria c = cap.getCriteria();
+            c.addRobot(bots, index);
+            c.setBallPosition(ballX, ballY);
+            if (cap.getCriteria().isMet()) {
+                Action a = cap.getAction();
+                a.addRobot(bots, index);
+                a.setBallPosition(ballX, ballY);
+                a.execute();
+            }
+        }
+    }
+
+    public void addRobot (Robots bots, int index) {
+        this.bots = bots;
+        this.index = index;
+    }
+
+    public void setBallPosition(double x, double y) {
+        this.ballX = x;
+        this.ballY = y;
+    }
+
     @Override
     public String toString() {
         return roleName;
     }
+
 
 }

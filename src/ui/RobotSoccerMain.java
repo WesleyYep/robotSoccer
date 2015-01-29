@@ -89,6 +89,7 @@ public class RobotSoccerMain extends JPanel
         }
 
         currentStrategy = new CurrentStrategy(fieldController);
+        field.setCurrentStrategy(currentStrategy);
         situationPanel = new SituationPanel(fieldController, currentStrategy);
         playsPanel = new PlaysPanel(currentStrategy);
         rolesPanel = new RolesPanel(currentStrategy);
