@@ -53,7 +53,6 @@ public class Sender {
 			while (outputBuffer.length() <=512 ) {
 				outputBuffer.append(" ");
 			}
-			System.out.println(outputBuffer.toString());
 			os.write(outputBuffer.toString(),0, outputBuffer.length());
 			os.flush();
 
