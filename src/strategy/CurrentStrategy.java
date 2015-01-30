@@ -179,7 +179,7 @@ public class CurrentStrategy {
                     plays.add(play);
                 } else if (line.startsWith("Situation:")) {
                     String[] splitLine = line.split(":");
-                    SituationArea area = new SituationArea(0,0);
+                    SituationArea area = new SituationArea(Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
                     area.addAreaListener(fieldController);
                     area.setBounds(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]),
                             Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));

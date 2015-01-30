@@ -300,6 +300,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		playsModel.setListOfPlays(listOfSituations.get(0).getPlays());
 		//add anything else here?
 		
+		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
 		((JTabbedPane)this.getParent()).setSelectedComponent(this);
 	}
 }
