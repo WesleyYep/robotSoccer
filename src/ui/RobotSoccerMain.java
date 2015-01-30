@@ -7,17 +7,17 @@ import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -29,39 +29,30 @@ import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import bot.Robots;
 
-import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.ds.ipcam.IpCamAuth;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
-import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 import communication.Receiver;
 import communication.SerialPortCommunicator;
 
 import controllers.BallController;
 import controllers.FieldController;
+import controllers.WebcamController;
 
 
 public class RobotSoccerMain extends JPanel implements ActionListener {
-
-	static {
-	    Webcam.setDriver(new IpCamDriver());
-	}
 	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
-    private JButton startButton;
+    private JButton startButton, connectionButton, recordButton;
     private JTextArea taskOutput;
     private Receiver task;
     private FieldController fieldController;
     private BallController ballController;
     private Field field;
     private Ball ball;
-    private JTextField portField;
+    private JTextField portField, webcamURLField;
     private RobotInfoPanel[] robotInfoPanels;
     private TestComPanel testComPanel;
     private SerialPortCommunicator serialCom;
     private Robots bots;
+    private JRadioButton defaultWebcamRadioButton, IPWebcamRadioButton;
     
     private SituationPanel situationPanel;
     private PlaysPanel playsPanel;
@@ -71,9 +62,16 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     private JTabbedPane tabPane;
 	private DrawAreaGlassPanel glassPanel;
 	
+	private WebcamController webcamController;
+	
 	// Constant string so that you can switch between cards.
-	final static String FIELDSTRING = "Card with Field";
-	final static String CAMSTRING = "Card with Cam";
+	private final static String FIELDSTRING = "Card with Field";
+	private final static String CAMSTRING = "Card with Cam";
+	
+	private final static String[] CONNECTION = {"Connect", "Disconnect"};
+	private final static String[] VIDEOCAPTURE = {"Record", "Stop"};
+	
+	private final static String[] WEBCAMCONNECTIONTYPE = {"Default", "IP"};
 	
     public RobotSoccerMain() throws MalformedURLException {
     	// Auto wrap after 12 columns.
@@ -150,28 +148,60 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
 			}
 				
         });
-//        WebcamLogConfigurator.configure("logback.xml");
+        
+        // Create webcam component panel.
+        JPanel webcamComponentPanel = new JPanel(new MigLayout());
+        JLabel webcamURLLabel = new JLabel("URL");
+        // Create the components.
+        webcamURLField = new JTextField();
+        
+        defaultWebcamRadioButton = new JRadioButton(WEBCAMCONNECTIONTYPE[0]);
+        IPWebcamRadioButton = new JRadioButton(WEBCAMCONNECTIONTYPE[1]);
+        
+        ButtonGroup webcamSelectionGroup = new ButtonGroup();
+        webcamSelectionGroup.add(defaultWebcamRadioButton);
+        webcamSelectionGroup.add(IPWebcamRadioButton);
+
+        // Add Listener for radio buttons.
+        defaultWebcamRadioButton.addActionListener(this);
+        IPWebcamRadioButton.addActionListener(this);
+        
+        // Initially set defaultWebcamRadioButton
+        defaultWebcamRadioButton.doClick();
+        
+        connectionButton = new JButton(CONNECTION[0]);
+        recordButton = new JButton(VIDEOCAPTURE[0]);
+        
+        // Add listeners
+        connectionButton.addActionListener(this);
+        recordButton.addActionListener(this);
+        
+        // Add components into panel.
+        webcamComponentPanel.add(webcamURLLabel, "span 2, wrap");
+        webcamComponentPanel.add(webcamURLField, "span 2, pushx, growx, wrap");
+        webcamComponentPanel.add(defaultWebcamRadioButton, "split 2");
+        webcamComponentPanel.add(IPWebcamRadioButton, "wrap");
+        webcamComponentPanel.add(connectionButton);
+        webcamComponentPanel.add(recordButton);
+        
         // Create the cards.
         JPanel cards = new JPanel(new CardLayout());
+        WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel();
+        webcamController = new WebcamController(webcamDisplayPanel);
+        cards.add(webcamDisplayPanel, CAMSTRING);
 //        cards.add(field, FIELDSTRING);
-        // Set up webcam.
-        IpCamDevice camDevice = new IpCamDevice("BLAZE", "http://192.168.1.78:9000/video", IpCamMode.PUSH);
-        IpCamDeviceRegistry.register(camDevice);
-        Webcam webcam = Webcam.getDefault();
-
-        WebcamPanel webcamPanel = new WebcamPanel(webcam);
-        
-        cards.add(webcamPanel, CAMSTRING);
         setUpGame();
         
-        add(cards, "span 6, width 600:600:600");
+        add(cards, "span 6, width 600:600:600, height 400:400:400");
         add(tabPane, "span 6 4, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
         add(portPanel, "span 2, width 200:200:200");
-        add(new JScrollPane(taskOutput), "span 4 2, width 400:400:400, pushy, growy, wrap");
+        add(new JScrollPane(taskOutput), "span 4 3, width 400:400:400, pushy, growy, wrap");
+        add(webcamComponentPanel, "span 2, width 200:200:200");
         add(testComContainerPanel, "span 2, width 200:200:200");
         
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
     }
 
     public void setUpGame() {
@@ -184,22 +214,56 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-    	if (startButton.getText() == "Start") {
-	    	int portNumber;
-	    	try {
-	    		portNumber = Integer.parseInt(portField.getText());
-	    	}	catch (NumberFormatException e) {
-	    		portNumber = DEFAULT_PORT_NUMBER;
-	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
-	    	}
-	    	
-	        task = new Receiver(taskOutput, portNumber);
-	        task.registerListener(fieldController);
-	        task.execute();
-	        startButton.setText("Stop");
-    	} else {
-    		task.stop();
-    		startButton.setText("Start");
+    	if (evt.getSource() == startButton) {
+    		if (startButton.getText() == "Start") {
+    	    	int portNumber;
+    	    	try {
+    	    		portNumber = Integer.parseInt(portField.getText());
+    	    	}	catch (NumberFormatException e) {
+    	    		portNumber = DEFAULT_PORT_NUMBER;
+    	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+    	    	}
+    	    	
+    	        task = new Receiver(taskOutput, portNumber);
+    	        task.registerListener(fieldController);
+    	        task.execute();
+    	        startButton.setText("Stop");
+    		} else {
+        		task.stop();
+        		startButton.setText("Start");
+    		}
+    	} else if (evt.getSource() == defaultWebcamRadioButton) {
+    		webcamURLField.setEditable(false);
+    	} else if (evt.getSource() == IPWebcamRadioButton) {
+    		webcamURLField.setEditable(true);
+    	} else if (evt.getSource() == connectionButton) {
+    		if (connectionButton.getText().equals(CONNECTION[0])) {
+
+    			boolean success;
+    			// Only one of the radio buttons can be selected at a time
+    			if (defaultWebcamRadioButton.isSelected()) {
+    				success = webcamController.connect();
+    			} else {
+    				success = webcamController.connect(webcamURLField.getText());
+    			}
+    			
+    			// If connection is a success, change text.
+    			if (success) {
+    				connectionButton.setText(CONNECTION[1]);
+    			}
+    			
+    		} else {
+    			
+    			webcamController.disconnect();
+    			connectionButton.setText(CONNECTION[0]);
+    			
+    		}
+    	} else if (evt.getSource() == recordButton) {
+    		if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
+    			recordButton.setText(VIDEOCAPTURE[1]);
+    		} else {
+    			recordButton.setText(VIDEOCAPTURE[0]);
+    		}
     	}
     }
 
