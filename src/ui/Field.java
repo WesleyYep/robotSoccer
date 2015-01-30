@@ -378,11 +378,12 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		List<Situation> situations = currentStrategy.getSituations();
 		for (int i = 0; i < situations.size(); i++) {
 			if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
+				if (situations.get(i).getPlays().size() == 0) { break; }
 				Play p = situations.get(i).getPlays().get(0); //get the first play
-				Role r1 = p.getRoles()[0];
-				//add bot[0]to role.
+				if (p == null) { break; }
 				for (int j = 0; j < 5; j++) {
 					Role role = p.getRoles()[j];
+					if (role == null) { continue; }
 					role.addRobot(bots, j);
 					role.setBallPosition(getBallX(), getBallY());
 					role.execute();

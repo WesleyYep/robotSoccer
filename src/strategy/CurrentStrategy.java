@@ -121,8 +121,8 @@ public class CurrentStrategy {
                         continue;
                     }
                     bufferedWriter.write(r.toString() + "\n");
-                    bufferedWriter.write("-----\n");
                 }
+                bufferedWriter.write("-----\n");
             }
 
             for (Situation s : situations) {

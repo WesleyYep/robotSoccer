@@ -52,7 +52,9 @@ public class Role {
 
     public void execute() {
         for (CriteriaActionPair cap : pairs) {
+            if (cap == null) { continue; }
             Criteria c = cap.getCriteria();
+            if (c == null) { continue; }
             c.addRobot(bots, index);
             c.setBallPosition(ballX, ballY);
             if (cap.getCriteria().isMet()) {

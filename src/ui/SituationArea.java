@@ -86,8 +86,8 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	
 	protected void paintComponent(Graphics g) {
 		nameLbl.setText(situationName);
-		coordLbl.setText("X: " + this.getX() + " Y: " + this.getY());
-		sizeLbl.setText("W: " + this.getWidth() + " H: " + this.getHeight());
+		coordLbl.setText("X: " + (this.getX() - Field.ORIGIN_X)/Field.SCALE_FACTOR + " Y: " + (this.getY() - Field.ORIGIN_Y)/Field.SCALE_FACTOR);
+		sizeLbl.setText("W: " + this.getWidth()/Field.SCALE_FACTOR + " H: " + this.getHeight()/Field.SCALE_FACTOR);
 		
 		super.paintComponent(g);
 	    Graphics2D g2d = (Graphics2D) g;
@@ -326,6 +326,17 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 	}
 
 	public boolean containsPoint(double x, double y) {
-		return (x > getX() && y > getY() && x < getX() - getWidth() && y < getY() - getHeight());
+//		System.out.println("ball x: " + x);
+//		System.out.println("ball y: " + y);
+		double areaX = (this.getX() - Field.ORIGIN_X) / Field.SCALE_FACTOR;
+		double areaY = (this.getY() - Field.ORIGIN_Y) / Field.SCALE_FACTOR;
+		double width = this.getWidth() / Field.SCALE_FACTOR;
+		double height = this.getHeight() / Field.SCALE_FACTOR;
+//		System.out.println("x: " + getX());
+//		System.out.println("y: " + getY());
+//		System.out.println("height: " + getHeight());
+//		System.out.println("width: " + getWidth());
+//		System.out.println((x > areaX && y > areaY && x < areaX + width && y < areaY + height));
+		return (x > areaX && y > areaY && x < areaX + width && y < areaY + height);
 	}
 }

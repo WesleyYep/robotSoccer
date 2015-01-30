@@ -23,9 +23,10 @@ public class closestToBall extends Criteria{
             if (i == index) {
                 continue;
             } else {
-                Robot r2 = bots.getRobot(index);
+                Robot r2 = bots.getRobot(i);
                 double x2 = r2.getXPosition();
                 double y2 = r2.getYPosition();
+
                 double distanceOther = Math.sqrt(squared(x2-ballX) + squared(y2-ballY));
                 if (distanceOther < distance) {
                     return false;
