@@ -38,6 +38,7 @@ public class Receiver extends SwingWorker<Void, String> {
      */
     @Override
     public Void doInBackground() {
+    	System.out.println("listeneing");
 		try (InputStream inputStream = clientSocket.getInputStream();
 			 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
@@ -48,7 +49,6 @@ public class Receiver extends SwingWorker<Void, String> {
 				
 				if (message.equals("closing")) {
 					this.cancel(false);
-					isClientClosing = true;
 				}
 				
 				if (message != null) {
@@ -58,6 +58,7 @@ public class Receiver extends SwingWorker<Void, String> {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			
 			return null;
 		} 
 		return null;
@@ -76,10 +77,9 @@ public class Receiver extends SwingWorker<Void, String> {
      */
     @Override
     public void done() {
-    	if (isClientClosing) {
-    		serverSocket.stop();
-    		System.out.println("client has closed connection");
-    	}
+    	serverSocket.closeOutputStream();
+    	serverSocket.closeServerSocket();
+    	System.out.println("client has closed connection");
     	
     }
     

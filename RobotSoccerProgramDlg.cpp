@@ -2138,6 +2138,9 @@ UINT DataReceivingThread(void *pParam)
 							velocityObject.m_AngularVelocity[4] = stod(x.at(index).substr(pos+10));;
 						}
 					}
+					else if ( pos =x.at(index).find("close connection") != std::string::npos ) {
+						pThis->sendStuff("closing");
+					}
 
 					//send a message to the main thread containing the processed data
 					pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), reinterpret_cast<LPARAM>(&elems));

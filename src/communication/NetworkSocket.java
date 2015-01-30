@@ -22,6 +22,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 	private List<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
 	private List<SenderListener> senderListeners = new ArrayList<SenderListener>();
 	private JButton toggleButton;
+	private boolean isClientConnected = false;
 	
 	public NetworkSocket(int portNumber, JTextArea o, JButton button) {
 		try {
@@ -52,13 +53,15 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 			receiver.registerListener(l);
 		}
 		receiver.execute();
-		
+		isClientConnected = true;
 		return null;
 	}
 	
 	@Override
     protected void done() {
-       System.out.println("done");
+		if (isClientConnected) {
+			System.out.println("connected to client");
+		}
     }
 	 protected void process(List<Sender> chunks) {
 		 for (Sender s : chunks) {
@@ -71,28 +74,10 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 		 
 	 }
 	 
-	 public void stop() {
-		 if (receiver != null && !receiver.isCancelled()) {
-			 receiver.cancel(false);
-		 }
-		 
-		 
+	 public void closeOutputStream() {	
 		 if (sender != null) {
 			 sender.close();
-		 }
-		 
-		 for (SenderListener l : senderListeners) {
-			 l.setSender(null);
-		 }
-
-		try {
-				if (clientSocket != null) clientSocket.close();
-				if (serverSocket != null) serverSocket.close();
-
-		} catch (IOException e) {
-				e.printStackTrace();
-		} 
-		toggleButton.setText("Start");
+		 } 
 	 }
 	 
 	 public Sender getSender() {
@@ -106,5 +91,44 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 	 public void addSenderListener(SenderListener listener) {
 		 senderListeners.add(listener);
 	 }
+
+	public void closeServerSocket() {
+		try {
+			this.clientSocket.close();
+			this.serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		toggleButton.setText("Start");
+		
+	}
+
+	public void close() {
+		/**
+		 * if a client is connected already, set sender to null for all the object using it
+		 * then send a message to C++ program requesting a closing message back. Once the receiver 
+		 * read the closing message from the C++ program. The receiver will stop listening and close 
+		 * all the input readers and stream. Then in the receiver done method, it will close the outputstream
+		 * first after that it will close the sockets and toggle the button.
+		 */
+		if (isClientConnected) {
+			for (SenderListener l : senderListeners) {
+				 l.setSender(null);
+			}
+			
+			if (sender != null) {
+				sender.sendStuff("close connection" + System.lineSeparator());
+			}
+		}
+		/**
+		 * if no client is connected, the program can cancel the current worker and
+		 * toggle the button back to start
+		 */
+		else {
+			this.cancel(true);
+			System.out.println("no client connected, stopping the server socket");
+			toggleButton.setText("Start");
+		}
+	}
 
 }
