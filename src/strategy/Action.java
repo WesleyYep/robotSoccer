@@ -1,5 +1,6 @@
 package strategy;
 
+import Paths.Path;
 import bot.Robots;
 
 /**
@@ -7,9 +8,10 @@ import bot.Robots;
  */
 public abstract class Action {
     protected Robots bots;
-    private double ballX;
-    private double ballY;
+    protected double ballX;
+    protected double ballY;
     protected int index;
+    protected Path path;
 
     public abstract String getName();
 
