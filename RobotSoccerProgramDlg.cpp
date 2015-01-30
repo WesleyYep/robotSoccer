@@ -391,10 +391,19 @@ UINT DrawDisplay_callback(LPVOID pParam)
 
 bool CRobotSoccerProgramDlg::Initialization(void)
 {
-	number = 0;
+	//preset the program to simulation mode
+	CButton* simulationCheckBox;
+	simulationCheckBox = reinterpret_cast<CButton *>(GetDlgItem(IDC_CHECK_SIMULATION));
+	simulationCheckBox->SetCheck(1);
 
-	isSending = false;
+	CButton* manualButton;
+	manualButton = reinterpret_cast<CButton *>(GetDlgItem(IDC_CHECK_TRANSMITTER_TEST));
+	manualButton->SetCheck(1);
+	UpdateData();
+	//
 	m_comboCameraID.SetCurSel(0);
+
+
 
 	{
 		m_graphMain.SetRegionY( 0, 0.2 );
@@ -466,10 +475,10 @@ bool CRobotSoccerProgramDlg::Initialization(void)
 		m_propStrategyGUI.SetDisplayDC( &m_dcDisplay );
 	}
 
-
+	//tab control
+	m_PropertySheet.AddPage(&m_propGame);
 	m_PropertySheet.AddPage(&m_propColorSetting);	
-	m_PropertySheet.AddPage(&m_propVision);	
-	m_PropertySheet.AddPage(&m_propGame);	
+	m_PropertySheet.AddPage(&m_propVision);		
 	m_PropertySheet.AddPage(&m_propStrategyGUI);	
 
 	m_PropertySheet.Create(this, WS_CHILD|WS_VISIBLE,0);
@@ -833,7 +842,6 @@ void CRobotSoccerProgramDlg::Process(void)
 		n = sprintf(test,"Ball x=%f y=%f ",ball_xPos,ball_yPos);
 		std::string message(test);
 		sendStuff(message);
-		
 
 		m_propGame.SetObjectInfomation( m_ObjectInfo, current, past, error );
 		
@@ -2000,13 +2008,14 @@ LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM lParam)
 	UpdateData(true);
 	CEdit* Display;
 	CListBox* bigBox;
-	number++;
-	if (number >9) {
-		number =0;
-	}
+	//number++;
+	//if (number >9) {
+	//	number =0;
+	//}
 	
 	
 	CObjectVelocityInfo object = *(reinterpret_cast<CObjectVelocityInfo*>(wParam));
+	/*
 	std::vector<std::string> y = *(reinterpret_cast<std::vector<std::string>*>(lParam));
 	// debugging output start
 	bigBox = reinterpret_cast<CListBox *>(GetDlgItem(IDC_DEBUG_BIG_BOX));
@@ -2037,6 +2046,7 @@ LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM lParam)
 	//Display->SetWindowText(ws.c_str());
 
 	//debuggin output end
+	*/
 	m_cs.Lock();
 	for( int i=0 ; i<11 ; i++ ){
 
@@ -2051,6 +2061,7 @@ LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM lParam)
 //the function that the thread will be running
 UINT DataReceivingThread(void *pParam)
 {
+	//initialising all the variable to read the incoming data
 	CRobotSoccerProgramDlg* pThis= (CRobotSoccerProgramDlg*)pParam;
 	
 	bool listening = true;
@@ -2067,11 +2078,15 @@ UINT DataReceivingThread(void *pParam)
 
 	while ( listening ) {
 		
+		//reading the data and  putting it into the buffer
 		int iResult = recv(pThis->getSocket(), buffer,  len, 0);
+
+		//if there is something in the buffer, process it
 		if (iResult > 0) {
 				std::string hello(buffer, 512);
 				outputResult = hello;
 				x.clear();
+				//breaking up the chunks of data into each line in a vector
 				std::vector<std::string> elems;
 				std::stringstream ss(outputResult);
 				std::string item;
@@ -2080,10 +2095,8 @@ UINT DataReceivingThread(void *pParam)
 				}
 				x = elems;
 				
-
+				//reading each line of data
 				for (size_t index=0; index<x.size(); index++) {
-					std::vector<char> writable(x.at(index).begin(), x.at(index).end());
-					writable.push_back('\0');
 					size_t pos = 0;
 					if (x.at(index).length() < 14) {
 					}
@@ -2125,16 +2138,17 @@ UINT DataReceivingThread(void *pParam)
 							velocityObject.m_AngularVelocity[4] = stod(x.at(index).substr(pos+10));;
 						}
 					}
-					else if ( pos = x.at(index).find("Timestamp" ) != std::string::npos) {
-						timestamp = x.at(index);
-					}
+
+					//send a message to the main thread containing the processed data
 					pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), reinterpret_cast<LPARAM>(&elems));
 					
 				}		
 		} 
+		//if no more data close the socket
 		else {
 			listening = false;
 			closesocket(pThis->getSocket());
+			WSACleanup();
 		}
 	}
 	
