@@ -193,7 +193,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
         setUpGame();
         
         add(cards, "span 6, width 600:600:600, height 400:400:400");
-        add(tabPane, "span 6 4, width 600:600:600, pushy, growy, wrap");
+        add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
         add(portPanel, "span 2, width 200:200:200");
         add(new JScrollPane(taskOutput), "span 4 3, width 400:400:400, pushy, growy, wrap");

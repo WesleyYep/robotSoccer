@@ -7,6 +7,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import net.miginfocom.swing.MigLayout;
+
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 
@@ -34,15 +36,18 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void update(Webcam webcam) {
-		// Gets webcam from controller. If webcam is null, it means webcam was not found.
+		// Gets webcam from controller. If webcam is null, it means webcam was not found.		
 		if (webcam == null) {
 			currentViewState = ViewState.connectionFail();
-		} else if (!webcam.isOpen()) {
+		} else if (!webcam.isOpen() && !webcam.getLock().isLocked()) {
+			currentViewState = ViewState.connectionQuery();
+		} else if (!webcam.isOpen() && webcam.getLock().isLocked()) {
 			currentViewState = ViewState.disconnect();
 			remove(webcamPanel);
 		} else {
 			currentViewState = ViewState.connectionSuccess();
 			webcamPanel = new WebcamPanel(webcam);
+			webcamPanel.setSize(getSize());
 			add(webcamPanel, BorderLayout.CENTER);
 		}
 		
@@ -71,13 +76,13 @@ public class WebcamDisplayPanel extends JPanel {
 			
 			g.drawString(displayMessage, displayMessageX, displayMessageY);
 		}
-		
 	}
 
 	// Nested enum.
 	private enum ViewState {
 		
 		UNCONNECTED("Software is not connected to a webcam device"),
+		CONNECTING("Software is trying to connect to webcam"),
 		CONNECTED("Connection success"),
 		ERROR("An error has occurred! Please fix");
 		
@@ -89,6 +94,10 @@ public class WebcamDisplayPanel extends JPanel {
 		
 		private String getMessage() {
 			return displayMessage;
+		}
+		
+		private static ViewState connectionQuery() {
+			return CONNECTING;
 		}
 		
 		private static ViewState connectionSuccess() {

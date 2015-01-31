@@ -1,12 +1,16 @@
 package controllers;
 
 import java.net.MalformedURLException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.SwingWorker;
 
 import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamException;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
@@ -25,17 +29,56 @@ public class WebcamController {
 	
 	public boolean connect() {
 		
-		try {
-			webcam = Webcam.getDefault();
-			webcam.open();
-			webcamDisplayPanel.update(webcam);
-
-			return (webcam == null) ? false : true;
-		} catch (IllegalArgumentException | WebcamException e) {
-			webcamDisplayPanel.update((Webcam)null);
-		}
+		boolean connected = false;
 		
-		return false;
+		SwingWorker<Boolean, Webcam> worker = new SwingWorker<Boolean, Webcam>() {
+			
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				// TODO Auto-generated method stub
+				webcam = Webcam.getDefault();
+
+//				publish(webcam);
+
+				webcam.open();
+				
+				return (webcam == null) ? false : true;
+			}
+
+			
+			
+			@Override
+			protected void process(List<Webcam> chunks) {
+				for (Webcam w : chunks) {
+					webcamDisplayPanel.update(w);
+				}
+			}
+
+			@Override
+			protected void done() {
+				try {
+					boolean connected = get();
+					webcamDisplayPanel.update(webcam);
+				} catch (ExecutionException | InterruptedException e) {
+					webcamDisplayPanel.update((Webcam)null);
+				}
+			}
+			
+		};
+		
+		worker.execute();
+		
+//		try {
+//			webcam = Webcam.getDefault();
+//			webcam.open();
+//			webcamDisplayPanel.update(webcam);
+//
+//			return (webcam == null) ? false : true;
+//		} catch (IllegalArgumentException | WebcamException e) {
+//			webcamDisplayPanel.update((Webcam)null);
+//		}
+		
+		return true;
 
 	}
 	
