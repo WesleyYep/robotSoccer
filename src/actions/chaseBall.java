@@ -27,8 +27,15 @@ public class chaseBall extends Action{
         double ballTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
  //       System.out.println("ballTheta: " + ballTheta);
  //       System.out.println("robot ballTheta: " + Math.toRadians(r.getTheta()));
-        if (Math.abs(ballTheta - Math.toRadians(r.getTheta())) >= 0.8) {
-            if (ballTheta - Math.toRadians(r.getTheta()) > 0) {
+        double difference = ballTheta - Math.toRadians(r.getTheta());
+        if (difference > Math.PI) {
+            difference -= (2 * Math.PI);
+        } else if (difference < -Math.PI) {
+            difference += (2 * Math.PI);
+        }
+
+        if (Math.abs(difference) >= 0.7) {
+            if (difference > 0) {
                 r.angularVelocity = 2*Math.PI;
             } else {
                 r.angularVelocity = -2*Math.PI;
@@ -39,6 +46,8 @@ public class chaseBall extends Action{
             r.angularVelocity = 0;
         }
 
+
+    //    System.out.println(System.currentTimeMillis());
 
     }
 

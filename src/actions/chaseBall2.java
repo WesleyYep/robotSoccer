@@ -28,7 +28,7 @@ public class chaseBall2 extends Action{
         double difference = ballTheta - Math.toRadians(r.getTheta());
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
-        } else if (difference < -180) {
+        } else if (difference < -Math.PI) {
             difference += (2 * Math.PI);
         }
         double distance = Math.sqrt(squared(r.getXPosition()-ballX) + squared(r.getYPosition()-ballY));
