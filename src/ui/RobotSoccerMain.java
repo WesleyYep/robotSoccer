@@ -22,22 +22,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
+import ui.WebcamDisplayPanel.ViewState;
 import bot.Robots;
-
 import communication.Receiver;
 import communication.SerialPortCommunicator;
-
 import controllers.BallController;
 import controllers.FieldController;
 import controllers.WebcamController;
 
 
-public class RobotSoccerMain extends JPanel implements ActionListener {
+public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
     private JButton startButton, connectionButton, recordButton;
@@ -62,6 +62,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     private JTabbedPane tabPane;
 	private DrawAreaGlassPanel glassPanel;
 	
+	private WebcamDisplayPanel webcamDisplayPanel;
 	private WebcamController webcamController;
 	
 	// Constant string so that you can switch between cards.
@@ -186,8 +187,12 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
         
         // Create the cards.
         JPanel cards = new JPanel(new CardLayout());
-        WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel();
+        webcamDisplayPanel = new WebcamDisplayPanel();
         webcamController = new WebcamController(webcamDisplayPanel);
+        
+        // Add listener
+        webcamDisplayPanel.addWebcamDisplayPanelListener(this);
+        
         cards.add(webcamDisplayPanel, CAMSTRING);
 //        cards.add(field, FIELDSTRING);
         setUpGame();
@@ -239,23 +244,16 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     	} else if (evt.getSource() == connectionButton) {
     		if (connectionButton.getText().equals(CONNECTION[0])) {
 
-    			boolean success;
     			// Only one of the radio buttons can be selected at a time
     			if (defaultWebcamRadioButton.isSelected()) {
-    				success = webcamController.connect();
+    				webcamController.connect();
     			} else {
-    				success = webcamController.connect(webcamURLField.getText());
-    			}
-    			
-    			// If connection is a success, change text.
-    			if (success) {
-    				connectionButton.setText(CONNECTION[1]);
+    				webcamController.connect(webcamURLField.getText());
     			}
     			
     		} else {
     			
     			webcamController.disconnect();
-    			connectionButton.setText(CONNECTION[0]);
     			
     		}
     	} else if (evt.getSource() == recordButton) {
@@ -267,6 +265,20 @@ public class RobotSoccerMain extends JPanel implements ActionListener {
     	}
     }
 
+	@Override
+	public void viewStateChanged() {
+		ViewState currentViewState = webcamDisplayPanel.getViewState();
+		
+		switch(currentViewState) {
+		case CONNECTED:
+			connectionButton.setText(CONNECTION[1]);
+			break;
+		default:
+			connectionButton.setText(CONNECTION[0]);
+			break;
+		}
+	}
+    
     /**
      * Create the GUI and show it. As with all GUI code, this must run
      * on the event-dispatching thread.

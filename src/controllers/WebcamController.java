@@ -1,16 +1,14 @@
 package controllers;
 
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamException;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
@@ -27,26 +25,19 @@ public class WebcamController {
 		this.webcamDisplayPanel = webcamDisplayPanel;
 	}
 	
-	public boolean connect() {
-		
-		boolean connected = false;
+	public void connect() {
 		
 		SwingWorker<Boolean, Webcam> worker = new SwingWorker<Boolean, Webcam>() {
 			
 			@Override
 			protected Boolean doInBackground() throws Exception {
-				// TODO Auto-generated method stub
 				webcam = Webcam.getDefault();
-
-//				publish(webcam);
 
 				webcam.open();
 				
 				return (webcam == null) ? false : true;
 			}
 
-			
-			
 			@Override
 			protected void process(List<Webcam> chunks) {
 				for (Webcam w : chunks) {
@@ -57,7 +48,7 @@ public class WebcamController {
 			@Override
 			protected void done() {
 				try {
-					boolean connected = get();
+					get();
 					webcamDisplayPanel.update(webcam);
 				} catch (ExecutionException | InterruptedException e) {
 					webcamDisplayPanel.update((Webcam)null);
@@ -67,58 +58,83 @@ public class WebcamController {
 		};
 		
 		worker.execute();
-		
-//		try {
-//			webcam = Webcam.getDefault();
-//			webcam.open();
-//			webcamDisplayPanel.update(webcam);
-//
-//			return (webcam == null) ? false : true;
-//		} catch (IllegalArgumentException | WebcamException e) {
-//			webcamDisplayPanel.update((Webcam)null);
-//		}
-		
-		return true;
 
 	}
 	
-	public boolean connect(String url) {	
+	public void connect(final String url) {	
 		
-		try {
-			// Not thread safe. Updating the driver is not thread safe. Driver field is volatile.
-			Webcam.setDriver(new IpCamDriver());
+		SwingWorker<Boolean, Webcam> worker = new SwingWorker<Boolean, Webcam>() {
 
-			// IpCamMode.PUSH - stream Motion JPEG in real time and serve newest image on-demand.
-			IpCamDeviceRegistry.register(IPWEBCAMDEVICENAME, url, IpCamMode.PUSH);
-			webcam = Webcam.getDefault();
-			webcam.open();
-			webcamDisplayPanel.update(webcam);
-			
-			if (webcam != null) {
-				return true;
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				// Not thread safe. Updating the driver is not thread safe. Driver field is volatile.
+				Webcam.setDriver(new IpCamDriver());
+
+				// IpCamMode.PUSH - stream Motion JPEG in real time and serve newest image on-demand.
+				IpCamDeviceRegistry.register(IPWEBCAMDEVICENAME, url, IpCamMode.PUSH);
+				
+				webcam = Webcam.getDefault();
+				webcam.open();
+				return (webcam == null) ? false : true;
 			}
 			
-		} catch (MalformedURLException | IllegalArgumentException | WebcamException e) {
-			// An error occurred in processing url.
-			webcamDisplayPanel.update((Webcam)null);
-		}
+			@Override
+			protected void process(List<Webcam> chunks) {
+				for (Webcam webcam : chunks) {
+					webcamDisplayPanel.update(webcam);
+				}
+			}
+			
+			@Override
+			protected void done() {
+				try {
+					boolean connected = get();
+					webcamDisplayPanel.update(webcam);
+					
+					if (!connected) {
+						// If an exception occurred or webcam is null, reset driver.
+						Webcam.resetDriver();
+					}
+					
+				} catch (ExecutionException | InterruptedException e) {
+					webcamDisplayPanel.update((Webcam)null);
+					
+					// If an exception occurred or webcam is null, reset driver.
+					Webcam.resetDriver();
+				}
+			}
+			
+		};
 		
-		// If an exception occurred or webcam is null, reset driver.
-		Webcam.resetDriver();
-		return false;
+		worker.execute();
 	}
 	
 	public void disconnect() {
 		
-		webcam.close();
+		SwingWorker<Void, Webcam> worker = new SwingWorker<Void, Webcam>() {
 
-		IpCamDeviceRegistry.unregisterAll();
+			@Override
+			protected Void doInBackground() throws Exception {
+				
+				webcam.close();
+
+				IpCamDeviceRegistry.unregisterAll();
+				
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				// Update webcam display panel. Disconnect webcam.
+				webcamDisplayPanel.update(webcam);
+				
+				// Not thread safe.
+				Webcam.resetDriver();
+			}
+			
+		};
 		
-		// Update webcam display panel. Disconnect webcam.
-		webcamDisplayPanel.update(webcam);
-		
-		// Not thread safe.
-		Webcam.resetDriver();
+		worker.execute();
 		
 	}
 	

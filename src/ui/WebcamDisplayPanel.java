@@ -4,10 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
-
-import net.miginfocom.swing.MigLayout;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
@@ -16,6 +15,7 @@ public class WebcamDisplayPanel extends JPanel {
 
 	private ViewState currentViewState;
 	private WebcamPanel webcamPanel;
+	private ArrayList<WebcamDisplayPanelListener> wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 	
 	public WebcamDisplayPanel() {
 		super();
@@ -51,6 +51,7 @@ public class WebcamDisplayPanel extends JPanel {
 			add(webcamPanel, BorderLayout.CENTER);
 		}
 		
+		notifyWebcamDisplayPanelListeners();
 		repaint();
 	}
 	
@@ -78,8 +79,26 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 	}
 
+	public void addWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
+		wdpListeners.add(l);
+	}
+	
+	public void removeWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
+		wdpListeners.remove(l);
+	}
+	
+	public void notifyWebcamDisplayPanelListeners() {
+		for (WebcamDisplayPanelListener l : wdpListeners) {
+			l.viewStateChanged();
+		}
+	}
+	
+	public ViewState getViewState() {
+		return currentViewState;
+	}
+	
 	// Nested enum.
-	private enum ViewState {
+	public enum ViewState {
 		
 		UNCONNECTED("Software is not connected to a webcam device"),
 		CONNECTING("Software is trying to connect to webcam"),
