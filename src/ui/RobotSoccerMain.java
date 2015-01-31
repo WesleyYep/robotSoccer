@@ -175,14 +175,16 @@ public class RobotSoccerMain extends JPanel
 	    		portNumber = DEFAULT_PORT_NUMBER;
 	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
 	    	}
+	    	
+
 	    	serverSocket = new NetworkSocket(portNumber, taskOutput, startButton);
+	    	System.out.println("created new socket");
 	    	serverSocket.execute();
 	    	serverSocket.addReceiverListener(fieldController);
 	    	serverSocket.addSenderListener(gameTick);
     	} else {
-    		serverSocket.cancel(true);
-    		serverSocket.stop();
-    		
+    		//tell the serverSocket to begin the closing procedure;
+    		serverSocket.close();
     	}
     }
 

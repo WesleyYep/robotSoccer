@@ -30,26 +30,30 @@ public class Tick extends TimerTask implements SenderListener{
 		field.executeStrategy();
 		if (comPanel.isSimulation()) {
 			field.repaint();
-			setBotCoordinates();
+			
 			if (sender != null) {
-				sender.sendStuff();
+				sender.sendStuff(createBotCoordinatesMessage());
 			}
 		} else {
 			bots.send();
 		}
 	}
 
-	private void setBotCoordinates() {
+	private String createBotCoordinatesMessage() {
+		StringBuilder outputMessage = new StringBuilder();
 		Robot[] botArray = bots.getRobots();
 		for (int i = 0; i < 5; i++) {
-			Sender.botXs[i] ="lin bot" + i + ": " + botArray[i].linearVelocity;
-			Sender.botYs[i] ="ang bot" + i + ": " + botArray[i].angularVelocity;
+			outputMessage.append("lin bot" + i + ": " + botArray[i].linearVelocity + System.lineSeparator());
+			outputMessage.append("ang bot" + i + ": " + botArray[i].angularVelocity + System.lineSeparator());
 		}
+		
+		return outputMessage.toString();
 	}
 
 	
 	public void setSender(Sender sender) {
 		this.sender = sender;
 	}
+	
 
 }
