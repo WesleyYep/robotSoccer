@@ -18,7 +18,6 @@ public class StraightLinePath extends Path {
     @Override
     public boolean hasReachedTarget() {
         if ((int)robot.getXPosition() == endPointX && (int)robot.getYPosition() == endPointY) {
-            System.out.println("Has reached target");
             return true;
         } else {
             return false;

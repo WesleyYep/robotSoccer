@@ -24,11 +24,11 @@ public class chaseBall extends Action{
 
         //Should try to use the path here, rather than just hard coding some velocities
 
-        double theta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
- //       System.out.println("theta: " + theta);
- //       System.out.println("robot theta: " + Math.toRadians(r.getTheta()));
-        if (Math.abs(theta - Math.toRadians(r.getTheta())) >= 0.8) {
-            if (theta - Math.toRadians(r.getTheta()) > 0) {
+        double ballTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+ //       System.out.println("ballTheta: " + ballTheta);
+ //       System.out.println("robot ballTheta: " + Math.toRadians(r.getTheta()));
+        if (Math.abs(ballTheta - Math.toRadians(r.getTheta())) >= 0.8) {
+            if (ballTheta - Math.toRadians(r.getTheta()) > 0) {
                 r.angularVelocity = 2*Math.PI;
             } else {
                 r.angularVelocity = -2*Math.PI;
@@ -39,5 +39,10 @@ public class chaseBall extends Action{
             r.angularVelocity = 0;
         }
 
+
+    }
+
+    protected double squared (double x) {
+        return x * x;
     }
 }

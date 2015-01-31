@@ -6,7 +6,7 @@ import strategy.Action;
  * Created by Wesley on 21/01/2015.
  */
 public class Actions {
-    private static Action[] actions = new Action[] { null, new chaseBall() };
+    private static Action[] actions = new Action[] { null, new chaseBall(), new chaseBall2() };
 
     public Action getAction(int index) {
         return actions[index];

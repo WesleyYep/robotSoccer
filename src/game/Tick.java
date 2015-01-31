@@ -24,7 +24,7 @@ public class Tick extends TimerTask implements SenderListener{
 		this.comPanel = comPanel;
 //		physics = new Physics();
 	}
-	
+
 	public void run() {
 		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
 		field.executeStrategy();
