@@ -173,7 +173,7 @@ public class RobotSoccerMain extends JPanel
 	    		portNumber = Integer.parseInt(portField.getText());
 	    	}	catch (NumberFormatException e) {
 	    		portNumber = DEFAULT_PORT_NUMBER;
-	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+	    		taskOutput.append("\nIncorrect character, will use default port: 31000\n");
 	    	}
 	    	
 

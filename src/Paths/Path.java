@@ -21,4 +21,5 @@ public abstract class Path {
     public abstract boolean hasReachedTarget();
 
     public abstract void setPoints();
+    
 }

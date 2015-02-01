@@ -14,6 +14,7 @@ public class Tick extends TimerTask implements SenderListener{
 	private Field field;
 	private Robots bots;
 	private TestComPanel comPanel;
+	private boolean stopSimBot = false;
 	
 	private Sender sender;
 //	private Physics physics;
@@ -46,10 +47,9 @@ public class Tick extends TimerTask implements SenderListener{
 			outputMessage.append("lin bot" + i + ": " + botArray[i].linearVelocity + System.lineSeparator());
 			outputMessage.append("ang bot" + i + ": " + botArray[i].angularVelocity + System.lineSeparator());
 		}
-		
 		return outputMessage.toString();
 	}
-
+	
 	
 	public void setSender(Sender sender) {
 		this.sender = sender;

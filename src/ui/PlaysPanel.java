@@ -92,7 +92,7 @@ public class PlaysPanel extends JPanel implements StrategyListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 Play play = new Play();
-                play.setPlayName("test");
+                play.setPlayName("new play");
                 playsList.add(play);
                 lastSelectedPlay = play;
                 currentStrategy.setPlays(playsList);

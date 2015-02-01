@@ -134,38 +134,14 @@ public class TestComPanel extends JPanel {
 		simulationCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (simulationCheckBox.isSelected()) {
-					robots.makeSimRobots();
-				} else {
-					robots.makeRealRobots();
-				}
+				
 			}
 		});
 	}
 
-		public boolean isSimulation() {
+	public boolean isSimulation() {
 			return simulationCheckBox.isSelected();
-		}
-	
-//	class TestWorker extends SwingWorker<Integer,Integer> {
-//
-//		private RobotController controller;
-//
-//		public TestWorker () {
-//			controller = new RobotController(serialCom);
-//		}
-//		@Override
-//		protected Integer doInBackground() throws Exception {
-//			long startTime = System.currentTimeMillis();
-//
-//			long endTime = startTime +5000;
-//			while (!isCancelled() && System.currentTimeMillis() < endTime) {
-//				controller.sendVelocity(linearVelocity, angularVelocity);
-//			}
-//			return null;
-//		}
-//
-//	}
+	}
 
 
 	//may possibly not even need this worker

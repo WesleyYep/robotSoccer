@@ -95,7 +95,7 @@ public class RolesPanel extends JPanel implements StrategyListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Role role = new Role();
-                role.setRoleName("test");
+                role.setRoleName("new role");
                 rolesList.add(role);
                 lastSelectedRole = role;
                 currentStrategy.setRoles(rolesList);
