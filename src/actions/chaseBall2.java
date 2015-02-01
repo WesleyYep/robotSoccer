@@ -7,10 +7,10 @@ import strategy.Action;
 /**
  * Created by Wesley on 21/01/2015.
  */
-public class chaseBall extends Action{
+public class chaseBall2 extends Action{
     @Override
     public String getName() {
-        return "Chase Ball";
+        return "Chase Ball (smooth)";
     }
 
     @Override
@@ -25,29 +25,34 @@ public class chaseBall extends Action{
         //Should try to use the path here, rather than just hard coding some velocities
 
         double ballTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
- //       System.out.println("ballTheta: " + ballTheta);
- //       System.out.println("robot ballTheta: " + Math.toRadians(r.getTheta()));
         double difference = ballTheta - Math.toRadians(r.getTheta());
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
         } else if (difference < -Math.PI) {
             difference += (2 * Math.PI);
         }
-
-        if (Math.abs(difference) >= 0.7) {
-            if (difference > 0) {
-                r.angularVelocity = 2*Math.PI;
-            } else {
-                r.angularVelocity = -2*Math.PI;
-            }
-            r.linearVelocity = 0;
-        } else {
-            r.linearVelocity = 1;
-            r.angularVelocity = 0;
-        }
+        double distance = Math.sqrt(squared(r.getXPosition()-ballX) + squared(r.getYPosition()-ballY));
+        r.linearVelocity = 1;
+        r.angularVelocity = difference / (distance/100);
 
 
-    //    System.out.println(System.currentTimeMillis());
+
+        //       System.out.println("ballTheta: " + ballTheta);
+        //       System.out.println("robot ballTheta: " + Math.toRadians(r.getTheta()));
+//        if (Math.abs(ballTheta - Math.toRadians(r.getTheta())) >= 0.8) {
+//            if (ballTheta - Math.toRadians(r.getTheta()) > 0) {
+//                r.angularVelocity = 2*Math.PI;
+//            } else {
+//                r.angularVelocity = -2*Math.PI;
+//            }
+//            r.linearVelocity = 0;
+//        } else {
+//            r.linearVelocity = 1;
+//            r.angularVelocity = 0;
+//        }
+
+
+
 
     }
 
