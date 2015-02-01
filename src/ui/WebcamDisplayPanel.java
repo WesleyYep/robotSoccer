@@ -11,17 +11,27 @@ import javax.swing.JPanel;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 
+/**
+ * <p>Displays the webcam on the JPanel.</p>
+ * <p>{@link ui.RobotSoccerMain}</p>
+ * <p>{@link controllers.WebcamController}</p>
+ * @author Chang Kon, Wesley, John
+ *
+ */
+
+@SuppressWarnings("serial")
 public class WebcamDisplayPanel extends JPanel {
 
 	private ViewState currentViewState;
 	private WebcamPanel webcamPanel;
-	private ArrayList<WebcamDisplayPanelListener> wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
+	private ArrayList<WebcamDisplayPanelListener> wdpListeners;
 	
 	public WebcamDisplayPanel() {
 		super();
 		
 		// Initially not connected to anything.
 		currentViewState = ViewState.UNCONNECTED;
+		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		webcamPanel = null;
 		
 		setLayout(new BorderLayout());
@@ -29,9 +39,11 @@ public class WebcamDisplayPanel extends JPanel {
 	}
 	
 	/**
-	 * Receives webcam and updates view. <br/>
-	 * If the webcam is null, either it was not found or error occurred. <br/>
-	 * {@link controllers.WebcamController}
+	 * <p>Receives webcam and updates view.</p>
+	 * <p>If the webcam is null, either it was not found or error occurred.</p>
+	 * <p>Notifies all listeners of view state change</p>
+	 * <p>{@link ui.WebcamDisplayPanelListener}</p>
+	 * <p>{@link controllers.WebcamController}</p>
 	 * @param webcam
 	 */
 	
@@ -39,16 +51,13 @@ public class WebcamDisplayPanel extends JPanel {
 		// Gets webcam from controller. If webcam is null, it means webcam was not found.		
 		if (webcam == null) {
 			currentViewState = ViewState.connectionFail();
-		} else if (!webcam.isOpen() && !webcam.getLock().isLocked()) {
-			currentViewState = ViewState.connectionQuery();
-		} else if (!webcam.isOpen() && webcam.getLock().isLocked()) {
-			currentViewState = ViewState.disconnect();
-			remove(webcamPanel);
-		} else {
+		} else if (webcam.isOpen()) {
 			currentViewState = ViewState.connectionSuccess();
 			webcamPanel = new WebcamPanel(webcam);
-			webcamPanel.setSize(getSize());
 			add(webcamPanel, BorderLayout.CENTER);
+		} else {
+			currentViewState = ViewState.disconnect();
+			removeAll();
 		}
 		
 		notifyWebcamDisplayPanelListeners();
@@ -59,6 +68,7 @@ public class WebcamDisplayPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
+		// Get the current state of the displayPanel. Draw text onto screen.
 		switch(currentViewState) {
 		case CONNECTED:
 			break;
@@ -97,11 +107,16 @@ public class WebcamDisplayPanel extends JPanel {
 		return currentViewState;
 	}
 	
-	// Nested enum.
+	/**
+	 * <p>Defines the <strong>state</strong> of the display.</p>
+	 * <p>Each state has a <strong>display message</strong></p>
+	 * @author Chang Kon, Wesley, John
+	 *
+	 */
+	
 	public enum ViewState {
 		
 		UNCONNECTED("Software is not connected to a webcam device"),
-		CONNECTING("Software is trying to connect to webcam"),
 		CONNECTED("Connection success"),
 		ERROR("An error has occurred! Please fix");
 		
@@ -113,10 +128,6 @@ public class WebcamDisplayPanel extends JPanel {
 		
 		private String getMessage() {
 			return displayMessage;
-		}
-		
-		private static ViewState connectionQuery() {
-			return CONNECTING;
 		}
 		
 		private static ViewState connectionSuccess() {
