@@ -23,15 +23,8 @@ public abstract class Robot extends JPanel {
 	public double angularVelocity;
 	
 	/*
-	 * Java theta
 	 * 
-	 * 		 	^ 270
-	 * 			|
-	 * 	  0	<=== ===> 180
-	 * 			|
-	 * 			v 90
-	 * 
-	 * C++ theta
+	 * theta
 	 * 
 	 * 		 	^ 90
 	 * 			|

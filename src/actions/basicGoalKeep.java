@@ -60,7 +60,6 @@ public class basicGoalKeep extends Action{
         	
         	
         	if (keepRotate){
-        		System.out.println("hereer");
         		if (Math.toDegrees(theta*-1) - r.getTheta() > 0) {
         			r.angularVelocity = 1;
         			r.linearVelocity = 0;
@@ -73,7 +72,6 @@ public class basicGoalKeep extends Action{
         	}
         	
         	if (goStraight) {
-        		System.out.println("robot x: " + r.getXPosition());
         		if (r.getXPosition() < goalKeepLine + error && r.getXPosition() > goalKeepLine - error) {
         			r.linearVelocity = 0;
             		r.angularVelocity = 0;
@@ -95,7 +93,6 @@ public class basicGoalKeep extends Action{
         	
         }
         else {
-        	System.out.println("stop");
         	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(),(int)r.getXPosition(), (int)r.getYPosition());
         	path.setPoints();
         	r.linearVelocity = 0;

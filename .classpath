@@ -16,5 +16,7 @@
 	<classpathentry kind="lib" path="lib/jssc.jar"/>
 	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/logback-classic-1.0.9.jar"/>
+	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/logback-core-1.0.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
