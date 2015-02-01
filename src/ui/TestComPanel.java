@@ -52,15 +52,15 @@ public class TestComPanel extends JPanel {
 
 		JPanel buttonPanel = new JPanel();
 
-		buttonPanel.setLayout(new MigLayout());
-		buttonPanel.add(testRotateBtn, "pushx, growx");
-		buttonPanel.add(testForwardBtn, "wrap");
+		buttonPanel.setLayout(new MigLayout("ins 0"));
+		buttonPanel.add(testRotateBtn, "w 50%");
+		buttonPanel.add(testForwardBtn, "w 50%, wrap");
 		buttonPanel.add(simulationCheckBox);
 
-		this.setLayout(new BorderLayout());
-		this.add(comboBox, BorderLayout.NORTH);
-		this.add(buttonPanel, BorderLayout.SOUTH);
-		
+		this.setLayout(new MigLayout());
+		this.add(comboBox, "pushx, growx, wrap");
+		this.add(buttonPanel, "pushx, growx");
+
 		//open the port;
 		serialCom.openPort((String) comboBox.getSelectedItem());
 

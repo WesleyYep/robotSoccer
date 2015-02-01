@@ -3,6 +3,7 @@ package ui;
 import game.Tick;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -26,17 +27,7 @@ import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
-import ui.Ball;
-import ui.DrawAreaGlassPanel;
-import ui.Field;
-import ui.PlaysPanel;
-import ui.RobotInfoPanel;
-import ui.RolesPanel;
-import ui.SituationPanel;
-import ui.TestComPanel;
-import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
-import ui.WebcamDisplayPanelListener;
 import bot.Robots;
 
 import communication.NetworkSocket;
@@ -106,9 +97,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         
         JPanel portPanel = new JPanel(new MigLayout());
         portPanel.add(startButton);
-        portPanel.add(portField, "push, grow");
-        portPanel.add(saveButton, "gapx 250");
-        portPanel.add(openButton);
+        portPanel.add(portField, "pushx, growx");
+        
+        JPanel settingPanel = new JPanel(new MigLayout());
+        settingPanel.add(openButton);
+        settingPanel.add(saveButton);
         
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
@@ -124,9 +117,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         ballController = new BallController(ball);
         fieldController = new FieldController(field, bots, ball);
         
-        JPanel testComContainerPanel = new JPanel();
+        JPanel testComContainerPanel = new JPanel(new MigLayout("ins 0"));
         testComPanel = new TestComPanel(serialCom, bots);
-        testComContainerPanel.add(testComPanel);
+        testComContainerPanel.add(testComPanel, "pushx, growx");
         
         //creating panel holding robot informations
         JPanel infoPanel = new JPanel();
@@ -153,6 +146,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		
         //create tab pane
         tabPane = new JTabbedPane();
+        tabPane.addTab("Output", new JScrollPane(taskOutput));
         tabPane.addTab("Situation", situationPanel);
         tabPane.addTab("Plays", playsPanel);
         tabPane.addTab("Roles", rolesPanel);
@@ -200,12 +194,12 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         recordButton.addActionListener(this);
         
         // Add components into panel.
-        webcamComponentPanel.add(webcamURLLabel, "span 2, wrap");
+        webcamComponentPanel.add(webcamURLLabel, "wrap");
         webcamComponentPanel.add(webcamURLField, "span 2, pushx, growx, wrap");
         webcamComponentPanel.add(defaultWebcamRadioButton, "split 2");
         webcamComponentPanel.add(IPWebcamRadioButton, "wrap");
-        webcamComponentPanel.add(connectionButton);
-        webcamComponentPanel.add(recordButton);
+        webcamComponentPanel.add(connectionButton, "w 50%");
+        webcamComponentPanel.add(recordButton, "w 50%");
         
         // Create the cards.
         cards = new JPanel(new CardLayout());
@@ -218,16 +212,18 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards.add(field, FIELDSTRING);
         cards.add(webcamDisplayPanel, CAMSTRING);
         
-        add(cards, "span 6, width 600:600:600, height 400:400:400");
+        add(cards, "span 6, width 600:600:600, height 400:400:600");
         add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
-        add(portPanel, "span 2, width 200:200:200");
-        add(new JScrollPane(taskOutput), "span 4 3, width 400:400:400, pushy, growy, wrap");
-        add(webcamComponentPanel, "span 2, width 200:200:200");
-        add(testComContainerPanel, "span 2, width 200:200:200");
-        
+        add(portPanel, "span 3, width 300:300:300");
+        add(settingPanel, "span 3, width 300:300:300, wrap");
+        add(webcamComponentPanel, "span 3, width 300:300:300");
+        add(testComContainerPanel, "span 3, width 300:300:300");
+
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        setPreferredSize(new Dimension(1250, 700));
+        
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
