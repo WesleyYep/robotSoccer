@@ -7,7 +7,7 @@ import strategy.Action;
  */
 public class Actions {
 
-    private static Action[] actions = new Action[] { null, new chaseBall(), new chaseBall2(), new basicGoalKeep() };
+    private static Action[] actions = new Action[] { null, new chaseBall(), new chaseBall2(), new basicGoalKeep(), new wait() };
 
 
     public Action getAction(int index) {

@@ -12,10 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 import bot.Robots;
+import communication.Sender;
+import communication.SenderListener;
 import communication.SerialPortCommunicator;
 import jssc.SerialPortList;
 
-public class TestComPanel extends JPanel {
+public class TestComPanel extends JPanel implements SenderListener{
 	
 	
 	//18.52 second from one side to another side actual
@@ -32,6 +34,7 @@ public class TestComPanel extends JPanel {
 //	private TestWorker currentWorker;
 	private SimulationWorker currentSimWorker;
 	private Robots robots;
+	private Sender sender = null;
 	
 	private SerialPortCommunicator serialCom;
 	
@@ -164,6 +167,12 @@ public class TestComPanel extends JPanel {
 			return null;
 		}
 
+	}
+
+
+	@Override
+	public void setSender(Sender s) {
+		sender = s;
 	}
 }
 

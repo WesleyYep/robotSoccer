@@ -159,7 +159,7 @@ public class RobotSoccerMain extends JPanel
 
     public void setUpGame() {
         java.util.Timer timer = new java.util.Timer();
-        timer.schedule(gameTick, 0, 50);
+        timer.schedule(gameTick, 0, 5);
     }
     /**
      * Invoked when the user presses the start button.
@@ -182,6 +182,7 @@ public class RobotSoccerMain extends JPanel
 	    	serverSocket.execute();
 	    	serverSocket.addReceiverListener(fieldController);
 	    	serverSocket.addSenderListener(gameTick);
+	    	serverSocket.addSenderListener(testComPanel);
     	} else {
     		//tell the serverSocket to begin the closing procedure;
     		serverSocket.close();
