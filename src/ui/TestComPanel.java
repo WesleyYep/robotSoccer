@@ -1,21 +1,23 @@
 package ui;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import jssc.SerialPortList;
+import net.miginfocom.swing.MigLayout;
 import bot.Robots;
+
 import communication.Sender;
 import communication.SenderListener;
+
 import communication.SerialPortCommunicator;
-import jssc.SerialPortList;
 
 public class TestComPanel extends JPanel implements SenderListener{
 	
@@ -54,14 +56,14 @@ public class TestComPanel extends JPanel implements SenderListener{
 
 		JPanel buttonPanel = new JPanel();
 
-		buttonPanel.setLayout(new FlowLayout());
-		buttonPanel.add(testRotateBtn);
-		buttonPanel.add(testForwardBtn);
+		buttonPanel.setLayout(new MigLayout("ins 0"));
+		buttonPanel.add(testRotateBtn, "w 50%");
+		buttonPanel.add(testForwardBtn, "w 50%, wrap");
 		buttonPanel.add(simulationCheckBox);
 
-		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		this.add(comboBox);
-		this.add(buttonPanel);
+		this.setLayout(new MigLayout());
+		this.add(comboBox, "pushx, growx, wrap");
+		this.add(buttonPanel, "pushx, growx");
 
 		//open the port;
 		serialCom.openPort((String) comboBox.getSelectedItem());
