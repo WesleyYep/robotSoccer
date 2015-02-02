@@ -1,6 +1,5 @@
 package ui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,7 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 
 import jssc.SerialPortList;
 import net.miginfocom.swing.MigLayout;
@@ -30,19 +28,16 @@ public class TestComPanel extends JPanel implements SenderListener{
 	private JButton testForwardBtn;
     private JCheckBox simulationCheckBox;
 
-	private double[] linearVelocity;
-	private double[] angularVelocity;
-
-//	private TestWorker currentWorker;
-	private SimulationWorker currentSimWorker;
 	private Robots robots;
 	private Sender sender = null;
+	
+	private boolean manualControl = false;
+	private boolean testingForward = false;
+	private boolean testingRotate = false;
 	
 	private SerialPortCommunicator serialCom;
 	
 	public TestComPanel (SerialPortCommunicator s, Robots bots) {
-		linearVelocity = new double[11];
-		angularVelocity = new double[11];
 		serialCom = s;
 		robots = bots;
 
@@ -83,13 +78,15 @@ public class TestComPanel extends JPanel implements SenderListener{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 		//		if (simulationCheckBox.isSelected()) {
-					if (currentSimWorker != null) {
-						currentSimWorker.cancel(true);
-						currentSimWorker = null;
+					if (!manualControl || testingForward) {
+						robots.testRotate();
+						manualControl = true;
+						testingForward = false;
+						testingRotate = true;
+					}
+					else {
+						manualControl = false;
 						robots.stopAllMovement();
-					} else {
-						currentSimWorker = new SimulationWorker("rotate");
-						currentSimWorker.execute();
 					}
 		//		} else {
 //					if (currentWorker != null) {
@@ -112,14 +109,16 @@ public class TestComPanel extends JPanel implements SenderListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 //				if (simulationCheckBox.isSelected()) {
-					if (currentSimWorker != null) {
-						currentSimWorker.cancel(true);
-						currentSimWorker = null;
+					if (!manualControl || testingRotate) {
+						robots.testForward();
+						manualControl = true;
+						testingRotate = false;
+						testingForward = true;
+					}
+					else {
+						manualControl = false;
 						robots.stopAllMovement();
-					} else {
-						currentSimWorker = new SimulationWorker("forward");
-						currentSimWorker.execute();
-					} 
+					}
 //				} else {
 //					if (currentWorker != null) {
 //						currentWorker.cancel(true);
@@ -149,32 +148,13 @@ public class TestComPanel extends JPanel implements SenderListener{
 	}
 
 
-	//may possibly not even need this worker
-	class SimulationWorker extends SwingWorker<Integer,Integer> {
-		private String command;
-		
-		public SimulationWorker(String command) {
-			this.command = command;
-		}
-		@Override
-		protected Integer doInBackground() throws Exception {
-		//	while (!isCancelled()) {
-				if (command.equals("forward")) {
-					robots.testForward();
-				} else {
-					robots.testRotate();
-				}
-		//	}
-		//	robots.stopAllMovement();
-			return null;
-		}
-
-	}
-
-
 	@Override
 	public void setSender(Sender s) {
 		sender = s;
+	}
+	
+	public boolean isManualControl() {
+		return manualControl;
 	}
 }
 

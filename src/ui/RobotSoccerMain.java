@@ -29,10 +29,9 @@ import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import bot.Robots;
-
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
-
+import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
 import controllers.WebcamController;
@@ -240,6 +239,10 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         
         gameTick = new Tick(field, bots, testComPanel);
         setUpGame();
+        
+        //setting up configuration for the program
+        ConfigFile configFile = ConfigFile.getInstance();
+        configFile.createConfigFile();
     }
 
     public void setUpGame() {
@@ -340,7 +343,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         frame.pack();
         frame.setVisible(true);
     }
-
+    
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

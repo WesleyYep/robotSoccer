@@ -35,12 +35,14 @@ public class Robots {
     public void testForward() {
     	for (int i = 0; i < 5; i++) {
     		bots[i].linearVelocity = 0.1;
+    		bots[i].angularVelocity = 0;
     	} 
     }
     
 	public void testRotate() {
 		for (int i = 0; i < 5; i++) {
     		bots[i].angularVelocity = Math.PI/2;
+    		bots[i].linearVelocity = 0;
     	} 
 	}
 	

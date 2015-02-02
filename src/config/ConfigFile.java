@@ -1,0 +1,104 @@
+package config;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+
+public class ConfigFile {
+	
+	//http://commons.apache.org/proper/commons-configuration/index.html
+	
+	String path = "RobotSoccerConfiguration.config";
+	
+	private static ConfigFile instance = null;
+	private String saveDirectoryKey;
+	private String openDirectoryKey;
+	
+	private XMLConfiguration config;
+	
+	protected ConfigFile() {
+		saveDirectoryKey="savedirectory";
+		openDirectoryKey="opendirectory";
+		
+		
+	}
+	
+	public static ConfigFile getInstance() {
+		if (instance == null) {
+			instance = new ConfigFile();
+		}
+		return instance;
+	}
+	
+	
+	public boolean checkFileExist() {
+		File file = new File(path);
+		return file.exists();
+	}
+	
+	/**
+	 * create a new configuration file for robot soccer program
+	 * @return 0 - successfully created configuration file
+	 * ,1 - encountered an error while creating the file
+	 * ,2 - file already created
+	 */
+	public void createConfigFile() {
+		try {
+			if (checkFileExist()) {
+				config = new XMLConfiguration(path);
+			}
+			else {
+				config = new XMLConfiguration();
+				config.setFile(new File(path));
+			}
+			config.save();
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public String getLastSaveDirectory() {
+		return config.getString(saveDirectoryKey,null);
+	}
+	
+	public String getLastOpenDirectory() {
+		return config.getString(openDirectoryKey,null);
+	}
+	
+	public void setLastSaveDirectory(String path) {
+		if (config.getString(saveDirectoryKey,null) == null) {
+			config.addProperty(saveDirectoryKey, path);
+		}
+		else {
+			config.setProperty(saveDirectoryKey, path);
+		}
+		try {
+			config.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setLastOpenDirectory(String path) {
+		if (config.getString(openDirectoryKey,null) == null) {
+			config.addProperty(openDirectoryKey, path);
+		}
+		else {
+			config.setProperty(openDirectoryKey, path);
+		}
+		try {
+			config.save();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+}
