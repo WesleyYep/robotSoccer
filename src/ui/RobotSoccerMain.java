@@ -65,6 +65,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private WebcamDisplayPanel webcamDisplayPanel;
 	private WebcamController webcamController;
 	
+	private JPanel cards;
+	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
 	private final static String CAMSTRING = "Card with Cam";
@@ -186,15 +188,16 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         webcamComponentPanel.add(recordButton);
         
         // Create the cards.
-        JPanel cards = new JPanel(new CardLayout());
+        cards = new JPanel(new CardLayout());
         webcamDisplayPanel = new WebcamDisplayPanel();
         webcamController = new WebcamController(webcamDisplayPanel);
         
         // Add listener
         webcamDisplayPanel.addWebcamDisplayPanelListener(this);
         
+        cards.add(field, FIELDSTRING);
         cards.add(webcamDisplayPanel, CAMSTRING);
-//        cards.add(field, FIELDSTRING);
+        
         setUpGame();
         
         add(cards, "span 6, width 600:600:600, height 400:400:400");
@@ -257,6 +260,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     			
     		}
     	} else if (evt.getSource() == recordButton) {
+    		
+    		CardLayout layout = (CardLayout)cards.getLayout();
+    		
+    		layout.next(cards);
+    		
     		if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
     			recordButton.setText(VIDEOCAPTURE[1]);
     		} else {
