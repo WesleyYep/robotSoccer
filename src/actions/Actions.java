@@ -2,13 +2,13 @@ package actions;
 
 import strategy.Action;
 
-import java.util.List;
-
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class Actions {
-    private Action[] actions = new Action[] { null, new KickAction() };
+
+    private static Action[] actions = new Action[] { null, new chaseBall(), new chaseBall2(), new basicGoalKeep() };
+
 
     public Action getAction(int index) {
         return actions[index];
@@ -16,5 +16,17 @@ public class Actions {
 
     public int getLength() {
         return actions.length;
+    }
+
+    public Action findAction(String name) {
+        for (Action a : actions) {
+            if (a == null) {
+                continue;
+            }
+            if (a.getName().equals(name)) {
+                return a;
+            }
+        }
+        return null;
     }
 }

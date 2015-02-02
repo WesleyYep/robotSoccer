@@ -9,11 +9,16 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 import javax.swing.JPanel;
 
 import bot.Robot;
 import bot.Robots;
+import data.Situation;
+import strategy.CurrentStrategy;
+import strategy.Play;
+import strategy.Role;
 
 public class Field extends JPanel implements MouseListener, MouseMotionListener {
 
@@ -41,8 +46,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	final public static int SCALE_FACTOR = 2;
 	
 	final public static int CORNER_LENGTH = 7;
-	
-	
+
 	final public static int ORIGIN_X = 5+INNER_GOAL_AREA_WIDTH*SCALE_FACTOR;
 	final public static int ORIGIN_Y = 5;
 
@@ -53,12 +57,12 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
     private Point endPoint;
     
     private boolean isMouseDrag;
-    
+
+    private CurrentStrategy currentStrategy;
 
     public Field(Robots bots, Ball ball) {
     	this.bots = bots;
     	this.ball = ball;
-    	
     	isMouseDrag = false;
     	
     	// Add mouse listeners
@@ -365,5 +369,27 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		
 		repaint();
 	}
-		
+
+	public void setCurrentStrategy(CurrentStrategy c) {
+		this.currentStrategy = c;
+	}
+
+	public void executeStrategy() {
+		List<Situation> situations = currentStrategy.getSituations();
+		for (int i = 0; i < situations.size(); i++) {
+			if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
+				if (situations.get(i).getPlays().size() == 0) { break; }
+				Play p = situations.get(i).getPlays().get(0); //get the first play
+				if (p == null) { break; }
+				for (int j = 0; j < 5; j++) {
+					Role role = p.getRoles()[j];
+					if (role == null) { continue; }
+					role.addRobot(bots, j);
+					role.setBallPosition(getBallX(), getBallY());
+					role.execute();
+				}
+
+			}
+		}
+	}
 }

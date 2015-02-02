@@ -10,6 +10,7 @@ import java.util.List;
 public class PlaysTableModel extends AbstractTableModel {
 
 	private List<Play> listOfPlays;
+	private boolean isEditable = true;
 
 	public PlaysTableModel(List<Play> plays) {
 		listOfPlays = plays;
@@ -40,7 +41,11 @@ public class PlaysTableModel extends AbstractTableModel {
 
 	
 	public boolean isCellEditable(int row, int col) { 
-	    return true; 
+	    return isEditable;
+	}
+
+	public void setEditable(boolean value) {
+		isEditable = value;
 	}
 	
 	public void setValueAt(Object value, int row, int col) {

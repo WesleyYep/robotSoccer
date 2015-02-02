@@ -19,7 +19,7 @@ public class Robots {
     public void makeRealRobots() {
     	for (int i = 0; i < 5; i++) {
     		if (bots[i] == null) {
-        		bots[i] = new RealRobot(50, 50, 0, i);
+        		bots[i] = new RealRobot(50 + 10*i, 50 + 10*i, 0, i);
     		} else {
         		bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), bots[i].getId());
     		}

@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -30,6 +31,8 @@ public class FieldController implements ReceiverListener, AreaListener {
 
     private boolean isMouseDrag;
     
+    private TestComPanel comPanel;
+    
     private SituationArea selectedArea;
 
     public FieldController(Field field, Robots bots, Ball ball) {
@@ -38,11 +41,19 @@ public class FieldController implements ReceiverListener, AreaListener {
         this.field = field;
         field.setBackground(Color.green);
     }
+    
+    public void setComPanel(TestComPanel p) {
+    	comPanel = p;
+    }
 
     @Override
     public void action(List<String> chunks) {
+    	//System.out.println("Received: simulation: " + comPanel.isSimulation());
+    	/*if (comPanel.isSimulation()) {
+    		return;
+    	}*/
         for (String s : chunks) {
-
+        	
             if (s.indexOf("Robot") != -1) {
                 int idIndex = s.indexOf("id=");
                 int xIndex = s.indexOf("x=");
@@ -52,7 +63,12 @@ public class FieldController implements ReceiverListener, AreaListener {
                 double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
                 double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
                 double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
-
+                /*
+                if (id == 0) {
+                	System.out.println(s + "Received Timestamp: " + Calendar.getInstance().getTime());
+                }
+                */
+                
                 bots.setIndividualBotPosition(id, x, y, theta);
 
             } else if (s.indexOf("Ball") != -1) {
@@ -109,8 +125,7 @@ public class FieldController implements ReceiverListener, AreaListener {
 		//negative to the right
 		int newWidth = selectedArea.getWidth() + w;
 		int newHeight = selectedArea.getHeight() + h;
-		
-		selectedArea.setBounds(x, y, newWidth, newHeight);
+        selectedArea.setBounds(x, y, newWidth, newHeight);
 		
 		field.repaint();
 	}
@@ -145,6 +160,7 @@ public class FieldController implements ReceiverListener, AreaListener {
 			}
 			field.setComponentZOrder(comp, 0);
 		}
+		
 	}
 	
 	public void showArea(boolean show) {

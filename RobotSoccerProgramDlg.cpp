@@ -7,8 +7,10 @@
 #include "RobotSoccerProgramDlg.h"
 #include "afxdialogex.h"
 #include <cctype>
+#include <string>
 
 #define _USE_MATH_DEFINES
+#define WM_MY_THREAD_MESSAGE	WM_APP+100
 #include <math.h>
 
 #ifdef _DEBUG
@@ -20,6 +22,7 @@
 
 class CAboutDlg : public CDialogEx
 {
+
 public:
 	CAboutDlg();
 
@@ -121,6 +124,8 @@ void CRobotSoccerProgramDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CRobotSoccerProgramDlg, CDialogEx)
+
+	ON_MESSAGE(WM_MY_THREAD_MESSAGE, OnThreadMessage)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -386,7 +391,19 @@ UINT DrawDisplay_callback(LPVOID pParam)
 
 bool CRobotSoccerProgramDlg::Initialization(void)
 {
+	//preset the program to simulation mode
+	CButton* simulationCheckBox;
+	simulationCheckBox = reinterpret_cast<CButton *>(GetDlgItem(IDC_CHECK_SIMULATION));
+	simulationCheckBox->SetCheck(1);
+
+	CButton* manualButton;
+	manualButton = reinterpret_cast<CButton *>(GetDlgItem(IDC_CHECK_TRANSMITTER_TEST));
+	manualButton->SetCheck(1);
+	UpdateData();
+	//
 	m_comboCameraID.SetCurSel(0);
+
+
 
 	{
 		m_graphMain.SetRegionY( 0, 0.2 );
@@ -458,10 +475,10 @@ bool CRobotSoccerProgramDlg::Initialization(void)
 		m_propStrategyGUI.SetDisplayDC( &m_dcDisplay );
 	}
 
-
+	//tab control
+	m_PropertySheet.AddPage(&m_propGame);
 	m_PropertySheet.AddPage(&m_propColorSetting);	
-	m_PropertySheet.AddPage(&m_propVision);	
-	m_PropertySheet.AddPage(&m_propGame);	
+	m_PropertySheet.AddPage(&m_propVision);		
 	m_PropertySheet.AddPage(&m_propStrategyGUI);	
 
 	m_PropertySheet.Create(this, WS_CHILD|WS_VISIBLE,0);
@@ -509,6 +526,7 @@ bool CRobotSoccerProgramDlg::Initialization(void)
 	return false;
 }
 
+static UINT DataReceivingThread(void*);
 //CONNECTTOHOST – Connects to a remote host
 void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	
@@ -525,9 +543,6 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 	
 	//checking if the string is number only
 	has_only_digit = true;
-
-
-
 
 	for (int n = 0; n < m_portNumber.GetLength(); n++) {
 		if (!std::isdigit( m_portNumber[ n ] )) {
@@ -552,6 +567,13 @@ void CRobotSoccerProgramDlg::OnBnClickedConnectToHost() {
 		Display->SetWindowText( _T("Connected") );
 	}else {
 		Display->SetWindowText( _T("Error") );
+	}
+}
+
+
+SOCKET CRobotSoccerProgramDlg::getSocket() {
+	if (s != NULL) {
+		return s;
 	}
 }
 
@@ -585,6 +607,7 @@ bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 	//check if the socket is valid
 	if (s == INVALID_SOCKET) {
 		WSACleanup();
+		s = -1;
 		return false;
 	}
 
@@ -595,12 +618,7 @@ bool CRobotSoccerProgramDlg::connectToHost(int portNumber)
 		closeConnection();
 		return false;
 	}
-
-	error = send(s, "hi", sizeof("hi"), 0);
-	if (error == SOCKET_ERROR) {
-		closeConnection();
-		return false;
-	}
+	AfxBeginThread(DataReceivingThread, this);
 
 	return true;
 }
@@ -695,6 +713,7 @@ void CRobotSoccerProgramDlg::Process(void)
 	}
 	else
 	{
+		//need to be unedited
 		m_VelocityInfo.Reset();
 
 		if( m_bSimulationMode == FALSE )
@@ -773,10 +792,16 @@ void CRobotSoccerProgramDlg::Process(void)
 
 		CObjectPositionInfo info;
 		info = m_propGame.GetObjectInfomation();
+
+		/*if (isSending == true) {
+			info = listener.GetObjectInfomation();
+		}*/
+
 		m_SynchronousModule.UpdatePositionData( m_ObjectInfo, info );
 
 		if( m_bBallSimulation == TRUE || m_bSimulationMode == TRUE )
 		{
+			//broke here
 			m_SynchronousModule.Simulation(FALSE, (int)m_sliderSimulationStep.GetValue() );
 		}
 		else
@@ -786,27 +811,10 @@ void CRobotSoccerProgramDlg::Process(void)
 
 		m_ObjectInfo = m_SynchronousModule.PositionData();
 		
-//		m_ObjectInfo.m_posBall = info.m_posBall;
 		CObjectPositionInfo current = m_SynchronousModule.PositionDataCurrent();
 		CObjectPositionInfo past = m_SynchronousModule.PositionDataPast();
 		CObjectPositionInfo error = m_SynchronousModule.PositionDataError();
-		/*
-		int x, y, theta;
-		for (int i = 0; i < 5; i++) {
-			x = current.m_Robot[i].pos.x*100 + i * 1000;
-			sendStuff(x);
-			y = current.m_Robot[i].pos.y*100 + i * 1000 + 5000; //we know its the y coordinate by adding 5000
-			sendStuff(y);
-			theta = current.m_Robot[i].orientation + i * 1000 + 20180; //we know its the orientation by adding 20180, the +180 will make it between 0 - 360
-			sendStuff(theta);
-		}
-		
-		int ball_xPos = (m_ObjectInfo.m_Ball.pos.x*100+10000); //we know its the ball by adding 10000
-		sendStuff(ball_xPos);
-		int ball_yPos = (m_ObjectInfo.m_Ball.pos.y*100+11000);
-		sendStuff(ball_yPos);  */
 
-		sendStuff("Working\n");
 		double x, y, theta;
 		for (int i = 0; i < 5; i++) {
 			x = current.m_Robot[i].pos.x;
@@ -834,7 +842,6 @@ void CRobotSoccerProgramDlg::Process(void)
 		n = sprintf(test,"Ball x=%f y=%f ",ball_xPos,ball_yPos);
 		std::string message(test);
 		sendStuff(message);
-		
 
 		m_propGame.SetObjectInfomation( m_ObjectInfo, current, past, error );
 		
@@ -858,10 +865,10 @@ void CRobotSoccerProgramDlg::Process(void)
 				, current.m_Robot[2].orientation );
 		}
 
-
-
+		
 		if( m_bManualControl )
 		{
+			
 			bool bRobotManualControl[11];
 			bRobotManualControl[0] = (m_bManualRobotAll == TRUE || m_bManualRobot1 == TRUE );
 			bRobotManualControl[1] = (m_bManualRobotAll == TRUE || m_bManualRobot2 == TRUE );
@@ -874,6 +881,7 @@ void CRobotSoccerProgramDlg::Process(void)
 			bRobotManualControl[8] = (m_bManualRobotAll == TRUE || m_bManualRobot9 == TRUE );
 			bRobotManualControl[9] = (m_bManualRobotAll == TRUE || m_bManualRobot10 == TRUE );
 			bRobotManualControl[10] =(m_bManualRobotAll == TRUE || m_bManualRobot11 == TRUE );
+			
 
 			double v_linear  = 0.0;
 			double v_angular = 0.0;
@@ -897,11 +905,12 @@ void CRobotSoccerProgramDlg::Process(void)
 			double v_left  = v_linear - v_angular * 0.0675 / 2.;
 			double v_right = v_linear + v_angular * 0.0675 / 2.;
 
-
+			
 			for( int i=0 ; i<11 ; i++ )
 			{
 				if( bRobotManualControl[i] )
 				{
+					/*
 					m_VelocityInfo.m_VelocityLeft[i] = v_left;
 					m_VelocityInfo.m_VelocityRight[i] = v_right;
 
@@ -909,6 +918,20 @@ void CRobotSoccerProgramDlg::Process(void)
 					m_VelocityInfo.m_AngularVelocity[i] = v_angular;
 
 					m_VelocityInfo.m_Behavior[i] = m_RobotTestBehavior;
+						*/		
+					m_cs.Lock();
+					for( int i=0 ; i<11 ; i++ ){
+
+							m_VelocityInfo.m_LinearVelocity[i] = javaVelocityInfo.m_LinearVelocity[i];
+							m_VelocityInfo.m_AngularVelocity[i] = javaVelocityInfo.m_AngularVelocity[i];
+
+							m_VelocityInfo.m_VelocityLeft[i] = javaVelocityInfo.m_LinearVelocity[i] - javaVelocityInfo.m_AngularVelocity[i] * 0.0675 / 2.;
+							m_VelocityInfo.m_VelocityRight[i] = javaVelocityInfo.m_LinearVelocity[i] + javaVelocityInfo.m_AngularVelocity[i] * 0.0675 / 2.;
+
+							m_VelocityInfo.m_Behavior[i] = 0;
+					}
+					m_cs.Unlock();
+
 				}
 				else
 				{
@@ -920,8 +943,10 @@ void CRobotSoccerProgramDlg::Process(void)
 
 					m_VelocityInfo.m_Behavior[i] = ROBOT_BEHAVIOR_STOP; // stop behavior
 				}
-			}
-		}
+			} 	
+		} 
+		
+		
 		
 		m_SynchronousModule.UpdateVelocityData( m_VelocityInfo );
 
@@ -1565,6 +1590,7 @@ void CRobotSoccerProgramDlg::OnBnClickedCancel()
 		
 		if( AfxMessageBox(_T("Are you sure you want to exit the program?"), MB_YESNO|MB_ICONQUESTION) == IDYES )
 		{
+			sendStuff("closing");
 			m_bExit = true;
 		}
 	}
@@ -1974,4 +2000,160 @@ void CRobotSoccerProgramDlg::OnSelchangeComboRobotTestBehavior()
 void CRobotSoccerProgramDlg::OnBnClickedCheckCameraImageOnGame()
 {
 	UpdateData(TRUE);
+}
+
+//kinda like process method for swing worker which will run in the main window thread
+LRESULT CRobotSoccerProgramDlg::OnThreadMessage(WPARAM wParam, LPARAM lParam)
+{
+	UpdateData(true);
+	CEdit* Display;
+	CListBox* bigBox;
+	//number++;
+	//if (number >9) {
+	//	number =0;
+	//}
+	
+	
+	CObjectVelocityInfo object = *(reinterpret_cast<CObjectVelocityInfo*>(wParam));
+	/*
+	std::vector<std::string> y = *(reinterpret_cast<std::vector<std::string>*>(lParam));
+	// debugging output start
+	bigBox = reinterpret_cast<CListBox *>(GetDlgItem(IDC_DEBUG_BIG_BOX));
+	bigBox->ResetContent();
+
+	for (size_t i=0; i<y.size(); i++) {
+		std::wstring ws;
+		ws.assign(y.at(i).begin(),y.at(i).end());
+		bigBox->InsertString(-1, ws.c_str());
+	}
+
+    //bigBox->InsertString(-1,_T("dasdf"));
+	Display = reinterpret_cast<CEdit *>(GetDlgItem(IDC_DEBUG_BOX));
+	
+	//std::string timestamp = *(reinterpret_cast<std::string*>(lParam));
+	std::wstringstream ss;
+	ss <<  object.m_LinearVelocity[0];
+	ss << " ";
+	ss << number;
+	ss << " ";
+
+	//std::wstring ws;
+	//ws.assign(timestamp.begin(),timestamp.end());
+
+	//ss << ws;
+
+	//Display->SetWindowText(ss.str().c_str()); 
+	//Display->SetWindowText(ws.c_str());
+
+	//debuggin output end
+	*/
+	m_cs.Lock();
+	for( int i=0 ; i<11 ; i++ ){
+
+		javaVelocityInfo.m_LinearVelocity[i] = object.m_LinearVelocity[i];
+		javaVelocityInfo.m_AngularVelocity[i] = object.m_AngularVelocity[i];
+	}
+	m_cs.Unlock();
+	return 0;
+	
+}
+
+//the function that the thread will be running
+UINT DataReceivingThread(void *pParam)
+{
+	//initialising all the variable to read the incoming data
+	CRobotSoccerProgramDlg* pThis= (CRobotSoccerProgramDlg*)pParam;
+	
+	bool listening = true;
+	std::string outputResult;
+	std::string timestamp;
+	
+	std::string message;
+	std::vector<std::string> x;
+	CObjectVelocityInfo velocityObject;
+
+	bool found = false;
+	char buffer[512];
+	int len = 512;
+
+	while ( listening ) {
+		
+		//reading the data and  putting it into the buffer
+		int iResult = recv(pThis->getSocket(), buffer,  len, 0);
+
+		//if there is something in the buffer, process it
+		if (iResult > 0) {
+				std::string hello(buffer, 512);
+				outputResult = hello;
+				x.clear();
+				//breaking up the chunks of data into each line in a vector
+				std::vector<std::string> elems;
+				std::stringstream ss(outputResult);
+				std::string item;
+				while (std::getline(ss, item, '\r')) {
+					elems.push_back(item);
+				}
+				x = elems;
+				
+				//reading each line of data
+				for (size_t index=0; index<x.size(); index++) {
+					size_t pos = 0;
+					if (x.at(index).length() < 14) {
+					}
+					else if ( pos =x.at(index).find("lin") != std::string::npos) {
+						if ( pos = x.at(index).find("lin bot0:" ) != std::string::npos) {
+							velocityObject.m_LinearVelocity[0] = stod(x.at(index).substr(pos+10));	
+						}
+						else if ( pos = x.at(index).find("lin bot1:" ) != std::string::npos ) {
+
+							velocityObject.m_LinearVelocity[1] = stod(x.at(index).substr(pos+10));
+						}
+						else if (pos = x.at(index).find("lin bot2:" ) != std::string::npos ) {
+
+							velocityObject.m_LinearVelocity[2] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("lin bot3:" ) != std::string::npos) {
+
+							velocityObject.m_LinearVelocity[3] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("lin bot4:" ) != std::string::npos) {
+
+							velocityObject.m_LinearVelocity[4] = stod(x.at(index).substr(pos+10));
+						}
+					}
+					else if  ( pos =x.at(index).find("ang") != std::string::npos) {
+						if ( pos = x.at(index).find("ang bot0:" ) != std::string::npos ) {
+							velocityObject.m_AngularVelocity[0] = stod(x.at(index).substr(pos+10));
+						}
+						else if (pos = x.at(index).find("ang bot1:" ) != std::string::npos ) {
+							velocityObject.m_AngularVelocity[1] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("ang bot2:" ) != std::string::npos) {
+							velocityObject.m_AngularVelocity[2] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("ang bot3:" ) != std::string::npos) {
+							velocityObject.m_AngularVelocity[3] = stod(x.at(index).substr(pos+10));
+						}
+						else if ( pos = x.at(index).find("ang bot4:" ) != std::string::npos) {
+							velocityObject.m_AngularVelocity[4] = stod(x.at(index).substr(pos+10));;
+						}
+					}
+					else if ( pos =x.at(index).find("close connection") != std::string::npos ) {
+						pThis->sendStuff("closing");
+					}
+
+					//send a message to the main thread containing the processed data
+					pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), reinterpret_cast<LPARAM>(&elems));
+					
+				}		
+		} 
+		//if no more data close the socket
+		else {
+			listening = false;
+			closesocket(pThis->getSocket());
+			WSACleanup();
+		}
+	}
+	
+    return 0;
 }

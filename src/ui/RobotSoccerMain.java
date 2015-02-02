@@ -15,34 +15,44 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
+import ui.Ball;
+import ui.DrawAreaGlassPanel;
+import ui.Field;
+import ui.PlaysPanel;
+import ui.RobotInfoPanel;
+import ui.RolesPanel;
+import ui.SituationPanel;
+import ui.TestComPanel;
+import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
+import ui.WebcamDisplayPanelListener;
 import bot.Robots;
-import communication.Receiver;
+
+import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
+
 import controllers.BallController;
 import controllers.FieldController;
 import controllers.WebcamController;
 
-
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
-    private JButton startButton, connectionButton, recordButton;
+    private JButton startButton, connectionButton, recordButton, saveButton, openButton;
     private JTextArea taskOutput;
-    private Receiver task;
+
+    private NetworkSocket serverSocket;
     private FieldController fieldController;
     private BallController ballController;
     private Field field;
@@ -53,6 +63,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     private SerialPortCommunicator serialCom;
     private Robots bots;
     private JRadioButton defaultWebcamRadioButton, IPWebcamRadioButton;
+    
+    private Tick gameTick;
     
     private SituationPanel situationPanel;
     private PlaysPanel playsPanel;
@@ -89,9 +101,14 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         startButton.addActionListener(this);
         portField = new JTextField();
         
+        saveButton = new JButton("Save to File");
+        openButton = new JButton("Open");
+        
         JPanel portPanel = new JPanel(new MigLayout());
         portPanel.add(startButton);
         portPanel.add(portField, "push, grow");
+        portPanel.add(saveButton, "gapx 250");
+        portPanel.add(openButton);
         
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
@@ -116,12 +133,15 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         infoPanel.setLayout(new FlowLayout());
         robotInfoPanels = new RobotInfoPanel[5];
         
+        fieldController.setComPanel(testComPanel);
+        
         for (int i = 0; i<5; i++) {
         	robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
         	infoPanel.add(robotInfoPanels[i]);
         }
 
-        currentStrategy = new CurrentStrategy();
+        currentStrategy = new CurrentStrategy(fieldController);
+        field.setCurrentStrategy(currentStrategy);
         situationPanel = new SituationPanel(fieldController, currentStrategy);
         playsPanel = new PlaysPanel(currentStrategy);
         rolesPanel = new RolesPanel(currentStrategy);
@@ -198,8 +218,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards.add(field, FIELDSTRING);
         cards.add(webcamDisplayPanel, CAMSTRING);
         
-        setUpGame();
-        
         add(cards, "span 6, width 600:600:600, height 400:400:400");
         add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
@@ -209,13 +227,30 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         add(testComContainerPanel, "span 2, width 200:200:200");
         
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentStrategy.saveToFile();
+            }
+        });
+
+        openButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentStrategy.readFromFile();
+            }
+        });
         
+        gameTick = new Tick(field, bots, testComPanel);
+        setUpGame();
     }
 
     public void setUpGame() {
         java.util.Timer timer = new java.util.Timer();
-        timer.schedule(new Tick(field, bots, testComPanel), 0, 50);
+        timer.schedule(gameTick, 0, 50);
     }
+    
     /**
      * Invoked when the user presses the start button.
      */
@@ -224,22 +259,26 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         //we create new instances as needed.
     	if (evt.getSource() == startButton) {
     		if (startButton.getText() == "Start") {
+    	    	
     	    	int portNumber;
     	    	try {
     	    		portNumber = Integer.parseInt(portField.getText());
     	    	}	catch (NumberFormatException e) {
     	    		portNumber = DEFAULT_PORT_NUMBER;
-    	    		JOptionPane.showMessageDialog(RobotSoccerMain.this,"Incorrect character, will use default port: 31000");
+    	    		taskOutput.append("\nIncorrect character, will use default port: 31000\n");
     	    	}
     	    	
-    	        task = new Receiver(taskOutput, portNumber);
-    	        task.registerListener(fieldController);
-    	        task.execute();
-    	        startButton.setText("Stop");
+
+    	    	serverSocket = new NetworkSocket(portNumber, taskOutput, startButton);
+    	    	System.out.println("created new socket");
+    	    	serverSocket.execute();
+    	    	serverSocket.addReceiverListener(fieldController);
+    	    	serverSocket.addSenderListener(gameTick);
     		} else {
-        		task.stop();
-        		startButton.setText("Start");
+        		//tell the serverSocket to begin the closing procedure;
+        		serverSocket.close();
     		}
+    		
     	} else if (evt.getSource() == defaultWebcamRadioButton) {
     		webcamURLField.setEditable(false);
     	} else if (evt.getSource() == IPWebcamRadioButton) {
