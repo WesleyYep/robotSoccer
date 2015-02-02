@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -33,7 +35,6 @@ public class WebcamDisplayPanel extends JPanel {
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		webcamPanel = null;
-		
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 	}
@@ -54,6 +55,27 @@ public class WebcamDisplayPanel extends JPanel {
 		} else if (webcam.isOpen()) {
 			currentViewState = ViewState.connectionSuccess();
 			webcamPanel = new WebcamPanel(webcam);
+            webcamPanel.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    for (WebcamDisplayPanelListener listener : wdpListeners) {
+                        if (listener instanceof ColourPanel) {
+                            ColourPanel cp = (ColourPanel) listener;
+                            if (cp.getIsSampling()) {
+                                cp.takeSample((e.getX()-55.0)/485.0*176.0, e.getY()/400.0*144.0);
+                            }
+                        }
+                    }
+                }
+                @Override
+                public void mousePressed(MouseEvent e) { }
+                @Override
+                public void mouseReleased(MouseEvent e) {  }
+                @Override
+                public void mouseEntered(MouseEvent e) {  }
+                @Override
+                public void mouseExited(MouseEvent e) { }
+            });
 			add(webcamPanel, BorderLayout.CENTER);
 		} else {
 			currentViewState = ViewState.disconnect();
@@ -102,12 +124,12 @@ public class WebcamDisplayPanel extends JPanel {
 			l.viewStateChanged();
 		}
 	}
-	
-	public ViewState getViewState() {
-		return currentViewState;
-	}
-	
-	/**
+
+    public ViewState getViewState() {
+        return currentViewState;
+    }
+
+    /**
 	 * <p>Defines the <strong>state</strong> of the display.</p>
 	 * <p>Each state has a <strong>display message</strong></p>
 	 * @author Chang Kon, Wesley, John

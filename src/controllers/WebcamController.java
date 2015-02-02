@@ -1,6 +1,7 @@
 package controllers;
 
 import java.awt.CardLayout;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -69,6 +70,10 @@ public class WebcamController {
 		worker.execute();
 
 	}
+
+    public BufferedImage getImageFromWebcam() {
+        return webcam.getImage();
+    }
 	
 	/**
 	 * <p>Connects to a IP network camera. After connection attempt, it updates webcamDisplayPanel</p>

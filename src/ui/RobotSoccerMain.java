@@ -59,6 +59,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     private SituationPanel situationPanel;
     private PlaysPanel playsPanel;
     private RolesPanel rolesPanel;
+    private ColourPanel colourPanel;
     private CurrentStrategy currentStrategy;
     
     private JTabbedPane tabPane;
@@ -142,7 +143,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		glassPanel.setVisible(false);
 		field.add(glassPanel);
 		situationPanel.setGlassPanel(glassPanel);
-		
+
+
         //create tab pane
         tabPane = new JTabbedPane();
         tabPane.addTab("Output", new JScrollPane(taskOutput));
@@ -204,13 +206,15 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards = new JPanel(new CardLayout());
         webcamDisplayPanel = new WebcamDisplayPanel();
         webcamController = new WebcamController(webcamDisplayPanel);
-        
+        colourPanel = new ColourPanel(webcamController);
+
         // Add listener
         webcamDisplayPanel.addWebcamDisplayPanelListener(this);
-        
+        webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
         cards.add(field, FIELDSTRING);
         cards.add(webcamDisplayPanel, CAMSTRING);
-        
+
+        tabPane.addTab("Colour", colourPanel);
         add(cards, "span 6, width 600:600:600, height 400:400:600");
         add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
