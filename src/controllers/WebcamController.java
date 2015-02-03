@@ -1,6 +1,7 @@
 package controllers;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutionException;
 
@@ -9,6 +10,7 @@ import javax.swing.SwingWorker;
 import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
@@ -48,6 +50,9 @@ public class WebcamController {
 			protected Boolean doInBackground() throws Exception {
 				// Retrieve the webcam.
 				webcam = Webcam.getDefault();
+				
+				//webcam.setViewSize(new Dimension(485,400));
+				webcam.setViewSize(WebcamResolution.VGA.getSize());
 				webcam.open();
 				
 				return true;

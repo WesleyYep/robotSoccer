@@ -17,8 +17,6 @@
 	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
 	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/logback-classic-1.0.9.jar"/>
-	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/logback-core-1.0.9.jar"/>
 	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/commons-configuration-1.10.jar"/>
 	<classpathentry kind="lib" path="G:/Users/John/Documents/GitHub/robotSoccer/lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
