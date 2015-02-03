@@ -67,7 +67,7 @@ public class WebcamDisplayPanel extends JPanel {
                         if (listener instanceof ColourPanel) {
                             ColourPanel cp = (ColourPanel) listener;
                             if (cp.getIsSampling()) {
-                                cp.takeSample((e.getX()-55.0)/485.0*webcam.getImage().getWidth(), e.getY()/400.0*webcam.getImage().getHeight());
+                                cp.takeSample(e.getX(), e.getY());
                             }
                         }
                         
