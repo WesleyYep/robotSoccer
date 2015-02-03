@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
+import com.github.sarxos.webcam.WebcamResolution;
 import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
@@ -50,10 +51,9 @@ public class WebcamController {
 			protected Boolean doInBackground() throws Exception {
 				// Retrieve the webcam.
 				webcam = Webcam.getDefault();
-				
-				//webcam.setViewSize(new Dimension(485,400));
 				webcam.setViewSize(WebcamResolution.VGA.getSize());
 				webcam.open();
+
 				
 				return true;
 			}
@@ -98,9 +98,9 @@ public class WebcamController {
 				IpCamDeviceRegistry.register(IPWEBCAMDEVICENAME, url, IpCamMode.PUSH);
 				
 				webcam = Webcam.getDefault();
+                webcam.setViewSize(WebcamResolution.VGA.getSize());
 				webcam.open();
-				
-				return true;
+                return true;
 			}
 			
 			@Override
@@ -119,8 +119,7 @@ public class WebcamController {
 			}
 			
 		};
-		
-		worker.execute();
+        worker.execute();
 	}
 	
 	/**
