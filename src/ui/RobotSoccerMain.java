@@ -69,6 +69,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private WebcamController webcamController;
 	
 	private JPanel cards;
+	private VisionPanel visionPanel;
 	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -215,7 +216,12 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards.add(webcamDisplayPanel, CAMSTRING);
 
         tabPane.addTab("Colour", colourPanel);
-        add(cards, "span 6, width 600:600:600, height 400:400:600");
+        
+        visionPanel = new VisionPanel(webcamController);
+        webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
+        tabPane.addTab("Vision", visionPanel);
+        
+        add(cards, "span 6, width 640:640:640, height 480:480:480");
         add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
         add(portPanel, "span 3, width 300:300:300");
@@ -225,7 +231,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        setPreferredSize(new Dimension(1250, 700));
+        setPreferredSize(new Dimension(1290, 780));
         
         saveButton.addActionListener(new ActionListener() {
             @Override
