@@ -26,6 +26,11 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private Point right;
 	private Point left;
 	
+	private Point rightAbove;
+	private Point rightBelow;
+	private Point leftAbove;
+	private Point leftBelow;
+	
 	private WebcamController webcamController;
 	
 	private JButton topRightButton;
@@ -36,14 +41,31 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private JButton bottomMiddleButton;
 	private JButton bottomRightButton;
 	
+	private JButton leftAboveButton;
 	private JButton leftButton;
+	private JButton leftBelowButton;
+	
+	private JButton rightAboveButton;
 	private JButton rightButton;
+	private JButton rightBelowButton;
 
 	
 	private JLabel mousePoint;
 	
 	private JButton buttonSelected = null;
 	private String originalButtonText = null;
+	
+	//pixel/cm
+	private double xScaleFactor = 0;
+	private double yScaleFactor = 0;
+	
+	private int topY;
+	private int BottomY;
+	private int centreX;
+	
+	private int leftX;
+	private int centreY;
+	private int rightX;
 	
 	public VisionPanel(WebcamController wc) {
 		webcamController = wc;
@@ -56,9 +78,13 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		bottomMiddleButton = new JButton("Bottom Middle");
 		bottomRightButton = new JButton("Bottom Right");
 		
+		leftAboveButton = new JButton("Left Above");
 		leftButton = new JButton("Left");
-		rightButton = new JButton("Right");
+		leftBelowButton = new JButton("Left Below");
 		
+		rightAboveButton = new JButton("Right Above");
+		rightButton = new JButton("Right");
+		rightBelowButton = new JButton("Right Below");
 		
 		topRightButton.addActionListener(new ActionListener() {
 
@@ -167,6 +193,24 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 			}
 			
 		});
+		
+		rightAboveButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rightAboveButton.getText().equals("Right Above")) {
+					rightAboveButton.setText("Selecting");
+					buttonSelected = rightAboveButton;
+					originalButtonText = "Right Above";
+				}
+				else {
+					rightAboveButton.setText("Right Above");
+					buttonSelected = null;
+					originalButtonText = null;
+				}
+			}
+			
+		});
 	
 		rightButton.addActionListener(new ActionListener() {
 
@@ -184,6 +228,41 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				}
 			}
 			
+		});
+		
+		rightBelowButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rightBelowButton.getText().equals("Right Below")) {
+					rightBelowButton.setText("Selecting");
+					buttonSelected = rightBelowButton;
+					originalButtonText = "Right Below";
+				}
+				else {
+					rightBelowButton.setText("Right Below");
+					buttonSelected = null;
+					originalButtonText = null;
+				}
+			}
+			
+		});
+		
+		leftAboveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (leftAboveButton.getText().equals("Left Above")) {
+					leftAboveButton.setText("Selecting");
+					buttonSelected = leftAboveButton;
+					originalButtonText = "Left Above";
+				}
+				else {
+					leftAboveButton.setText("Left Above");
+					buttonSelected = null;
+					originalButtonText = null;
+				}
+			}
 		});
 
 		leftButton.addActionListener(new ActionListener() {
@@ -204,6 +283,24 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 			
 		});
 		
+		leftBelowButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (leftBelowButton.getText().equals("Left Below")) {
+					leftBelowButton.setText("Selecting");
+					buttonSelected = leftBelowButton;
+					originalButtonText = "Left Below";
+				}
+				else {
+					leftBelowButton.setText("Left Below");
+					buttonSelected = null;
+					originalButtonText = null;
+				}
+			}
+			
+		});
+		
 		mousePoint = new JLabel("Mouse at x: 0 y: 0");
 		
 		this.setLayout(new MigLayout());
@@ -214,14 +311,18 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		add(topMiddleButton);
 		add(topRightButton,"wrap");
 		
+		add(leftAboveButton);
 		add(leftButton);
-		add(rightButton,"wrap");
+		add(leftBelowButton, "wrap");
+		
+		add(rightAboveButton);
+		add(rightButton);
+		add(rightBelowButton,"wrap");
 		
 		add(bottomLeftButton);
 		add(bottomMiddleButton);
 		add(bottomRightButton);
 	}
-	
 	
 	
 	public void updateMousePoint(int x, int y) {
@@ -252,24 +353,62 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 			else if (buttonSelected.equals(rightButton)){
 				right = new Point(x,y);		
 			}
+			else if (buttonSelected.equals(leftAboveButton)){
+				leftAbove = new Point(x,y);
+			}
+			else if (buttonSelected.equals(rightAboveButton)){
+				rightAbove = new Point(x,y);		
+			}
+			else if (buttonSelected.equals(leftBelowButton)){
+				leftBelow = new Point(x,y);
+			}
+			else if (buttonSelected.equals(rightBelowButton)){
+				rightBelow = new Point(x,y);		
+			}
 			
 			buttonSelected.setText(originalButtonText);
 			buttonSelected = null;
 			originalButtonText = null;
-		}
-		System.out.println(" ");
-		System.out.println(topLeft + " " + topMiddle + " " + topRight);
-		System.out.println(left + " " + right);
-		System.out.println(bottomLeft + " " + bottomMiddle + " " + bottomRight);
-		
-		if (topLeft != null && topMiddle !=null && topRight !=null) {
-			if (left != null && right != null) {
+			
+			System.out.println(" ");
+			System.out.println(topLeft + " " + topMiddle + " " + topRight);
+			System.out.println(leftAbove+ " " + left +" " + leftBelow);
+			System.out.println(rightAbove+ " " + right +" " + rightBelow);
+			System.out.println(bottomLeft + " " + bottomMiddle + " " + bottomRight);
+			
+			if (topLeft != null && topMiddle !=null && topRight !=null) {
 				if (bottomLeft != null && bottomMiddle != null && bottomRight != null) {
-					
-					
-				}
+						
+						topY = Math.round((topLeft.y+topMiddle.y+topRight.y)/3);
+						BottomY = Math.round((bottomLeft.y+bottomMiddle.y+bottomRight.y)/3);
+						//centreX = Math.round((left.x + right.x)/2);
+						
+						leftX = Math.round((topLeft.x+bottomLeft.x)/2);
+						rightX = Math.round((topRight.x+bottomRight.x)/2);
+						//centreY = Math.round((topMiddle.y+bottomMiddle.y)/2);
+						
+						xScaleFactor = (rightX-leftX)/220.00;
+						
+						yScaleFactor = (BottomY-topY)/180.00;
+						
+						System.out.println("topY: " +  topY + " BottomY: " + BottomY);
+						System.out.println("leftX: " + leftX + " rightX: " + rightX);
+						System.out.println("xscale: " + xScaleFactor + " yscale: " + yScaleFactor);
+					}	
 			}
 		}
+		
+		
+		if (topY != 0 && leftX != 0) {
+			double actualX = x-leftX;
+			double actualY = y-topY;
+			
+			actualX = actualX/xScaleFactor;
+			actualY = actualY/yScaleFactor;
+			
+			System.out.println("Actual X:" + actualX + " actual y:" + actualY);
+		}
+		
 		
 		
 		this.repaint();
