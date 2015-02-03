@@ -73,6 +73,9 @@ public class SamplingPanel extends JPanel {
         System.out.println("Y: " + y);
         System.out.println("U: " + u);
         System.out.println("V: " + v);
+        YSlider.repaint();
+        USlider.repaint();
+        VSlider.repaint();
     }
 
 }
