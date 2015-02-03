@@ -33,6 +33,7 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
                     isSampling = true;
                 } else {
                     sampleButton.setText("Start Sample");
+                    isSampling = false;
                 }
             }
         });
@@ -40,10 +41,10 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
 
     public void takeSample(double x, double y) {
         System.out.println("X: " + x);
-        System.out.println(("Y: " + y));
+        System.out.println("Y: " + y);
         BufferedImage image = webcamController.getImageFromWebcam();
-        System.out.println(image.getWidth());
-        System.out.println(image.getHeight());
+        System.out.println("Width: " + image.getWidth());
+        System.out.println("Height: " + image.getHeight());
         Color color = new Color(image.getRGB((int)x, (int)y));
         System.out.println("Red: " + color.getRed());
         System.out.println("Green: " + color.getGreen());

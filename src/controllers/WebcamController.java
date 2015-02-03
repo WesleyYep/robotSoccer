@@ -72,6 +72,8 @@ public class WebcamController {
 	}
 
     public BufferedImage getImageFromWebcam() {
+    	System.out.println(webcam.getViewSize());
+    	System.out.println(webcam.getImage().getWidth());
         return webcam.getImage();
     }
 	
