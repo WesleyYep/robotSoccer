@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
