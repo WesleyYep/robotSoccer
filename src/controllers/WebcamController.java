@@ -60,8 +60,6 @@ public class WebcamController {
 
 			@Override
 			protected void done() {
-				CardLayout layout = (CardLayout)webcamDisplayPanel.getParent().getLayout();
-	    		layout.next(webcamDisplayPanel.getParent());
 				try {
 					get();
 					webcamDisplayPanel.update(webcam);
@@ -142,8 +140,6 @@ public class WebcamController {
 
 			@Override
 			protected void done() {
-				CardLayout layout = (CardLayout)webcamDisplayPanel.getParent().getLayout();
-	    		layout.next(webcamDisplayPanel.getParent());
 				// Update webcam display panel. Disconnect webcam.
 				webcamDisplayPanel.update(webcam);
 				// Not thread safe.
