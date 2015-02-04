@@ -26,18 +26,30 @@ public class TurnToFaceBall extends Action{
             difference += (2 * Math.PI);
         }
 
-        double errorMargin = 0.7;
+        double errorMargin = 0.8;
         if (Math.abs(difference) >= errorMargin) {
             if (difference > 0) {
                 r.angularVelocity = 2*Math.PI;
             } else {
                 r.angularVelocity = -2*Math.PI;
             }
+        } else if (Math.abs(difference) >= errorMargin/2) {
+            if (difference > 0) {
+                r.angularVelocity = Math.PI;
+            } else {
+                r.angularVelocity = Math.PI;
+            }
+        } else if (Math.abs(difference) >= errorMargin/4) {
+            if (difference > 0) {
+                r.angularVelocity = Math.PI/2;
+            } else {
+                r.angularVelocity = Math.PI/2;
+            }
             r.linearVelocity = 0;
         } else {
             r.angularVelocity = 0;
-            r.linearVelocity = 0;
         }
+        r.linearVelocity = 0;
 
 
     //    System.out.println(System.currentTimeMillis());
