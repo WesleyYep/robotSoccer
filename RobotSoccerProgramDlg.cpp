@@ -2152,6 +2152,14 @@ UINT DataReceivingThread(void *pParam)
 			listening = false;
 			closesocket(pThis->getSocket());
 			WSACleanup();
+			
+			//setting robot stop
+			for (int i=0; i<5; i++) {
+				velocityObject.m_LinearVelocity[i] = 0;
+				velocityObject.m_AngularVelocity[i] = 0;
+			}
+			pThis->SendMessage(WM_MY_THREAD_MESSAGE,reinterpret_cast<WPARAM>(&velocityObject), NULL);
+			
 		}
 	}
 	

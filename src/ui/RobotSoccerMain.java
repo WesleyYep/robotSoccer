@@ -29,10 +29,9 @@ import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import bot.Robots;
-
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
-
+import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
 import controllers.WebcamController;
@@ -60,6 +59,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     private SituationPanel situationPanel;
     private PlaysPanel playsPanel;
     private RolesPanel rolesPanel;
+    private ColourPanel colourPanel;
     private CurrentStrategy currentStrategy;
     
     private JTabbedPane tabPane;
@@ -69,6 +69,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private WebcamController webcamController;
 	
 	private JPanel cards;
+	private VisionPanel visionPanel;
 	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -143,28 +144,14 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		glassPanel.setVisible(false);
 		field.add(glassPanel);
 		situationPanel.setGlassPanel(glassPanel);
-		
+
+
         //create tab pane
         tabPane = new JTabbedPane();
         tabPane.addTab("Output", new JScrollPane(taskOutput));
         tabPane.addTab("Situation", situationPanel);
         tabPane.addTab("Plays", playsPanel);
         tabPane.addTab("Roles", rolesPanel);
-
-        tabPane.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent arg0) {
-				if (tabPane.getTitleAt(tabPane.getSelectedIndex()).equals("Situation")){
-					fieldController.showArea(true);
-				}
-				else {
-					fieldController.showArea(false);
-				}
-				fieldController.repaintField();
-			}
-				
-        });
         
         // Create webcam component panel.
         JPanel webcamComponentPanel = new JPanel(new MigLayout());
@@ -205,14 +192,21 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards = new JPanel(new CardLayout());
         webcamDisplayPanel = new WebcamDisplayPanel();
         webcamController = new WebcamController(webcamDisplayPanel);
-        
+        colourPanel = new ColourPanel(webcamController);
+
         // Add listener
         webcamDisplayPanel.addWebcamDisplayPanelListener(this);
-        
+        webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
         cards.add(field, FIELDSTRING);
         cards.add(webcamDisplayPanel, CAMSTRING);
+
+        tabPane.addTab("Colour", colourPanel);
         
-        add(cards, "span 6, width 600:600:600, height 400:400:600");
+        visionPanel = new VisionPanel(webcamController);
+        webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
+        tabPane.addTab("Vision", visionPanel);
+        
+        add(cards, "span 6, width 640:640:640, height 480:480:480");
         add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
         add(portPanel, "span 3, width 300:300:300");
@@ -222,7 +216,31 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        setPreferredSize(new Dimension(1250, 700));
+        setPreferredSize(new Dimension(1290, 780));
+        
+        tabPane.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				int selectedIndex = tabPane.getSelectedIndex();
+				String tabTitle = tabPane.getTitleAt(selectedIndex);
+				if (tabTitle.equals("Situation")){
+					fieldController.showArea(true);
+				}
+				else {
+					fieldController.showArea(false);
+				}
+				
+				if (tabTitle.equals("Colour") || tabTitle.equals("Vision")) {
+					changeCard(CAMSTRING);
+				} else {
+					changeCard(FIELDSTRING);
+				}
+				
+				fieldController.repaintField();
+			}
+				
+        });
         
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -240,11 +258,15 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         
         gameTick = new Tick(field, bots, testComPanel);
         setUpGame();
+        
+        //setting up configuration for the program
+        ConfigFile configFile = ConfigFile.getInstance();
+        configFile.createConfigFile();
     }
 
     public void setUpGame() {
         java.util.Timer timer = new java.util.Timer();
-        timer.schedule(gameTick, 0, 50);
+        timer.schedule(gameTick, 0, 5);
     }
     
     /**
@@ -270,11 +292,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     	    	serverSocket.execute();
     	    	serverSocket.addReceiverListener(fieldController);
     	    	serverSocket.addSenderListener(gameTick);
+    	    	serverSocket.addSenderListener(testComPanel);
     		} else {
         		//tell the serverSocket to begin the closing procedure;
         		serverSocket.close();
     		}
-    		
     	} else if (evt.getSource() == defaultWebcamRadioButton) {
     		webcamURLField.setEditable(false);
     	} else if (evt.getSource() == IPWebcamRadioButton) {
@@ -296,10 +318,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     		}
     	} else if (evt.getSource() == recordButton) {
     		
-    		CardLayout layout = (CardLayout)cards.getLayout();
-    		
-    		layout.next(cards);
-    		
     		if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
     			recordButton.setText(VIDEOCAPTURE[1]);
     		} else {
@@ -308,6 +326,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     	}
     }
 
+    public void changeCard(String cardName) {
+    	CardLayout layout = (CardLayout)cards.getLayout();
+    	layout.show(cards, cardName);
+    }
+    
 	@Override
 	public void viewStateChanged() {
 		ViewState currentViewState = webcamDisplayPanel.getViewState();
@@ -340,7 +363,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         frame.pack();
         frame.setVisible(true);
     }
-
+    
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

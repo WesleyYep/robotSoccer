@@ -14,8 +14,8 @@ public class Tick extends TimerTask implements SenderListener{
 	private Field field;
 	private Robots bots;
 	private TestComPanel comPanel;
-	private boolean stopSimBot = false;
 	
+	private boolean runStrat = false;
 	private Sender sender;
 //	private Physics physics;
 	
@@ -29,6 +29,7 @@ public class Tick extends TimerTask implements SenderListener{
 	public void run() {
 		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
 		field.executeStrategy();
+		
 		if (comPanel.isSimulation()) {
 			field.repaint();
 			
@@ -53,6 +54,10 @@ public class Tick extends TimerTask implements SenderListener{
 	
 	public void setSender(Sender sender) {
 		this.sender = sender;
+	}
+	
+	public void startGame(boolean start) {
+		runStrat = start;
 	}
 	
 

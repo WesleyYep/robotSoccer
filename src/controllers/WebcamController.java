@@ -1,12 +1,19 @@
 package controllers;
 
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
+import com.github.sarxos.webcam.WebcamResolution;
+
 import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
@@ -46,7 +53,9 @@ public class WebcamController {
 			protected Boolean doInBackground() throws Exception {
 				// Retrieve the webcam.
 				webcam = Webcam.getDefault();
+				webcam.setViewSize(WebcamResolution.VGA.getSize());
 				webcam.open();
+
 				
 				return true;
 			}
@@ -85,9 +94,9 @@ public class WebcamController {
 				IpCamDeviceRegistry.register(IPWEBCAMDEVICENAME, url, IpCamMode.PUSH);
 				
 				webcam = Webcam.getDefault();
+                webcam.setViewSize(WebcamResolution.VGA.getSize());
 				webcam.open();
-				
-				return true;
+                return true;
 			}
 			
 			@Override
@@ -96,7 +105,7 @@ public class WebcamController {
 					
 					get();
 					webcamDisplayPanel.update(webcam);
-					
+
 				} catch (ExecutionException | InterruptedException e) {
 					webcamDisplayPanel.update((Webcam)null);
 					// Reset driver.
@@ -106,8 +115,7 @@ public class WebcamController {
 			}
 			
 		};
-		
-		worker.execute();
+        worker.execute();
 	}
 	
 	/**
@@ -142,4 +150,20 @@ public class WebcamController {
 		
 	}
 	
+    public BufferedImage getImageFromWebcam() {
+        return webcam.getImage();
+    }
+	
+    public void setPainter(WebcamPanel.Painter painter) {
+    	webcamDisplayPanel.getRSWebcamPanel().setPainter(painter);
+    }
+    
+    public Webcam getWebcam() {
+    	return webcam;
+    }
+    
+    public WebcamDisplayPanel getWebcamDisplayPanel() {
+    	return webcamDisplayPanel;
+    }
+    
 }

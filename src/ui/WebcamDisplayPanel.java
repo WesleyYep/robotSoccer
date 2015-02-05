@@ -2,14 +2,18 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -23,7 +27,7 @@ import com.github.sarxos.webcam.WebcamPanel;
 public class WebcamDisplayPanel extends JPanel {
 
 	private ViewState currentViewState;
-	private WebcamPanel webcamPanel;
+	private RSWebcamPanel webcamPanel;
 	private ArrayList<WebcamDisplayPanelListener> wdpListeners;
 	
 	public WebcamDisplayPanel() {
@@ -33,9 +37,9 @@ public class WebcamDisplayPanel extends JPanel {
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		webcamPanel = null;
-		
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
+		
 	}
 	
 	/**
@@ -47,14 +51,45 @@ public class WebcamDisplayPanel extends JPanel {
 	 * @param webcam
 	 */
 	
-	public void update(Webcam webcam) {
+	public void update(final Webcam webcam) {
 		// Gets webcam from controller. If webcam is null, it means webcam was not found.		
 		if (webcam == null) {
 			currentViewState = ViewState.connectionFail();
 		} else if (webcam.isOpen()) {
 			currentViewState = ViewState.connectionSuccess();
-			webcamPanel = new WebcamPanel(webcam);
-			add(webcamPanel, BorderLayout.CENTER);
+			webcamPanel = new RSWebcamPanel(webcam);
+
+            webcamPanel.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                	//System.out.println(e.getX());
+                    for (WebcamDisplayPanelListener listener : wdpListeners) {
+                        if (listener instanceof ColourPanel) {
+                            ColourPanel cp = (ColourPanel) listener;
+                            if (cp.getIsSampling()) {
+                                cp.takeSample(e.getX(), e.getY());
+                            }
+                        }
+                        
+                        
+                        if (listener instanceof VisionPanel) {
+                        	VisionPanel panel = (VisionPanel) listener;
+                        	if (panel.isSelectedTab()) {
+                        		panel.updateMousePoint(e.getX(), e.getY());
+                        	}
+                        }
+                    }
+                }
+                @Override
+                public void mousePressed(MouseEvent e) { }
+                @Override
+                public void mouseReleased(MouseEvent e) {  }
+                @Override
+                public void mouseEntered(MouseEvent e) {  }
+                @Override
+                public void mouseExited(MouseEvent e) { }
+            });
+			add(webcamPanel,BorderLayout.CENTER);
 		} else {
 			currentViewState = ViewState.disconnect();
 			removeAll();
@@ -71,6 +106,7 @@ public class WebcamDisplayPanel extends JPanel {
 		// Get the current state of the displayPanel. Draw text onto screen.
 		switch(currentViewState) {
 		case CONNECTED:
+			
 			break;
 		default:
 			g.setColor(Color.WHITE);
@@ -102,12 +138,16 @@ public class WebcamDisplayPanel extends JPanel {
 			l.viewStateChanged();
 		}
 	}
-	
-	public ViewState getViewState() {
-		return currentViewState;
-	}
-	
-	/**
+
+    public ViewState getViewState() {
+        return currentViewState;
+    }
+
+    public RSWebcamPanel getRSWebcamPanel() {
+    	return webcamPanel;
+    }
+    
+    /**
 	 * <p>Defines the <strong>state</strong> of the display.</p>
 	 * <p>Each state has a <strong>display message</strong></p>
 	 * @author Chang Kon, Wesley, John

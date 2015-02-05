@@ -1,6 +1,7 @@
 package strategy;
 
 import actions.Actions;
+import config.ConfigFile;
 import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
@@ -9,6 +10,7 @@ import ui.SituationArea;
 import ui.SituationPanel;
 
 import javax.swing.*;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,9 +96,24 @@ public class CurrentStrategy {
     }
 
     public void saveToFile() {
-        JFileChooser fileChooser = new JFileChooser();
+    	JFileChooser fileChooser;
+        String path;
+        //read in the last save directory
+        if ((path = ConfigFile.getInstance().getLastSaveDirectory()) == null) {
+        	fileChooser = new JFileChooser();
+        }
+        else {
+        	fileChooser = new JFileChooser(path);
+        }
         fileChooser.showSaveDialog(null);
+        
+        if (fileChooser.getSelectedFile() == null) {
+        	return;
+        }
+        
         String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+        String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
+        ConfigFile.getInstance().setLastSaveDirectory(folderPath);
         try {
             FileWriter fileWriter = new FileWriter(fileName);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -141,10 +158,28 @@ public class CurrentStrategy {
         }
     }
 
-    public void readFromFile() {
-        JFileChooser fileChooser = new JFileChooser();
+    public void readFromFile() {  	
+    	
+        JFileChooser fileChooser;
+        String path;
+        //read in the last open directory
+        if ((path = ConfigFile.getInstance().getLastOpenDirectory()) == null) {
+        	fileChooser = new JFileChooser();
+        }
+        else {
+        	fileChooser = new JFileChooser(path);
+        }
         fileChooser.showOpenDialog(null);
+        
+        if (fileChooser.getSelectedFile() == null) {
+        	return;
+        }
+        
         String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+        
+        //creating the folder name and write into configuration
+        String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
+        ConfigFile.getInstance().setLastOpenDirectory(folderPath);
         String line = null;
         try {
             FileReader fileReader = new FileReader(fileName);
