@@ -4,23 +4,28 @@ import controllers.WebcamController;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 /**
  * Created by Wesley on 3/02/2015.
  */
-public class SamplingPanel extends JPanel {
+public class SamplingPanel extends JPanel implements ActionListener {
 
     private WebcamController webcamController;
     private ColourSlider YSlider = new ColourSlider();
     private ColourSlider USlider = new ColourSlider();
     private ColourSlider VSlider = new ColourSlider();
-    private JButton sampleButton = new JButton("Start Sample");
+    private JButton sampleButton, detectButton;
     public boolean isSampling = false;
 
+    private static final String[] DETECTSTRING = {"Detect", "Stop"};
+    
     public SamplingPanel (WebcamController wc) {
         this.setLayout(new MigLayout());
         this.webcamController = wc;
@@ -30,24 +35,17 @@ public class SamplingPanel extends JPanel {
         VSlider.setMin(-157);
         VSlider.setMax(157);
 
-        add(sampleButton, "wrap");
+        sampleButton = new JButton("Start Sample");
+        detectButton = new JButton(DETECTSTRING[0]);
+        
+        add(sampleButton, "split 2");
+        add(detectButton, "width 75:75:75, wrap");
         add(YSlider, "wrap, width 400:400:400");
         add(USlider, "wrap, width 400:400:400");
         add(VSlider, "wrap, width 400:400:400");
-
-        sampleButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isSampling) {
-                    sampleButton.setText("Stop Sample");
-                    isSampling = true;
-                } else {
-                    sampleButton.setText("Start Sample");
-                    isSampling = false;
-                }
-            }
-        });
-
+        
+        sampleButton.addActionListener(this);
+        detectButton.addActionListener(this);
     }
 
     public void takeSample(double xPos, double yPos) {
@@ -100,4 +98,26 @@ public class SamplingPanel extends JPanel {
     public int getUpperBoundForV() {
         return YSlider.getHighValue();
     }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == sampleButton) {
+            if (!isSampling) {
+                sampleButton.setText("Stop Sample");
+                isSampling = true;
+            } else {
+                sampleButton.setText("Start Sample");
+                isSampling = false;
+            }
+		} else if (e.getSource() == detectButton) {
+			RSWebcamPanel webcamPanel = webcamController.getWebcamDisplayPanel().getRSWebcamPanel();
+			if (detectButton.getText().equals(DETECTSTRING[0])) {
+				webcamController.setPainter(webcamPanel.new DetectionPainter(this));
+				detectButton.setText(DETECTSTRING[1]);
+			} else {
+				webcamController.setPainter(webcamPanel.getDefaultPainter());
+				detectButton.setText(DETECTSTRING[0]);
+			}
+		}
+	}
 }

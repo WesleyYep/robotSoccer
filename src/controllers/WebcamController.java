@@ -8,9 +8,11 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 import com.github.sarxos.webcam.WebcamResolution;
+
 import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
@@ -73,10 +75,6 @@ public class WebcamController {
 		worker.execute();
 
 	}
-
-    public BufferedImage getImageFromWebcam() {
-        return webcam.getImage();
-    }
 	
 	/**
 	 * <p>Connects to a IP network camera. After connection attempt, it updates webcamDisplayPanel</p>
@@ -107,7 +105,7 @@ public class WebcamController {
 					
 					get();
 					webcamDisplayPanel.update(webcam);
-					
+
 				} catch (ExecutionException | InterruptedException e) {
 					webcamDisplayPanel.update((Webcam)null);
 					// Reset driver.
@@ -152,4 +150,20 @@ public class WebcamController {
 		
 	}
 	
+    public BufferedImage getImageFromWebcam() {
+        return webcam.getImage();
+    }
+	
+    public void setPainter(WebcamPanel.Painter painter) {
+    	webcamDisplayPanel.getRSWebcamPanel().setPainter(painter);
+    }
+    
+    public Webcam getWebcam() {
+    	return webcam;
+    }
+    
+    public WebcamDisplayPanel getWebcamDisplayPanel() {
+    	return webcamDisplayPanel;
+    }
+    
 }

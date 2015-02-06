@@ -27,7 +27,7 @@ import com.github.sarxos.webcam.WebcamResolution;
 public class WebcamDisplayPanel extends JPanel {
 
 	private ViewState currentViewState;
-	private WebcamPanel webcamPanel;
+	private RSWebcamPanel webcamPanel;
 	private ArrayList<WebcamDisplayPanelListener> wdpListeners;
 	
 	public WebcamDisplayPanel() {
@@ -57,8 +57,8 @@ public class WebcamDisplayPanel extends JPanel {
 			currentViewState = ViewState.connectionFail();
 		} else if (webcam.isOpen()) {
 			currentViewState = ViewState.connectionSuccess();
-			webcamPanel = new WebcamPanel(webcam);
-			System.out.println(webcam.getImage().getWidth() + " " + webcam.getImage().getHeight());
+			webcamPanel = new RSWebcamPanel(webcam);
+
             webcamPanel.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -143,6 +143,10 @@ public class WebcamDisplayPanel extends JPanel {
         return currentViewState;
     }
 
+    public RSWebcamPanel getRSWebcamPanel() {
+    	return webcamPanel;
+    }
+    
     /**
 	 * <p>Defines the <strong>state</strong> of the display.</p>
 	 * <p>Each state has a <strong>display message</strong></p>
