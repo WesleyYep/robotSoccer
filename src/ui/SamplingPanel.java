@@ -79,25 +79,26 @@ public class SamplingPanel extends JPanel {
     }
 
     public int getLowerBoundForY() {
-        return YSlider.getLowValue();
+        return YSlider.getLowValueScaled();
     }
 
     public int getUpperBoundForY() {
-        return YSlider.getHighValue();
+        return YSlider.getHighValueScaled();
     }
 
     public int getLowerBoundForU() {
-        return USlider.getLowValue();
+        return USlider.getLowValueScaled();
     }
 
     public int getUpperBoundForU() {
-        return USlider.getHighValue();
+        return USlider.getHighValueScaled();
     }
+
     public int getLowerBoundForV() {
-        return YSlider.getLowValue();
+        return VSlider.getLowValueScaled();
     }
 
     public int getUpperBoundForV() {
-        return YSlider.getHighValue();
+        return VSlider.getHighValueScaled();
     }
 }

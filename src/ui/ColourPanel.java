@@ -4,6 +4,7 @@ import com.github.sarxos.webcam.Webcam;
 import com.jidesoft.swing.RangeSlider;
 import controllers.WebcamController;
 import net.miginfocom.swing.MigLayout;
+import vision.VisionWorker;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -17,15 +18,16 @@ import java.awt.image.BufferedImage;
  * Created by Wesley on 2/02/2015.
  */
 public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
-    SamplingPanel ballSamplingPanel;
-    SamplingPanel teamSamplingPanel;
-    SamplingPanel groundSamplingPanel;
-    SamplingPanel opponentSamplingPanel;
+    public SamplingPanel ballSamplingPanel;
+    public SamplingPanel teamSamplingPanel;
+    public SamplingPanel groundSamplingPanel;
+    public SamplingPanel opponentSamplingPanel;
     private SamplingPanel[] samplingPanels;
     private RangeSlider robotSizeSlider = new RangeSlider(0, 500);
     private RangeSlider ballSizeSlider = new RangeSlider(0, 500);
     private JLabel robotSizeLabel = new JLabel("0 : 500");
     private JLabel ballSizeLabel = new JLabel("0 : 500");
+
 
     private JTabbedPane tabPane = new JTabbedPane();
 
@@ -61,6 +63,7 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
                 ballSizeLabel.setText(ballSizeSlider.getLowValue() + " : " + ballSizeSlider.getHighValue());
             }
         });
+
     }
 
     public void takeSample(double xPos, double yPos) {

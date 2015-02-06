@@ -14,12 +14,14 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import data.Coordinate;
 import ui.*;
 import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
+import vision.VisionListener;
 
-public class FieldController implements ReceiverListener, AreaListener {
+public class FieldController implements ReceiverListener, AreaListener, VisionListener {
 
     private Field field;
 
@@ -171,4 +173,9 @@ public class FieldController implements ReceiverListener, AreaListener {
 			}
 	}
 
+    @Override
+    public void receive(Coordinate ballCoord) {
+        ball.setX(640 - ballCoord.x); //hardcoded for now
+        ball.setY(ballCoord.y);
+    }
 }

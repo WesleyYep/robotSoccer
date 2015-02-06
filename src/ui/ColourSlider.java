@@ -39,6 +39,16 @@ public class ColourSlider extends RangeSlider {
         data.add(value);
     }
 
+    public int getHighValueScaled() {
+        double difference = max - min;
+        return (int)((double)getHighValue()/100*difference) + min;
+    }
+
+    public int getLowValueScaled() {
+        double difference = max - min;
+        return (int)((double)getLowValue()/100*difference) + min;
+    }
+
     public void setMax(int max) {
         this.max = max;
     }

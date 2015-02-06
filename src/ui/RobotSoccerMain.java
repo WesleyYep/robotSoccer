@@ -35,6 +35,7 @@ import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
 import controllers.WebcamController;
+import vision.VisionWorker;
 
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 	
@@ -70,6 +71,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	
 	private JPanel cards;
 	private VisionPanel visionPanel;
+
+    private JButton testColourButton = new JButton("Test");
+    private VisionWorker visionWorker;
 	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -201,7 +205,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         webcamComponentPanel.add(defaultWebcamRadioButton, "split 2");
         webcamComponentPanel.add(IPWebcamRadioButton, "wrap");
         webcamComponentPanel.add(connectionButton, "w 50%");
-        webcamComponentPanel.add(recordButton, "w 50%");
+        webcamComponentPanel.add(recordButton, "w 50%, wrap");
+        webcamComponentPanel.add(testColourButton);
         
         // Create the cards.
         cards = new JPanel(new CardLayout());
@@ -214,6 +219,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
         cards.add(field, FIELDSTRING);
         cards.add(webcamDisplayPanel, CAMSTRING);
+        visionWorker = new VisionWorker(webcamController, colourPanel);
+        visionWorker.addListener(fieldController);
 
         tabPane.addTab("Colour", colourPanel);
         
@@ -253,6 +260,13 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();
         configFile.createConfigFile();
+
+        testColourButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visionWorker.execute();
+            }
+        });
     }
 
     public void setUpGame() {
