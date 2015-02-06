@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.List;
+import java.awt.image.DataBufferByte;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
@@ -42,46 +42,43 @@ public class RSWebcamPanel extends WebcamPanel {
 		}
 		
 		public boolean isDetected(int y, int u, int v) {
-			if (!((samplingPanel.getLowerBoundForY() <= y) && (y <= samplingPanel.getUpperBoundForY()))) {
+			if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {
 				return false;
 			}
 
-			if (!((samplingPanel.getLowerBoundForU() <= u) && (u <= samplingPanel.getUpperBoundForU()))) {
+			if (!((u >= samplingPanel.getLowerBoundForU()) && (u <= samplingPanel.getUpperBoundForU()))) {
 				return false;
 			}
 			
-			if (!((samplingPanel.getLowerBoundForV() <= v) && (v <= samplingPanel.getUpperBoundForV()))) {
+			if (!((v >= samplingPanel.getLowerBoundForV()) && (v <= samplingPanel.getUpperBoundForV()))) {
 				return false;
 			}
-			System.out.println("match");
+
 			return true;
 		}
 		
 		@Override
 		public void paintImage(WebcamPanel owner, BufferedImage image, Graphics2D g2) {
 			int r, g, b, y, u, v;
+			
 			Color color;
-			for (int i = 0; i < image.getWidth(); i++) {
-				for (int j = 0; j < image.getHeight(); j++) {
+
+			for (int j = 0; j < image.getHeight(); j++) {
+				for (int i = 0; i < image.getWidth(); i++) {
 					color = new Color(image.getRGB(i, j));
 					
 					r = color.getRed();
 					g = color.getGreen();
 					b = color.getBlue();
 					
-			        y = (int)(0.299 * r + 0.587 * g + 0.114 * b);
-			        u = (int)(-0.14713 * r + -0.28886 * g + 0.436 * b);
-			        v = (int)(0.615 * r + -0.51499 * g + -0.10001 * b);
+			        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
+			        y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
+			        u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
+			        v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
 			        
-//			        if (isDetected(y, u, v)) {
-//			        	image.setRGB(i, y, DETECTDISPLAYCOLOR.getRGB());
-//			        	System.out.println("yes");
-//			      	}
-			        
-			        if (i % 2 == 0 && j % 2 == 0) {
-			        	image.setRGB(i, y, DETECTDISPLAYCOLOR.getRGB());
-			        }
-			        
+			        if (isDetected(y, u, v)) {
+			        	image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
+			      	}
 				}
 			}
 			

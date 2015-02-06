@@ -105,7 +105,6 @@ public class WebcamController {
 					
 					get();
 					webcamDisplayPanel.update(webcam);
-
 				} catch (ExecutionException | InterruptedException e) {
 					webcamDisplayPanel.update((Webcam)null);
 					// Reset driver.

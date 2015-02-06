@@ -18,9 +18,7 @@ import java.awt.image.BufferedImage;
 public class SamplingPanel extends JPanel implements ActionListener {
 
     private WebcamController webcamController;
-    private ColourSlider YSlider = new ColourSlider();
-    private ColourSlider USlider = new ColourSlider();
-    private ColourSlider VSlider = new ColourSlider();
+    private ColourSlider YSlider, USlider, VSlider;
     private JButton sampleButton, detectButton;
     public boolean isSampling = false;
 
@@ -30,39 +28,39 @@ public class SamplingPanel extends JPanel implements ActionListener {
         this.setLayout(new MigLayout());
         this.webcamController = wc;
 
-        USlider.setMin(-111);
-        USlider.setMax(111);
-        VSlider.setMin(-157);
-        VSlider.setMax(157);
+        YSlider = new ColourSlider(0, 255);
+        USlider = new ColourSlider(0, 255);
+        VSlider = new ColourSlider(0, 255);
 
         sampleButton = new JButton("Start Sample");
         detectButton = new JButton(DETECTSTRING[0]);
         
         add(sampleButton, "split 2");
         add(detectButton, "width 75:75:75, wrap");
-        add(YSlider, "wrap, width 400:400:400");
-        add(USlider, "wrap, width 400:400:400");
-        add(VSlider, "wrap, width 400:400:400");
+        add(YSlider, "width 400:400:400, wrap");
+        add(USlider, "width 400:400:400, wrap");
+        add(VSlider, "width 400:400:400, wrap");
         
         sampleButton.addActionListener(this);
         detectButton.addActionListener(this);
     }
 
     public void takeSample(double xPos, double yPos) {
-//        System.out.println("X: " + x);
-//        System.out.println(("Y: " + y));
         BufferedImage image = webcamController.getImageFromWebcam();
-        System.out.println(image.getWidth());
-        System.out.println(image.getHeight());
         Color color = new Color(image.getRGB((int)xPos, (int)yPos));
 
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
-
-        int y = (int)(0.299 * r + 0.587 * g + 0.114 * b);
-        int u = (int)(-0.14713 * r + -0.28886 * g + 0.436 * b);
-        int v = (int)(0.615 * r + -0.51499 * g + -0.10001 * b);
+        
+        System.out.println("R: " + r);
+        System.out.println("G: " + g);
+        System.out.println("B: " + b);
+        
+        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
+        int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
+        int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
+        int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
 
         YSlider.addToData(y);
         USlider.addToData(u);
@@ -74,6 +72,8 @@ public class SamplingPanel extends JPanel implements ActionListener {
         YSlider.repaint();
         USlider.repaint();
         VSlider.repaint();
+        System.out.println(getLowerBoundForY());
+        System.out.println(getUpperBoundForY());
     }
 
     public int getLowerBoundForY() {
@@ -92,11 +92,11 @@ public class SamplingPanel extends JPanel implements ActionListener {
         return USlider.getHighValue();
     }
     public int getLowerBoundForV() {
-        return YSlider.getLowValue();
+        return VSlider.getLowValue();
     }
 
     public int getUpperBoundForV() {
-        return YSlider.getHighValue();
+        return VSlider.getHighValue();
     }
 
 	@Override
