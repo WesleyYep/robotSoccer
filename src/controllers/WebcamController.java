@@ -33,6 +33,8 @@ public class WebcamController {
 	
 	private final static String IPWEBCAMDEVICENAME = "BLAZE";
 	
+	
+	
 	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
 		webcam = null;
 		this.webcamDisplayPanel = webcamDisplayPanel;
@@ -77,7 +79,12 @@ public class WebcamController {
 	}
 
     public BufferedImage getImageFromWebcam() {
-        return webcam.getImage();
+    	if (webcam != null) {
+    		return webcam.getImage();
+    	}
+    	else {
+    		return null;
+    	}
     }
 	
 	/**
