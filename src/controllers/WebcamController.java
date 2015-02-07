@@ -13,7 +13,6 @@ import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
@@ -161,9 +160,6 @@ public class WebcamController {
 		
 	}
 	
-    public BufferedImage getImageFromWebcam() {
-        return webcam.getImage();
-    }
 	
     public void setPainter(WebcamPanel.Painter painter) {
     	webcamDisplayPanel.getRSWebcamPanel().setPainter(painter);
