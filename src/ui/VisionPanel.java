@@ -30,14 +30,6 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private Point bottomLeft;
 	private Point bottomMiddle;
 	
-	private Point right;
-	private Point left;
-	
-	private Point rightAbove;
-	private Point rightBelow;
-	private Point leftAbove;
-	private Point leftBelow;
-	
 	private WebcamController webcamController;
 	
 	private JButton boardButton;
@@ -157,11 +149,12 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				
 				t.transform(new Point(x,y), selectedPoint);
 				
-				double avgTopLine = (topLeft.getY() + topRight.getY())/2;
-				double avgBotLine = (bottomLeft.getY()+bottomRight.getY())/2;
+				System.out.println("asdas " + newTopLeft.getY());
+				double avgTopLine = (newTopLeft.getY() + newTopRight.getY())/2;
+				double avgBotLine = (newBottomLeft.getY()+newBottomRight.getY())/2;
 				
-				double avgRightLine = (topRight.getX()+bottomRight.getX())/2;
-				double avgLeftLine = (topLeft.getX()+bottomLeft.getX())/2;
+				double avgRightLine = (newTopRight.getX()+newBottomRight.getX())/2;
+				double avgLeftLine = (newTopLeft.getX()+newBottomLeft.getX())/2;
 				
 				double yScaleFactor = (avgBotLine - avgTopLine)/180.00;
 				double xScaleFactor = (avgRightLine-avgLeftLine)/220.00;
