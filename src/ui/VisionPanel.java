@@ -1,14 +1,21 @@
 package ui;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
 import controllers.WebcamController;
@@ -23,255 +30,182 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private Point bottomLeft;
 	private Point bottomMiddle;
 	
-	private Point right;
-	private Point left;
-	
 	private WebcamController webcamController;
 	
-	private JButton topRightButton;
-	private JButton topLeftButton;
-	private JButton topMiddleButton;
-	
-	private JButton bottomLeftButton;
-	private JButton bottomMiddleButton;
-	private JButton bottomRightButton;
-	
-	private JButton leftButton;
-	private JButton rightButton;
-
+	private JButton boardButton;
 	
 	private JLabel mousePoint;
 	
 	private JButton buttonSelected = null;
 	private String originalButtonText = null;
 	
-	public VisionPanel(WebcamController wc) {
-		webcamController = wc;
-		
-		topRightButton = new JButton("Top Right");
-		topLeftButton = new JButton("Top Left");
-		topMiddleButton = new JButton("Top Middle");
-		
-		bottomLeftButton = new JButton("Bottom Left");
-		bottomMiddleButton = new JButton("Bottom Middle");
-		bottomRightButton = new JButton("Bottom Right");
-		
-		leftButton = new JButton("Left");
-		rightButton = new JButton("Right");
-		
-		
-		topRightButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (topRightButton.getText().equals("Top Right")) {
-					topRightButton.setText("Selecting");
-					buttonSelected = topRightButton;
-					originalButtonText = "Top Right";
-				}
-				else {
-					topRightButton.setText("Top Right");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
-		
-		topMiddleButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (topMiddleButton.getText().equals("Top Middle")) {
-					topMiddleButton.setText("Selecting");
-					buttonSelected = topMiddleButton;
-					originalButtonText = "Top Middle";
-				}
-				else {
-					topMiddleButton.setText("Top Middle");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
-
-		topLeftButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (topLeftButton.getText().equals("Top Left")) {
-					topLeftButton.setText("Selecting");
-					buttonSelected = topLeftButton;
-					originalButtonText = "Top Left";
-				}
-				else {
-					topLeftButton.setText("Top Left");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
-
-		bottomRightButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (bottomRightButton.getText().equals("Bottom Right")) {
-					bottomRightButton.setText("Selecting");
-					buttonSelected = bottomRightButton;
-					originalButtonText = "Bottom Right";
-				}
-				else {
-					bottomRightButton.setText("Bottom Right");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
-
-		bottomMiddleButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (bottomMiddleButton.getText().equals("Bottom Middle")) {
-					bottomMiddleButton.setText("Selecting");
-					buttonSelected = bottomMiddleButton;
-					originalButtonText = "Bottom Middle";
-				}
-				else {
-					bottomMiddleButton.setText("Bottom Middle");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
-
-		bottomLeftButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (bottomLeftButton.getText().equals("Bottom Left")) {
-					bottomLeftButton.setText("Selecting");
-					buttonSelected = bottomLeftButton;
-					originalButtonText = "Bottom Left";
-				}
-				else {
-					bottomLeftButton.setText("Bottom Left");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
+	private boolean isDrawImage = false;
 	
-		rightButton.addActionListener(new ActionListener() {
+	private BoardDialog dialog;
+	private BufferedImage webcamImage;
+	
+	public VisionPanel(WebcamController wc) {
+		
+		topRight = new Point(200,100);
+		topLeft = new Point(100,100);
+		bottomLeft = new Point(100,200);
+		bottomRight = new Point(200,200);
+		
+		webcamController = wc;
+
+		
+		boardButton = new JButton("Set board area");
+		
+		dialog = new BoardDialog((JFrame) SwingUtilities.getWindowAncestor(this), topLeft,topRight,bottomLeft,bottomRight);
+		dialog.setVisible(false);
+		
+		boardButton.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (rightButton.getText().equals("Right")) {
-					rightButton.setText("Selecting");
-					buttonSelected = rightButton;
-					originalButtonText = "Right";
-				}
-				else {
-					rightButton.setText("Right");
-					buttonSelected = null;
-					originalButtonText = null;
-				}
-			}
-			
-		});
-
-		leftButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (leftButton.getText().equals("Left")) {
-					leftButton.setText("Selecting");
-					buttonSelected = leftButton;
-					originalButtonText = "Left";
-				}
-				else {
-					leftButton.setText("Left");
-					buttonSelected = null;
-					originalButtonText = null;
+			public void actionPerformed(ActionEvent arg0) {
+				webcamImage = webcamController.getImageFromWebcam();
+				if (webcamImage != null) {
+					System.out.println(webcamImage.getWidth() +" " + webcamImage.getHeight());
+					if (webcamImage != null) {
+						dialog.setBoardImage(webcamImage);
+					}
+					dialog.repaint();
+					dialog.setVisible(!dialog.isVisible());
 				}
 			}
-			
+					
 		});
+		
 		
 		mousePoint = new JLabel("Mouse at x: 0 y: 0");
 		
 		this.setLayout(new MigLayout());
 		
-		
-		add(mousePoint, "wrap");
-		add(topLeftButton);
-		add(topMiddleButton);
-		add(topRightButton,"wrap");
-		
-		add(leftButton);
-		add(rightButton,"wrap");
-		
-		add(bottomLeftButton);
-		add(bottomMiddleButton);
-		add(bottomRightButton);
+		add(boardButton);
 	}
 	
 	
-	
-	public void updateMousePoint(int x, int y) {
+	public void updateMousePoint(int x, int y, BufferedImage image) {
 		mousePoint.setText("Mouse at x:" + x + " y: " + y);
 		
-		if (buttonSelected != null) {
-			if (buttonSelected.equals(topRightButton)) {
-				topRight = new Point(x,y);
-			}
-			else if (buttonSelected.equals(topMiddleButton)){
-				topMiddle = new Point(x,y);
-			}
-			else if (buttonSelected.equals(topLeftButton)){
-				topLeft = new Point(x,y);
-			}
-			else if (buttonSelected.equals(bottomRightButton)) {
-				bottomRight = new Point(x,y);
-			}
-			else if (buttonSelected.equals(bottomMiddleButton)){
-				bottomMiddle = new Point(x,y);
-			}
-			else if (buttonSelected.equals(bottomLeftButton)){
-				bottomLeft = new Point(x,y);
-			}
-			else if (buttonSelected.equals(leftButton)){
-				left = new Point(x,y);
-			}
-			else if (buttonSelected.equals(rightButton)){
-				right = new Point(x,y);		
-			}
+		if (topLeft != null && topRight !=null) {
+			if (bottomLeft != null && bottomRight != null) {	
+				System.out.println("");
+				//positive x axis as 0
+				double angleX1 = Math.atan(topRight.getY()-topLeft.getY())/(topRight.getX()-topLeft.getX());
+				double angleX2 = Math.atan(bottomRight.getY()-bottomLeft.getY())/(bottomRight.getX()-bottomLeft.getX());
+				
+				double avgAngleX = (angleX1+angleX2)/2;
+				System.out.println("angle x:" + Math.toDegrees(avgAngleX));
+			//	System.out.println(angleX1);
+			//	System.out.println(angleX2);
+				
+				//positve y axis as 0
+				double angleY1 = Math.atan(topRight.getX()-bottomRight.getX())/(topRight.getY()-bottomRight.getY());
+				double angleY2 = Math.atan(topLeft.getX()-bottomLeft.getX())/(topLeft.getY()-bottomLeft.getY());
+				
+				double avgAngleY = (angleY1+angleY2)/2;
+			//	System.out.println(angleY1);
+			//	System.out.println(angleY2);
+				
+				System.out.println("angle y:" + Math.toDegrees(avgAngleY));
+				
+				double avgAngle = -1*(avgAngleY+ (-1*avgAngleX)) /2;
+				//double avgAngle = (-1*(2*Math.PI)/360)*1.5;
+				System.out.println("avgAngle:" + Math.toDegrees(avgAngle));
+				
+				
+				double x1 = (topLeft.getX()+topRight.getX())/2;
+				double y1 = (topLeft.getY()+topRight.getY())/2;
+				
+				double x2 = (bottomLeft.getX()+bottomRight.getX())/2;
+				double y2 = (bottomLeft.getY()+bottomRight.getY())/2;
+				
+				double x3 = (topLeft.getX()+bottomLeft.getX())/2;
+				double y3 = (topLeft.getY()+bottomLeft.getY())/2;
+				
+				double x4 = (topRight.getX()+bottomRight.getX())/2;
+				double y4 = (topRight.getY()+bottomRight.getY())/2;
+				
+				double d = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);  
+			    double xi = ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+			    double yi = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+				
+				AffineTransform t = new AffineTransform();
+				t.rotate((2*Math.PI)/90,xi,yi);
+				
+				
+				Point newTopLeft = new Point();
+				Point newTopRight = new Point();
+				Point newBottomRight = new Point();
+				Point newBottomLeft = new Point();
+				
+				Point selectedPoint = new Point();
+				
+				Point[] oldPoint = {topLeft,topRight,bottomRight,bottomLeft};
+				Point[] newPoint = {newTopLeft,newTopRight,newBottomRight,newBottomLeft};
+				
+				t.transform(oldPoint, 0, newPoint, 0, 4);
+				
+				t.transform(new Point(x,y), selectedPoint);
+				
+				System.out.println("asdas " + newTopLeft.getY());
+				double avgTopLine = (newTopLeft.getY() + newTopRight.getY())/2;
+				double avgBotLine = (newBottomLeft.getY()+newBottomRight.getY())/2;
+				
+				double avgRightLine = (newTopRight.getX()+newBottomRight.getX())/2;
+				double avgLeftLine = (newTopLeft.getX()+newBottomLeft.getX())/2;
+				
+				double yScaleFactor = (avgBotLine - avgTopLine)/180.00;
+				double xScaleFactor = (avgRightLine-avgLeftLine)/220.00;
+				
+				double actualX = (selectedPoint.getX()-avgLeftLine)/xScaleFactor;
+				double actualY = (selectedPoint.getY()-avgTopLine)/yScaleFactor;
+					
+				
+				System.out.println(actualX + " " + actualY);
+				
+
+				Graphics2D g2d = image.createGraphics();
+				
+				g2d.setColor(Color.black);
+				
+				//axis
+				g2d.drawLine(image.getWidth()/2, 0, image.getWidth()/2, image.getHeight());
+				g2d.drawLine(0, image.getHeight()/2, image.getWidth(), image.getHeight()/2);
+				
+				//orginally rectangle
+				g2d.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y);
+				g2d.drawLine(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y);
+				g2d.drawLine(topRight.x,topRight.y,bottomRight.x,bottomRight.y);
+				g2d.drawLine(bottomLeft.x,bottomLeft.y,bottomRight.x,bottomRight.y);
+				
+				g2d.setColor(Color.BLUE);
+				//after rotation
+				g2d.drawLine(newTopLeft.x,newTopLeft.y,newTopRight.x,newTopRight.y);
+				g2d.drawLine(newTopLeft.x,newTopLeft.y,newBottomLeft.x,newBottomLeft.y);
+				g2d.drawLine(newTopRight.x,newTopRight.y,newBottomRight.x,newBottomRight.y);
+				g2d.drawLine(newBottomLeft.x,newBottomLeft.y,newBottomRight.x,newBottomRight.y);
+				
+				g2d.setColor(Color.red);
+				//avg lines;
+				g2d.drawLine((int)Math.round(avgLeftLine),(int) Math.round(avgTopLine),(int) Math.round(avgRightLine),(int) Math.round(avgTopLine));
+				g2d.drawLine((int)Math.round(avgLeftLine),(int) Math.round(avgTopLine),(int) Math.round(avgLeftLine),(int) Math.round(avgBotLine));
+				g2d.drawLine((int)Math.round(avgRightLine),(int) Math.round(avgTopLine),(int) Math.round(avgRightLine),(int) Math.round(avgBotLine));
+				g2d.drawLine((int)Math.round(avgLeftLine),(int) Math.round(avgBotLine),(int) Math.round(avgRightLine),(int) Math.round(avgBotLine));
+				
+				g2d.setColor(Color.green);
+				System.out.println(selectedPoint);
+				g2d.fillRect((int)Math.round(selectedPoint.getX()), (int)Math.round(selectedPoint.getY()), 5, 5);
+				
+				g2d.setColor(Color.MAGENTA);
+				g2d.fillRect(x,y,5,5);
 			
-			buttonSelected.setText(originalButtonText);
-			buttonSelected = null;
-			originalButtonText = null;
-		}
-		System.out.println(" ");
-		System.out.println(topLeft + " " + topMiddle + " " + topRight);
-		System.out.println(left + " " + right);
-		System.out.println(bottomLeft + " " + bottomMiddle + " " + bottomRight);
-		
-		if (topLeft != null && topMiddle !=null && topRight !=null) {
-			if (left != null && right != null) {
-				if (bottomLeft != null && bottomMiddle != null && bottomRight != null) {
+				ImageIcon ii = new ImageIcon(image);
+				JOptionPane.showMessageDialog(null,ii);
 					
-					
-				}
-			}
+				}	
 		}
-		
-		
 		this.repaint();
 	}
 	
@@ -297,4 +231,5 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	public void viewStateChanged() {
 		
 	}
+
 }

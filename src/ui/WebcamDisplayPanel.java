@@ -39,7 +39,6 @@ public class WebcamDisplayPanel extends JPanel {
 		webcamPanel = null;
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
-		
 	}
 	
 	/**
@@ -69,19 +68,22 @@ public class WebcamDisplayPanel extends JPanel {
                             if (cp.getIsSampling()) {
                                 cp.takeSample(e.getX(), e.getY());
                             }
-                        }
-                        
-                        
-                        if (listener instanceof VisionPanel) {
-                        	VisionPanel panel = (VisionPanel) listener;
-                        	if (panel.isSelectedTab()) {
-                        		panel.updateMousePoint(e.getX(), e.getY());
-                        	}
-                        }
-                    }
+                        }                       
+                   }
                 }
                 @Override
-                public void mousePressed(MouseEvent e) { }
+                public void mousePressed(MouseEvent e) { 
+                	 for (WebcamDisplayPanelListener listener : wdpListeners) {
+	                	 if (listener instanceof VisionPanel) {
+	                     	VisionPanel panel = (VisionPanel) listener;
+	                     	if (panel.isSelectedTab()) {
+	                     		System.out.println(WebcamDisplayPanel.this.getWidth() + " " + WebcamDisplayPanel.this.getHeight());
+	                     		panel.updateMousePoint(e.getX(), e.getY(), webcam.getImage());
+	                     		
+	                     	}
+	                     }
+                	 }
+                }
                 @Override
                 public void mouseReleased(MouseEvent e) {  }
                 @Override
@@ -106,7 +108,6 @@ public class WebcamDisplayPanel extends JPanel {
 		// Get the current state of the displayPanel. Draw text onto screen.
 		switch(currentViewState) {
 		case CONNECTED:
-			
 			break;
 		default:
 			g.setColor(Color.WHITE);
