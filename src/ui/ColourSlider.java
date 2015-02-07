@@ -13,17 +13,30 @@ import java.util.List;
  */
 public class ColourSlider extends RangeSlider {
     private List<Integer> data = new ArrayList<Integer>();
-    private int max = 255;
-    private int min = 0;
 
-    @Override
+    public ColourSlider() {
+    	super();
+    }
+    
+	public ColourSlider(int orientation) {
+		super(orientation);
+	}
+	
+	public ColourSlider(int min, int max) {
+		super(min, max);
+	}
+	
+    public ColourSlider(int min, int max, int low, int high) {
+		super(min, max, low, high);
+	}
+
+	@Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
-      //  int scale = getWidth()/100;
 
         // Mark data points.
         g2.setPaint(Color.red);
@@ -34,16 +47,9 @@ public class ColourSlider extends RangeSlider {
     }
 
     public void addToData(int value) {
-        double difference = max - min;
-        value = (int)((value - min)/difference * getWidth());
+        double difference = getMaximum() - getMinimum();
+        value = (int)((value - getMinimum())/difference * getWidth());
         data.add(value);
     }
 
-    public void setMax(int max) {
-        this.max = max;
-    }
-
-    public void setMin(int min) {
-        this.min = min;
-    }
 }
