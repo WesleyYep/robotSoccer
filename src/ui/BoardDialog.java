@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -23,7 +24,7 @@ public class BoardDialog extends JDialog {
 	
 	private BoardAreaGlassPanel glassPanel;
 	
-	public BoardDialog(JFrame jFrame, Point topLeft, Point topRight, Point botLeft, Point botRight) {
+	public BoardDialog(JFrame jFrame, Point2D topLeft, Point2D topRight, Point2D botLeft, Point2D botRight) {
 		super(jFrame,false);
 
 		picLabel = new JLabel();
@@ -50,7 +51,6 @@ public class BoardDialog extends JDialog {
 	}
 	
 	public void setBoardImage(BufferedImage image) {
-		System.out.println("setting image");
 		boardImage = image;
 		picLabel.setIcon(new ImageIcon(image));
 		
@@ -69,11 +69,6 @@ public class BoardDialog extends JDialog {
 		this.pack();
 		this.validate();
 		this.repaint();
-
-		System.out.println(panel.getComponentZOrder(picLabel));
-		System.out.println(panel.getComponentZOrder(glassPanel));
-		System.out.println(glassPanel.getWidth() +  " " + glassPanel.getHeight());
-		System.out.println(glassPanel.getX() + " " + glassPanel.getY());
 		
 		System.out.println("frame:" + this.getWidth() + " " + this.getHeight());
 	}
