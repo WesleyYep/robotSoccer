@@ -23,6 +23,8 @@ public class VisionWorker extends SwingWorker<Void, Coordinate> {
     private int[] teamMax = new int[3];
     private List<Coordinate> pixelsInARobot = new ArrayList<Coordinate>();
     private List<VisionListener> listeners = new ArrayList<VisionListener>();
+    private List<Coordinate> robotTopCorners = new ArrayList<Coordinate>();
+    private List<Coordinate> robotBottomCorners = new ArrayList<Coordinate>();
 
     public VisionWorker(WebcamController wc, ColourPanel colourPanel) {
         this.webcamController = wc;
@@ -67,28 +69,43 @@ public class VisionWorker extends SwingWorker<Void, Coordinate> {
                     int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
                     int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
 
-                    //ball detection
-                    if (isBall(y, u, v)) {
-                        previous = true;
-                        rowWidth++;
-                    } else if (previous) {
-                        if (rowWidth > highestRowWidth) {
-                            highestRowWidth = rowWidth;
-                            ballX = j;
-                            ballY = i;
-                        }
-                        rowWidth = 0;
-                        previous = false;
-                    }
+//                    //ball detection
+//                    if (isBall(y, u, v)) {
+//                        previous = true;
+//                        rowWidth++;
+//                    } else if (previous) {
+//                        if (rowWidth > highestRowWidth) {
+//                            highestRowWidth = rowWidth;
+//                            ballX = j;
+//                            ballY = i;
+//                        }
+//                        rowWidth = 0;
+//                        previous = false;
+//                    }
 
                     //robot detection
                     if (!partOfRobot(j,i) && isTeam(y, u, v)) {
-
+       //                 System.out.println("checking depth");
+                        if (getDepthOfSameColourPixels(image, j, i) > 10) {  //assume robot patch is more than 10 pixels
+        //                    System.out.println("added");
+                            robotTopCorners.add(new Coordinate(j, i));
+                        }
                     }
 
 
                 }
             }
+
+            if (!robotTopCorners.isEmpty()) {
+                System.out.println("Size: " + robotTopCorners.size());
+                System.out.println("robot: top - " + robotTopCorners.get(0).x + ", " + robotTopCorners.get(0).y);
+            } else {
+                System.out.println("no robots detected");
+            }
+            pixelsInARobot.clear();
+            robotTopCorners.clear();
+            robotBottomCorners.clear();
+
      //       System.out.println("X: " + ballX + "  Y: " + ballY);
             publish(new Coordinate(ballX+highestRowWidth/2*10, ballY));
 //            System.out.println(System.currentTimeMillis() - startTime);
@@ -96,6 +113,25 @@ public class VisionWorker extends SwingWorker<Void, Coordinate> {
         }
 
         return null;
+    }
+
+    //used after the first pixel is detected
+    private boolean isPixelInTeamColourRange(BufferedImage image, int xPos, int yPos) {
+        try {
+            Color color = new Color(image.getRGB(xPos, yPos));
+            int r = color.getRed();
+            int g = color.getGreen();
+            int b = color.getBlue();
+
+            int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
+            int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
+            int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
+            return isTeam(y, u, v);
+
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("pixel out of bounds!");
+            return false;
+        }
     }
 
     @Override
@@ -109,6 +145,27 @@ public class VisionWorker extends SwingWorker<Void, Coordinate> {
 
     public void addListener(VisionListener listener) {
         listeners.add(listener);
+    }
+
+    public int getDepthOfSameColourPixels(BufferedImage image, int x, int y) {
+        pixelsInARobot.add(new Coordinate(x, y));
+        if (y < image.getHeight() && isPixelInTeamColourRange(image, x, y+1)) {
+            int test =  1 + getDepthOfSameColourPixels(image, x, y + 1);
+     //       System.out.println(test);
+            return test;
+        } else if (x > 0 && y < image.getHeight() && isPixelInTeamColourRange(image, x - 1, y + 1)) {
+            int test = 1 + getDepthOfSameColourPixels(image, x - 1, y + 1);
+     //       System.out.println(test);
+            return test;
+        } else if (x < image.getWidth() && y < image.getHeight() && isPixelInTeamColourRange(image, x + 1, y + 1)) {
+            int test = 1 + getDepthOfSameColourPixels(image, x + 1, y + 1);
+   //         System.out.println(test);
+            return test;
+        } else {
+            //no more pixels below match, ie. this is the corner
+            robotBottomCorners.add(new Coordinate(x, y));
+            return 1;
+        }
     }
 
     private boolean isBall(int y, int u, int v) {
