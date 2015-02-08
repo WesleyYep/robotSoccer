@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -22,12 +23,12 @@ import controllers.WebcamController;
 
 public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	
-	private Point topRight;
-	private Point topLeft;
+	private Point2D topRight;
+	private Point2D topLeft;
 	private Point topMiddle;
 	
-	private Point bottomRight;
-	private Point bottomLeft;
+	private Point2D bottomRight;
+	private Point2D bottomLeft;
 	private Point bottomMiddle;
 	
 	private WebcamController webcamController;
@@ -46,10 +47,10 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	
 	public VisionPanel(WebcamController wc) {
 		
-		topRight = new Point(200,100);
-		topLeft = new Point(100,100);
-		bottomLeft = new Point(100,200);
-		bottomRight = new Point(200,200);
+		topRight = new Point2D.Double(200,100);
+		topLeft = new Point2D.Double(100,100);
+		bottomLeft = new Point2D.Double(100,200);
+		bottomRight = new Point2D.Double(200,200);
 		
 		webcamController = wc;
 
@@ -97,19 +98,19 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				
 				double avgAngleX = (angleX1+angleX2)/2;
 				System.out.println("angle x:" + Math.toDegrees(avgAngleX));
-			//	System.out.println(angleX1);
-			//	System.out.println(angleX2);
+				System.out.println(Math.toDegrees(angleX1));
+				System.out.println(Math.toDegrees(angleX2));
 				
 				//positve y axis as 0
 				double angleY1 = Math.atan(topRight.getX()-bottomRight.getX())/(topRight.getY()-bottomRight.getY());
 				double angleY2 = Math.atan(topLeft.getX()-bottomLeft.getX())/(topLeft.getY()-bottomLeft.getY());
 				
 				double avgAngleY = (angleY1+angleY2)/2;
-			//	System.out.println(angleY1);
-			//	System.out.println(angleY2);
+				
 				
 				System.out.println("angle y:" + Math.toDegrees(avgAngleY));
-				
+				System.out.println(Math.toDegrees(angleY1));
+				System.out.println(Math.toDegrees(angleY2));
 				double avgAngle = -1*(avgAngleY+ (-1*avgAngleX)) /2;
 				//double avgAngle = (-1*(2*Math.PI)/360)*1.5;
 				System.out.println("avgAngle:" + Math.toDegrees(avgAngle));
@@ -132,24 +133,23 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 			    double yi = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
 				
 				AffineTransform t = new AffineTransform();
-				t.rotate((2*Math.PI)/90,xi,yi);
+				t.rotate(avgAngle,xi,yi);
 				
 				
-				Point newTopLeft = new Point();
-				Point newTopRight = new Point();
-				Point newBottomRight = new Point();
-				Point newBottomLeft = new Point();
+				Point2D newTopLeft = new Point2D.Double();
+				Point2D newTopRight = new Point2D.Double();
+				Point2D newBottomRight = new Point2D.Double();
+				Point2D newBottomLeft = new Point2D.Double();
 				
-				Point selectedPoint = new Point();
+				Point2D selectedPoint = new Point2D.Double();
 				
-				Point[] oldPoint = {topLeft,topRight,bottomRight,bottomLeft};
-				Point[] newPoint = {newTopLeft,newTopRight,newBottomRight,newBottomLeft};
+				Point2D[] oldPoint = {topLeft,topRight,bottomRight,bottomLeft};
+				Point2D[] newPoint = {newTopLeft,newTopRight,newBottomRight,newBottomLeft};
 				
 				t.transform(oldPoint, 0, newPoint, 0, 4);
 				
-				t.transform(new Point(x,y), selectedPoint);
-				
-				System.out.println("asdas " + newTopLeft.getY());
+				t.transform(new Point2D.Double(x,y), selectedPoint);
+
 				double avgTopLine = (newTopLeft.getY() + newTopRight.getY())/2;
 				double avgBotLine = (newBottomLeft.getY()+newBottomRight.getY())/2;
 				
@@ -175,17 +175,44 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				g2d.drawLine(0, image.getHeight()/2, image.getWidth(), image.getHeight()/2);
 				
 				//orginally rectangle
-				g2d.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y);
-				g2d.drawLine(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y);
-				g2d.drawLine(topRight.x,topRight.y,bottomRight.x,bottomRight.y);
-				g2d.drawLine(bottomLeft.x,bottomLeft.y,bottomRight.x,bottomRight.y);
+				g2d.drawLine((int)Math.round(topLeft.getX())
+						, (int)Math.round(topLeft.getY())
+						, (int)Math.round(topRight.getX())
+						,(int)Math.round(topRight.getY()));
+				
+				g2d.drawLine((int)Math.round(topLeft.getX())
+						, (int)Math.round(topLeft.getY())
+						, (int)Math.round(bottomLeft.getX())
+						, (int)Math.round(bottomLeft.getY()));
+				
+				g2d.drawLine((int)Math.round(topRight.getX())
+						,(int)Math.round(topRight.getY())
+						,(int)Math.round(bottomRight.getX())
+						,(int)Math.round(bottomRight.getY()));
+				
+				g2d.drawLine((int)Math.round(bottomLeft.getX())
+						,(int)Math.round(bottomLeft.getY())
+						,(int)Math.round(bottomRight.getX())
+						,(int)Math.round(bottomRight.getY()));
 				
 				g2d.setColor(Color.BLUE);
 				//after rotation
-				g2d.drawLine(newTopLeft.x,newTopLeft.y,newTopRight.x,newTopRight.y);
-				g2d.drawLine(newTopLeft.x,newTopLeft.y,newBottomLeft.x,newBottomLeft.y);
-				g2d.drawLine(newTopRight.x,newTopRight.y,newBottomRight.x,newBottomRight.y);
-				g2d.drawLine(newBottomLeft.x,newBottomLeft.y,newBottomRight.x,newBottomRight.y);
+				g2d.drawLine((int)Math.round(newTopLeft.getX())
+						,(int)Math.round(newTopLeft.getY())
+						,(int)Math.round(newTopRight.getX())
+						,(int)Math.round(newTopRight.getY()));
+				g2d.drawLine((int)Math.round(newTopLeft.getX())
+						,(int)Math.round(newTopLeft.getY())
+						,(int)Math.round(newBottomLeft.getX())
+						,(int)Math.round(newBottomLeft.getY()));
+				g2d.drawLine((int)Math.round(newTopRight.getX())
+						,(int)Math.round(newTopRight.getY())
+						,(int)Math.round(newBottomRight.getX())
+						,(int)Math.round(newBottomRight.getY()));
+				g2d.drawLine((int)Math.round(newBottomLeft.getX())
+						,(int)Math.round(newBottomLeft.getY())
+						,(int)Math.round(newBottomRight.getX())
+						,(int)Math.round(newBottomRight.getY()));
 				
 				g2d.setColor(Color.red);
 				//avg lines;

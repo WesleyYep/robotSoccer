@@ -7,15 +7,16 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 
 public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener {
 
-	private Point topLeft;
-	private Point topRight;
-	private Point bottomRight;
-	private Point bottomLeft;
+	private Point2D topLeft;
+	private Point2D topRight;
+	private Point2D bottomRight;
+	private Point2D bottomLeft;
 	
 	final public static int NONE = 0;
 	final public static int TOP_LEFT = 1;
@@ -26,7 +27,7 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	private int pointMoving = NONE;
 	
 	
-	public BoardAreaGlassPanel(Point topLeft2, Point topRight2, Point botLeft, Point botRight) {
+	public BoardAreaGlassPanel(Point2D topLeft2, Point2D topRight2, Point2D botLeft, Point2D botRight) {
 		topLeft = topLeft2;
 		topRight = topRight2;
 		bottomLeft = botLeft;
@@ -42,13 +43,25 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 		
 		g.setColor(Color.black);
 		
-		g.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y);
-		g.drawLine(topLeft.x,topLeft.y,bottomLeft.x,bottomLeft.y);
-		g.drawLine(topRight.x,topRight.y,bottomRight.x,bottomRight.y);
-		g.drawLine(bottomLeft.x,bottomLeft.y,bottomRight.x,bottomRight.y);
+		g.drawLine((int)Math.round(topLeft.getX())
+				, (int)Math.round(topLeft.getY())
+				, (int)Math.round(topRight.getX())
+				, (int)Math.round(topRight.getY()));
+		g.drawLine((int)Math.round(topLeft.getX())
+				,(int)Math.round(topLeft.getY())
+				,(int)Math.round(bottomLeft.getX())
+				,(int)Math.round(bottomLeft.getY()));
+		g.drawLine((int)Math.round(topRight.getX())
+				,(int)Math.round(topRight.getY())
+				,(int)Math.round(bottomRight.getX())
+				,(int)Math.round(bottomRight.getY()));
+		g.drawLine((int)Math.round(bottomLeft.getX())
+				,(int)Math.round(bottomLeft.getY())
+				,(int)Math.round(bottomRight.getX())
+				,(int)Math.round(bottomRight.getY()));
 		
-		g.drawString("Top Left", topLeft.x-1, topLeft.y-1);
-		g.drawString("BottomRight", bottomRight.x-1,bottomRight.y-1);
+		g.drawString("Top Left", (int)Math.round(topLeft.getX())-1, (int)Math.round(topLeft.getY())-1);
+		g.drawString("BottomRight", (int)Math.round(bottomRight.getX())-1,(int)Math.round(bottomRight.getY())-1);
 		
 	}
 
@@ -121,35 +134,19 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	}
 	
 	private boolean isTopLeft(MouseEvent e) {
-		return (e.getX() < (topLeft.x+5) && e.getX() > (topLeft.x-5) && e.getY() < (topLeft.y+5) && e.getY() > (topLeft.y-5));
+		return (e.getX() < (topLeft.getX()+5) && e.getX() > (topLeft.getX()-5) && e.getY() < (topLeft.getY()+5) && e.getY() > (topLeft.getY()-5));
 	}
 	
 	private boolean isTopRight(MouseEvent e) {
-		return (e.getX() < (topRight.x+5) && e.getX() > (topRight.x-5) && e.getY() < (topRight.y+5) && e.getY() > (topRight.y-5));
+		return (e.getX() < (topRight.getX()+5) && e.getX() > (topRight.getX()-5) && e.getY() < (topRight.getY()+5) && e.getY() > (topRight.getY()-5));
 	}
 	
 	private boolean isBotLeft(MouseEvent e) {
-		return (e.getX() < (bottomLeft.x+5) && e.getX() > (bottomLeft.x-5) && e.getY() < (bottomLeft.y+5) && e.getY() > (bottomLeft.y-5));
+		return (e.getX() < (bottomLeft.getX()+5) && e.getX() > (bottomLeft.getX()-5) && e.getY() < (bottomLeft.getY()+5) && e.getY() > (bottomLeft.getY()-5));
 	}
 	
 	private boolean isBotRight(MouseEvent e) {
-		return (e.getX() < (bottomRight.x+5) && e.getX() > (bottomRight.x-5) && e.getY() < (bottomRight.y+5) && e.getY() > (bottomRight.y-5));
-	}
-	
-	public Point getTopLeft() {
-		return topLeft;
-	}
-	
-	public Point getTopRight() {
-		return topRight;
-	}
-	
-	public Point getBotLeft() {
-		return bottomLeft;
-	}
-	
-	public Point getBotRight() {
-		return bottomRight;
+		return (e.getX() < (bottomRight.getX()+5) && e.getX() > (bottomRight.getX()-5) && e.getY() < (bottomRight.getY()+5) && e.getY() > (bottomRight.getY()-5));
 	}
 	
 	
