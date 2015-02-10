@@ -13,7 +13,6 @@ import ui.WebcamDisplayPanel;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
@@ -34,6 +33,8 @@ public class WebcamController {
 	private WebcamDisplayPanel webcamDisplayPanel;
 	
 	private final static String IPWEBCAMDEVICENAME = "BLAZE";
+	
+	
 	
 	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
 		webcam = null;
@@ -75,6 +76,16 @@ public class WebcamController {
 		worker.execute();
 
 	}
+
+    public BufferedImage getImageFromWebcam() {
+    	if (webcam != null) {
+    		return webcam.getImage();
+    	}
+    	else {
+    		return null;
+    	}
+    }
+
 	
 	/**
 	 * <p>Connects to a IP network camera. After connection attempt, it updates webcamDisplayPanel</p>
@@ -149,9 +160,6 @@ public class WebcamController {
 		
 	}
 	
-    public BufferedImage getImageFromWebcam() {
-        return webcam.getImage();
-    }
 	
     public void setPainter(WebcamPanel.Painter painter) {
     	webcamDisplayPanel.getRSWebcamPanel().setPainter(painter);

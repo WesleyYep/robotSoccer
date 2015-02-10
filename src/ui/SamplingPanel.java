@@ -167,6 +167,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     public int getUpperBoundForU() {
         return USlider.getHighValue();
     }
+
     public int getLowerBoundForV() {
         return VSlider.getLowValue();
     }

@@ -29,10 +29,9 @@ public class Tick extends TimerTask implements SenderListener{
 	public void run() {
 		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
 		field.executeStrategy();
-		
-		if (comPanel.isSimulation()) {
-			field.repaint();
-			
+        field.repaint();
+
+        if (comPanel.isSimulation()) {
 			if (sender != null) {
 				sender.sendStuff(createBotCoordinatesMessage());
 			}

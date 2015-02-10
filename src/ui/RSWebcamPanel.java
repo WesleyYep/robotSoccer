@@ -58,7 +58,7 @@ public class RSWebcamPanel extends WebcamPanel {
 		 */
 		
 		public boolean isDetected(int y, int u, int v) {
-			if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {
+            if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {
 				return false;
 			}
 

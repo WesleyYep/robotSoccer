@@ -51,4 +51,5 @@ public class ColourSlider extends RangeSlider {
         value = (int)((value - getMinimum())/difference * getWidth());
         data.add(value);
     }
+
 }
