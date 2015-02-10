@@ -30,8 +30,16 @@ public class RSWebcamPanel extends WebcamPanel {
 		super(webcam, size, start);
 	}
 	
+	/**
+	 * <p>Detects for pixels which are sampled by the sampling panel. Colours the pixels into a different colour</p>
+	 * <p>{@link ui.SamplingPanel}</p>
+	 * @author Chang Kon, Wesley, John
+	 *
+	 */
+	
 	public class DetectionPainter extends WebcamPanel.DefaultPainter {
 
+		// The color to show.
 		private final Color DETECTDISPLAYCOLOR = Color.CYAN;
 		
 		private SamplingPanel samplingPanel;
@@ -40,6 +48,14 @@ public class RSWebcamPanel extends WebcamPanel {
 			super();
 			this.samplingPanel = samplingPanel;
 		}
+		
+		/**
+		 * <p>Retrieves the YUV values for the pixel and checks if it is in the acceptable range set by the SamplingPanel</p>
+		 * @param y
+		 * @param u
+		 * @param v
+		 * @return boolean
+		 */
 		
 		public boolean isDetected(int y, int u, int v) {
 			if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {

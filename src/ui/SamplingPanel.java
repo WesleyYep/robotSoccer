@@ -6,16 +6,25 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 import net.miginfocom.swing.MigLayout;
 import controllers.WebcamController;
 
 /**
+ * <p>Users sample the webcam image and adds data to ColourSlider</p>
+ * <p>{@link controllers.WebcamController}</p>
+ * <p>{@link ui.ColourSlider}</p>
  * Created by Wesley on 3/02/2015.
  */
 public class SamplingPanel extends JPanel implements ActionListener {
@@ -24,6 +33,9 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private ColourSlider YSlider, USlider, VSlider;
     private JButton sampleButton, detectButton, setValueButton;
     private JLabel lowYLabel, highYLabel, lowULabel, highULabel, lowVLabel, highVLabel;
+    private JPanel optionPanePanel;
+    private JTextField lowValueTextField, highValueTextField;
+    private JComboBox<String> YUVCombo;
     
     public boolean isSampling = false;
 
@@ -78,6 +90,27 @@ public class SamplingPanel extends JPanel implements ActionListener {
         sampleButton = new JButton("Start Sample");
         detectButton = new JButton(DETECTSTRING[0]);
         setValueButton = new JButton("Set Value");
+        
+        optionPanePanel = new JPanel(new MigLayout());
+        
+        // Create textfield for optionPanePanel and set the documentfilter.
+        lowValueTextField = new JTextField();
+        ((AbstractDocument)lowValueTextField.getDocument()).setDocumentFilter(new YUVFilter());
+        highValueTextField = new JTextField();
+        ((AbstractDocument)highValueTextField.getDocument()).setDocumentFilter(new YUVFilter());
+        
+		YUVCombo = new JComboBox<String>();
+		
+		YUVCombo.addItem("Y");
+		YUVCombo.addItem("U");
+		YUVCombo.addItem("V");
+        
+		optionPanePanel.add(YUVCombo, "span, push, grow, wrap");
+		optionPanePanel.add(new JLabel("Choose values 0-255"), "span, push, grow, wrap");
+		optionPanePanel.add(new JLabel("Set low value"), "split 2, span");
+        optionPanePanel.add(lowValueTextField, "push, grow, wrap");
+        optionPanePanel.add(new JLabel("Set high value"), "split 2, span");
+        optionPanePanel.add(highValueTextField, "push, grow");
         
         add(lowYLabel, "width 30:30:30, split 3");
         add(YSlider, "width 400:400:400");
@@ -153,6 +186,8 @@ public class SamplingPanel extends JPanel implements ActionListener {
                 isSampling = false;
             }
 		} else if (e.getSource() == detectButton) {
+			
+			// Change the painter for the webcamPanel.
 			RSWebcamPanel webcamPanel = webcamController.getWebcamDisplayPanel().getRSWebcamPanel();
 			if (detectButton.getText().equals(DETECTSTRING[0])) {
 				webcamController.setPainter(webcamPanel.new DetectionPainter(this));
@@ -161,8 +196,88 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				webcamController.setPainter(webcamPanel.getDefaultPainter());
 				detectButton.setText(DETECTSTRING[0]);
 			}
+			
 		} else if (e.getSource() == setValueButton) {
-
+			int selection = JOptionPane.showConfirmDialog(
+					null,
+					optionPanePanel,
+					"Set value for slider",
+					JOptionPane.OK_CANCEL_OPTION
+					);
+			
+			if (selection == JOptionPane.OK_OPTION) {
+				try {
+					String YUVSelection = (String)YUVCombo.getSelectedItem();
+					int lowValue = Integer.parseInt(lowValueTextField.getText());
+					int highValue = Integer.parseInt(highValueTextField.getText());
+					
+					if (lowValue > highValue) {
+						JOptionPane.showMessageDialog(null, "Cannot have low value greater than high value");
+					} else {
+						
+						switch(YUVSelection) {
+						case "Y":
+							
+							YSlider.setLowValue(lowValue);
+							YSlider.setHighValue(highValue);
+							break;
+						case "U":
+							
+							USlider.setLowValue(lowValue);
+							USlider.setHighValue(highValue);
+							break;
+						case "V":
+							
+							VSlider.setLowValue(lowValue);
+							VSlider.setHighValue(highValue);
+							break;
+						}
+						
+					}
+					
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "You did not insert a number.");
+				}
+			}
+			
 		}
 	}
+	
+	/**
+	 * <p>Filters the text inserted into textfield for YUV values.</p>
+	 * @author Chang Kon, Wesley, John
+	 *
+	 */
+	
+	private class YUVFilter extends DocumentFilter {
+
+		@Override
+		public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+			try {
+				// Try to change text to int. Throw exception is not possible.
+				Integer.parseInt(text);
+				
+				// If there are 3 digits, check the value before adding to textfield.
+				if (offset == 2) {
+					int value = Integer.parseInt(fb.getDocument().getText(0, offset) + text);
+					
+					if (value > 255) {
+						return;
+					}
+				}
+				
+				// As the values are only from 0-255, anything greater than 3 digits will be above 255 and is invalid.
+				if (offset > 2) {
+					return;
+				}
+				
+			} catch (NumberFormatException e) {
+				return;
+			}
+			
+			super.replace(fb, offset, length, text, attrs);
+		}
+		
+	}
+	
 }
