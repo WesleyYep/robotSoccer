@@ -1,21 +1,14 @@
 package ui;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.awt.image.BufferedImage;
 
 import javax.media.jai.PerspectiveTransform;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JFrame;
@@ -37,8 +30,6 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private JButton boardButton;
 	
 	private JLabel mousePoint;
-	
-	private boolean isDrawImage = false;
 	
 	private BoardDialog dialog;
 	private BufferedImage webcamImage;
@@ -89,6 +80,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		
 		this.setLayout(new MigLayout());
 		
+		add(mousePoint,"wrap");
 		add(boardButton);
 	}
 	
@@ -101,27 +93,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				System.out.println("");
 				//positive x axis as 0
 				createTransformMatrix();
-				
-				Point2D selectedPoint = new Point2D.Double();
-				t.transform(new Point2D.Double(x,y), selectedPoint);
-				System.out.println("method 1:");
-				System.out.println(selectedPoint);
-			//	System.out.println((selectedPoint.getX()-mapLeft)/1.8 + " " + (selectedPoint.getY()-mapTop)/1.8 + "\n");
-				double actualX = (selectedPoint.getX() - mapLeft) / ((mapRight-mapLeft)/(double)Field.OUTER_BOUNDARY_WIDTH);
-				double actualY = (selectedPoint.getY() - mapTop) / ((mapBot-mapTop)/(double)Field.OUTER_BOUNDARY_HEIGHT);
-				System.out.println(actualX + " " + actualY);
-				/*
-				System.out.println("method 2:");
-				double[][] matrix = new double[3][3];
-				
-				t.getMatrix(matrix);
-				
-				double actualX = (matrix[0][0]*x + matrix[0][1]*y + matrix[0][2]) / (matrix[2][0]*x + matrix[2][1]*y + 1);
-				double actualY = (matrix[1][0]*x + matrix[1][1]*y + matrix[1][2]) / (matrix[2][0]*x + matrix[2][1]*y + 1);
-				System.out.println(actualX/1.8 + " " + actualY/1.8 + "\n");
-				*/
-				
-				
+				System.out.println(imagePosToActualPos(x,y));
 				}	
 		}
 		this.repaint();
@@ -148,24 +120,40 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				topLeft.getX(), topLeft.getY(), bottomLeft.getX(),bottomLeft.getY()
 				, bottomRight.getX(),bottomRight.getY(), topRight.getX(),topRight.getY());
 
+		/*
 		System.out.println("mapping: " + mapLeft + " " + mapRight + " " + mapTop + " " + mapBot);
 		System.out.println(topLeft);
 		System.out.println(topRight);
 		System.out.println(bottomRight);
 		System.out.println(bottomLeft);
+		*/
 		try {
 			t = tInverse.createInverse();
-			System.out.println(t.toString());
+			//System.out.println(t.toString());
 	//		System.out.println(tInverse.toString());
 		} catch (NoninvertibleTransformException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	
+	public Point2D imagePosToActualPos (double x, double y) {
+		if (t != null ) {
+			Point2D selectedPoint = new Point2D.Double();
+			t.transform(new Point2D.Double(x,y), selectedPoint);
+			double actualX = (selectedPoint.getX() - mapLeft) / ((mapRight-mapLeft)/(double)Field.OUTER_BOUNDARY_WIDTH);
+			double actualY = (selectedPoint.getY() - mapTop) / ((mapBot-mapTop)/(double)Field.OUTER_BOUNDARY_HEIGHT);
+			
+			return new Point2D.Double(actualX,actualY);
+		}
+		else {
+			return null;
+		}
+		
+	}
 	
 	
 	
