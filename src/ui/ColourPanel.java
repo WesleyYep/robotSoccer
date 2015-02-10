@@ -22,6 +22,7 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     public SamplingPanel teamSamplingPanel;
     public SamplingPanel groundSamplingPanel;
     public SamplingPanel opponentSamplingPanel;
+    public SamplingPanel greenSamplingPanel;
     private SamplingPanel[] samplingPanels;
     private RangeSlider robotSizeSlider = new RangeSlider(0, 500);
     private RangeSlider ballSizeSlider = new RangeSlider(0, 500);
@@ -35,11 +36,13 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         this.setLayout(new MigLayout());
         ballSamplingPanel = new SamplingPanel(wc);
         teamSamplingPanel = new SamplingPanel(wc);
+        greenSamplingPanel = new SamplingPanel(wc);
         groundSamplingPanel = new SamplingPanel(wc);
         opponentSamplingPanel = new SamplingPanel(wc);
-        samplingPanels = new SamplingPanel[] { ballSamplingPanel, teamSamplingPanel, groundSamplingPanel, opponentSamplingPanel };
+        samplingPanels = new SamplingPanel[] { ballSamplingPanel, teamSamplingPanel, greenSamplingPanel, groundSamplingPanel, opponentSamplingPanel };
         tabPane.addTab("Ball", ballSamplingPanel);
         tabPane.addTab("Team", teamSamplingPanel);
+        tabPane.addTab("Green", greenSamplingPanel);
         tabPane.addTab("Ground", groundSamplingPanel);
         tabPane.addTab("Opponent", opponentSamplingPanel);
         add(tabPane, "wrap");
