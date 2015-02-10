@@ -6,11 +6,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import com.github.sarxos.webcam.Webcam;
@@ -126,13 +123,27 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * <p>Add instance to be an observer</p>
+	 * @param WebcamDisplayPanelListener instance
+	 */
+	
 	public void addWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
 		wdpListeners.add(l);
 	}
 	
+	/**
+	 * <p>Remove the instance from observer list</p>
+	 * @param WebcamDisplayPanelListener instance
+	 */
+	
 	public void removeWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
 		wdpListeners.remove(l);
 	}
+	
+	/**
+	 * <p>Notify all observers of change</p>
+	 */
 	
 	public void notifyWebcamDisplayPanelListeners() {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
@@ -140,10 +151,20 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * <p>Returns the current view state of the WebcamDisplayPanel</p>
+	 * @return currentViewState
+	 */
+	
     public ViewState getViewState() {
         return currentViewState;
     }
 
+    /**
+     * <p>Return the webcamPanel for this WebcamDisplayPanel</p>
+     * @return
+     */
+    
     public RSWebcamPanel getRSWebcamPanel() {
     	return webcamPanel;
     }
