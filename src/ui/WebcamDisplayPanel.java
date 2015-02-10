@@ -74,7 +74,6 @@ public class WebcamDisplayPanel extends JPanel {
 	                	 if (listener instanceof VisionPanel) {
 	                     	VisionPanel panel = (VisionPanel) listener;
 	                     	if (panel.isSelectedTab()) {
-	                     		System.out.println(WebcamDisplayPanel.this.getWidth() + " " + WebcamDisplayPanel.this.getHeight());
 	                     		panel.updateMousePoint(e.getX(), e.getY(), webcam.getImage());
 	                     		
 	                     	}

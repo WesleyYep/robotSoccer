@@ -11,12 +11,10 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 
+import controllers.VisionController;
+
 public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener {
 
-	private Point2D topLeft;
-	private Point2D topRight;
-	private Point2D bottomRight;
-	private Point2D bottomLeft;
 	
 	final public static int NONE = 0;
 	final public static int TOP_LEFT = 1;
@@ -26,16 +24,13 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	
 	private int pointMoving = NONE;
 	
+	private VisionController vc;
 	
-	public BoardAreaGlassPanel(Point2D topLeft2, Point2D topRight2, Point2D botLeft, Point2D botRight) {
-		topLeft = topLeft2;
-		topRight = topRight2;
-		bottomLeft = botLeft;
-		bottomRight = botRight;
+	public BoardAreaGlassPanel(VisionController vc) {
+		this.vc = vc;
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
-	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -43,25 +38,25 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 		
 		g.setColor(Color.black);
 		
-		g.drawLine((int)Math.round(topLeft.getX())
-				, (int)Math.round(topLeft.getY())
-				, (int)Math.round(topRight.getX())
-				, (int)Math.round(topRight.getY()));
-		g.drawLine((int)Math.round(topLeft.getX())
-				,(int)Math.round(topLeft.getY())
-				,(int)Math.round(bottomLeft.getX())
-				,(int)Math.round(bottomLeft.getY()));
-		g.drawLine((int)Math.round(topRight.getX())
-				,(int)Math.round(topRight.getY())
-				,(int)Math.round(bottomRight.getX())
-				,(int)Math.round(bottomRight.getY()));
-		g.drawLine((int)Math.round(bottomLeft.getX())
-				,(int)Math.round(bottomLeft.getY())
-				,(int)Math.round(bottomRight.getX())
-				,(int)Math.round(bottomRight.getY()));
+		g.drawLine((int)Math.round(vc.getTopLeft().getX())
+				, (int)Math.round(vc.getTopLeft().getY())
+				, (int)Math.round(vc.getTopRight().getX())
+				, (int)Math.round(vc.getTopRight().getY()));
+		g.drawLine((int)Math.round(vc.getTopLeft().getX())
+				,(int)Math.round(vc.getTopLeft().getY())
+				,(int)Math.round(vc.getBottomLeft().getX())
+				,(int)Math.round(vc.getBottomLeft().getY()));
+		g.drawLine((int)Math.round(vc.getTopRight().getX())
+				,(int)Math.round(vc.getTopRight().getY())
+				,(int)Math.round(vc.getBottomRight().getX())
+				,(int)Math.round(vc.getBottomRight().getY()));
+		g.drawLine((int)Math.round(vc.getBottomLeft().getX())
+				,(int)Math.round(vc.getBottomLeft().getY())
+				,(int)Math.round(vc.getBottomRight().getX())
+				,(int)Math.round(vc.getBottomRight().getY()));
 		
-		g.drawString("Top Left", (int)Math.round(topLeft.getX())-1, (int)Math.round(topLeft.getY())-1);
-		g.drawString("BottomRight", (int)Math.round(bottomRight.getX())-1,(int)Math.round(bottomRight.getY())-1);
+		g.drawString("Top Left", (int)Math.round(vc.getTopLeft().getX())-1, (int)Math.round(vc.getTopLeft().getY())-1);
+		g.drawString("BottomRight", (int)Math.round(vc.getBottomRight().getX())-1,(int)Math.round(vc.getBottomRight().getY())-1);
 		
 	}
 
@@ -108,16 +103,16 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (pointMoving == TOP_LEFT) {
-			topLeft.setLocation(e.getPoint());
+			vc.setTopLeft(e.getPoint());
 		}
 		else if (pointMoving == TOP_RIGHT) {
-			topRight.setLocation(e.getPoint());
+			vc.setTopRight(e.getPoint());
 		}
 		else if (pointMoving == BOT_LEFT) {
-			bottomLeft.setLocation(e.getPoint());
+			vc.setBottomLeft(e.getPoint());
 		}
 		else if (pointMoving == BOT_RIGHT) {
-			bottomRight.setLocation(e.getPoint());
+			vc.setBottomRight(e.getPoint());
 		}
 		this.repaint();
 	}
@@ -134,19 +129,19 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	}
 	
 	private boolean isTopLeft(MouseEvent e) {
-		return (e.getX() < (topLeft.getX()+5) && e.getX() > (topLeft.getX()-5) && e.getY() < (topLeft.getY()+5) && e.getY() > (topLeft.getY()-5));
+		return (e.getX() < (vc.getTopLeft().getX()+5) && e.getX() > (vc.getTopLeft().getX()-5) && e.getY() < (vc.getTopLeft().getY()+5) && e.getY() > (vc.getTopLeft().getY()-5));
 	}
 	
 	private boolean isTopRight(MouseEvent e) {
-		return (e.getX() < (topRight.getX()+5) && e.getX() > (topRight.getX()-5) && e.getY() < (topRight.getY()+5) && e.getY() > (topRight.getY()-5));
+		return (e.getX() < (vc.getTopRight().getX()+5) && e.getX() > (vc.getTopRight().getX()-5) && e.getY() < (vc.getTopRight().getY()+5) && e.getY() > (vc.getTopRight().getY()-5));
 	}
 	
 	private boolean isBotLeft(MouseEvent e) {
-		return (e.getX() < (bottomLeft.getX()+5) && e.getX() > (bottomLeft.getX()-5) && e.getY() < (bottomLeft.getY()+5) && e.getY() > (bottomLeft.getY()-5));
+		return (e.getX() < (vc.getBottomLeft().getX()+5) && e.getX() > (vc.getBottomLeft().getX()-5) && e.getY() < (vc.getBottomLeft().getY()+5) && e.getY() > (vc.getBottomLeft().getY()-5));
 	}
 	
 	private boolean isBotRight(MouseEvent e) {
-		return (e.getX() < (bottomRight.getX()+5) && e.getX() > (bottomRight.getX()-5) && e.getY() < (bottomRight.getY()+5) && e.getY() > (bottomRight.getY()-5));
+		return (e.getX() < (vc.getBottomRight().getX()+5) && e.getX() > (vc.getBottomRight().getX()-5) && e.getY() < (vc.getBottomRight().getY()+5) && e.getY() > (vc.getBottomRight().getY()-5));
 	}
 	
 	

@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import controllers.VisionController;
+
 public class BoardDialog extends JDialog {
 
 	
@@ -24,11 +26,11 @@ public class BoardDialog extends JDialog {
 	
 	private BoardAreaGlassPanel glassPanel;
 	
-	public BoardDialog(JFrame jFrame, Point2D topLeft, Point2D topRight, Point2D botLeft, Point2D botRight) {
+	public BoardDialog(JFrame jFrame, VisionController vc) {
 		super(jFrame,false);
 
 		picLabel = new JLabel();
-		glassPanel = new BoardAreaGlassPanel(topLeft,topRight,botLeft,botRight);
+		glassPanel = new BoardAreaGlassPanel(vc);
 		this.setResizable(false);
 
 		
@@ -69,7 +71,5 @@ public class BoardDialog extends JDialog {
 		this.pack();
 		this.validate();
 		this.repaint();
-		
-		System.out.println("frame:" + this.getWidth() + " " + this.getHeight());
 	}
 }

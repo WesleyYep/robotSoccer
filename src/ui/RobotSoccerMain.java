@@ -34,6 +34,7 @@ import communication.SerialPortCommunicator;
 import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
+import controllers.VisionController;
 import controllers.WebcamController;
 import vision.VisionWorker;
 
@@ -74,6 +75,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
     private JButton testColourButton = new JButton("Test");
     private VisionWorker visionWorker;
+	private VisionController visionController;
 	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -209,7 +211,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
         tabPane.addTab("Colour", colourPanel);
         
-        visionPanel = new VisionPanel(webcamController);
+        visionController = new VisionController();
+        
+        visionPanel = new VisionPanel(webcamController,visionController);
         webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
         tabPane.addTab("Vision", visionPanel);
         
