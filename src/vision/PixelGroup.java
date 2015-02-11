@@ -5,7 +5,7 @@ import data.Coordinate;
 /**
 * Created by Wesley on 7/02/2015.
 */
-public class PixelGroup implements Comparable{
+public class PixelGroup {
 
     //this class represents matching colour pixels along one row of a buffered image
 
@@ -21,8 +21,7 @@ public class PixelGroup implements Comparable{
         mostBottomCorner = new Coordinate(x, y);
     }
 
-    @Override
-    public int compareTo(Object o) {
+    public int getSize() {
         return (mostBottomCorner.y - mostTopCorner.y) + (mostRightCorner.x - mostLeftCorner.x);
     }
 }

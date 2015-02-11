@@ -1,5 +1,6 @@
 package vision;
 
+import controllers.VisionController;
 import controllers.WebcamController;
 import data.Coordinate;
 import data.VisionData;
@@ -8,9 +9,11 @@ import ui.SamplingPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -18,6 +21,7 @@ import java.util.List;
  */
 public class VisionWorker extends SwingWorker<Void, VisionData> {
     private WebcamController webcamController;
+    private VisionController visionController;
     private ColourPanel colourPanel;
     private int[] ballMin = new int[3];
     private int[] ballMax = new int[3];
@@ -28,9 +32,10 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     private List<VisionListener> listeners = new ArrayList<VisionListener>();
     private List<PixelGroup> groups = new ArrayList<PixelGroup>();
 
-    public VisionWorker(WebcamController wc, ColourPanel colourPanel) {
+    public VisionWorker(WebcamController wc, ColourPanel colourPanel, VisionController vc) {
         this.webcamController = wc;
         this.colourPanel = colourPanel;
+        this.visionController = vc;
     }
 
     @Override
@@ -122,7 +127,12 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                     }
                 }
 
-                Collections.sort(groups);
+                Collections.sort(groups, new Comparator<PixelGroup>() {
+                    @Override
+                    public int compare(PixelGroup o1, PixelGroup o2) {
+                        return o2.getSize() - o1.getSize();
+                    }
+                });
 
                 if (!groups.isEmpty()) {
                     System.out.println(groups.size());
@@ -131,13 +141,19 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                     System.out.println("right: " + groups.get(0).mostRightCorner.x + ", " + groups.get(0).mostRightCorner.y);
                     System.out.println("bottom: " + groups.get(0).mostBottomCorner.x + ", " + groups.get(0).mostBottomCorner.y);
                     System.out.println("----------------------------------------------------");
+
+                    Point2D ball = visionController.imagePosToActualPos(ballX+highestRowWidth/2*1, ballY);
+                    PixelGroup pg = groups.get(0); //only use 1 robot for now
+                    Point2D robot = visionController.imagePosToActualPos((pg.mostBottomCorner.x + pg.mostTopCorner.x) / 2, (pg.mostBottomCorner.y + pg.mostTopCorner.y) / 2);
+                    publish(new VisionData(new Coordinate((int)robot.getX(), (int) robot.getY()), "robot"));
+                    groups.clear();
                 }
 
-                PixelGroup pg = groups.get(0); //only use 1 robot for now
-                publish(new VisionData(new Coordinate(ballX+highestRowWidth/2*1, ballY), "ball"),
-                        new VisionData(new Coordinate((pg.mostBottomCorner.x + pg.mostTopCorner.x)/2, (pg.mostBottomCorner.y + pg.mostTopCorner.y)/2), "robot"));
-   //             System.out.println(System.currentTimeMillis() - startTime);
-                groups.clear();
+                //send ball
+                Point2D ball = visionController.imagePosToActualPos(ballX+highestRowWidth/2*1, ballY);
+                publish(new VisionData(new Coordinate((int)ball.getX(),(int) ball.getY()), "ball"));
+
+                //             System.out.println(System.currentTimeMillis() - startTime)
 
             } catch (Exception e) {
                 System.out.println("wtf");

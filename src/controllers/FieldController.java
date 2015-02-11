@@ -178,11 +178,11 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
     public void receive(VisionData data) {
         if (data.getType().equals("ball")) {
             Coordinate ballCoord = data.getCoordinate();
-            ball.setX(640 - ballCoord.x); //hardcoded for now
+            ball.setX(220 - ballCoord.x); //hardcoded for now
             ball.setY(ballCoord.y);
         } else if (data.getType().equals("robot")) {
             Coordinate robotCoord = data.getCoordinate();
-            bots.getRobot(0).setX(640 - robotCoord.x); //hardcoded for now
+            bots.getRobot(0).setX(220 - robotCoord.x); //hardcoded for now
             bots.getRobot(0).setY(robotCoord.y);
         }
     }
