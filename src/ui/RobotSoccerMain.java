@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -23,6 +24,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
@@ -34,12 +36,13 @@ import controllers.BallController;
 import controllers.FieldController;
 import controllers.VisionController;
 import controllers.WebcamController;
+import vision.VisionSettingFile;
 import vision.VisionWorker;
 
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
-    private JButton startButton, connectionButton, recordButton, saveButton, openButton;
+    private JButton startButton, connectionButton, recordButton, saveStratButton, openStratButton;
     private JTextArea taskOutput;
 
     private NetworkSocket serverSocket;
@@ -70,10 +73,13 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	
 	private JPanel cards;
 	private VisionPanel visionPanel;
+	private VisionSettingFile visionSetting;
 
     private JButton testColourButton = new JButton("Test");
     private VisionWorker visionWorker;
 	private VisionController visionController;
+	private JButton openVisionButton;
+	private JButton saveVisionButton;
 	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -97,16 +103,21 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         startButton.addActionListener(this);
         portField = new JTextField();
         
-        saveButton = new JButton("Save to File");
-        openButton = new JButton("Open");
+        saveStratButton = new JButton("Save Strat");
+        openStratButton = new JButton("Open Strat");
+        
+        saveVisionButton = new JButton("Save Vision/Colour");
+        openVisionButton = new JButton("Open Vision/Colour");
         
         JPanel portPanel = new JPanel(new MigLayout());
         portPanel.add(startButton);
         portPanel.add(portField, "pushx, growx");
         
         JPanel settingPanel = new JPanel(new MigLayout());
-        settingPanel.add(openButton);
-        settingPanel.add(saveButton);
+        settingPanel.add(openStratButton);
+        settingPanel.add(saveStratButton, "wrap");
+        settingPanel.add(openVisionButton);
+        settingPanel.add(saveVisionButton);
         
         taskOutput = new JTextArea(5, 20);
         taskOutput.setMargin(new Insets(5,5,5,5));
@@ -208,6 +219,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
         visionWorker.addListener(fieldController);
 
+        visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
         tabPane.addTab("Colour", colourPanel);
         
 
@@ -251,7 +263,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 				
         });
         
-        saveButton.addActionListener(new ActionListener() {
+        saveStratButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String file = currentStrategy.saveToFile();
@@ -259,11 +271,29 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
             }
         });
 
-        openButton.addActionListener(new ActionListener() {
+        openStratButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentStrategy.readFromFile();
             }
+        });
+        
+        saveVisionButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				visionSetting.saveVisionSetting();
+			}
+        	
+        });
+        
+        openVisionButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				visionSetting.openVisionSetting();
+			}
+        	
         });
         
         gameTick = new Tick(field, bots, testComPanel);
