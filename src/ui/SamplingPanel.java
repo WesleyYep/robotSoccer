@@ -175,6 +175,30 @@ public class SamplingPanel extends JPanel implements ActionListener {
     public int getUpperBoundForV() {
         return VSlider.getHighValue();
     }
+    
+    public void setUpperBoundForY(int i) {
+    	YSlider.setHighValue(i);
+    }
+    
+    public void setLowerBoundForY(int i) {
+    	YSlider.setLowValue(i);
+    }
+    
+    public void setUpperBoundForU(int i) {
+    	USlider.setHighValue(i);
+    }
+    
+    public void setLowerBoundForU(int i) {
+    	USlider.setLowValue(i);
+    }
+    
+    public void setUpperBoundForV(int i) {
+    	VSlider.setHighValue(i);
+    }
+    
+    public void setLowerBoundForV(int i) {
+    	VSlider.setLowValue(i);
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

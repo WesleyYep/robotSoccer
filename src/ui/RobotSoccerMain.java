@@ -237,7 +237,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        setPreferredSize(new Dimension(1290, 780));
+        setPreferredSize(new Dimension(1290, 900));
         
         tabPane.addChangeListener(new ChangeListener() {
 
