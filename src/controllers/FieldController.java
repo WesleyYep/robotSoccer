@@ -180,10 +180,13 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
             Coordinate ballCoord = data.getCoordinate();
             ball.setX(220 - ballCoord.x); //hardcoded for now
             ball.setY(ballCoord.y);
-        } else if (data.getType().equals("robot")) {
+        } else if (data.getType().startsWith("robot")) {
             Coordinate robotCoord = data.getCoordinate();
-            bots.getRobot(0).setX(220 - robotCoord.x); //hardcoded for now
-            bots.getRobot(0).setY(robotCoord.y);
+            int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+            bots.getRobot(index).setX(220 - robotCoord.x); //hardcoded for now
+            bots.getRobot(index).setY(robotCoord.y);
+            bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
+
         }
     }
 }

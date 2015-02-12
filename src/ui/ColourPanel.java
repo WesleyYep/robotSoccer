@@ -13,6 +13,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Created by Wesley on 2/02/2015.
@@ -28,8 +31,6 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     private RangeSlider ballSizeSlider = new RangeSlider(0, 500);
     private JLabel robotSizeLabel = new JLabel("0 : 500");
     private JLabel ballSizeLabel = new JLabel("0 : 500");
-
-
     private JTabbedPane tabPane = new JTabbedPane();
 
     public ColourPanel(WebcamController wc) {
@@ -85,6 +86,19 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         }
         return false;
     }
+
+//    public void saveColourData(String fileName) {
+//        try {
+//            FileWriter fileWriter = new FileWriter(fileName, true);
+//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+//
+//            bufferedWriter.write();
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void viewStateChanged() {

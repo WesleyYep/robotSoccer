@@ -9,7 +9,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -24,7 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
@@ -256,7 +254,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentStrategy.saveToFile();
+                String file = currentStrategy.saveToFile();
+          //      colourPanel.saveColourData(file);
             }
         });
 
