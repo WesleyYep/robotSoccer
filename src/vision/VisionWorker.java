@@ -59,6 +59,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             BufferedImage image = webcamController.getImageFromWebcam();
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
+            System.out.println(System.currentTimeMillis() - startTime);
+
             boolean previous = false;
             int rowWidth = 0;
             int highestRowWidth = 0;
@@ -204,7 +206,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             Point2D ball = visionController.imagePosToActualPos(ballX + highestRowWidth / 2 * 1, ballY);
             publish(new VisionData(new Coordinate((int) ball.getX(), (int) ball.getY()), 0, "ball"));
 
-            //             System.out.println(System.currentTimeMillis() - startTime)
+           //            System.out.println(System.currentTimeMillis() - startTime);
 
             groups.clear();
             greenGroups.clear();

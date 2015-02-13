@@ -4,13 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
-import com.github.sarxos.webcam.Webcam;
+import org.bytedeco.javacpp.opencv_core.IplImage;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -23,19 +25,43 @@ import com.github.sarxos.webcam.Webcam;
 @SuppressWarnings("serial")
 public class WebcamDisplayPanel extends JPanel {
 
+    private final Color DETECTDISPLAYCOLOR = Color.CYAN;
 	private ViewState currentViewState;
-	private RSWebcamPanel webcamPanel;
-	private ArrayList<WebcamDisplayPanelListener> wdpListeners;
-	
+	//private RSWebcamPanel webcamImageLabel;
+	private JLabel webcamImageLabel = new JLabel();
+    private ArrayList<WebcamDisplayPanelListener> wdpListeners;
+    private SamplingPanel samplingPanel;
+    private boolean isFiltering = false;
+
 	public WebcamDisplayPanel() {
 		super();
 		
 		// Initially not connected to anything.
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
-		webcamPanel = null;
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
+        add(webcamImageLabel, BorderLayout.CENTER);
+
+        webcamImageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (WebcamDisplayPanelListener listener : wdpListeners) {
+                    //    System.out.println("listener");
+                    if (listener instanceof ColourPanel) {
+                        ColourPanel cp = (ColourPanel) listener;
+                        if (cp.getIsSampling()) {
+                            cp.takeSample(e.getX(), e.getY());
+                        }
+                    } else if (listener instanceof VisionPanel) {
+                        VisionPanel panel = (VisionPanel) listener;
+                        if (panel.isSelectedTab()) {
+             //               panel.updateMousePoint(e.getX(), e.getY(), img.getBufferedImage());
+                        }
+                    }
+                }
+            }
+        });
 	}
 	
 	/**
@@ -47,51 +73,40 @@ public class WebcamDisplayPanel extends JPanel {
 	 * @param webcam
 	 */
 	
-	public void update(final Webcam webcam) {
+	public void update(final IplImage img) {
 		// Gets webcam from controller. If webcam is null, it means webcam was not found.		
-		if (webcam == null) {
-			currentViewState = ViewState.connectionFail();
-		} else if (webcam.isOpen()) {
+		if (img == null) {
+            currentViewState = ViewState.connectionFail();
+		} else /*if (webcam.isOpen())*/ {
 			currentViewState = ViewState.connectionSuccess();
-			webcamPanel = new RSWebcamPanel(webcam);
+            //	webcamImageLabel = new RSWebcamPanel(img);
+            BufferedImage image = img.getBufferedImage();
+            if (isFiltering) {
+                for (int j = 0; j < image.getHeight(); j++) {
+                    for (int i = 0; i < image.getWidth(); i++) {
+                          Color color = new Color(image.getRGB(i, j));
 
-            webcamPanel.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                	//System.out.println(e.getX());
-                    for (WebcamDisplayPanelListener listener : wdpListeners) {
-                        if (listener instanceof ColourPanel) {
-                            ColourPanel cp = (ColourPanel) listener;
-                            if (cp.getIsSampling()) {
-                                cp.takeSample(e.getX(), e.getY());
-                            }
-                        }                       
-                   }
+                         int r = color.getRed();
+                         int g = color.getGreen();
+                         int b = color.getBlue();
+
+                        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
+                        int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
+                        int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
+                        int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
+
+                        if (isDetected(y, u, v)) {
+                            image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
+                        }
+                    }
                 }
-                @Override
-                public void mousePressed(MouseEvent e) { 
-                	 for (WebcamDisplayPanelListener listener : wdpListeners) {
-	                	 if (listener instanceof VisionPanel) {
-	                     	VisionPanel panel = (VisionPanel) listener;
-	                     	if (panel.isSelectedTab()) {
-	                     		panel.updateMousePoint(e.getX(), e.getY(), webcam.getImage());
-	                     		
-	                     	}
-	                     }
-                	 }
-                }
-                @Override
-                public void mouseReleased(MouseEvent e) {  }
-                @Override
-                public void mouseEntered(MouseEvent e) {  }
-                @Override
-                public void mouseExited(MouseEvent e) { }
-            });
-			add(webcamPanel,BorderLayout.CENTER);
-		} else {
+            }
+            webcamImageLabel.setIcon(new ImageIcon(image));
+
+		} /*else {
 			currentViewState = ViewState.disconnect();
 			removeAll();
-		}
+		}*/
 		
 		notifyWebcamDisplayPanelListeners();
 		repaint();
@@ -121,6 +136,30 @@ public class WebcamDisplayPanel extends JPanel {
 			g.drawString(displayMessage, displayMessageX, displayMessageY);
 		}
 	}
+
+    public boolean isDetected(int y, int u, int v) {
+        if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {
+            return false;
+        }
+
+        if (!((u >= samplingPanel.getLowerBoundForU()) && (u <= samplingPanel.getUpperBoundForU()))) {
+            return false;
+        }
+
+        if (!((v >= samplingPanel.getLowerBoundForV()) && (v <= samplingPanel.getUpperBoundForV()))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void setIsFiltering(boolean bool) {
+        isFiltering = bool;
+    }
+
+    public void setSamplingPanel(SamplingPanel sp) {
+        this.samplingPanel = sp;
+    }
 
 	/**
 	 * <p>Add instance to be an observer</p>
@@ -160,13 +199,13 @@ public class WebcamDisplayPanel extends JPanel {
     }
 
     /**
-     * <p>Return the webcamPanel for this WebcamDisplayPanel</p>
+     * <p>Return the webcamImageLabel for this WebcamDisplayPanel</p>
      * @return
      */
     
-    public RSWebcamPanel getRSWebcamPanel() {
-    	return webcamPanel;
-    }
+   // public RSWebcamPanel getRSWebcamPanel() {
+   // 	return webcamImageLabel;
+  //  }
     
     /**
 	 * <p>Defines the <strong>state</strong> of the display.</p>

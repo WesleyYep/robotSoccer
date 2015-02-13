@@ -211,17 +211,14 @@ public class SamplingPanel extends JPanel implements ActionListener {
                 isSampling = false;
             }
 		} else if (e.getSource() == detectButton) {
-			
-			// Change the painter for the webcamPanel.
-			RSWebcamPanel webcamPanel = webcamController.getWebcamDisplayPanel().getRSWebcamPanel();
-			if (detectButton.getText().equals(DETECTSTRING[0])) {
-				webcamController.setPainter(webcamPanel.new DetectionPainter(this));
-				detectButton.setText(DETECTSTRING[1]);
-			} else {
-				webcamController.setPainter(webcamPanel.getDefaultPainter());
-				detectButton.setText(DETECTSTRING[0]);
-			}
-			
+            if (detectButton.getText().equals(DETECTSTRING[0])) {
+                webcamController.getWebcamDisplayPanel().setSamplingPanel(this);
+                webcamController.getWebcamDisplayPanel().setIsFiltering(true);
+                detectButton.setText(DETECTSTRING[1]);
+            } else {
+                webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+                detectButton.setText(DETECTSTRING[0]);
+            }
 		} else if (e.getSource() == setValueButton) {
 			int selection = JOptionPane.showConfirmDialog(
 					null,
