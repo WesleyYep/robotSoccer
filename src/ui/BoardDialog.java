@@ -6,11 +6,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import controllers.VisionController;
@@ -53,6 +55,7 @@ public class BoardDialog extends JDialog {
 	}
 	
 	public void setBoardImage(BufferedImage image) {
+		
 		boardImage = image;
 		picLabel.setIcon(new ImageIcon(image));
 		
@@ -72,4 +75,10 @@ public class BoardDialog extends JDialog {
 		this.validate();
 		this.repaint();
 	}
+	
+	
+	
+	
+	
+	
 }

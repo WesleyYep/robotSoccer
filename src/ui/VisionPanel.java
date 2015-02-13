@@ -31,6 +31,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private BoardDialog dialog;
 	private BufferedImage webcamImage;
 	
+	private JButton blurButton;
 
 	
 	public VisionPanel(WebcamController wc, VisionController vc) {
@@ -38,6 +39,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		visionController = vc;
 		
 		boardButton = new JButton("Set board area");
+		blurButton = new JButton("Blur");
 		
 		dialog = new BoardDialog((JFrame) SwingUtilities.getWindowAncestor(this), visionController);
 		dialog.setVisible(false);
@@ -58,12 +60,28 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 					
 		});
 		
+		blurButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				webcamImage = webcamController.getImageFromWebcam();
+				if (webcamImage != null) {
+					if (webcamImage != null) {
+						visionController.showBlurImage(webcamImage);
+					}
+					
+				}
+			}
+			
+		});
+		
 		mousePoint = new JLabel("Mouse at x: 0 y: 0");
 		
 		this.setLayout(new MigLayout());
 		
 		add(mousePoint,"wrap");
 		add(boardButton);
+		add(blurButton);
 	}
 	
 	
