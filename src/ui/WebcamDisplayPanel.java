@@ -87,7 +87,7 @@ public class WebcamDisplayPanel extends JPanel {
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-            BufferedImage image = img.getBufferedImage();
+            final BufferedImage image = img.getBufferedImage();
             
             if (isFiltering) {
                 for (int j = 0; j < image.getHeight(); j++) {
@@ -109,17 +109,28 @@ public class WebcamDisplayPanel extends JPanel {
                     }
                 }
             }
-            
-            // Update the image.
-            webcamImageLabel.setIcon(new ImageIcon(image));
 
-            // Adds the component when necessary. It checks if the webcamImageLabel is already in the panel before adding.
-            if (webcamImageLabel.getParent() == null) {
-            	add(webcamImageLabel, BorderLayout.CENTER);
-            }
+            /*
+             * This method is not being called EDT thread so to update the GUI use invokeLater.
+             */
+            SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					// Update the image.
+					webcamImageLabel.setIcon(new ImageIcon(image));
+					
+					if (webcamImageLabel.getParent() == null) {
+						add(webcamImageLabel, BorderLayout.CENTER);
+					}
+				}
+            	
+            });
+
 		}
 		
 		notifyWebcamDisplayPanelListeners();
+		// Thread safe call.
 		repaint();
 	}
 	

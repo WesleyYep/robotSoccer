@@ -134,34 +134,18 @@ public class WebcamController {
                 //Flip image horizontally
                 cvFlip(img, img, 1);
                 //Show video frame in canvas
-                publish(img);
+                webcamDisplayPanel.update(img);
             }
             
+            // All done; clean up
+			grabber.stop();
+            grabber = null;
+            
+	        // Notify webcamdisplaypanel.
+	        webcamDisplayPanel.update((IplImage)null);
             return null;
         }
 
-		@Override
-		protected void process(List<IplImage> chunks) {
-//			if (!isDone()) {
-				for (IplImage img : chunks) {
-					webcamDisplayPanel.update(img);
-				}
-//			}
-		}
-
-		@Override
-		protected void done() {
-			try {
-	            // All done; clean up
-				grabber.stop();
-	            grabber = null;
-	            
-		        // Notify webcamdisplaypanel.
-		        webcamDisplayPanel.update((IplImage)null);
-			} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
-				System.err.println("Could not stop grabber");
-			}
-		}
     }
 
 }
