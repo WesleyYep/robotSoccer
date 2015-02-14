@@ -89,7 +89,7 @@ public class WebcamController {
 			grabby = new Grabby();
 			grabby.execute();
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			System.err.println("Could not connect to IP webcam.");
 		}
 		
 	}
@@ -126,23 +126,34 @@ public class WebcamController {
                 //insert grabbed video from to IplImage img
                 img = grabber.grab();
 
-                if (img != null) {
-                    //Flip image horizontally
-                    cvFlip(img, img, 1);
-                    //Show video frame in canvas
-                    webcamDisplayPanel.update(img);
-
+                if (img == null) {
+                	cancel(true);
                 }
+                
+                //Flip image horizontally
+                cvFlip(img, img, 1);
+                //Show video frame in canvas
+                webcamDisplayPanel.update(img);
             }
             
-            // All done; clean up
-            grabber.stop();
-            grabber = null;
-            
-            // Notify webcamdisplaypanel.
-            webcamDisplayPanel.update((IplImage)null);
             return null;
         }
+
+		@Override
+		protected void done() {
+            
+            try {
+            	// All done; clean up
+				grabber.stop();
+	            grabber = null;
+	            
+	            // Notify webcamdisplaypanel.
+	            webcamDisplayPanel.update((IplImage)null);
+			} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
+				e.printStackTrace();
+			}
+		}
+        
     }
 
 }

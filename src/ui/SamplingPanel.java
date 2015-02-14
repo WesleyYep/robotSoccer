@@ -42,7 +42,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
     
     public SamplingPanel (WebcamController wc) {
-        this.setLayout(new MigLayout());
+        this.setLayout(new MigLayout("debug"));
         this.webcamController = wc;
 
         lowYLabel = new JLabel();
@@ -124,7 +124,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
         add(sampleButton, "span, split 3, align right");
         add(detectButton, "width 75:75:75");
         add(setValueButton, "wrap");
-        
+
         sampleButton.addActionListener(this);
         detectButton.addActionListener(this);
         setValueButton.addActionListener(this);
@@ -142,7 +142,9 @@ public class SamplingPanel extends JPanel implements ActionListener {
         int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
         int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
         int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
-
+        System.out.println("Y " + y);
+        System.out.println("U " + u);
+        System.out.println("V " + v);
         YSlider.addToData(y);
         USlider.addToData(u);
         VSlider.addToData(v);
