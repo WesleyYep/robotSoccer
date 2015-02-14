@@ -1,21 +1,16 @@
 package ui;
 
-import com.github.sarxos.webcam.Webcam;
-import com.jidesoft.swing.RangeSlider;
-import controllers.WebcamController;
-import net.miginfocom.swing.MigLayout;
-import vision.VisionWorker;
-
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import net.miginfocom.swing.MigLayout;
+
+import com.jidesoft.swing.RangeSlider;
+
+import controllers.WebcamController;
 
 /**
  * Created by Wesley on 2/02/2015.
