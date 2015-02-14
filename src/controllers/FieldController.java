@@ -14,12 +14,15 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import data.Coordinate;
+import data.VisionData;
 import ui.*;
 import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
+import vision.VisionListener;
 
-public class FieldController implements ReceiverListener, AreaListener {
+public class FieldController implements ReceiverListener, AreaListener, VisionListener {
 
     private Field field;
 
@@ -171,4 +174,19 @@ public class FieldController implements ReceiverListener, AreaListener {
 			}
 	}
 
+    @Override
+    public void receive(VisionData data) {
+        if (data.getType().equals("ball")) {
+            Coordinate ballCoord = data.getCoordinate();
+            ball.setX(220 - ballCoord.x); //hardcoded for now
+            ball.setY(ballCoord.y);
+        } else if (data.getType().startsWith("robot")) {
+            Coordinate robotCoord = data.getCoordinate();
+            int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+            bots.getRobot(index).setX(220 - robotCoord.x); //hardcoded for now
+            bots.getRobot(index).setY(robotCoord.y);
+            bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
+
+        }
+    }
 }

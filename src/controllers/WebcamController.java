@@ -1,17 +1,21 @@
 package controllers;
 
-import java.awt.CardLayout;
-import java.awt.image.BufferedImage;
-import java.util.concurrent.ExecutionException;
+import static org.bytedeco.javacpp.opencv_core.cvFlip;
 
+import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import ui.WebcamDisplayPanel;
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.IPCameraFrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
 
-import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
-import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
+import ui.WebcamDisplayPanel;
 
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
@@ -25,14 +29,39 @@ import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 
 public class WebcamController {
 
-	private Webcam webcam;
 	private WebcamDisplayPanel webcamDisplayPanel;
-	
 	private final static String IPWEBCAMDEVICENAME = "BLAZE";
 	
+	//javaCV stuff
+    protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
+    protected boolean mirror = true;				// make true in order to mirror left<->right so your left hand is on the left side of the image
+    protected int width, height;					// the size of the grabbed images (scaled if so specified)
+    protected BufferedImage image;					// image grabbed from webcam (if any)
+    protected opencv_core.IplImage img;
+    private Grabby grabby;							// handles webcam grabbing
+    private JLabel imgLabel = new JLabel();
+    private JButton captureBtn = new JButton("Capture");
+    private FrameGrabber grabber;					// JavaCV
+	
 	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
-		webcam = null;
 		this.webcamDisplayPanel = webcamDisplayPanel;
+
+        // Repeated attempts following discussion on javacv forum, fall 2013 (might be fixed internally in future versions)
+//        final int MAX_ATTEMPTS = 60;
+//        int attempt = 0;
+//        while (attempt < MAX_ATTEMPTS) {
+//            attempt++;
+//            try {
+//                grabber.start();
+//                break;
+//            }
+//            catch (Exception e) { }
+//        }
+//        if (attempt == MAX_ATTEMPTS) {
+//            System.err.println("Failed after "+attempt+" attempts");
+//            return;
+//        }
+
 	}
 	
 	/**
@@ -41,117 +70,79 @@ public class WebcamController {
 	 */
 	
 	public void connect() {
-		
-		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-			
-			@Override
-			protected Boolean doInBackground() throws Exception {
-				// Retrieve the webcam.
-				webcam = Webcam.getDefault();
-				webcam.open();
-				
-				return true;
-			}
-
-			@Override
-			protected void done() {
-				CardLayout layout = (CardLayout)webcamDisplayPanel.getParent().getLayout();
-	    		layout.next(webcamDisplayPanel.getParent());
-				try {
-					get();
-					webcamDisplayPanel.update(webcam);
-				} catch (ExecutionException | InterruptedException e) {
-					webcamDisplayPanel.update((Webcam)null);
-				}
-			}
-			
-		};
-		
-		worker.execute();
-
+        // Spawn a separate thread to handle grabbing.
+		// Set up webcam. DeviceNumber.
+		grabber = new OpenCVFrameGrabber(0);
+        grabby = new Grabby();
+        grabby.execute();
 	}
 
-    public BufferedImage getImageFromWebcam() {
-    	System.out.println(webcam.getViewSize());
-    	System.out.println(webcam.getImage().getWidth());
-        return webcam.getImage();
-    }
-	
 	/**
-	 * <p>Connects to a IP network camera. After connection attempt, it updates webcamDisplayPanel</p>
+	 * <p>Connects to an IP Camera</p>
+	 * <p>After connection attempt, update the webcamDisplayPanel.</p>
 	 * @param url
 	 */
 	
-	public void connect(final String url) {	
+	public void connect(String url) {
+		try {
+			grabber = new IPCameraFrameGrabber(url);
+			grabby = new Grabby();
+			grabby.execute();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 		
-		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-
-			@Override
-			protected Boolean doInBackground() throws Exception {
-				// Not thread safe. Updating the driver is not thread safe. Driver field is volatile.
-				Webcam.setDriver(new IpCamDriver());
-
-				// IpCamMode.PUSH - stream Motion JPEG in real time and serve newest image on-demand.
-				IpCamDeviceRegistry.register(IPWEBCAMDEVICENAME, url, IpCamMode.PUSH);
-				
-				webcam = Webcam.getDefault();
-				webcam.open();
-				
-				return true;
-			}
-			
-			@Override
-			protected void done() {
-				try {
-					
-					get();
-					webcamDisplayPanel.update(webcam);
-					
-				} catch (ExecutionException | InterruptedException e) {
-					webcamDisplayPanel.update((Webcam)null);
-					// Reset driver.
-					Webcam.resetDriver();
-					IpCamDeviceRegistry.unregisterAll();
-				}
-			}
-			
-		};
-		
-		worker.execute();
 	}
 	
 	/**
-	 * <p>Disconnects webcam and updates webcamDisplayPanel</p>
+	 * <p>Disconnect the webcam</p>
 	 */
 	
 	public void disconnect() {
-		
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-			@Override
-			protected Void doInBackground() throws Exception {
-				
-				webcam.close();
-
-				IpCamDeviceRegistry.unregisterAll();
-				
-				return null;
-			}
-
-			@Override
-			protected void done() {
-				CardLayout layout = (CardLayout)webcamDisplayPanel.getParent().getLayout();
-	    		layout.next(webcamDisplayPanel.getParent());
-				// Update webcam display panel. Disconnect webcam.
-				webcamDisplayPanel.update(webcam);
-				// Not thread safe.
-				Webcam.resetDriver();
-			}
-			
-		};
-		
-		worker.execute();
-		
+		grabby.cancel(true);
 	}
 	
+    public BufferedImage getImageFromWebcam() {
+        return img.getBufferedImage();
+    }
+    
+    public WebcamDisplayPanel getWebcamDisplayPanel() {
+    	return webcamDisplayPanel;
+    }
+
+
+
+    /**
+     * Handles grabbing an image from the webcam (following JavaCV examples)
+     * storing it in image, and telling the canvas to repaint itself.
+     */
+    private class Grabby extends SwingWorker<Void, Void> {
+        protected Void doInBackground() throws Exception {
+        	
+            System.out.println("Initializing camera");
+            grabber.start();
+            
+            while (!isCancelled()) {
+                //insert grabbed video from to IplImage img
+                img = grabber.grab();
+
+                if (img != null) {
+                    //Flip image horizontally
+                    cvFlip(img, img, 1);
+                    //Show video frame in canvas
+                    webcamDisplayPanel.update(img);
+
+                }
+            }
+            
+            // All done; clean up
+            grabber.stop();
+            grabber = null;
+            
+            // Notify webcamdisplaypanel.
+            webcamDisplayPanel.update((IplImage)null);
+            return null;
+        }
+    }
+
 }

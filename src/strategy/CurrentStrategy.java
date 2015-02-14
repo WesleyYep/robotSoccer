@@ -95,7 +95,7 @@ public class CurrentStrategy {
         return null;
     }
 
-    public void saveToFile() {
+    public String saveToFile() {
     	JFileChooser fileChooser;
         String path;
         //read in the last save directory
@@ -108,7 +108,7 @@ public class CurrentStrategy {
         fileChooser.showSaveDialog(null);
         
         if (fileChooser.getSelectedFile() == null) {
-        	return;
+        	return null;
         }
         
         String fileName = fileChooser.getSelectedFile().getAbsolutePath();
@@ -156,6 +156,7 @@ public class CurrentStrategy {
         catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
         }
+        return fileName;
     }
 
     public void readFromFile() {  	
