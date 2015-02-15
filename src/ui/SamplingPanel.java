@@ -213,6 +213,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 		} else if (e.getSource() == detectButton) {
             if (detectButton.getText().equals(DETECTSTRING[0])) {
                 webcamController.getWebcamDisplayPanel().setSamplingPanel(this);
+            //    webcamController.getWebcamDisplayPanel().setMaxandMinForFilter();
                 webcamController.getWebcamDisplayPanel().setIsFiltering(true);
                 detectButton.setText(DETECTSTRING[1]);
             } else {
