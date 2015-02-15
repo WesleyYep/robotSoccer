@@ -33,7 +33,6 @@ public class WebcamDisplayPanel extends JPanel {
 
     private final Color DETECTDISPLAYCOLOR = Color.CYAN;
 	private ViewState currentViewState;
-	//private RSWebcamPanel webcamImageLabel;
 	private JLabel webcamImageLabel = new JLabel();
     private ArrayList<WebcamDisplayPanelListener> wdpListeners;
     private SamplingPanel samplingPanel;
@@ -49,13 +48,11 @@ public class WebcamDisplayPanel extends JPanel {
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
-        add(webcamImageLabel, BorderLayout.CENTER);
 
         webcamImageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 for (WebcamDisplayPanelListener listener : wdpListeners) {
-                    //    System.out.println("listener");
                     if (listener instanceof ColourPanel) {
                         ColourPanel cp = (ColourPanel) listener;
                         if (cp.getIsSampling()) {
@@ -74,7 +71,6 @@ public class WebcamDisplayPanel extends JPanel {
 	
 	/**
 	 * <p>Receives webcam and updates view.</p>
-	 * <p>If the webcam is null, either it was not found or error occurred.</p>
 	 * <p>Notifies all listeners of view state change</p>
 	 * <p>{@link ui.WebcamDisplayPanelListener}</p>
 	 * <p>{@link controllers.WebcamController}</p>
@@ -82,21 +78,33 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void update(final IplImage img) {
-		// Gets webcam from controller. If webcam is null, it means webcam was not found.		
+
 		if (img == null) {
-            currentViewState = ViewState.connectionFail();
-		} else /*if (webcam.isOpen())*/ {
+			
+			/* 
+			 * This assumes that you cannot have a connection fail if you're already connected hence you are disconnecting.
+			 * If you are unconnected and you get a null image, connection has failed.
+			 */
+			
+			if (currentViewState == ViewState.UNCONNECTED) {
+				currentViewState = ViewState.connectionFail();
+			} else if (currentViewState == ViewState.CONNECTED) {
+				removeAll();
+				currentViewState = ViewState.disconnect();
+			}
+			
+		} else {
 			currentViewState = ViewState.connectionSuccess();
-            //	webcamImageLabel = new RSWebcamPanel(img);
-            BufferedImage image = img.getBufferedImage();
+            final BufferedImage image = img.getBufferedImage();
+            
             if (isFiltering) {
                 for (int j = 0; j < image.getHeight(); j++) {
                     for (int i = 0; i < image.getWidth(); i++) {
-                          Color color = new Color(image.getRGB(i, j));
+                        Color color = new Color(image.getRGB(i, j));
 
-                         int r = color.getRed();
-                         int g = color.getGreen();
-                         int b = color.getBlue();
+                        int r = color.getRed();
+                        int g = color.getGreen();
+                        int b = color.getBlue();
 
                         // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
                         int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
@@ -112,28 +120,42 @@ public class WebcamDisplayPanel extends JPanel {
 //                cvInRangeS(img, min, max, imgThreshold);
 //                image = imgThreshold.getBufferedImage();
             }
-            webcamImageLabel.setIcon(new ImageIcon(image));
 
-		} /*else {
-			currentViewState = ViewState.disconnect();
-			removeAll();
-		}*/
+            /*
+             * This method is not being called EDT thread so to update the GUI use invokeLater.
+             */
+            SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					// Update the image.
+					webcamImageLabel.setIcon(new ImageIcon(image));
+					
+					if (webcamImageLabel.getParent() == null) {
+						add(webcamImageLabel, BorderLayout.CENTER);
+					}
+				}
+            	
+            });
+
+		}
 		
 		notifyWebcamDisplayPanelListeners();
+		// Thread safe call.
 		repaint();
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		// Get the current state of the displayPanel. Draw text onto screen.
 		switch(currentViewState) {
 		case CONNECTED:
 			break;
 		default:
 			g.setColor(Color.WHITE);
-			
+
 			// Find width and height of the display panel.
 			int width = getWidth();
 			int height = getHeight();
@@ -228,15 +250,6 @@ public class WebcamDisplayPanel extends JPanel {
     public ViewState getViewState() {
         return currentViewState;
     }
-
-    /**
-     * <p>Return the webcamImageLabel for this WebcamDisplayPanel</p>
-     * @return
-     */
-    
-   // public RSWebcamPanel getRSWebcamPanel() {
-   // 	return webcamImageLabel;
-  //  }
     
     /**
 	 * <p>Defines the <strong>state</strong> of the display.</p>

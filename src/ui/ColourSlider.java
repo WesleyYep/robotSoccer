@@ -42,7 +42,8 @@ public class ColourSlider extends RangeSlider {
         g2.setPaint(Color.red);
         for(int i = 0; i < data.size(); i++) {
             double x = data.get(i);
-            g2.fill(new Ellipse2D.Double(x, 0, 4, 4));
+            // x minus the radius of the circle.
+            g2.fill(new Ellipse2D.Double(x - 2, 0, 4, 4));
         }
     }
 
