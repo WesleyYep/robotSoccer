@@ -142,9 +142,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
         int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
         int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
         int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
-        System.out.println("Y " + y);
-        System.out.println("U " + u);
-        System.out.println("V " + v);
+
         YSlider.addToData(y);
         USlider.addToData(u);
         VSlider.addToData(v);

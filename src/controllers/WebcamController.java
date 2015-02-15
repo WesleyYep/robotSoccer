@@ -4,6 +4,7 @@ import static org.bytedeco.javacpp.opencv_core.cvFlip;
 
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -116,7 +117,7 @@ public class WebcamController {
      * Handles grabbing an image from the webcam (following JavaCV examples)
      * storing it in image, and telling the canvas to repaint itself.
      */
-    private class Grabby extends SwingWorker<Void, Void> {
+    private class Grabby extends SwingWorker<Void, IplImage> {
         protected Void doInBackground() throws Exception {
         	
             System.out.println("Initializing camera");
@@ -133,27 +134,34 @@ public class WebcamController {
                 //Flip image horizontally
                 cvFlip(img, img, 1);
                 //Show video frame in canvas
-                webcamDisplayPanel.update(img);
+                publish(img);
             }
             
             return null;
         }
 
 		@Override
+		protected void process(List<IplImage> chunks) {
+//			if (!isDone()) {
+				for (IplImage img : chunks) {
+					webcamDisplayPanel.update(img);
+				}
+//			}
+		}
+
+		@Override
 		protected void done() {
-            
-            try {
-            	// All done; clean up
+			try {
+	            // All done; clean up
 				grabber.stop();
 	            grabber = null;
 	            
-	            // Notify webcamdisplaypanel.
-	            webcamDisplayPanel.update((IplImage)null);
+		        // Notify webcamdisplaypanel.
+		        webcamDisplayPanel.update((IplImage)null);
 			} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
-				e.printStackTrace();
+				System.err.println("Could not stop grabber");
 			}
 		}
-        
     }
 
 }

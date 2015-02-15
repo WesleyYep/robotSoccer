@@ -80,7 +80,7 @@ public class WebcamDisplayPanel extends JPanel {
 			
 			if (currentViewState == ViewState.UNCONNECTED) {
 				currentViewState = ViewState.connectionFail();
-			} else if (currentViewState == ViewState.CONNECTED){
+			} else if (currentViewState == ViewState.CONNECTED) {
 				removeAll();
 				currentViewState = ViewState.disconnect();
 			}
@@ -126,14 +126,14 @@ public class WebcamDisplayPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		// Get the current state of the displayPanel. Draw text onto screen.
 		switch(currentViewState) {
 		case CONNECTED:
 			break;
 		default:
 			g.setColor(Color.WHITE);
-			
+
 			// Find width and height of the display panel.
 			int width = getWidth();
 			int height = getHeight();
