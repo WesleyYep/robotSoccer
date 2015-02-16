@@ -218,7 +218,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards.add(webcamDisplayPanel, CAMSTRING);
         visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
         visionWorker.addListener(fieldController);
-
+        
         visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
         tabPane.addTab("Colour", colourPanel);
         

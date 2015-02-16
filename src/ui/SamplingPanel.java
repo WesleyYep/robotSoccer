@@ -42,7 +42,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
     
     public SamplingPanel (WebcamController wc) {
-        this.setLayout(new MigLayout("debug"));
+        this.setLayout(new MigLayout());
         this.webcamController = wc;
 
         lowYLabel = new JLabel();

@@ -1,5 +1,9 @@
 package vision;
 
+import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
+import static org.bytedeco.javacpp.opencv_core.cvGetSize;
+import static org.bytedeco.javacpp.opencv_core.cvInRangeS;
+import static org.bytedeco.javacpp.opencv_core.cvScalar;
 import controllers.VisionController;
 import controllers.WebcamController;
 import data.Coordinate;
@@ -8,6 +12,10 @@ import ui.ColourPanel;
 import ui.SamplingPanel;
 
 import javax.swing.*;
+
+import org.bytedeco.javacpp.opencv_core.CvScalar;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -55,11 +63,9 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
         while (!isCancelled()) try {
 
-            long startTime = System.currentTimeMillis();
             BufferedImage image = webcamController.getImageFromWebcam();
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
-            System.out.println(System.currentTimeMillis() - startTime);
 
             boolean previous = false;
             int rowWidth = 0;
@@ -67,100 +73,110 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             int ballX = 0;
             int ballY = 0;
 
+            IplImage webcamImage = IplImage.createFrom(image);
+            
+            // If gaussian blurring required, place here.
+            
+            // Binary image.
+            IplImage ballThresholdBinary = cvCreateImage(cvGetSize(webcamImage), 8, 1);
+    		CvScalar ballMin = cvScalar(27, 34, 31, 0); //BGR-A
+    	    CvScalar ballMax= cvScalar(48, 44, 39, 0); //BGR-A
+            cvInRangeS(webcamImage, ballMin, ballMax, ballThresholdBinary);
+            
             //loop through every row
-            for (int i = 0; i < imageHeight; i += 1) {
-                //loop through every 10th column from right to left
-                for (int j = imageWidth - 1; j >= 0; j -= 1) {
-
-                    Color color = new Color(image.getRGB(j, i));
-                    int r = color.getRed();
-                    int g = color.getGreen();
-                    int b = color.getBlue();
-
-                    int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
-                    int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
-                    int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
-
-                    //ball detection
-                    if (isBall(y, u, v)) {
-                        previous = true;
-                        rowWidth++;
-                    } else if (previous) {
-                        if (rowWidth > highestRowWidth) {
-                            highestRowWidth = rowWidth;
-                            ballX = j;
-                            ballY = i;
-                        }
-                        rowWidth = 0;
-                        previous = false;
-                    }
-
-                    //robot detection
-                    if (isTeam(y, u, v)) {
-                        if (groups.isEmpty()) {
-                            groups.add(new PixelGroup(j, i));
-                        } else {
-                            boolean inAGroup = false;
-
-                            for (PixelGroup pg : groups) {
-                                boolean inThisGroup = true;
-                                if (pg.mostRightCorner.x < j && Math.abs(pg.mostRightCorner.x - j) < 20 && Math.abs(pg.mostRightCorner.y - i) < 5) {
-                                    pg.mostRightCorner.x = j;
-                                    pg.mostRightCorner.y = i;
-                                } else if (pg.mostLeftCorner.x > j && Math.abs(pg.mostLeftCorner.x - j) < 20 && Math.abs(pg.mostLeftCorner.y - i) < 5) {
-                                    pg.mostLeftCorner.x = j;
-                                    pg.mostLeftCorner.y = i;
-                                } else if (pg.mostBottomCorner.y < i && Math.abs(pg.mostBottomCorner.y - i) < 20 && Math.abs(pg.mostBottomCorner.x - j) < 5) {
-                                    pg.mostBottomCorner.x = j;
-                                    pg.mostBottomCorner.y = i;
-                                } else if (j < pg.mostLeftCorner.x || j > pg.mostRightCorner.x || i > pg.mostBottomCorner.y || i < pg.mostTopCorner.y) { //within pixel group
-                                    inThisGroup = false;
-                                }
-                                if (inThisGroup) {
-                                    inAGroup = true;
-                                }
-                            }
-                            if (!inAGroup) {
-                                //                          System.out.println("new group added!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-                                groups.add(new PixelGroup(j, i));
-                            }
-                        }
-                    }
-
-                    //green detection
-                    if (isGreen(y, u, v)) {
-                        if (greenGroups.isEmpty()) {
-                            greenGroups.add(new PixelGroup(j, i));
-                        } else {
-                            boolean inAGroup = false;
-
-                            for (PixelGroup pg : greenGroups) {
-                                boolean inThisGroup = true;
-                                if (pg.mostRightCorner.x < j && Math.abs(pg.mostRightCorner.x - j) < 20 && Math.abs(pg.mostRightCorner.y - i) < 5) {
-                                    pg.mostRightCorner.x = j;
-                                    pg.mostRightCorner.y = i;
-                                } else if (pg.mostLeftCorner.x > j && Math.abs(pg.mostLeftCorner.x - j) < 20 && Math.abs(pg.mostLeftCorner.y - i) < 5) {
-                                    pg.mostLeftCorner.x = j;
-                                    pg.mostLeftCorner.y = i;
-                                } else if (pg.mostBottomCorner.y < i && Math.abs(pg.mostBottomCorner.y - i) < 20 && Math.abs(pg.mostBottomCorner.x - j) < 5) {
-                                    pg.mostBottomCorner.x = j;
-                                    pg.mostBottomCorner.y = i;
-                                } else if (j < pg.mostLeftCorner.x || j > pg.mostRightCorner.x || i > pg.mostBottomCorner.y || i < pg.mostTopCorner.y) { //within pixel group
-                                    inThisGroup = false;
-                                }
-                                if (inThisGroup) {
-                                    inAGroup = true;
-                                }
-                            }
-                            if (!inAGroup) {
-                                //                          System.out.println("new group added!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-                                greenGroups.add(new PixelGroup(j, i));
-                            }
-                        }
-                    }
-
-                }
-            }
+//            for (int i = 0; i < imageHeight; i += 1) {
+//                //loop through every 10th column from right to left
+//                for (int j = imageWidth - 1; j >= 0; j -= 1) {
+//
+//                    Color color = new Color(image.getRGB(j, i));
+//                    int r = color.getRed();
+//                    int g = color.getGreen();
+//                    int b = color.getBlue();
+//
+//                    int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
+//                    int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
+//                    int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
+//
+//                    //ball detection
+//                    if (isBall(y, u, v)) {
+//                        previous = true;
+//                        rowWidth++;
+//                    } else if (previous) {
+//                        if (rowWidth > highestRowWidth) {
+//                            highestRowWidth = rowWidth;
+//                            ballX = j;
+//                            ballY = i;
+//                        }
+//                        rowWidth = 0;
+//                        previous = false;
+//                    }
+//
+//                    //robot detection
+//                    if (isTeam(y, u, v)) {
+//                        if (groups.isEmpty()) {
+//                            groups.add(new PixelGroup(j, i));
+//                        } else {
+//                            boolean inAGroup = false;
+//
+//                            for (PixelGroup pg : groups) {
+//                                boolean inThisGroup = true;
+//                                if (pg.mostRightCorner.x < j && Math.abs(pg.mostRightCorner.x - j) < 20 && Math.abs(pg.mostRightCorner.y - i) < 5) {
+//                                    pg.mostRightCorner.x = j;
+//                                    pg.mostRightCorner.y = i;
+//                                } else if (pg.mostLeftCorner.x > j && Math.abs(pg.mostLeftCorner.x - j) < 20 && Math.abs(pg.mostLeftCorner.y - i) < 5) {
+//                                    pg.mostLeftCorner.x = j;
+//                                    pg.mostLeftCorner.y = i;
+//                                } else if (pg.mostBottomCorner.y < i && Math.abs(pg.mostBottomCorner.y - i) < 20 && Math.abs(pg.mostBottomCorner.x - j) < 5) {
+//                                    pg.mostBottomCorner.x = j;
+//                                    pg.mostBottomCorner.y = i;
+//                                } else if (j < pg.mostLeftCorner.x || j > pg.mostRightCorner.x || i > pg.mostBottomCorner.y || i < pg.mostTopCorner.y) { //within pixel group
+//                                    inThisGroup = false;
+//                                }
+//                                if (inThisGroup) {
+//                                    inAGroup = true;
+//                                }
+//                            }
+//                            if (!inAGroup) {
+//                                //                          System.out.println("new group added!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//                                groups.add(new PixelGroup(j, i));
+//                            }
+//                        }
+//                    }
+//
+//                    //green detection
+//                    if (isGreen(y, u, v)) {
+//                        if (greenGroups.isEmpty()) {
+//                            greenGroups.add(new PixelGroup(j, i));
+//                        } else {
+//                            boolean inAGroup = false;
+//
+//                            for (PixelGroup pg : greenGroups) {
+//                                boolean inThisGroup = true;
+//                                if (pg.mostRightCorner.x < j && Math.abs(pg.mostRightCorner.x - j) < 20 && Math.abs(pg.mostRightCorner.y - i) < 5) {
+//                                    pg.mostRightCorner.x = j;
+//                                    pg.mostRightCorner.y = i;
+//                                } else if (pg.mostLeftCorner.x > j && Math.abs(pg.mostLeftCorner.x - j) < 20 && Math.abs(pg.mostLeftCorner.y - i) < 5) {
+//                                    pg.mostLeftCorner.x = j;
+//                                    pg.mostLeftCorner.y = i;
+//                                } else if (pg.mostBottomCorner.y < i && Math.abs(pg.mostBottomCorner.y - i) < 20 && Math.abs(pg.mostBottomCorner.x - j) < 5) {
+//                                    pg.mostBottomCorner.x = j;
+//                                    pg.mostBottomCorner.y = i;
+//                                } else if (j < pg.mostLeftCorner.x || j > pg.mostRightCorner.x || i > pg.mostBottomCorner.y || i < pg.mostTopCorner.y) { //within pixel group
+//                                    inThisGroup = false;
+//                                }
+//                                if (inThisGroup) {
+//                                    inAGroup = true;
+//                                }
+//                            }
+//                            if (!inAGroup) {
+//                                //                          System.out.println("new group added!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//                                greenGroups.add(new PixelGroup(j, i));
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
 
             Collections.sort(groups, new Comparator<PixelGroup>() {
                 @Override
