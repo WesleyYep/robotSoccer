@@ -80,14 +80,14 @@ public class WebcamDisplayPanel extends JPanel {
 			
 			if (currentViewState == ViewState.UNCONNECTED) {
 				currentViewState = ViewState.connectionFail();
-			} else if (currentViewState == ViewState.CONNECTED){
+			} else if (currentViewState == ViewState.CONNECTED) {
 				removeAll();
 				currentViewState = ViewState.disconnect();
 			}
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-            BufferedImage image = img.getBufferedImage();
+            final BufferedImage image = img.getBufferedImage();
             
             if (isFiltering) {
                 for (int j = 0; j < image.getHeight(); j++) {
@@ -109,31 +109,42 @@ public class WebcamDisplayPanel extends JPanel {
                     }
                 }
             }
-            
-            // Update the image.
-            webcamImageLabel.setIcon(new ImageIcon(image));
 
-            // Adds the component when necessary. It checks if the webcamImageLabel is already in the panel before adding.
-            if (webcamImageLabel.getParent() == null) {
-            	add(webcamImageLabel, BorderLayout.CENTER);
-            }
+            /*
+             * This method is not being called EDT thread so to update the GUI use invokeLater.
+             */
+            SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					// Update the image.
+					webcamImageLabel.setIcon(new ImageIcon(image));
+					
+					if (webcamImageLabel.getParent() == null) {
+						add(webcamImageLabel, BorderLayout.CENTER);
+					}
+				}
+            	
+            });
+
 		}
 		
 		notifyWebcamDisplayPanelListeners();
+		// Thread safe call.
 		repaint();
 	}
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		// Get the current state of the displayPanel. Draw text onto screen.
 		switch(currentViewState) {
 		case CONNECTED:
 			break;
 		default:
 			g.setColor(Color.WHITE);
-			
+
 			// Find width and height of the display panel.
 			int width = getWidth();
 			int height = getHeight();

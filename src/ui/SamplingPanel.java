@@ -42,7 +42,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
     
     public SamplingPanel (WebcamController wc) {
-        this.setLayout(new MigLayout());
+        this.setLayout(new MigLayout("debug"));
         this.webcamController = wc;
 
         lowYLabel = new JLabel();
@@ -124,7 +124,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
         add(sampleButton, "span, split 3, align right");
         add(detectButton, "width 75:75:75");
         add(setValueButton, "wrap");
-        
+
         sampleButton.addActionListener(this);
         detectButton.addActionListener(this);
         setValueButton.addActionListener(this);

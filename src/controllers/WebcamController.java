@@ -4,6 +4,7 @@ import static org.bytedeco.javacpp.opencv_core.cvFlip;
 
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -89,7 +90,7 @@ public class WebcamController {
 			grabby = new Grabby();
 			grabby.execute();
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			System.err.println("Could not connect to IP webcam.");
 		}
 		
 	}
@@ -120,7 +121,7 @@ public class WebcamController {
      * Handles grabbing an image from the webcam (following JavaCV examples)
      * storing it in image, and telling the canvas to repaint itself.
      */
-    private class Grabby extends SwingWorker<Void, Void> {
+    private class Grabby extends SwingWorker<Void, IplImage> {
         protected Void doInBackground() throws Exception {
         	
             System.out.println("Initializing camera");
@@ -130,23 +131,25 @@ public class WebcamController {
                 //insert grabbed video from to IplImage img
                 img = grabber.grab();
 
-                if (img != null) {
-                    //Flip image horizontally
-                    cvFlip(img, img, 1);
-                    //Show video frame in canvas
-                    webcamDisplayPanel.update(img);
-
+                if (img == null) {
+                	cancel(true);
                 }
+                
+                //Flip image horizontally
+                cvFlip(img, img, 1);
+                //Show video frame in canvas
+                webcamDisplayPanel.update(img);
             }
             
             // All done; clean up
-            grabber.stop();
+			grabber.stop();
             grabber = null;
             
-            // Notify webcamdisplaypanel.
-            webcamDisplayPanel.update((IplImage)null);
+	        // Notify webcamdisplaypanel.
+	        webcamDisplayPanel.update((IplImage)null);
             return null;
         }
+
     }
 
 }
