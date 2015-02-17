@@ -67,7 +67,8 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 				webcamImage = webcamController.getImageFromWebcam();
 				if (webcamImage != null) {
 					if (webcamImage != null) {
-						visionController.showBlurImage(webcamImage);
+						//visionController.showBlurImage(webcamImage);
+						visionController.testBlur(webcamController.getIplImage());
 					}
 					
 				}
