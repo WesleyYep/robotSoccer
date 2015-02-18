@@ -9,6 +9,20 @@ import javax.media.jai.PerspectiveTransform;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.bridj.SizeT;
+import org.bytedeco.javacpp.opencv_core.CvMat;
+import org.bytedeco.javacpp.opencv_core.CvMemStorage;
+import org.bytedeco.javacpp.opencv_core.CvSeq;
+import org.bytedeco.javacpp.opencv_core.CvSize;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.Size;
+
+import org.bytedeco.javacv.*;
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_highgui.*;
+import org.bytedeco.javacpp.Pointer;
 import ui.Field;
 
 public class VisionController {
@@ -127,8 +141,42 @@ public class VisionController {
 		gaussianBlur(webcamImage);
 	}
 
+	public void testBlur(IplImage image) {
+		IplImage dst = null;
+		//GaussianBlur(dst,dst,s,11.0);
+		//cvSmooth(image, image, CV_GAUSSIAN, 11, 0, 0, 0);
+		
+		CvMemStorage storage = cvCreateMemStorage(0);
+		CvSeq lines = new CvSeq();
+		dst = cvCreateImage(cvGetSize(image), image.depth(), 1);
+        IplImage colorDst = cvCreateImage(cvGetSize(image), image.depth(), 3);
+        cvCanny(image, dst, 50, 200, 3);
+        cvCvtColor(dst, colorDst, CV_GRAY2BGR);
+		 lines = cvHoughLines2(dst, storage, CV_HOUGH_PROBABILISTIC, 1, Math.PI / 180, 40, 50, 10);
+		
+		 for (int i = 0; i < lines.total(); i++) {
+             // Based on JavaCPP, the equivalent of the C code:
+             // CvPoint* line = (CvPoint*)cvGetSeqElem(lines,i);
+             // CvPoint first=line[0], second=line[1]
+             // is:
+             Pointer line = cvGetSeqElem(lines, i);
+             CvPoint pt1  = new CvPoint(line).position(0);
+             CvPoint pt2  = new CvPoint(line).position(1);
+
+             	cvLine(colorDst, pt1, pt2, CV_RGB(255, 0, 0), 3, CV_AA, 0); // draw the segment on the image
+         	
+		}
+		 
+		ImageIcon ii = new ImageIcon(colorDst.getBufferedImage());
+		JOptionPane.showMessageDialog(null, ii);
+	}
+	
+	
+	
 	private void gaussianBlur(BufferedImage image) {
 		//http://blog.ivank.net/fastest-gaussian-blur.html
+		
+		/*
 		int w = image.getWidth();
 		int h = image.getHeight();
 		
@@ -176,6 +224,8 @@ public class VisionController {
 				row++;
 			}	
 		}
+		*/
+		
 		
 		ImageIcon ii = new ImageIcon(image);
 		JOptionPane.showMessageDialog(null, ii);

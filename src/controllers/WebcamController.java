@@ -110,6 +110,10 @@ public class WebcamController {
     public WebcamDisplayPanel getWebcamDisplayPanel() {
     	return webcamDisplayPanel;
     }
+    
+    public IplImage getIplImage () {
+    	return img;
+    }
 
 
 
