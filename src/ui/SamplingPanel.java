@@ -42,7 +42,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
     
     public SamplingPanel (WebcamController wc) {
-        this.setLayout(new MigLayout("debug"));
+        this.setLayout(new MigLayout());
         this.webcamController = wc;
 
         lowYLabel = new JLabel();
@@ -133,7 +133,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     public void takeSample(double xPos, double yPos) {
         BufferedImage image = webcamController.getImageFromWebcam();
         Color color = new Color(image.getRGB((int)xPos, (int)yPos));
-
+    //    System.out.println(yPos);
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();

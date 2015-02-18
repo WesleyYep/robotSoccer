@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
 import java.util.Calendar;
 import java.util.List;
 
@@ -178,13 +179,14 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
     public void receive(VisionData data) {
         if (data.getType().equals("ball")) {
             Coordinate ballCoord = data.getCoordinate();
-            ball.setX(220 - ballCoord.x); //hardcoded for now
+            ball.setX(ballCoord.x); //hardcoded for now
             ball.setY(ballCoord.y);
         } else if (data.getType().startsWith("robot")) {
             Coordinate robotCoord = data.getCoordinate();
+            Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);
             int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
-            bots.getRobot(index).setX(220 - robotCoord.x); //hardcoded for now
-            bots.getRobot(index).setY(robotCoord.y);
+            bots.getRobot(index).setX(p.getX()); //hardcoded for now
+            bots.getRobot(index).setY(p.getY());
             bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
 
         }

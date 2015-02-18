@@ -33,14 +33,14 @@ public class VisionController {
 	private Point2D bottomRight;
 	private Point2D bottomLeft;
 	
-	private double mapLeft = 121;
-	private double mapRight = 517;
-	private double mapTop = 48;
-	private double mapBot = 372;
+	private static double mapLeft = 121;
+	private static double mapRight = 517;
+	private static double mapTop = 48;
+	private static double mapBot = 372;
 	
 
-	private PerspectiveTransform t;
-	private PerspectiveTransform tInverse;
+	private static PerspectiveTransform t;
+	private static PerspectiveTransform tInverse;
 	
 	public VisionController() {
 		topRight = new Point2D.Double(200,100);
@@ -78,7 +78,7 @@ public class VisionController {
 		}
 	}
 	
-	public Point2D imagePosToActualPos (double x, double y) {
+	public static Point2D imagePosToActualPos (double x, double y) {
 		if (t != null ) {
 			Point2D selectedPoint = new Point2D.Double();
 			t.transform(new Point2D.Double(x,y), selectedPoint);
