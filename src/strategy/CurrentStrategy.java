@@ -189,7 +189,7 @@ public class CurrentStrategy {
             roles.clear();
             plays.clear();
             situations.clear();
-
+            fieldController.removeAllSituationArea();
             while((line = bufferedReader.readLine()) != null) {
                 if (line.startsWith("Role:")) {
                     int i = 0;
