@@ -1,18 +1,12 @@
 package ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import controllers.VisionController;
@@ -34,12 +28,8 @@ public class BoardDialog extends JDialog {
 		picLabel = new JLabel();
 		glassPanel = new BoardAreaGlassPanel(vc);
 		this.setResizable(false);
-
-		
 		
 		panel = new JPanel();
-		//this.getContentPane().setLayout(new BorderLayout());
-		//this.getContentPane().add(picLabel, BorderLayout.CENTER);
 		
 		panel.setLayout(null);
 		

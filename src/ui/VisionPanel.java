@@ -2,11 +2,8 @@ package ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
-import javax.media.jai.PerspectiveTransform;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,15 +28,12 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 	private BoardDialog dialog;
 	private BufferedImage webcamImage;
 	
-	private JButton blurButton;
-
 	
 	public VisionPanel(WebcamController wc, VisionController vc) {
 		webcamController = wc;
 		visionController = vc;
 		
 		boardButton = new JButton("Set board area");
-		blurButton = new JButton("Blur");
 		
 		dialog = new BoardDialog((JFrame) SwingUtilities.getWindowAncestor(this), visionController);
 		dialog.setVisible(false);
@@ -60,21 +54,6 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 					
 		});
 		
-		blurButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				webcamImage = webcamController.getImageFromWebcam();
-				if (webcamImage != null) {
-					if (webcamImage != null) {
-						//visionController.showBlurImage(webcamImage);
-						visionController.testBlur(webcamController.getIplImage());
-					}
-					
-				}
-			}
-			
-		});
 		
 		mousePoint = new JLabel("Mouse at x: 0 y: 0");
 		
@@ -82,14 +61,11 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		
 		add(mousePoint,"wrap");
 		add(boardButton);
-		add(blurButton);
 	}
 	
 	
 	public void updateMousePoint(int x, int y, BufferedImage image) {
 		mousePoint.setText("Mouse at x:" + x + " y: " + y);
-		
-		System.out.println(visionController.imagePosToActualPos(x, y));
 		this.repaint();
 	}
 	
