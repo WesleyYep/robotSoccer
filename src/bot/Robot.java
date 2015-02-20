@@ -56,6 +56,7 @@ public abstract class Robot extends JPanel {
 	
 	public void setTheta (double theta) {
 		this.theta = theta;
+
 		notifyRobotListeners();
 	}
 	

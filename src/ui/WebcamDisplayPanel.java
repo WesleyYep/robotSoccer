@@ -55,6 +55,8 @@ public class WebcamDisplayPanel extends JPanel {
                         ColourPanel cp = (ColourPanel) listener;
                         if (cp.getIsSampling()) {
                             cp.takeSample(e.getX(), e.getY());
+                        } else if (cp.getIsGettingRobotDimension()) {
+                            cp.setRobotDimension(e.getX(), e.getY());
                         }
                     } else if (listener instanceof VisionPanel) {
                         VisionPanel panel = (VisionPanel) listener;

@@ -3,3 +3,4 @@ bin/*
 .project
 RobotSoccerConfiguration.config
 RobotSoccerConfiguration.config
+out/*

@@ -185,6 +185,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
             Coordinate robotCoord = data.getCoordinate();
             Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);
             int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+
             bots.getRobot(index).setX(p.getX()); //hardcoded for now
             bots.getRobot(index).setY(p.getY());
             bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
