@@ -1,16 +1,5 @@
 package ui;
 
-import static org.bytedeco.javacpp.opencv_core.CV_AA;
-import static org.bytedeco.javacpp.opencv_core.cvCircle;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvGetSeqElem;
-import static org.bytedeco.javacpp.opencv_core.cvGetSize;
-import static org.bytedeco.javacpp.opencv_core.cvInRangeS;
-import static org.bytedeco.javacpp.opencv_core.cvPoint;
-import static org.bytedeco.javacpp.opencv_core.cvScalar;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_HOUGH_GRADIENT;
-import static org.bytedeco.javacpp.opencv_imgproc.cvHoughCircles;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -24,13 +13,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import org.bytedeco.javacpp.opencv_core.CvMemStorage;
-import org.bytedeco.javacpp.opencv_core.CvPoint;
-import org.bytedeco.javacpp.opencv_core.CvPoint3D32f;
-import org.bytedeco.javacpp.opencv_core.CvScalar;
-import org.bytedeco.javacpp.opencv_core.CvSeq;
+import static org.bytedeco.javacpp.opencv_core.*;
 import org.bytedeco.javacpp.opencv_core.IplImage;
+
 /**
  * <p>Displays the webcam on the JPanel.</p>
  * <p>{@link ui.RobotSoccerMain}</p>
@@ -105,69 +90,26 @@ public class WebcamDisplayPanel extends JPanel {
 		} else {
 			currentViewState = ViewState.connectionSuccess();
             final BufferedImage image = img.getBufferedImage();
-            IplImage ballThresholdBinary = null;
+
             if (isFiltering) {
-//                for (int j = 0; j < image.getHeight(); j++) {
-//                    for (int i = 0; i < image.getWidth(); i++) {
-//                        Color color = new Color(image.getRGB(i, j));
-//
-//                        int r = color.getRed();
-//                        int g = color.getGreen();
-//                        int b = color.getBlue();
-//
-//                        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
-//                        int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
-//                        int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
-//                        int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
-//
-//                        if (isDetected(y, u, v)) {
-//                            image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
-//                        }
-//                    }
-//                }
-                IplImage webcamImage = IplImage.createFrom(image);
-                
-                // If gaussian blurring required, place here.
-                
-                // Binary image.
-                ballThresholdBinary = cvCreateImage(cvGetSize(webcamImage), 8, 1);
-                
-                int lr, lg, lb, hr, hg, hb;
-                lr = (int)(samplingPanel.getLowerBoundForY() + 2*(samplingPanel.getLowerBoundForV()-128)*(1-0.299));
-                lg = (int)(samplingPanel.getLowerBoundForY() - 2*(samplingPanel.getLowerBoundForU()-128)*(1-0.114)*0.114/0.587 - 2*(samplingPanel.getLowerBoundForV()-128)*(1-0.299)*0.299/0.587);
-                lb = (int)(samplingPanel.getLowerBoundForY() + 2*(samplingPanel.getLowerBoundForU()-128)*(1-0.114));
-                
-                hr = (int)(samplingPanel.getUpperBoundForY() + 2*(samplingPanel.getUpperBoundForV()-128)*(1-0.299));
-                hg = (int)(samplingPanel.getUpperBoundForY() - 2*(samplingPanel.getUpperBoundForU()-128)*(1-0.114)*0.114/0.587 - 2*(samplingPanel.getUpperBoundForV()-128)*(1-0.299)*0.299/0.587);
-                hb = (int)(samplingPanel.getUpperBoundForY() + 2*(samplingPanel.getUpperBoundForU()-128)*(1-0.114));
-                
-        		CvScalar ballMin = cvScalar(lb, lg, lr, 0); //BGR-A
-        	    CvScalar ballMax= cvScalar(hb, hg, hr, 0); //BGR-A
-                cvInRangeS(webcamImage, ballMin, ballMax, ballThresholdBinary);
-                CvMemStorage mem = CvMemStorage.create();
-                
-                CvSeq circles = cvHoughCircles( 
-                	    ballThresholdBinary, //Input image
-                	    mem, //Memory Storage
-                	    CV_HOUGH_GRADIENT, //Detection method
-                	    1, //Inverse ratio
-                	    100, //Minimum distance between the centers of the detected circles
-                	    100, //Higher threshold for canny edge detector
-                	    100, //Threshold at the center detection stage
-                	    15, //min radius
-                	    500 //max radius
-                	    );
-                CvPoint center = null;
-                for(int i = 0; i < circles.total(); i++) {
-                	CvPoint3D32f circle = new CvPoint3D32f(cvGetSeqElem(circles, i));
-//                    CvPoint center = cvPointFrom32f(new CvPoint2D32f(circle.x(), circle.y()));
-                    center = cvPoint((int)circle.x(), (int)circle.y());
-                    int radius = Math.round(circle.z());    
-                	cvCircle(webcamImage, center, radius, CvScalar.GREEN, 6, CV_AA, 0);  
+                for (int j = 0; j < image.getHeight(); j++) {
+                    for (int i = 0; i < image.getWidth(); i++) {
+                        Color color = new Color(image.getRGB(i, j));
+
+                        int r = color.getRed();
+                        int g = color.getGreen();
+                        int b = color.getBlue();
+
+                        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
+                        int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
+                        int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
+                        int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
+
+                        if (isDetected(y, u, v)) {
+                            image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
+                        }
+                    }
                 }
-                
-                webcamImageLabel.setIcon(new ImageIcon(ballThresholdBinary.getBufferedImage()));
-                System.out.println(center.x() +""+ center.y());
             }
 
             /*
@@ -178,13 +120,7 @@ public class WebcamDisplayPanel extends JPanel {
 				@Override
 				public void run() {
 					// Update the image.
-//					webcamImageLabel.setIcon(new ImageIcon(image));
-					
-					if (isFiltering) {
-//						webcamImageLabel.setIcon(new ImageIcon(ballThresholdBinary.getBufferedImage()));
-					} else {
-						webcamImageLabel.setIcon(new ImageIcon(image));
-					}
+					webcamImageLabel.setIcon(new ImageIcon(image));
 					
 					if (webcamImageLabel.getParent() == null) {
 						add(webcamImageLabel, BorderLayout.CENTER);
@@ -247,7 +183,27 @@ public class WebcamDisplayPanel extends JPanel {
 
     public void setSamplingPanel(SamplingPanel sp) {
         this.samplingPanel = sp;
+
     }
+
+//    public void setMaxandMinForFilter() {
+//        int cMin = samplingPanel.getLowerBoundForY() - 16;
+//        int cMax = samplingPanel.getUpperBoundForY() - 16;
+//        int dMin = samplingPanel.getLowerBoundForU() - 128;
+//        int dMax = samplingPanel.getUpperBoundForU() - 128;
+//        int eMin = samplingPanel.getLowerBoundForV() - 128;
+//        int eMax = samplingPanel.getUpperBoundForV() - 128;
+//
+//        int rMin = (( 298 * cMin + 409 * eMin + 128) >> 8);
+//        int rMax = (( 298 * cMax + 409 * eMax + 128) >> 8);
+//        int gMin = (( 298 * cMin - 100 * dMin - 208 * eMin + 128) >> 8);
+//        int gMax = (( 298 * cMax - 100 * dMax - 208 * eMax + 128) >> 8);
+//        int bMin = (( 298 * cMin + 516 * dMin + 128) >> 8);
+//        int bMax = (( 298 * cMax + 516 * dMax + 128) >> 8);
+//
+//        min = cvScalar(bMin, gMin, rMin, 0);  //BGR-Alpha
+//        max = cvScalar(bMax, gMax, rMax, 0); //BGR-Alpha
+//    }
 
 	/**
 	 * <p>Add instance to be an observer</p>
