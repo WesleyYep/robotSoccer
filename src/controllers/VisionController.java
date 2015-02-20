@@ -92,6 +92,35 @@ public class VisionController {
 		}
 		
 	}
+	
+	public void rotatePointAntiClockwise() {
+		Point2D tempBottomLeft = bottomLeft;
+		Point2D tempTopLeft = topLeft;
+		
+		Point2D tempTopRight = topRight;
+		Point2D tempBottomRight = bottomRight;
+		
+		bottomLeft = tempBottomRight;
+		topLeft = tempBottomLeft;
+		
+		topRight = tempTopLeft;
+		bottomRight = tempTopRight;
+	}
+	
+	public void rotatePointClockwise() {
+		Point2D tempBottomLeft = bottomLeft;
+		Point2D tempTopLeft = topLeft;
+		
+		Point2D tempTopRight = topRight;
+		Point2D tempBottomRight = bottomRight;
+		
+		bottomLeft = tempTopLeft;
+		topLeft = tempTopRight;
+		
+		topRight = tempBottomRight;
+		bottomRight = tempBottomLeft;
+	}
+	
 
 	public Point2D getTopRight() {
 		return topRight;

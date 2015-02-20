@@ -15,10 +15,8 @@ import javax.swing.*;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
+import controllers.VisionController;
 import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
-import static org.bytedeco.javacpp.opencv_core.cvGetSize;
-import static org.bytedeco.javacpp.opencv_core.cvScalar;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -62,6 +60,7 @@ public class WebcamDisplayPanel extends JPanel {
                         VisionPanel panel = (VisionPanel) listener;
                         if (panel.isSelectedTab()) {
              //               panel.updateMousePoint(e.getX(), e.getY(), img.getBufferedImage());
+                        	System.out.println(VisionController.imagePosToActualPos(e.getX(), e.getY()));
                         }
                     }
                 }

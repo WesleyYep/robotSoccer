@@ -104,7 +104,12 @@ public class WebcamController {
 	}
 	
     public BufferedImage getImageFromWebcam() {
-        return img.getBufferedImage();
+    	if (img != null) {
+    		return img.getBufferedImage();
+    	}
+    	else {
+    		return null;
+    	}
     }
     
     public WebcamDisplayPanel getWebcamDisplayPanel() {

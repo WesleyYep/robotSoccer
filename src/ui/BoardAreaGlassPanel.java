@@ -56,7 +56,9 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 				,(int)Math.round(vc.getBottomRight().getY()));
 		
 		g.drawString("Top Left", (int)Math.round(vc.getTopLeft().getX())-1, (int)Math.round(vc.getTopLeft().getY())-1);
+		g.drawString("Top Right", (int)Math.round(vc.getTopRight().getX())-1, (int)Math.round(vc.getTopRight().getY())-1);
 		g.drawString("BottomRight", (int)Math.round(vc.getBottomRight().getX())-1,(int)Math.round(vc.getBottomRight().getY())-1);
+		g.drawString("BottomLeft", (int)Math.round(vc.getBottomLeft().getX())-1,(int)Math.round(vc.getBottomLeft().getY())-1);
 		
 	}
 
@@ -90,6 +92,14 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 		}
 		else {
 			pointMoving = NONE;
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				vc.rotatePointAntiClockwise();
+			}
+			else if (e.getButton() == MouseEvent.BUTTON3) {
+				vc.rotatePointClockwise();
+			}
+			vc.createTransformMatrix();
+			this.repaint();
 		}
 	}
 
@@ -124,7 +134,7 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 		}
 		else {
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		}
 	}
 	
