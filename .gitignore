@@ -4,3 +4,4 @@ bin/*
 RobotSoccerConfiguration.config
 RobotSoccerConfiguration.config
 out/*
+.idea/*
