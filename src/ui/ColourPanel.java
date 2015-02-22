@@ -6,6 +6,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import vision.ColourRangeListener;
+import vision.LookupTable;
 import net.miginfocom.swing.MigLayout;
 
 import com.jidesoft.swing.RangeSlider;
@@ -15,7 +17,7 @@ import controllers.WebcamController;
 /**
  * Created by Wesley on 2/02/2015.
  */
-public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
+public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, ColourRangeListener {
     public SamplingPanel ballSamplingPanel;
     public SamplingPanel teamSamplingPanel;
     public SamplingPanel groundSamplingPanel;
@@ -27,6 +29,8 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     private JLabel robotSizeLabel = new JLabel("0 : 500");
     private JLabel ballSizeLabel = new JLabel("0 : 500");
     private JTabbedPane tabPane = new JTabbedPane();
+    
+    
 
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
@@ -48,12 +52,19 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         add(new JLabel("Ball Pixel Range"), "wrap");
         add(ballSizeSlider, "wrap");
         add(ballSizeLabel, "wrap");
+        
+        ballSamplingPanel.addColourRangeListener(this);
+        teamSamplingPanel.addColourRangeListener(this);
+        greenSamplingPanel.addColourRangeListener(this);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 robotSizeLabel.setText(robotSizeSlider.getLowValue() + " : " + robotSizeSlider.getHighValue());
             }
+            
+            
+            
         });
 
         ballSizeSlider.addChangeListener(new ChangeListener() {
@@ -98,4 +109,51 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     public void viewStateChanged() {
         //do nothing
     }
+
+	@Override
+	public void yRangeChanged(int max, int min, SamplingPanel panel) {
+		byte temp = 0;
+		if (panel.equals(this.teamSamplingPanel)) {
+			temp = LookupTable.TEAM_COLOUR;
+		}
+		else if (panel.equals(this.greenSamplingPanel)) {
+			temp = LookupTable.GREEN_COLOUR;
+		}
+		else if (panel.equals(this.ballSamplingPanel)) {
+			temp = LookupTable.BALL_COLOUR;
+		}
+		LookupTable.setYTable(max, min, temp);
+	}
+
+	@Override
+	public void uRangeChanged(int max, int min, SamplingPanel panel) {
+		byte temp = 0;
+		if (panel.equals(this.teamSamplingPanel)) {
+			temp = LookupTable.TEAM_COLOUR;
+		}
+		else if (panel.equals(this.greenSamplingPanel)) {
+			temp = LookupTable.GREEN_COLOUR;
+		}
+		else if (panel.equals(this.ballSamplingPanel)) {
+			temp = LookupTable.BALL_COLOUR;
+		}
+		
+		LookupTable.setUTable(max, min, temp);
+	}
+
+	@Override
+	public void vRangeChanged(int max, int min, SamplingPanel panel) {
+		byte temp = 0;
+		if (panel.equals(this.teamSamplingPanel)) {
+			temp = LookupTable.TEAM_COLOUR;
+		}
+		else if (panel.equals(this.greenSamplingPanel)) {
+			temp = LookupTable.GREEN_COLOUR;
+		}
+		else if (panel.equals(this.ballSamplingPanel)) {
+			temp = LookupTable.BALL_COLOUR;
+		}
+		
+		LookupTable.setVTable(max, min, temp);
+	}
 }
