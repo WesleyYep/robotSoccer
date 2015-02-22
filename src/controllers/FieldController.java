@@ -187,12 +187,14 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
     public void receive(VisionData data) {
         if (data.getType().equals("ball")) {
             Coordinate ballCoord = data.getCoordinate();
-            ball.setX(ballCoord.x); //hardcoded for now
-            ball.setY(ballCoord.y);
+            Point2D p = VisionController.imagePosToActualPos(ballCoord.x, ballCoord.y);
+            ball.setX((int)p.getX()); //hardcoded for now
+            ball.setY((int)p.getY());
         } else if (data.getType().startsWith("robot")) {
             Coordinate robotCoord = data.getCoordinate();
             Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);
             int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+
             bots.getRobot(index).setX(p.getX()); //hardcoded for now
             bots.getRobot(index).setY(p.getY());
             bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
