@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -36,6 +37,7 @@ import controllers.BallController;
 import controllers.FieldController;
 import controllers.VisionController;
 import controllers.WebcamController;
+import controllers.WindowController;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
 
@@ -80,6 +82,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private VisionController visionController;
 	private JButton openVisionButton;
 	private JButton saveVisionButton;
+	private WindowController windowController;
 	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -227,6 +230,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
         tabPane.addTab("Vision", visionPanel);
         
+        //window listener
+        windowController = new WindowController(webcamController);
+        
         add(cards, "span 6, width 640:640:640, height 480:480:480");
         add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
         add(infoPanel, "span 6, width 600:600:600, wrap");
@@ -323,6 +329,10 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         timer.schedule(gameTick, 0, 5);
     }
     
+    public WindowController getWindowController() {
+    	return windowController;
+    }
+    
     /**
      * Invoked when the user presses the start button.
      */
@@ -412,6 +422,10 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         //Create and set up the content pane.
         JComponent newContentPane = new RobotSoccerMain();
         frame.add(newContentPane);
+        
+        if (((RobotSoccerMain)newContentPane).getWindowController() != null) {
+        	frame.addWindowListener(((RobotSoccerMain)newContentPane).getWindowController());
+        }
         
         //Display the window.
         frame.pack();

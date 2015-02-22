@@ -49,6 +49,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 		double x = robot.getXPosition();
 		double y = robot.getYPosition();
 		double o = robot.getTheta();
+
 	//	System.out.println(x);
 		xCoordinate.setText("x= " + (int)x);
 		yCoordinate.setText("y= " + (int)y);

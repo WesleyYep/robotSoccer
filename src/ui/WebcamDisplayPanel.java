@@ -21,8 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
-
 import utils.ColorSpace;
+import controllers.VisionController;
+import static org.bytedeco.javacpp.opencv_core.*;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -79,10 +80,15 @@ public class WebcamDisplayPanel extends JPanel {
                         BufferedImage crop = image.getSubimage(x, y, zoomCursorImg.getWidth(), zoomCursorImg.getHeight());
                         cp.setZoomLabelIcon(crop);
                         
+                        if (cp.getIsGettingRobotDimension()) {
+                            cp.setRobotDimension(e.getX(), e.getY());
+                        }
+                        
                     } else if (listener instanceof VisionPanel) {
                         VisionPanel panel = (VisionPanel) listener;
                         if (panel.isSelectedTab()) {
              //               panel.updateMousePoint(e.getX(), e.getY(), img.getBufferedImage());
+                        	System.out.println(VisionController.imagePosToActualPos(e.getX(), e.getY()));
                         }
                     }
                 }

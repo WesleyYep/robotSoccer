@@ -35,7 +35,6 @@ public class WebcamController {
 	
 	//javaCV stuff
     protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
-    protected boolean mirror = false;				// make true in order to mirror left<->right so your left hand is on the left side of the image
     protected int width, height;					// the size of the grabbed images (scaled if so specified)
     protected BufferedImage image;					// image grabbed from webcam (if any)
     protected opencv_core.IplImage img;
@@ -104,7 +103,12 @@ public class WebcamController {
 	}
 	
     public BufferedImage getImageFromWebcam() {
-        return img.getBufferedImage();
+    	if (img != null) {
+    		return img.getBufferedImage();
+    	}
+    	else {
+    		return null;
+    	}
     }
     
     public WebcamDisplayPanel getWebcamDisplayPanel() {
@@ -136,7 +140,7 @@ public class WebcamController {
                 }
                 
                 //Flip image horizontally
-                cvFlip(img, img, 1);
+               // cvFlip(img, img, 1);
                 //Show video frame in canvas
                 webcamDisplayPanel.update(img);
             }

@@ -3,12 +3,8 @@ package controllers;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 
 import javax.media.jai.PerspectiveTransform;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import org.bridj.SizeT;
 import org.bytedeco.javacpp.opencv_core.CvMat;
 import org.bytedeco.javacpp.opencv_core.CvMemStorage;
@@ -92,6 +88,35 @@ public class VisionController {
 		}
 		
 	}
+	
+	public void rotatePointAntiClockwise() {
+		Point2D tempBottomLeft = bottomLeft;
+		Point2D tempTopLeft = topLeft;
+		
+		Point2D tempTopRight = topRight;
+		Point2D tempBottomRight = bottomRight;
+		
+		bottomLeft = tempBottomRight;
+		topLeft = tempBottomLeft;
+		
+		topRight = tempTopLeft;
+		bottomRight = tempTopRight;
+	}
+	
+	public void rotatePointClockwise() {
+		Point2D tempBottomLeft = bottomLeft;
+		Point2D tempTopLeft = topLeft;
+		
+		Point2D tempTopRight = topRight;
+		Point2D tempBottomRight = bottomRight;
+		
+		bottomLeft = tempTopLeft;
+		topLeft = tempTopRight;
+		
+		topRight = tempBottomRight;
+		bottomRight = tempBottomLeft;
+	}
+	
 
 	public Point2D getTopRight() {
 		return topRight;
@@ -134,173 +159,6 @@ public class VisionController {
 	public void setBottomLeft(Point2D bottomLeft) {
 		this.bottomLeft = bottomLeft;
 		this.createTransformMatrix();
-	}
-
-
-	public void showBlurImage(BufferedImage webcamImage) {
-		gaussianBlur(webcamImage);
-	}
-
-	public void testBlur(IplImage image) {
-		IplImage dst = null;
-		//GaussianBlur(dst,dst,s,11.0);
-		//cvSmooth(image, image, CV_GAUSSIAN, 11, 0, 0, 0);
-		
-		CvMemStorage storage = cvCreateMemStorage(0);
-		CvSeq lines = new CvSeq();
-		dst = cvCreateImage(cvGetSize(image), image.depth(), 1);
-        IplImage colorDst = cvCreateImage(cvGetSize(image), image.depth(), 3);
-        cvCanny(image, dst, 50, 200, 3);
-        cvCvtColor(dst, colorDst, CV_GRAY2BGR);
-		 lines = cvHoughLines2(dst, storage, CV_HOUGH_PROBABILISTIC, 1, Math.PI / 180, 40, 50, 10);
-		
-		 for (int i = 0; i < lines.total(); i++) {
-             // Based on JavaCPP, the equivalent of the C code:
-             // CvPoint* line = (CvPoint*)cvGetSeqElem(lines,i);
-             // CvPoint first=line[0], second=line[1]
-             // is:
-             Pointer line = cvGetSeqElem(lines, i);
-             CvPoint pt1  = new CvPoint(line).position(0);
-             CvPoint pt2  = new CvPoint(line).position(1);
-
-             	cvLine(colorDst, pt1, pt2, CV_RGB(255, 0, 0), 3, CV_AA, 0); // draw the segment on the image
-         	
-		}
-		 
-		ImageIcon ii = new ImageIcon(colorDst.getBufferedImage());
-		JOptionPane.showMessageDialog(null, ii);
-	}
-	
-	
-	
-	private void gaussianBlur(BufferedImage image) {
-		//http://blog.ivank.net/fastest-gaussian-blur.html
-		
-		/*
-		int w = image.getWidth();
-		int h = image.getHeight();
-		
-		int[] targetR = new int[w*h];
-		int[] targetG = new int[w*h];
-		int[] targetB = new int[w*h];
-		
-		
-		int[] srcR = new int[w*h];
-		int[] srcG = new int[w*h];
-		int[] srcB = new int[w*h];
-		
-		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		
-		int pixelLength = 3;
-		int index = 0;
-		for (int pixel = 0; pixel<pixels.length; pixel+= pixelLength) {	
-			srcR[index] =(((int) pixels[pixel + 2] & 0xff));
-		    srcG[index] =(((int) pixels[pixel + 1] & 0xff));
-		    srcB[index] =((int) pixels[pixel] & 0xff);
-		    index++;
-		}
-		
-		int radius = 10;
-		
-		gaussBlur_4 (srcR, targetR,  w,  h,  radius);
-		gaussBlur_4 (srcG, targetG,  w,  h,  radius);
-		gaussBlur_4 (srcB, targetB,  w,  h,  radius);
-		
-		int row = 0;
-		int col = 0;
-		
-		for (int i = 0; i<targetR.length; i++) {
-			int rgb = 0;
-			
-			rgb += srcR[i] ;
-			rgb += srcG[i] << 8;
-			rgb += srcB[i] << 16;
-			
-			image.setRGB(col, row, rgb);
-			col++;
-			
-			if (col == w) {
-				col =0;
-				row++;
-			}	
-		}
-		*/
-		
-		
-		ImageIcon ii = new ImageIcon(image);
-		JOptionPane.showMessageDialog(null, ii);
-	}
-	
-	
-	private double[] boxesForGauss(double sigma, int n) {
-		
-		double wIdeal = Math.sqrt((12*sigma*sigma/n)+1);
-		double wl = Math.floor(wIdeal);
-		double wu = wl+2;
-		if (wl % 2 == 0) wl--;
-		
-		double mIdeal = (12*sigma*sigma - n*wl*wl - 4*n*wl - 3*n)/(-4*wl - 4);
-		double m = Math.round(mIdeal);
-		double[] size = new double[3];
-		
-		for (int i = 0; i <n; i++) {
-			if (i<m) {
-				size[i] = wl;
-			}
-			else {
-				size[i] = wu;
-			}
-		}
-		
-		return size;
-	}
-	
-	private void gaussBlur_4 (int[] scl, int[]tcl, int w, int h, int r) {
-		double[] bxs = boxesForGauss(r, 3);
-	    boxBlur_4 (scl, tcl, w, h, (bxs[0]-1)/2);
-		boxBlur_4 (tcl, scl, w, h, (bxs[1]-1)/2);
-		boxBlur_4 (scl, tcl, w, h, (bxs[2]-1)/2);
-	}
-
-	private void boxBlur_4(int[] scl, int[] tcl, int w, int h, double r) {
-		for(int i=0; i<scl.length; i++) {
-			tcl[i] = scl[i];
-		}
-		
-		
-		boxBlurH_4(tcl, scl, w, h, r);
-		boxBlurT_4(scl, tcl, w, h, r);
-	}
-
-	private void boxBlurT_4(int[] scl, int[] tcl, int w, int h, double r) {
-		double iarr = 1 / (r+r+1);
-		    for(int i=0; i<h; i++) {
-		        int ti = i*w;
-		        int li = ti; 
-		        int ri = (int) (ti+Math.round(r));
-		        int fv = scl[ ti];
-		        int lv = scl[ti+w-1];
-		        int val = (int) ((Math.round(r)+1)*fv);
-		        
-		        for(int j=0; j<r; j++) {
-		        	val += scl[ti+j];
-		        }
-		        for(int j=0  ; j<=r ; j++) { val += scl[ri++] - fv       ;   tcl[ti++] = (int) Math.round(val*iarr); }
-		        for(int j=(int)(Math.round(r)+1); j<w-r; j++) { val += scl[ri++] - scl[li++];   tcl[ti++] = (int) Math.round(val*iarr); }
-		        for(int j=(int)(w-Math.round(r)); j<w  ; j++) { val += lv        - scl[li++];   tcl[ti++] = (int) Math.round(val*iarr); }
-		    }
-	}
-
-	private void boxBlurH_4(int[] tcl, int[] scl, int w, int h, double r) {
-		double iarr = 1 / (r+r+1);
-		    for(int i=0; i<w; i++) {
-		        int ti = i, li = ti, ri = (int) (ti+Math.round(r)*w);
-		        int fv = scl[ti], lv = scl[ti+w*(h-1)], val = (int) ((Math.round(r)+1)*fv);
-		        for(int j=0; j<r; j++) val += scl[ti+j*w];
-		        for(int j=0  ; j<=r ; j++) { val += scl[ri] - fv     ;  tcl[ti] = (int) Math.round(val*iarr);  ri+=w; ti+=w; }
-		        for(int j=(int) (Math.round(r)+1); j<h-r; j++) { val += scl[ri] - scl[li];  tcl[ti] = (int) Math.round(val*iarr);  li+=w; ri+=w; ti+=w; }
-		        for(int j=(int) (h-Math.round(r)); j<h  ; j++) { val += lv      - scl[li];  tcl[ti] = (int) Math.round(val*iarr);  li+=w; ti+=w; }
-		}
 	}
 	
 }
