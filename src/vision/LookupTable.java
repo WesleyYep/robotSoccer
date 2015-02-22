@@ -11,6 +11,10 @@ public class LookupTable {
 	final public static byte GREEN_COLOUR = 00000010;
 	final public static byte BALL_COLOUR =  00000100;
 	
+	final public static int TEAM_BIT_POS = 1;
+	final public static int GREEN_BIT_POS = 2;
+	final public static int BALL_BIT_POS = 3;
+	
 	
 	
 	public static void setYTable(int max, int min, byte colour) {

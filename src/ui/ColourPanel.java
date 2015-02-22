@@ -162,13 +162,13 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 	public void yRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
-			temp = LookupTable.TEAM_COLOUR;
+			temp = (1 << LookupTable.TEAM_BIT_POS);
 		}
 		else if (panel.equals(this.greenSamplingPanel)) {
-			temp = LookupTable.GREEN_COLOUR;
+			temp = (1 << LookupTable.GREEN_BIT_POS);
 		}
 		else if (panel.equals(this.ballSamplingPanel)) {
-			temp = LookupTable.BALL_COLOUR;
+			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
 		LookupTable.setYTable(max, min, temp);
 	}
@@ -177,15 +177,14 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 	public void uRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
-			temp = LookupTable.TEAM_COLOUR;
+			temp = (1 << LookupTable.TEAM_BIT_POS);
 		}
 		else if (panel.equals(this.greenSamplingPanel)) {
-			temp = LookupTable.GREEN_COLOUR;
+			temp = (1 << LookupTable.GREEN_BIT_POS);
 		}
 		else if (panel.equals(this.ballSamplingPanel)) {
-			temp = LookupTable.BALL_COLOUR;
+			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
-		
 		LookupTable.setUTable(max, min, temp);
 	}
 
@@ -193,15 +192,14 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 	public void vRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
-			temp = LookupTable.TEAM_COLOUR;
+			temp = (1 << LookupTable.TEAM_BIT_POS);
 		}
 		else if (panel.equals(this.greenSamplingPanel)) {
-			temp = LookupTable.GREEN_COLOUR;
+			temp = (1 << LookupTable.GREEN_BIT_POS);
 		}
 		else if (panel.equals(this.ballSamplingPanel)) {
-			temp = LookupTable.BALL_COLOUR;
+			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
-		
 		LookupTable.setVTable(max, min, temp);
 	}
     protected int squared (int x) {
