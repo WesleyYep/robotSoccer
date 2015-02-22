@@ -234,7 +234,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         cards.add(webcamDisplayPanel, CAMSTRING);
         visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
         visionWorker.addListener(fieldController);
-
+        
         visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
         tabPane.addTab("Colour", colourPanel);
         
@@ -265,6 +265,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 			public void stateChanged(ChangeEvent arg0) {
 				int selectedIndex = tabPane.getSelectedIndex();
 				String tabTitle = tabPane.getTitleAt(selectedIndex);
+				
 				if (tabTitle.equals("Situation")){
 					fieldController.showArea(true);
 				}
@@ -276,6 +277,12 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 					changeCard(CAMSTRING);
 				} else {
 					changeCard(FIELDSTRING);
+				}
+				
+				if (tabTitle.equals("Colour")) {
+					webcamDisplayPanel.setZoomCursor();
+				} else {
+					webcamDisplayPanel.setDefaultCursor();
 				}
 				
 				fieldController.repaintField();

@@ -1,5 +1,9 @@
 package vision;
 
+import static org.bytedeco.javacpp.opencv_core.cvCreateImage;
+import static org.bytedeco.javacpp.opencv_core.cvGetSize;
+import static org.bytedeco.javacpp.opencv_core.cvInRangeS;
+import static org.bytedeco.javacpp.opencv_core.cvScalar;
 import controllers.VisionController;
 import controllers.WebcamController;
 import data.Coordinate;
@@ -8,6 +12,10 @@ import ui.ColourPanel;
 import ui.SamplingPanel;
 
 import javax.swing.*;
+
+import org.bytedeco.javacpp.opencv_core.CvScalar;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -51,10 +59,16 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
         while (!isCancelled()) try {
 
-            long startTime = System.currentTimeMillis();
             BufferedImage image = webcamController.getImageFromWebcam();
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
+
+            boolean previous = false;
+            int rowWidth = 0;
+            int highestRowWidth = 0;
+            int ballX = 0;
+            int ballY = 0;
+            
             int robotMinSize = colourPanel.getRobotSizeMinimum();
             int ballMinSize = colourPanel.getBallSizeMinimum();
             int suitableLength = colourPanel.getRobotDimension(); //change this if it doesn't work
@@ -243,14 +257,11 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                             }
                         }
                     }
-
-
-
                 }
             }
 
               alreadyProcessed.clear();
-              System.out.println("Time: " + (System.currentTimeMillis() - startTime));
+              //System.out.println("Time: " + (System.currentTimeMillis() - startTime));
 
         } catch (Exception e) {
             System.out.println("wtf");

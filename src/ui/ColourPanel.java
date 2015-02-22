@@ -1,22 +1,32 @@
 package ui;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 
 import vision.ColourRangeListener;
 import vision.LookupTable;
 import data.Coordinate;
+
 import net.miginfocom.swing.MigLayout;
-
-import com.jidesoft.swing.RangeSlider;
-
 import controllers.WebcamController;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.util.Map;
+import data.Coordinate;
 
 /**
  * Created by Wesley on 2/02/2015.
@@ -33,7 +43,8 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
     private JLabel robotSizeLabel = new JLabel("100");
     private JLabel ballSizeLabel = new JLabel("100");
     private JTabbedPane tabPane = new JTabbedPane();
-    
+
+    private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
     private JTextField robotDimensionField = new JTextField("8");
     private boolean isGettingRobotDimension = false;
@@ -53,6 +64,31 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         tabPane.addTab("Green", greenSamplingPanel);
         tabPane.addTab("Ground", groundSamplingPanel);
         tabPane.addTab("Opponent", opponentSamplingPanel);
+        
+        zoomLabel = new JLabel();
+        zoomLabel.setSize(new Dimension(150, 150));
+        zoomLabel.setPreferredSize(new Dimension(150, 150));
+        zoomLabel.setOpaque(true);
+        zoomLabel.setBackground(Color.BLACK);
+        
+        zoomLabel.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (getIsSampling()) {
+					if (zoomLabel.getIcon() != null) {
+						takeSample(e.getX(), e.getY());
+					} else {
+						System.err.println("No image to sample");
+					}
+				}
+			}
+        	
+        });
+        
+        add(zoomLabel, "span, align center, wrap");
+        add(tabPane, "span, pushx, growx, wrap");
+        add(new JLabel("Robot Pixel Range"), "wrap");
         add(tabPane, "wrap");
         add(new JLabel("Robot Pixel Minimum"), "wrap");
         add(robotSizeSlider, "wrap");
@@ -122,7 +158,9 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
     public void takeSample(double xPos, double yPos) {
         for (SamplingPanel sp : samplingPanels) {
             if (sp.isSampling) {
-                sp.takeSample(xPos, yPos);
+            	ImageIcon icon = (ImageIcon)zoomLabel.getIcon();
+            	BufferedImage image = (BufferedImage)icon.getImage();
+                sp.takeSample(image, xPos, yPos);
             }
         }
     }
@@ -135,7 +173,12 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         }
         return false;
     }
-
+    
+    public void setZoomLabelIcon(BufferedImage image) {
+    	BufferedImage scaled = utils.Image.resize(image, zoomLabel.getWidth(), zoomLabel.getHeight());
+    	zoomLabel.setIcon(new ImageIcon(scaled));
+    }
+    
     public boolean getIsGettingRobotDimension() {
         return isGettingRobotDimension;
     }
