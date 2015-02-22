@@ -1,5 +1,12 @@
 package ui;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -27,7 +34,8 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     private JLabel robotSizeLabel = new JLabel("0 : 500");
     private JLabel ballSizeLabel = new JLabel("0 : 500");
     private JTabbedPane tabPane = new JTabbedPane();
-
+    private JLabel zoomLabel;
+    
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
         ballSamplingPanel = new SamplingPanel(wc);
@@ -41,7 +49,30 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         tabPane.addTab("Green", greenSamplingPanel);
         tabPane.addTab("Ground", groundSamplingPanel);
         tabPane.addTab("Opponent", opponentSamplingPanel);
-        add(tabPane, "wrap");
+        
+        zoomLabel = new JLabel();
+        zoomLabel.setSize(new Dimension(150, 150));
+        zoomLabel.setPreferredSize(new Dimension(150, 150));
+        zoomLabel.setOpaque(true);
+        zoomLabel.setBackground(Color.BLACK);
+        
+        zoomLabel.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (getIsSampling()) {
+					if (zoomLabel.getIcon() != null) {
+						takeSample(e.getX(), e.getY());
+					} else {
+						System.err.println("No image to sample");
+					}
+				}
+			}
+        	
+        });
+        
+        add(zoomLabel, "span, align center, wrap");
+        add(tabPane, "span, pushx, growx, wrap");
         add(new JLabel("Robot Pixel Range"), "wrap");
         add(robotSizeSlider, "wrap");
         add(robotSizeLabel, "wrap");
@@ -67,7 +98,9 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     public void takeSample(double xPos, double yPos) {
         for (SamplingPanel sp : samplingPanels) {
             if (sp.isSampling) {
-                sp.takeSample(xPos, yPos);
+            	ImageIcon icon = (ImageIcon)zoomLabel.getIcon();
+            	BufferedImage image = (BufferedImage)icon.getImage();
+                sp.takeSample(image, xPos, yPos);
             }
         }
     }
@@ -80,7 +113,12 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         }
         return false;
     }
-
+    
+    public void setZoomLabelIcon(BufferedImage image) {
+    	BufferedImage scaled = utils.Image.resize(image, zoomLabel.getWidth(), zoomLabel.getHeight());
+    	zoomLabel.setIcon(new ImageIcon(scaled));
+    }
+    
 //    public void saveColourData(String fileName) {
 //        try {
 //            FileWriter fileWriter = new FileWriter(fileName, true);

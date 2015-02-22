@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
 	<classpathentry exported="true" kind="lib" path="lib/bridj-0.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bridj-0.6.3-20130316.190111-13.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.6.jar"/>

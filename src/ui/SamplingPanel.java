@@ -3,9 +3,12 @@ package ui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,6 +22,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 import net.miginfocom.swing.MigLayout;
+import utils.ColorSpace;
 import controllers.WebcamController;
 
 /**
@@ -38,7 +42,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JComboBox<String> YUVCombo;
     
     public boolean isSampling = false;
-
+    
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
     
     public SamplingPanel (WebcamController wc) {
@@ -52,9 +56,28 @@ public class SamplingPanel extends JPanel implements ActionListener {
         lowVLabel = new JLabel();
         highVLabel = new JLabel();
         
+        int minorTickSpacing = 5, majorTickSpacing = 25;
+        
         YSlider = new ColourSlider(0, 255);
+        YSlider.setMinorTickSpacing(minorTickSpacing);
+        YSlider.setMajorTickSpacing(majorTickSpacing);
+        YSlider.setLabelTable(YSlider.createStandardLabels(majorTickSpacing));
+        YSlider.setPaintTicks(true);
+        YSlider.setPaintLabels(true);
+        
         USlider = new ColourSlider(0, 255);
+        USlider.setMinorTickSpacing(minorTickSpacing);
+        USlider.setMajorTickSpacing(majorTickSpacing);
+        USlider.setLabelTable(USlider.createStandardLabels(majorTickSpacing));
+        USlider.setPaintTicks(true);
+        USlider.setPaintLabels(true);
+        
         VSlider = new ColourSlider(0, 255);
+        VSlider.setMinorTickSpacing(minorTickSpacing);
+        VSlider.setMajorTickSpacing(majorTickSpacing);
+        VSlider.setLabelTable(VSlider.createStandardLabels(majorTickSpacing));
+        VSlider.setPaintTicks(true);
+        VSlider.setPaintLabels(true);
         
         // Add change listener. Update labels.
         YSlider.addChangeListener(new ChangeListener() {
@@ -114,10 +137,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
         
         add(lowYLabel, "width 30:30:30, split 3");
         add(YSlider, "width 400:400:400");
-        add(highYLabel, "width 30:30:30, wrap");
+        add(highYLabel, "width 30:30:30, wrap 15");
         add(lowULabel, "width 30:30:30, split 3");
         add(USlider, "width 400:400:400");
-        add(highULabel, "width 30:30:30, wrap");
+        add(highULabel, "width 30:30:30, wrap 15");
         add(lowVLabel, "width 30:30:30, split 3");
         add(VSlider, "width 400:400:400");
         add(highVLabel, "width 30:30:30, wrap 15");
@@ -130,22 +153,14 @@ public class SamplingPanel extends JPanel implements ActionListener {
         setValueButton.addActionListener(this);
     }
 
-    public void takeSample(double xPos, double yPos) {
-        BufferedImage image = webcamController.getImageFromWebcam();
+    public void takeSample(BufferedImage image, double xPos, double yPos) {
         Color color = new Color(image.getRGB((int)xPos, (int)yPos));
-    //    System.out.println(yPos);
-        int r = color.getRed();
-        int g = color.getGreen();
-        int b = color.getBlue();
         
-        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
-        int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
-        int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
-        int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
+        double[] yuv = ColorSpace.RGBToYUV(color.getRed(), color.getGreen(), color.getBlue());
 
-        YSlider.addToData(y);
-        USlider.addToData(u);
-        VSlider.addToData(v);
+        YSlider.addToData((int)yuv[0]);
+        USlider.addToData((int)yuv[1]);
+        VSlider.addToData((int)yuv[2]);
 
         YSlider.repaint();
         USlider.repaint();

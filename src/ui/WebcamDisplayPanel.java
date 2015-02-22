@@ -2,19 +2,27 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import static org.bytedeco.javacpp.opencv_core.*;
+
 import org.bytedeco.javacpp.opencv_core.IplImage;
+
+import utils.ColorSpace;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -33,7 +41,9 @@ public class WebcamDisplayPanel extends JPanel {
     private ArrayList<WebcamDisplayPanelListener> wdpListeners;
     private SamplingPanel samplingPanel;
     private boolean isFiltering = false;
-
+    private BufferedImage zoomCursorImg;
+    private Cursor zoomCursor;
+    
 	public WebcamDisplayPanel() {
 		super();
 		
@@ -42,6 +52,14 @@ public class WebcamDisplayPanel extends JPanel {
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
+		
+		try {
+			zoomCursorImg = ImageIO.read(getClass().getClassLoader().getResourceAsStream("zoom.png"));
+			zoomCursor = Toolkit.getDefaultToolkit().createCustomCursor(zoomCursorImg, new Point(zoomCursorImg.getWidth() / 2, zoomCursorImg.getHeight() / 2), "Zoom cursor");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.err.println("Could not find zoom.png file");
+		}
 
         webcamImageLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -49,9 +67,18 @@ public class WebcamDisplayPanel extends JPanel {
                 for (WebcamDisplayPanelListener listener : wdpListeners) {
                     if (listener instanceof ColourPanel) {
                         ColourPanel cp = (ColourPanel) listener;
-                        if (cp.getIsSampling()) {
-                            cp.takeSample(e.getX(), e.getY());
-                        }
+                        
+                        // Get the current bufferedimage.
+                        ImageIcon icon = (ImageIcon)webcamImageLabel.getIcon();
+                        BufferedImage image = (BufferedImage)icon.getImage();
+
+                        int x = e.getX() - zoomCursorImg.getWidth() / 2;
+                        int y = e.getY() - zoomCursorImg.getHeight() / 2;
+
+                        // Crop the image
+                        BufferedImage crop = image.getSubimage(x, y, zoomCursorImg.getWidth(), zoomCursorImg.getHeight());
+                        cp.setZoomLabelIcon(crop);
+                        
                     } else if (listener instanceof VisionPanel) {
                         VisionPanel panel = (VisionPanel) listener;
                         if (panel.isSelectedTab()) {
@@ -96,16 +123,9 @@ public class WebcamDisplayPanel extends JPanel {
                     for (int i = 0; i < image.getWidth(); i++) {
                         Color color = new Color(image.getRGB(i, j));
 
-                        int r = color.getRed();
-                        int g = color.getGreen();
-                        int b = color.getBlue();
+                        double[] yuv = ColorSpace.RGBToYUV(color.getRed(), color.getGreen(), color.getBlue());
 
-                        // http://en.wikipedia.org/wiki/YUV#Full_swing_for_BT.601
-                        int y = ((76 * r + 150 * g +  29 * b + 128) >> 8);
-                        int u = ((-43 * r -  84 * g + 127 * b + 128) >> 8) + 128;
-                        int v = ((127 * r -  106 * g -  21 * b + 128) >> 8) + 128;
-
-                        if (isDetected(y, u, v)) {
+                        if (isDetected((int)yuv[0], (int)yuv[1], (int)yuv[2])) {
                             image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
                         }
                     }
@@ -233,6 +253,14 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 	}
 
+	public void setZoomCursor() {
+		setCursor(zoomCursor);
+	}
+	
+	public void setDefaultCursor() {
+		setCursor(Cursor.getDefaultCursor());
+	}
+	
 	/**
 	 * <p>Returns the current view state of the WebcamDisplayPanel</p>
 	 * @return currentViewState
