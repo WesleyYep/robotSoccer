@@ -5,17 +5,16 @@ import ui.Field;
 import Paths.StraightLinePath;
 import bot.Robot;
 
-public class BasicGoalKeep extends Action{
+public class BasicGoalKeep extends Action {
 	
 	private boolean onGoalKeepLine = false;
 	private boolean keepRotate = false;
 	private boolean goStraight = false;
 	private boolean inPosition = false;
 	
-	
 	private double goalKeepLine = 10;
-	
 	private double error = 2;
+	
 	@Override
     public String getName() {
         return "Basic Goal Keep";
@@ -23,33 +22,31 @@ public class BasicGoalKeep extends Action{
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
-        if (r.getXPosition()  <= (goalKeepLine+error) && r.getXPosition() >= (goalKeepLine-error)) {
-        	onGoalKeepLine = true;
-        }
-        else {
-        	onGoalKeepLine = false;
-        }
-        
-         if (onGoalKeepLine == true) {
-        	 if (r.getTheta() <= (90+error) && r.getTheta() >= (90-error) || r.getTheta()>=(-90+error) &&r.getTheta() <= (-90-error)) { 
-        		 inPosition = true;
-        	 }
-        	 else {
-        		 inPosition = false;
-        	 }
-         }
-        
-        
-        
+    	Robot r = bots.getRobot(index);
+
+    	if (r.getXPosition() <= (goalKeepLine+error) && r.getXPosition() >= (goalKeepLine-error)) {
+    		onGoalKeepLine = true;
+    	}
+    	else {
+    		onGoalKeepLine = false;
+    	}
+
+    	if (onGoalKeepLine == true) {
+    		if (r.getTheta() <= (90+error) && r.getTheta() >= (90-error) || r.getTheta() >= (-90+error) && r.getTheta() <= (-90-error)) { 
+    			inPosition = true;
+    		}
+    		else {
+    			inPosition = false;
+    		}
+    	}
         
         if (onGoalKeepLine == false) {
-        	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(),(int)goalKeepLine, Field.OUTER_BOUNDARY_HEIGHT/2);
+        	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(), (int)goalKeepLine, Field.OUTER_BOUNDARY_HEIGHT/2);
         	path.setPoints();
         	
         	double theta = Math.atan2(Field.OUTER_BOUNDARY_HEIGHT/2-r.getYPosition(), goalKeepLine - r.getXPosition());        	
         	
-        	if (Math.toDegrees(theta*-1) - r.getTheta() > -1 &&  Math.toDegrees(theta*-1) - r.getTheta() < 1) {
+        	if (Math.toDegrees(theta*-1) - r.getTheta() > -1 && Math.toDegrees(theta*-1) - r.getTheta() < 1) {
         		r.angularVelocity = 0;
         		keepRotate = false;
         		goStraight = true;
@@ -59,7 +56,7 @@ public class BasicGoalKeep extends Action{
         	}
         	
         	
-        	if (keepRotate){
+        	if (keepRotate) {
         		if (Math.toDegrees(theta*-1) - r.getTheta() > 0) {
         			r.angularVelocity = 1;
         			r.linearVelocity = 0;

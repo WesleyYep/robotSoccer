@@ -10,9 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-public class NetworkSocket extends SwingWorker<Integer, Sender>{
+public class NetworkSocket extends SwingWorker<Integer, Sender> {
 
-	
 	private int portNumber;
 	private Receiver receiver;
 	private Sender sender;
@@ -104,7 +103,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 	}
 
 	public void close() {
-		/**
+		/*
 		 * if a client is connected already, set sender to null for all the object using it
 		 * then send a message to C++ program requesting a closing message back. Once the receiver 
 		 * read the closing message from the C++ program. The receiver will stop listening and close 
@@ -120,7 +119,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender>{
 				sender.sendStuff("close connection" + System.lineSeparator());
 			}
 		}
-		/**
+		/*
 		 * if no client is connected, the program can cancel the current worker and
 		 * toggle the button back to start
 		 */

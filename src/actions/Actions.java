@@ -19,6 +19,29 @@ public class Actions {
         new GoalKeepTest()
     	};
 
+    /*
+     * Suggestion:
+     * private static ArrayList<Action> actions = new ArrayList<Action> {{
+     * 		add(new ChaseBall());
+     * 		add(new ChaseBall2());
+     * 		add(new BasicGoalKeep());
+     * 		add(new Wait());
+     * 		add(new TurnToFaceBall());
+     * 		add(TurnToFaceBall2());
+     * 		add(new GoalKeepTest());
+     * }};
+     * 
+     * public Action getAction(Class<? extends Action> givenClass) {
+     * 		for (Action a : actions) {
+     * 			if (a.getClass() == givenClass) {
+     * 				return a;
+     * 			}
+     * 		}
+     * 		return null;
+     * }
+     * 
+     */
+    
     public Action getAction(int index) {
         return actions[index];
     }

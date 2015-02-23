@@ -52,8 +52,6 @@ public class TurnToFaceBall extends Action{
         r.linearVelocity = 0;
 
 
-    //    System.out.println(System.currentTimeMillis());
-
     }
 
     protected double squared (double x) {

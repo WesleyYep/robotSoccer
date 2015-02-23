@@ -73,6 +73,10 @@ public class Robots {
 		bots[id].setTheta(theta);
 	}
 
+	/**
+	 * Instruct each robot to move.
+	 */
+	
 	public void moveBots() {
 		for (int i = 0; i < 5; i++) {
 			bots[i].moveLinear();
