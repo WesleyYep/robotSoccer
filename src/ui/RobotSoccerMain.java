@@ -44,6 +44,8 @@ import vision.VisionWorker;
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
+	
+	private static String dllpathx64 = "C:\\Users\\Chang Kon\\workspace\\robot_soccer\\robotSoccer\\lib\\CLEyeMulticam.dll";
     private JButton startButton, connectionButton, recordButton, saveStratButton, openStratButton;
     private JTextArea taskOutput;
 
@@ -102,7 +104,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     	// https://www.youtube.com/watch?v=U6xJfP7-HCc
     	// Layout constraint, column constraint
         super(new MigLayout("wrap 12"));
-        
         //Create the demo's UI.
         //create start button and text field for port number
         startButton = new JButton("Start");

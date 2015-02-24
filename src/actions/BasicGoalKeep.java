@@ -5,7 +5,7 @@ import ui.Field;
 import Paths.StraightLinePath;
 import bot.Robot;
 
-public class basicGoalKeep extends Action{
+public class BasicGoalKeep extends Action{
 	
 	private boolean onGoalKeepLine = false;
 	private boolean keepRotate = false;

@@ -1,7 +1,6 @@
 package controllers;
 
 import static org.bytedeco.javacpp.opencv_core.cvFlip;
-
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -15,9 +14,16 @@ import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.IPCameraFrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.javacv.PS3EyeFrameGrabber;
 
 import ui.WebcamDisplayPanel;
+import cl.eye.CLCamera;
+import java.io.File;
+import java.lang.reflect.Field;
+import sun.misc.Unsafe;
 
+import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
  * <strong>Note:</strong> In this class, uses two methods, Webcam.setDriver and Webcam.resetDriver 
@@ -73,6 +79,12 @@ public class WebcamController {
         // Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
 		grabber = new OpenCVFrameGrabber(0);
+//		try {
+//			grabber = new PS3EyeFrameGrabber(0);
+//		} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
+//			e.printStackTrace();
+//			System.err.println("PS3 camera not found");
+//		}
         grabby = new Grabby();
         grabby.execute();
 	}
@@ -130,7 +142,7 @@ public class WebcamController {
         	
             System.out.println("Initializing camera");
             grabber.start();
-            
+
             while (!isCancelled()) {
                 //insert grabbed video from to IplImage img
                 img = grabber.grab();

@@ -5,7 +5,7 @@ import bot.Robot;
 import strategy.Action;
 import ui.Field;
 
-public class goalKeepTest extends Action{
+public class GoalKeepTest extends Action{
 	private double goalKeepCentreX = 10;
     private double goalKeepCentreY = 100;
 
