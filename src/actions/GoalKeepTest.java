@@ -52,7 +52,7 @@ public class GoalKeepTest extends Action{
         } else if (distance < 10) { //goalkeeper needs to get back to line
             r.linearVelocity = 0.5;
             r.angularVelocity = difference / (2*distance/100);
-        }  else {
+        } else {
             r.linearVelocity = 1;
             r.angularVelocity = difference / (distance/100);
         }

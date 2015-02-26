@@ -2,23 +2,9 @@ package controllers;
 
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 
 import javax.media.jai.PerspectiveTransform;
-import org.bridj.SizeT;
-import org.bytedeco.javacpp.opencv_core.CvMat;
-import org.bytedeco.javacpp.opencv_core.CvMemStorage;
-import org.bytedeco.javacpp.opencv_core.CvSeq;
-import org.bytedeco.javacpp.opencv_core.CvSize;
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_core.Size;
 
-import org.bytedeco.javacv.*;
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
-import static org.bytedeco.javacpp.opencv_highgui.*;
-import org.bytedeco.javacpp.Pointer;
 import ui.Field;
 
 public class VisionController {
@@ -34,7 +20,6 @@ public class VisionController {
 	private static double mapTop = 48;
 	private static double mapBot = 372;
 	
-
 	private static PerspectiveTransform t;
 	private static PerspectiveTransform tInverse;
 	
@@ -44,30 +29,33 @@ public class VisionController {
 		bottomLeft = new Point2D.Double(100,200);
 		bottomRight = new Point2D.Double(200,200);
 		this.createTransformMatrix();
-		
 	}
-	
 	
 	public void createTransformMatrix() {
 		//x y: point that u want to map to
 		//xp yp: orginal points
-		tInverse = PerspectiveTransform.getQuadToQuad(mapLeft, mapTop, mapLeft, mapBot, mapRight, mapBot, mapRight, mapTop,
-				topLeft.getX(), topLeft.getY(), bottomLeft.getX(),bottomLeft.getY()
-				, bottomRight.getX(),bottomRight.getY(), topRight.getX(),topRight.getY());
+		tInverse = PerspectiveTransform.getQuadToQuad(
+				mapLeft,
+				mapTop,
+				mapLeft,
+				mapBot,
+				mapRight,
+				mapBot,
+				mapRight,
+				mapTop,
+				topLeft.getX(),
+				topLeft.getY(),
+				bottomLeft.getX(),
+				bottomLeft.getY(),
+				bottomRight.getX(),
+				bottomRight.getY(),
+				topRight.getX(),
+				topRight.getY()
+				);
 
-		/*
-		System.out.println("mapping: " + mapLeft + " " + mapRight + " " + mapTop + " " + mapBot);
-		System.out.println(topLeft);
-		System.out.println(topRight);
-		System.out.println(bottomRight);
-		System.out.println(bottomLeft);
-		*/
 		try {
 			t = tInverse.createInverse();
-			//System.out.println(t.toString());
-	//		System.out.println(tInverse.toString());
 		} catch (NoninvertibleTransformException e) {
-
 			e.printStackTrace();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -82,8 +70,7 @@ public class VisionController {
 			double actualY = (selectedPoint.getY() - mapTop) / ((mapBot-mapTop)/(double)Field.OUTER_BOUNDARY_HEIGHT);
 			
 			return new Point2D.Double(actualX,actualY);
-		}
-		else {
+		} else {
 			return null;
 		}
 		

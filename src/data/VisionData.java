@@ -5,6 +5,7 @@ package data;
  * Created by Wesley on 10/02/2015.
  */
 public class VisionData {
+	
     private Coordinate coordinate;
     private String type;
     private double theta;
@@ -15,7 +16,7 @@ public class VisionData {
         this.theta = theta;
     }
 
-    public  Coordinate getCoordinate() {
+    public Coordinate getCoordinate() {
         return coordinate;
     }
 

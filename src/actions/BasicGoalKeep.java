@@ -26,16 +26,14 @@ public class BasicGoalKeep extends Action {
 
     	if (r.getXPosition() <= (goalKeepLine+error) && r.getXPosition() >= (goalKeepLine-error)) {
     		onGoalKeepLine = true;
-    	}
-    	else {
+    	} else {
     		onGoalKeepLine = false;
     	}
 
     	if (onGoalKeepLine == true) {
     		if (r.getTheta() <= (90+error) && r.getTheta() >= (90-error) || r.getTheta() >= (-90+error) && r.getTheta() <= (-90-error)) { 
     			inPosition = true;
-    		}
-    		else {
+    		} else {
     			inPosition = false;
     		}
     	}
@@ -50,8 +48,7 @@ public class BasicGoalKeep extends Action {
         		r.angularVelocity = 0;
         		keepRotate = false;
         		goStraight = true;
-        	}
-        	else {
+        	} else {
         		keepRotate = true;
         	}
         	
@@ -60,8 +57,7 @@ public class BasicGoalKeep extends Action {
         		if (Math.toDegrees(theta*-1) - r.getTheta() > 0) {
         			r.angularVelocity = 1;
         			r.linearVelocity = 0;
-        		}
-        		else {
+        		} else {
         			 r.angularVelocity = -1;
         			 r.linearVelocity = 0;
         		}
@@ -73,23 +69,19 @@ public class BasicGoalKeep extends Action {
         			r.linearVelocity = 0;
             		r.angularVelocity = 0;
             		goStraight = false;
-        		}
-        		else if (r.getXPosition() < 50 && r.getXPosition() > 0){
+        		} else if (r.getXPosition() < 50 && r.getXPosition() > 0){
         			r.linearVelocity = 0.25;
 	        		r.angularVelocity = 0;
-        		}
-        		else if (r.getXPosition() < 100 && r.getXPosition() > 0){
+        		} else if (r.getXPosition() < 100 && r.getXPosition() > 0){
         			r.linearVelocity = 0.3;
 	        		r.angularVelocity = 0;
-        		}
-        		else {
+        		} else {
 	        		r.linearVelocity = 0.5;
 	        		r.angularVelocity = 0;
         		}
         	}
         	
-        }
-        else {
+        } else {
         	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(),(int)r.getXPosition(), (int)r.getYPosition());
         	path.setPoints();
         	r.linearVelocity = 0;

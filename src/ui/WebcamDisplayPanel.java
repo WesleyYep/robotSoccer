@@ -212,25 +212,6 @@ public class WebcamDisplayPanel extends JPanel {
 
     }
 
-//    public void setMaxandMinForFilter() {
-//        int cMin = samplingPanel.getLowerBoundForY() - 16;
-//        int cMax = samplingPanel.getUpperBoundForY() - 16;
-//        int dMin = samplingPanel.getLowerBoundForU() - 128;
-//        int dMax = samplingPanel.getUpperBoundForU() - 128;
-//        int eMin = samplingPanel.getLowerBoundForV() - 128;
-//        int eMax = samplingPanel.getUpperBoundForV() - 128;
-//
-//        int rMin = (( 298 * cMin + 409 * eMin + 128) >> 8);
-//        int rMax = (( 298 * cMax + 409 * eMax + 128) >> 8);
-//        int gMin = (( 298 * cMin - 100 * dMin - 208 * eMin + 128) >> 8);
-//        int gMax = (( 298 * cMax - 100 * dMax - 208 * eMax + 128) >> 8);
-//        int bMin = (( 298 * cMin + 516 * dMin + 128) >> 8);
-//        int bMax = (( 298 * cMax + 516 * dMax + 128) >> 8);
-//
-//        min = cvScalar(bMin, gMin, rMin, 0);  //BGR-Alpha
-//        max = cvScalar(bMax, gMax, rMax, 0); //BGR-Alpha
-//    }
-
 	/**
 	 * <p>Add instance to be an observer</p>
 	 * @param WebcamDisplayPanelListener instance

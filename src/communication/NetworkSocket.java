@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 public class NetworkSocket extends SwingWorker<Integer, Sender> {
@@ -22,27 +23,25 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 	private List<SenderListener> senderListeners = new ArrayList<SenderListener>();
 	private JButton toggleButton;
 	private boolean isClientConnected = false;
-	
+
 	public NetworkSocket(int portNumber, JTextArea o, JButton button) {
 		try {
 			toggleButton = button;
-	        toggleButton.setText("Stop");
+			toggleButton.setText("Stop");
 			output = o;
+			this.portNumber = portNumber;
 			serverSocket = new ServerSocket(portNumber);
 			sender = null;
 			receiver = null;
-			this.portNumber = portNumber;
 			clientSocket = null;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("error");
 		}
 	}
-	
+
 	@Override
 	protected Integer doInBackground() throws Exception {
-		// TODO Auto-generated method stub
 		output.append("Started\n");
 		clientSocket = serverSocket.accept();
 		output.append("connected\n");
@@ -55,41 +54,45 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 		isClientConnected = true;
 		return null;
 	}
+
+	public int getPortNumber() {
+		return portNumber;
+	}
 	
 	@Override
-    protected void done() {
+	protected void done() {
 		if (isClientConnected) {
 			System.out.println("connected to client");
 		}
-    }
-	 protected void process(List<Sender> chunks) {
-		 for (Sender s : chunks) {
-			 sender = s;
-		 }
-		 
-		 for (SenderListener l : senderListeners) {
-			 l.setSender(sender);
-		 }
-		 
-	 }
-	 
-	 public void closeOutputStream() {	
-		 if (sender != null) {
-			 sender.close();
-		 } 
-	 }
-	 
-	 public Sender getSender() {
-		 return sender;
-	 }
-	
-	 public void addReceiverListener(ReceiverListener listener) {
-		 receiverListeners.add(listener);
-	 }
-	 
-	 public void addSenderListener(SenderListener listener) {
-		 senderListeners.add(listener);
-	 }
+	}
+	protected void process(List<Sender> chunks) {
+		for (Sender s : chunks) {
+			sender = s;
+		}
+
+		for (SenderListener l : senderListeners) {
+			l.setSender(sender);
+		}
+
+	}
+
+	public void closeOutputStream() {	
+		if (sender != null) {
+			sender.close();
+		}
+	}
+
+	public Sender getSender() {
+		return sender;
+	}
+
+	public void addReceiverListener(ReceiverListener listener) {
+		receiverListeners.add(listener);
+	}
+
+	public void addSenderListener(SenderListener listener) {
+		senderListeners.add(listener);
+	}
 
 	public void closeServerSocket() {
 		try {
@@ -99,7 +102,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 			e.printStackTrace();
 		}
 		toggleButton.setText("Start");
-		
+
 	}
 
 	public void close() {
@@ -112,9 +115,9 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 		 */
 		if (isClientConnected) {
 			for (SenderListener l : senderListeners) {
-				 l.setSender(null);
+				l.setSender(null);
 			}
-			
+
 			if (sender != null) {
 				sender.sendStuff("close connection" + System.lineSeparator());
 			}
