@@ -102,7 +102,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     	// https://www.youtube.com/watch?v=U6xJfP7-HCc
     	// Layout constraint, column constraint
         super(new MigLayout("wrap 12"));
-        
+       // System.load("C:\\Users\\John\\Desktop\\CLEyeMulticam\\CLEyeMulticam.dll");
         //Create the demo's UI.
         //create start button and text field for port number
         startButton = new JButton("Start");

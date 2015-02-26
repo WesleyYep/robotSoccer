@@ -58,7 +58,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
         greenMax = new int []{ greenSp.getUpperBoundForY(), greenSp.getUpperBoundForU(), greenSp.getUpperBoundForV() };
 
         while (!isCancelled()) try {
-
+        	 long startTime = System.currentTimeMillis();
             BufferedImage image = webcamController.getImageFromWebcam();
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
@@ -90,7 +90,6 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
                     //ball detection
                     if (!ballFound && isBall(y, u, v)) {
-                    	System.out.println("here");
                         Queue<Coordinate> queue = new LinkedList<Coordinate>();
                         List<Coordinate> group = new ArrayList<Coordinate>();
                         queue.add(new Coordinate(j,i));
@@ -261,7 +260,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             }
 
               alreadyProcessed.clear();
-              //System.out.println("Time: " + (System.currentTimeMillis() - startTime));
+              System.out.println("Time: " + (System.currentTimeMillis() - startTime));
 
         } catch (Exception e) {
             System.out.println("wtf");
@@ -361,6 +360,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     			LookupTable.UTable[u] == LookupTable.BALL_COLOUR &&
     			LookupTable.VTable[v] == LookupTable.BALL_COLOUR); 
     			*/
+        
     }
 
     private boolean isTeam(int y, int u, int v) {
