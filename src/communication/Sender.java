@@ -26,7 +26,7 @@ public class Sender {
 	private Socket clientSocket;
 
 	public BufferedWriter os = null;
-	
+
 	public Sender(Socket s) {
 		clientSocket = s;
 		try {
@@ -36,20 +36,20 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	public void sendStuff(String outputMessage) {
 		try {
-			
+
 			StringBuilder outputBuffer = new StringBuilder();
-			
 			outputBuffer.append("Ignore First Line" + System.lineSeparator());
 			outputBuffer.append(outputMessage);
-			
-			while (outputBuffer.length() <=512 ) {
+
+			while (outputBuffer.length() <= 512) {
 				outputBuffer.append(" ");
 			}
-			os.write(outputBuffer.toString(),0, outputBuffer.length());
+
+			os.write(outputBuffer.toString(), 0 , outputBuffer.length());
 			os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -64,5 +64,5 @@ public class Sender {
 			e.printStackTrace();
 		}
 	}
-    
+
 }

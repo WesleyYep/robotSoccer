@@ -14,7 +14,7 @@
 /*
  * Removed processing.core.PApplet references as they aren't necessary.
  */
-package eye;
+package cl.eye;
 
 public class CLCamera
 {

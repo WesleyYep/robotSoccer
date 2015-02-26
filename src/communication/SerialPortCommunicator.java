@@ -4,18 +4,20 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 
 public class SerialPortCommunicator {
-	
+
 	private SerialPort currentSerialPort = null;
-	
+
 	public boolean openPort(String portName) {
 		currentSerialPort = new SerialPort(portName);
 		try {	
 			if (currentSerialPort.openPort()) {
 				//setup the port setting
-				currentSerialPort.setParams(SerialPort.BAUDRATE_115200,
-											SerialPort.DATABITS_8,
-											SerialPort.STOPBITS_1,
-											SerialPort.PARITY_NONE);
+				currentSerialPort.setParams(
+						SerialPort.BAUDRATE_115200,
+						SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1,
+						SerialPort.PARITY_NONE
+						);
 				return true;
 			}
 			else {
@@ -28,7 +30,7 @@ public class SerialPortCommunicator {
 		}
 	}
 
-	
+
 	public boolean writeData(int[] data) {
 		if (currentSerialPort != null && currentSerialPort.isOpened() == true) {
 			try {
@@ -43,8 +45,7 @@ public class SerialPortCommunicator {
 			return false;
 		}
 	}
-	
-	
+
 	public boolean closePort() {
 		try {
 			if (currentSerialPort != null && currentSerialPort.closePort()) {
@@ -58,5 +59,5 @@ public class SerialPortCommunicator {
 			return false;
 		}
 	}
-	
+
 }

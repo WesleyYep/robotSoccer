@@ -1,5 +1,8 @@
 package actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import strategy.Action;
 
 /**
@@ -21,19 +24,19 @@ public class Actions {
 
     /*
      * Suggestion:
-     * private static ArrayList<Action> actions = new ArrayList<Action> {{
+     * private static List<Action> actions = new ArrayList<Action>() {{
      * 		add(new ChaseBall());
      * 		add(new ChaseBall2());
      * 		add(new BasicGoalKeep());
      * 		add(new Wait());
      * 		add(new TurnToFaceBall());
-     * 		add(TurnToFaceBall2());
+     * 		add(new TurnToFaceBall2());
      * 		add(new GoalKeepTest());
      * }};
      * 
-     * public Action getAction(Class<? extends Action> givenClass) {
+     * public Action getAction(Class<? extends Action> className) {
      * 		for (Action a : actions) {
-     * 			if (a.getClass() == givenClass) {
+     * 			if (a.getClass() == className) {
      * 				return a;
      * 			}
      * 		}

@@ -1,46 +1,39 @@
 package config;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
 public class ConfigFile {
-	
+
 	//http://commons.apache.org/proper/commons-configuration/index.html
-	
+
 	String path = "RobotSoccerConfiguration.config";
-	
+
 	private static ConfigFile instance = null;
 	private String saveDirectoryKey;
 	private String openDirectoryKey;
-	
+
 	private XMLConfiguration config;
-	
+
 	protected ConfigFile() {
 		saveDirectoryKey="savedirectory";
 		openDirectoryKey="opendirectory";
-		
-		
 	}
-	
+
 	public static ConfigFile getInstance() {
 		if (instance == null) {
 			instance = new ConfigFile();
 		}
 		return instance;
 	}
-	
-	
+
 	public boolean checkFileExist() {
 		File file = new File(path);
 		return file.exists();
 	}
-	
+
 	/**
 	 * create a new configuration file for robot soccer program
 	 * @return 0 - successfully created configuration file
@@ -58,22 +51,20 @@ public class ConfigFile {
 			}
 			config.save();
 		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public String getLastSaveDirectory() {
-		return config.getString(saveDirectoryKey,null);
+		return config.getString(saveDirectoryKey, null);
 	}
-	
+
 	public String getLastOpenDirectory() {
-		return config.getString(openDirectoryKey,null);
+		return config.getString(openDirectoryKey, null);
 	}
-	
+
 	public void setLastSaveDirectory(String path) {
-		if (config.getString(saveDirectoryKey,null) == null) {
+		if (config.getString(saveDirectoryKey, null) == null) {
 			config.addProperty(saveDirectoryKey, path);
 		}
 		else {
@@ -85,9 +76,9 @@ public class ConfigFile {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void setLastOpenDirectory(String path) {
-		if (config.getString(openDirectoryKey,null) == null) {
+		if (config.getString(openDirectoryKey, null) == null) {
 			config.addProperty(openDirectoryKey, path);
 		}
 		else {
@@ -99,6 +90,5 @@ public class ConfigFile {
 			e.printStackTrace();
 		}
 	}
-	
 
 }

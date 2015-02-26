@@ -3,6 +3,8 @@ package controllers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.SwingWorker.StateValue;
+
 public class WindowController implements WindowListener {
 	
 	private WebcamController webcamController;
@@ -19,7 +21,8 @@ public class WindowController implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		if (webcamController.getImageFromWebcam() != null) {
+		StateValue webcamStatus = webcamController.getWebcamStatus();
+		if (webcamStatus == StateValue.STARTED) {
 			webcamController.disconnect();
 		}
 	}
