@@ -8,6 +8,8 @@ import ui.Field;
 public class GoalKeepTest extends Action{
 	private double goalKeepCentreX = 10;
     private double goalKeepCentreY = 100;
+    private int goalKeepTopLimit = 70;
+    private int goalKeepBottomLimit = 110;
 
 	@Override
     public String getName() {
@@ -27,9 +29,13 @@ public class GoalKeepTest extends Action{
         }
 
         //firstly check if gk is already on his line
-        if (r.angularVelocity == 0 && Math.abs(r.getXPosition() - goalKeepCentreX) < 5) {
+        if (Math.abs(r.angularVelocity) < 0.005 && Math.abs(r.getXPosition() - goalKeepCentreX) < 5) {
             double yDifference = r.getYPosition() - ballY;
-            r.linearVelocity = yDifference/100;
+            if ((r.getYPosition() < goalKeepTopLimit && yDifference > 0) || (r.getYPosition() > goalKeepBottomLimit && yDifference < 0)) {
+                r.linearVelocity = 0;
+            } else {
+                r.linearVelocity = yDifference / 100;
+            }
             return;
         }
 

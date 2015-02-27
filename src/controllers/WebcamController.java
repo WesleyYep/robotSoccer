@@ -10,7 +10,6 @@ import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.IPCameraFrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.javacv.PS3EyeFrameGrabber;
 
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
@@ -49,15 +48,24 @@ public class WebcamController {
 	public void connect() {
 		// Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
-		try {
-			grabber = new PS3EyeFrameGrabber(0);
-		} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
-			e.printStackTrace();
-			System.out.println("Could not find PS3 camera, will not try to connect to usb webcam.");
-			grabber = new OpenCVFrameGrabber(0);
-		}
-		
-		grabby.execute();
+//		try {
+//			grabber = new PS3EyeFrameGrabber(0);
+//		} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Could not find PS3 camera, will not try to connect to usb webcam.");
+//			grabber = new OpenCVFrameGrabber(0);
+//		}
+//		
+//		grabby.execute();
+  //      try {
+       //     System.load("C:\\javaProjects\\robotSoccer\\lib\\CLEyeMulticam.dll");
+      //      grabber = new PS3EyeFrameGrabber(0);
+            grabber = new OpenCVFrameGrabber(0);
+//        } catch (FrameGrabber.Exception e) {
+//            System.out.println(e.getMessage());
+//            e.printStackTrace();
+//        }
+        grabby.execute();
 	}
 
 	/**
@@ -73,7 +81,6 @@ public class WebcamController {
 		} catch (MalformedURLException e) {
 			System.err.println("Could not connect to IP webcam.");
 		}
-
 	}
 
 	/**
@@ -110,7 +117,7 @@ public class WebcamController {
 	 * @return
 	 */
 
-	public IplImage getIplImage () {
+	public IplImage getIplImage() {
 		return img;
 	}
 
@@ -140,20 +147,10 @@ public class WebcamController {
 				//insert grabbed video from to IplImage img
 				img = grabber.grab();
 
-				if (grabber instanceof PS3EyeFrameGrabber) {
-					if (img != null) {
-						webcamDisplayPanel.update(img);
-					}
-				} else {
-
-					if (img == null) {
-						cancel(true);
-					}
-
-					//Show video frame in canvas
+				if (img != null) {
 					webcamDisplayPanel.update(img);
-
 				}
+				
 			}
 
 			// All done; clean up

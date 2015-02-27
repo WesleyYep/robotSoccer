@@ -24,17 +24,17 @@ public class StraightLinePath extends Path {
 		}
 	}
 
-	@Override
-	public void setPoints() {
-		pointsXAlongPath.clear();
-		pointsYAlongPath.clear();
-		index = 0;
-		int distanceX = endPointX - startPointX;
-		int distanceY = endPointY - startPointY;
-		int numPoints = 10;
-		for (int i = 1; i <= numPoints; i++) {
-			pointsXAlongPath.add(startPointX + (1/numPoints)*distanceX);
-			pointsYAlongPath.add(startPointY + (1/numPoints)*distanceY);
-		}
-	}
+    @Override
+    public void setPoints() {
+        pointsXAlongPath.clear();
+        pointsYAlongPath.clear();
+        index = 0;
+        int distanceX = endPointX - startPointX;
+        int distanceY = endPointY - startPointY;
+        int numPoints = 10;
+        for (int i = 1; i <= numPoints; i++) {
+            pointsXAlongPath.add(startPointX + (1.0/numPoints)*distanceX);
+            pointsYAlongPath.add(startPointY + (1.0/numPoints)*distanceY);
+        }
+    }
 }

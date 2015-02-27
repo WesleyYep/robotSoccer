@@ -13,5 +13,6 @@
     <orderEntry type="library" name="jai_core" level="project" />
     <orderEntry type="library" name="opencv" level="project" />
     <orderEntry type="library" name="opencv-windows-x86" level="project" />
+    <orderEntry type="library" name="cleyemulticam" level="project" />
   </component>
 </module>

@@ -45,6 +45,7 @@ import controllers.WindowController;
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 
 	public static final int DEFAULT_PORT_NUMBER = 31000;
+	public static final int TICK_TIME_MS = 5;
 
 	private JButton startButton, connectionButton, recordButton, saveStratButton, openStratButton;
 	private JTextArea taskOutput;
@@ -356,26 +357,37 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		});
 	}
 
+	public void changeCard(String cardName) {
+		CardLayout layout = (CardLayout)cards.getLayout();
+		layout.show(cards, cardName);
+	}
+
 	public void setUpGame() {
 		java.util.Timer timer = new java.util.Timer();
-		timer.schedule(gameTick, 0, 5);
+		timer.schedule(gameTick, 0, TICK_TIME_MS);
 	}
 
 	public WindowController getWindowController() {
 		return windowController;
 	}
 
+	/**
+	 * Invoked when the user presses the start button.
+	 */
 	public void actionPerformed(ActionEvent evt) {
+		//Instances of javax.swing.SwingWorker are not reusuable, so
+		//we create new instances as needed.
 		if (evt.getSource() == startButton) {
 			if (startButton.getText() == "Start") {
 
 				int portNumber;
 				try {
 					portNumber = Integer.parseInt(portField.getText());
-				} catch (NumberFormatException e) {
+				}	catch (NumberFormatException e) {
 					portNumber = DEFAULT_PORT_NUMBER;
 					taskOutput.append("\nIncorrect character, will use default port: 31000\n");
 				}
+
 
 				serverSocket = new NetworkSocket(portNumber, taskOutput, startButton);
 				System.out.println("created new socket");
@@ -414,11 +426,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 				recordButton.setText(VIDEOCAPTURE[0]);
 			}
 		}
-	}
-
-	public void changeCard(String cardName) {
-		CardLayout layout = (CardLayout)cards.getLayout();
-		layout.show(cards, cardName);
 	}
 
 	@Override

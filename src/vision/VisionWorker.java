@@ -26,6 +26,7 @@ import java.util.List;
  * Created by Wesley on 6/02/2015.
  */
 public class VisionWorker extends SwingWorker<Void, VisionData> {
+
 	private WebcamController webcamController;
 	private VisionController visionController;
 	private ColourPanel colourPanel;
@@ -353,14 +354,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
 		return (y > ballMin[0] && y < ballMax[0] &&
 				u > ballMin[1] && u < ballMax[1] &&
-				v > ballMin[2] && v < ballMax[2]);  
-
-		/*
-
-    	return ( ((LookupTable.YTable[y] >> LookupTable.BALL_BIT_POS) & 1) &&
-    			LookupTable.UTable[u] == LookupTable.BALL_COLOUR &&
-    			LookupTable.VTable[v] == LookupTable.BALL_COLOUR); 
-		 */
+				v > ballMin[2] && v < ballMax[2]);
 	}
 
 	private boolean isTeam(int y, int u, int v) {
