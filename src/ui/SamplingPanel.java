@@ -38,7 +38,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 
     private WebcamController webcamController;
     private ColourSlider YSlider, USlider, VSlider;
-    private JButton sampleButton, detectButton, setValueButton;
+    private JButton sampleButton, detectButton, setValueButton, clearAllButton;
     private JLabel lowYLabel, highYLabel, lowULabel, highULabel, lowVLabel, highVLabel;
     private JPanel optionPanePanel;
     private JTextField lowValueTextField, highValueTextField;
@@ -130,6 +130,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
         sampleButton = new JButton("Start Sample");
         detectButton = new JButton(DETECTSTRING[0]);
         setValueButton = new JButton("Set Value");
+        clearAllButton = new JButton("Clear All");
         
         optionPanePanel = new JPanel(new MigLayout());
         
@@ -161,13 +162,15 @@ public class SamplingPanel extends JPanel implements ActionListener {
         add(lowVLabel, "width 30:30:30, split 3");
         add(VSlider, "width 400:400:400");
         add(highVLabel, "width 30:30:30, wrap 15");
-        add(sampleButton, "span, split 3, align right");
+        add(clearAllButton, "span, split 4, align right");
+        add(sampleButton);
         add(detectButton, "width 75:75:75");
         add(setValueButton, "wrap");
 
         sampleButton.addActionListener(this);
         detectButton.addActionListener(this);
         setValueButton.addActionListener(this);
+        clearAllButton.addActionListener(this);
     }
 
     public void takeSample(BufferedImage image, double xPos, double yPos) {
@@ -299,6 +302,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				}
 			}
 			
+		} else if (e.getSource() == clearAllButton) {
+			YSlider.clearData();
+			USlider.clearData();
+			VSlider.clearData();
 		}
 	}
 	

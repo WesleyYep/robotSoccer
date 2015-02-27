@@ -1,5 +1,6 @@
 package controllers;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
@@ -121,6 +122,15 @@ public class WebcamController {
 		return img;
 	}
 
+	/**
+	 * <p>Retrieve the webcam resolution. If the webcam is not running, it will return null.</p>
+	 * @return webcam resolution
+	 */
+	
+	public Dimension getWebcamResolution() {
+		return grabber == null ? null : new Dimension(grabber.getImageWidth(), grabber.getImageHeight());
+	}
+	
 	/**
 	 * <p>Returns the webcam status. This method returns the webcam display panel status.</p>
 	 * <p><strong>UNCONNECTED</strong></p>

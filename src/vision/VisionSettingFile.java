@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -34,7 +35,10 @@ public class VisionSettingFile {
 
 	}
 
-
+	/**
+	 * <p>Saves the vision setting into a xml file</p>
+	 */
+	
 	public void saveVisionSetting() {
 		JFileChooser fileChooser;
 		String path;
@@ -44,13 +48,30 @@ public class VisionSettingFile {
 		} else {
 			fileChooser = new JFileChooser(path);
 		}
+		
+		// Removes the accept all filter.
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		
+		// Adds the save filter.
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("text/xml", "xml"));
+		
 		fileChooser.showSaveDialog(null);
 
 		if (fileChooser.getSelectedFile() == null) {
 			return;
 		}
 
+		String extensionType = fileChooser.getFileFilter().getDescription();
 		String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+		
+		/*
+		 * Check the output filename and adds the correct extension type. If the output filename already has the extension added, it
+		 * doesn't append extension again.
+		 */
+		if (extensionType.contains("text/xml") && !fileName.contains("xml")) {
+			fileName = fileName + "." + "xml";
+		}
+		
 		String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
 		ConfigFile.getInstance().setLastSaveDirectory(folderPath);
 
@@ -133,6 +154,10 @@ public class VisionSettingFile {
 
 	}
 
+	/**
+	 * <p>Opens the vision setting xml file and loads it into the program</p>
+	 */
+	
 	public void openVisionSetting() {
 		JFileChooser fileChooser;
 		String path;
@@ -142,6 +167,13 @@ public class VisionSettingFile {
 		} else {
 			fileChooser = new JFileChooser(path);
 		}
+		
+		// Removes the accept all filter.
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		
+		// Adds the open filter.
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("text/xml", "xml"));
+		
 		fileChooser.showOpenDialog(null);
 
 		if (fileChooser.getSelectedFile() == null) {
@@ -168,53 +200,53 @@ public class VisionSettingFile {
 
 			SamplingPanel ballSP = colourPanel.ballSamplingPanel;
 
+			ballSP.setLowerBoundForY(openSetting.getInt("ballYLower"));
+			ballSP.setLowerBoundForU(openSetting.getInt("ballULower"));
+			ballSP.setLowerBoundForV(openSetting.getInt("ballVLower"));
+			
 			ballSP.setUpperBoundForY(openSetting.getInt("ballYUpper"));
 			ballSP.setUpperBoundForU(openSetting.getInt("ballUUpper"));
 			ballSP.setUpperBoundForV(openSetting.getInt("ballVUpper"));
 
-			ballSP.setLowerBoundForY(openSetting.getInt("ballYLower"));
-			ballSP.setLowerBoundForU(openSetting.getInt("ballULower"));
-			ballSP.setLowerBoundForV(openSetting.getInt("ballVLower"));
-
 			SamplingPanel teamSp = colourPanel.teamSamplingPanel;
-
-			teamSp.setUpperBoundForY(openSetting.getInt("teamYUpper"));
-			teamSp.setUpperBoundForU(openSetting.getInt("teamUUpper"));
-			teamSp.setUpperBoundForV(openSetting.getInt("teamVUpper"));
 
 			teamSp.setLowerBoundForY(openSetting.getInt("teamYLower"));
 			teamSp.setLowerBoundForU(openSetting.getInt("teamULower"));
 			teamSp.setLowerBoundForV(openSetting.getInt("teamVLower"));
+			
+			teamSp.setUpperBoundForY(openSetting.getInt("teamYUpper"));
+			teamSp.setUpperBoundForU(openSetting.getInt("teamUUpper"));
+			teamSp.setUpperBoundForV(openSetting.getInt("teamVUpper"));
 
 			SamplingPanel greenSp = colourPanel.greenSamplingPanel;
-
-			greenSp.setUpperBoundForY(openSetting.getInt("greenYUpper"));
-			greenSp.setUpperBoundForU(openSetting.getInt("greenUUpper"));
-			greenSp.setUpperBoundForV(openSetting.getInt("greenVUpper"));
 
 			greenSp.setLowerBoundForY(openSetting.getInt("greenYLower"));
 			greenSp.setLowerBoundForU(openSetting.getInt("greenULower"));
 			greenSp.setLowerBoundForV(openSetting.getInt("greenVLower"));
+			
+			greenSp.setUpperBoundForY(openSetting.getInt("greenYUpper"));
+			greenSp.setUpperBoundForU(openSetting.getInt("greenUUpper"));
+			greenSp.setUpperBoundForV(openSetting.getInt("greenVUpper"));
 
 			SamplingPanel groundSp = colourPanel.groundSamplingPanel;
-
-			groundSp.setUpperBoundForY(openSetting.getInt("groundYUpper"));
-			groundSp.setUpperBoundForU(openSetting.getInt("groundUUpper"));
-			groundSp.setUpperBoundForV(openSetting.getInt("groundVUpper"));
 
 			groundSp.setLowerBoundForY(openSetting.getInt("groundYLower"));
 			groundSp.setLowerBoundForU(openSetting.getInt("groundULower"));
 			groundSp.setLowerBoundForV(openSetting.getInt("groundVLower"));
+			
+			groundSp.setUpperBoundForY(openSetting.getInt("groundYUpper"));
+			groundSp.setUpperBoundForU(openSetting.getInt("groundUUpper"));
+			groundSp.setUpperBoundForV(openSetting.getInt("groundVUpper"));
 
 			SamplingPanel opponentSp = colourPanel.opponentSamplingPanel;
-
-			opponentSp.setUpperBoundForY(openSetting.getInt("opponentYUpper"));
-			opponentSp.setUpperBoundForU(openSetting.getInt("opponentUUpper"));
-			opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
 
 			opponentSp.setLowerBoundForY(openSetting.getInt("opponentYLower"));
 			opponentSp.setLowerBoundForU(openSetting.getInt("opponentULower"));
 			opponentSp.setLowerBoundForV(openSetting.getInt("opponentVLower"));
+			
+			opponentSp.setUpperBoundForY(openSetting.getInt("opponentYUpper"));
+			opponentSp.setUpperBoundForU(openSetting.getInt("opponentUUpper"));
+			opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
 
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block

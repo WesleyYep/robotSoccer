@@ -47,10 +47,25 @@ public class ColourSlider extends RangeSlider {
 		}
 	}
 
+	/**
+	 * <p>Adds the YUV value to the list</p> 
+	 * @param YUV value. 0-255
+	 */
+	
 	public void addToData(int value) {
 		double difference = getMaximum() - getMinimum();
 		value = (int)((value - getMinimum())/difference * getWidth());
 		data.add(value);
+		repaint();
 	}
 
+	/**
+	 * <p>Removes all colour sampling data</p>
+	 */
+	
+	public void clearData() {
+		data.clear();
+		repaint();
+	}
+	
 }
