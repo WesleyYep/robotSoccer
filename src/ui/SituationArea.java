@@ -131,14 +131,11 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 						newWidth = 0;
 						newX = pivotX-this.getWidth();
 						pivotX = pivotX-1;
-					}
-					else {
+					} else {
 						newWidth = ((diffX*-1)+baseWidth)-this.getWidth();
 					}
 					
-				}
-				
-				else if ( clickLeft == true) {
+				} else if ( clickLeft == true) {
 					diffX = startingX - (arg0.getX()+ (baseWidth-this.getWidth()));
 					if (diffX < (baseWidth*-1+1)) {
 						clickRight = true;
@@ -165,13 +162,11 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 						newHeight = 0;				
 						newY = pivotY+1;
 						pivotY = newY;
-					} 
-					else {
+					} else {
 						newHeight =((diffY)+baseHeight)-this.getHeight();	
 						newY = this.getY()-newHeight;
 					}
-				}
-				else if (clickBottom == true) {
+				} else if (clickBottom == true) {
 					if (arg0.getY() < -1) {
 						clickBottom = false;
 						clickTop = true;
@@ -180,8 +175,7 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 						newHeight = 0;
 						newY = pivotY-this.getHeight();
 						pivotY = pivotY-1;
-					}
-					else {
+					} else {
 					
 						newHeight = ((diffY*-1)+baseHeight-this.getHeight());
 						
@@ -189,8 +183,7 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 				}
 								
 				listener.resizeArea( newWidth, newHeight, newX, newY);		
-			} 
-			else if (draggingMode == MOVING) {
+			} else if (draggingMode == MOVING) {
 				
 				
 				listener.moveArea(diffX, diffY);
@@ -204,35 +197,26 @@ public class SituationArea extends JPanel implements MouseMotionListener, MouseL
 			//diagonal
 			if ( isMouseLeft(arg0) && isMouseTop(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
-			} 
-			else if (isMouseRight(arg0) && isMouseBottom(arg0)) {
+			} else if (isMouseRight(arg0) && isMouseBottom(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
-			}
-			else if (isMouseTop(arg0) && isMouseRight(arg0)) {
+			} else if (isMouseTop(arg0) && isMouseRight(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
-			}
-			else if (isMouseBottom(arg0) && isMouseLeft(arg0)) {
+			} else if (isMouseBottom(arg0) && isMouseLeft(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
-			}
-			//straight
-			else if ( isMouseLeft(arg0)) {
+			} else if ( isMouseLeft(arg0)) {
+				// straight
 				setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
-			} 
-			else if (isMouseRight(arg0)) {
+			} else if (isMouseRight(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
-			}
-			else if (isMouseTop(arg0)) {
+			} else if (isMouseTop(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-			}
-			else if (isMouseBottom(arg0)) {
+			} else if (isMouseBottom(arg0)) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
-			}
-			else {
+			} else {
 				
 				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			}
-		}
-		else {
+		} else {
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}

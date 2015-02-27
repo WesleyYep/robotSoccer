@@ -18,25 +18,25 @@ import communication.SenderListener;
 import communication.SerialPortCommunicator;
 
 public class TestComPanel extends JPanel implements SenderListener{
-	
-	
+
+
 	//18.52 second from one side to another side actual
 	//51.39 second from one side to another side in simulation
 	private JComboBox<String> comboBox;
-	
+
 	private JButton testRotateBtn;
 	private JButton testForwardBtn;
-    private JCheckBox simulationCheckBox;
+	private JCheckBox simulationCheckBox;
 
 	private Robots robots;
 	private Sender sender = null;
-	
+
 	private boolean manualControl = false;
 	private boolean testingForward = false;
 	private boolean testingRotate = false;
-	
+
 	private SerialPortCommunicator serialCom;
-	
+
 	public TestComPanel (SerialPortCommunicator s, Robots bots) {
 		serialCom = s;
 		robots = bots;
@@ -77,30 +77,29 @@ public class TestComPanel extends JPanel implements SenderListener{
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-		//		if (simulationCheckBox.isSelected()) {
-					if (!manualControl || testingForward) {
-						robots.testRotate();
-						manualControl = true;
-						testingForward = false;
-						testingRotate = true;
-					}
-					else {
-						manualControl = false;
-						robots.stopAllMovement();
-					}
-		//		} else {
-//					if (currentWorker != null) {
-//						currentWorker.cancel(true);
-//					}
-//
-//					for (int i = 0; i < 11; i++) {
-//						linearVelocity[i] = 0;
-//						angularVelocity[i] = (3.14159265358979323846) / 2;
-//						;
-//					}
-//					currentWorker = new TestWorker();
-//					currentWorker.execute();
-//				}
+				//		if (simulationCheckBox.isSelected()) {
+				if (!manualControl || testingForward) {
+					robots.testRotate();
+					manualControl = true;
+					testingForward = false;
+					testingRotate = true;
+				} else {
+					manualControl = false;
+					robots.stopAllMovement();
+				}
+				//		} else {
+				//					if (currentWorker != null) {
+				//						currentWorker.cancel(true);
+				//					}
+				//
+				//					for (int i = 0; i < 11; i++) {
+				//						linearVelocity[i] = 0;
+				//						angularVelocity[i] = (3.14159265358979323846) / 2;
+				//						;
+				//					}
+				//					currentWorker = new TestWorker();
+				//					currentWorker.execute();
+				//				}
 			}
 
 		});
@@ -108,29 +107,28 @@ public class TestComPanel extends JPanel implements SenderListener{
 		testForwardBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				if (simulationCheckBox.isSelected()) {
-					if (!manualControl || testingRotate) {
-						robots.testForward();
-						manualControl = true;
-						testingRotate = false;
-						testingForward = true;
-					}
-					else {
-						manualControl = false;
-						robots.stopAllMovement();
-					}
-//				} else {
-//					if (currentWorker != null) {
-//						currentWorker.cancel(true);
-//					}
-//
-//					for (int i = 0; i < 11; i++) {
-//						linearVelocity[i] = 0.1;
-//						angularVelocity[i] = 0;
-//					}
-//					currentWorker = new TestWorker();
-//					currentWorker.execute();
-//				}
+				//				if (simulationCheckBox.isSelected()) {
+				if (!manualControl || testingRotate) {
+					robots.testForward();
+					manualControl = true;
+					testingRotate = false;
+					testingForward = true;
+				} else {
+					manualControl = false;
+					robots.stopAllMovement();
+				}
+				//				} else {
+				//					if (currentWorker != null) {
+				//						currentWorker.cancel(true);
+				//					}
+				//
+				//					for (int i = 0; i < 11; i++) {
+				//						linearVelocity[i] = 0.1;
+				//						angularVelocity[i] = 0;
+				//					}
+				//					currentWorker = new TestWorker();
+				//					currentWorker.execute();
+				//				}
 			}
 
 		});
@@ -138,13 +136,13 @@ public class TestComPanel extends JPanel implements SenderListener{
 		simulationCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 			}
 		});
 	}
 
 	public boolean isSimulation() {
-			return simulationCheckBox.isSelected();
+		return simulationCheckBox.isSelected();
 	}
 
 
@@ -152,7 +150,7 @@ public class TestComPanel extends JPanel implements SenderListener{
 	public void setSender(Sender s) {
 		sender = s;
 	}
-	
+
 	public boolean isManualControl() {
 		return manualControl;
 	}

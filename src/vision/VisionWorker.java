@@ -26,369 +26,369 @@ import java.util.List;
  * Created by Wesley on 6/02/2015.
  */
 public class VisionWorker extends SwingWorker<Void, VisionData> {
-    private WebcamController webcamController;
-    private VisionController visionController;
-    private ColourPanel colourPanel;
-    private int[] ballMin = new int[3];
-    private int[] ballMax = new int[3];
-    private int[] teamMin = new int[3];
-    private int[] teamMax = new int[3];
-    private int[] greenMin = new int[3];
-    private int[] greenMax = new int[3];
-    private List<VisionListener> listeners = new ArrayList<VisionListener>();
-    private List<Coordinate> alreadyProcessed = new ArrayList<Coordinate>();
+	private WebcamController webcamController;
+	private VisionController visionController;
+	private ColourPanel colourPanel;
+	private int[] ballMin = new int[3];
+	private int[] ballMax = new int[3];
+	private int[] teamMin = new int[3];
+	private int[] teamMax = new int[3];
+	private int[] greenMin = new int[3];
+	private int[] greenMax = new int[3];
+	private List<VisionListener> listeners = new ArrayList<VisionListener>();
+	private List<Coordinate> alreadyProcessed = new ArrayList<Coordinate>();
 
-    public VisionWorker(WebcamController wc, ColourPanel colourPanel, VisionController vc) {
-        this.webcamController = wc;
-        this.colourPanel = colourPanel;
-        this.visionController = vc;
-    }
+	public VisionWorker(WebcamController wc, ColourPanel colourPanel, VisionController vc) {
+		this.webcamController = wc;
+		this.colourPanel = colourPanel;
+		this.visionController = vc;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
-        SamplingPanel ballSP = colourPanel.ballSamplingPanel;
-        SamplingPanel teamSp = colourPanel.teamSamplingPanel;
-        SamplingPanel greenSp = colourPanel.greenSamplingPanel;
+	@Override
+	protected Void doInBackground() throws Exception {
+		SamplingPanel ballSP = colourPanel.ballSamplingPanel;
+		SamplingPanel teamSp = colourPanel.teamSamplingPanel;
+		SamplingPanel greenSp = colourPanel.greenSamplingPanel;
 
-        ballMin = new int []{ ballSP.getLowerBoundForY(), ballSP.getLowerBoundForU(), ballSP.getLowerBoundForV() };
-        ballMax = new int []{ ballSP.getUpperBoundForY(), ballSP.getUpperBoundForU(), ballSP.getUpperBoundForV() };
-        teamMin = new int []{ teamSp.getLowerBoundForY(), teamSp.getLowerBoundForU(), teamSp.getLowerBoundForV() };
-        teamMax = new int []{ teamSp.getUpperBoundForY(), teamSp.getUpperBoundForU(), teamSp.getUpperBoundForV() };
-        greenMin = new int []{ greenSp.getLowerBoundForY(), greenSp.getLowerBoundForU(), greenSp.getLowerBoundForV() };
-        greenMax = new int []{ greenSp.getUpperBoundForY(), greenSp.getUpperBoundForU(), greenSp.getUpperBoundForV() };
+		ballMin = new int []{ ballSP.getLowerBoundForY(), ballSP.getLowerBoundForU(), ballSP.getLowerBoundForV() };
+		ballMax = new int []{ ballSP.getUpperBoundForY(), ballSP.getUpperBoundForU(), ballSP.getUpperBoundForV() };
+		teamMin = new int []{ teamSp.getLowerBoundForY(), teamSp.getLowerBoundForU(), teamSp.getLowerBoundForV() };
+		teamMax = new int []{ teamSp.getUpperBoundForY(), teamSp.getUpperBoundForU(), teamSp.getUpperBoundForV() };
+		greenMin = new int []{ greenSp.getLowerBoundForY(), greenSp.getLowerBoundForU(), greenSp.getLowerBoundForV() };
+		greenMax = new int []{ greenSp.getUpperBoundForY(), greenSp.getUpperBoundForU(), greenSp.getUpperBoundForV() };
 
-        while (!isCancelled()) try {
+		while (!isCancelled()) try {
 
-            BufferedImage image = webcamController.getImageFromWebcam();
-            int imageHeight = image.getHeight();
-            int imageWidth = image.getWidth();
+			BufferedImage image = webcamController.getImageFromWebcam();
+			int imageHeight = image.getHeight();
+			int imageWidth = image.getWidth();
 
-            boolean previous = false;
-            int rowWidth = 0;
-            int highestRowWidth = 0;
-            int ballX = 0;
-            int ballY = 0;
-            
-            int robotMinSize = colourPanel.getRobotSizeMinimum();
-            int ballMinSize = colourPanel.getBallSizeMinimum();
-            int suitableLength = colourPanel.getRobotDimension(); //change this if it doesn't work
-            boolean ballFound  = false;
+			boolean previous = false;
+			int rowWidth = 0;
+			int highestRowWidth = 0;
+			int ballX = 0;
+			int ballY = 0;
 
-            //loop through every 10th row
-            for (int i = 0; i < imageHeight; i += 10) {
-                //loop through every 10th column from right to left
-                for (int j = imageWidth - 1; j >= 0; j -= 10) {
+			int robotMinSize = colourPanel.getRobotSizeMinimum();
+			int ballMinSize = colourPanel.getBallSizeMinimum();
+			int suitableLength = colourPanel.getRobotDimension(); //change this if it doesn't work
+			boolean ballFound  = false;
 
-                    Color color = new Color(image.getRGB(j, i));
-                    int r = color.getRed();
-                    int g = color.getGreen();
-                    int b = color.getBlue();
+			//loop through every 10th row
+			for (int i = 0; i < imageHeight; i += 10) {
+				//loop through every 10th column from right to left
+				for (int j = imageWidth - 1; j >= 0; j -= 10) {
 
-                    int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
-                    int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
-                    int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
+					Color color = new Color(image.getRGB(j, i));
+					int r = color.getRed();
+					int g = color.getGreen();
+					int b = color.getBlue();
 
-                    //ball detection
-                    if (!ballFound && isBall(y, u, v)) {
-                    	System.out.println("here");
-                        Queue<Coordinate> queue = new LinkedList<Coordinate>();
-                        List<Coordinate> group = new ArrayList<Coordinate>();
-                        queue.add(new Coordinate(j,i));
-                        while (!queue.isEmpty()) {
-                            Coordinate c = queue.poll();
-                            int w = c.x;
-                            int e = c.x;
+					int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
+					int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
+					int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
 
-                            while (isPixelInBallColourRange(image, w - 1, c.y) && !group.contains(new Coordinate(w - 1, c.y))) {
-                                w--;
-                            }
-                            while (isPixelInBallColourRange(image, e + 1, c.y) && !group.contains(new Coordinate(e + 1, c.y))) {
-                                e++;
-                            }
+					//ball detection
+					if (!ballFound && isBall(y, u, v)) {
+						System.out.println("here");
+						Queue<Coordinate> queue = new LinkedList<Coordinate>();
+						List<Coordinate> group = new ArrayList<Coordinate>();
+						queue.add(new Coordinate(j,i));
+						while (!queue.isEmpty()) {
+							Coordinate c = queue.poll();
+							int w = c.x;
+							int e = c.x;
 
-                            for (int k = w; k < e + 1; k++) {
-                                group.add(new Coordinate(k, c.y));
-                                alreadyProcessed.add(new Coordinate(k, c.y));
-                                if (isPixelInBallColourRange(image, k, c.y - 1) && !group.contains(new Coordinate(k, c.y - 1))) {
-                                    queue.add(new Coordinate(k, c.y - 1));
-                                } if (isPixelInBallColourRange(image, k, c.y + 1) && !group.contains(new Coordinate(k, c.y + 1))) {
-                                    queue.add(new Coordinate(k, c.y + 1));
-                                }
-                            }
-                        }
-                        if (group.size() < ballMinSize) {
-                            //            System.out.println("group was too small");
-                        } else {
-                            ballFound = true;
-                            //first get center
-                            int N = group.size();
-                            int xSum = 0;
-                            int ySum = 0;
+							while (isPixelInBallColourRange(image, w - 1, c.y) && !group.contains(new Coordinate(w - 1, c.y))) {
+								w--;
+							}
+							while (isPixelInBallColourRange(image, e + 1, c.y) && !group.contains(new Coordinate(e + 1, c.y))) {
+								e++;
+							}
 
-                            for (Coordinate c: group) {
-                                xSum += c.x;
-                                ySum += c.y;
-                            }
-                            Coordinate centre = new Coordinate(xSum/N, ySum/N);
-                           //send ball
-                            publish(new VisionData(new Coordinate(centre.x, centre.y), 0, "ball"));
-                        }
-                    }
+							for (int k = w; k < e + 1; k++) {
+								group.add(new Coordinate(k, c.y));
+								alreadyProcessed.add(new Coordinate(k, c.y));
+								if (isPixelInBallColourRange(image, k, c.y - 1) && !group.contains(new Coordinate(k, c.y - 1))) {
+									queue.add(new Coordinate(k, c.y - 1));
+								} if (isPixelInBallColourRange(image, k, c.y + 1) && !group.contains(new Coordinate(k, c.y + 1))) {
+									queue.add(new Coordinate(k, c.y + 1));
+								}
+							}
+						}
+						if (group.size() < ballMinSize) {
+							//            System.out.println("group was too small");
+						} else {
+							ballFound = true;
+							//first get center
+							int N = group.size();
+							int xSum = 0;
+							int ySum = 0;
 
-                    //robot detection
-                    if (isTeam(y, u, v) && !alreadyProcessed.contains(new Coordinate(j, i))) {
-                        Queue<Coordinate> queue = new LinkedList<Coordinate>();
-                        List<Coordinate> group = new ArrayList<Coordinate>();
+							for (Coordinate c: group) {
+								xSum += c.x;
+								ySum += c.y;
+							}
+							Coordinate centre = new Coordinate(xSum/N, ySum/N);
+							//send ball
+							publish(new VisionData(new Coordinate(centre.x, centre.y), 0, "ball"));
+						}
+					}
 
-                        queue.add(new Coordinate(j,i));
-                        while (!queue.isEmpty()) {
-                            Coordinate c = queue.poll();
-                            int w = c.x;
-                            int e = c.x;
+					//robot detection
+					if (isTeam(y, u, v) && !alreadyProcessed.contains(new Coordinate(j, i))) {
+						Queue<Coordinate> queue = new LinkedList<Coordinate>();
+						List<Coordinate> group = new ArrayList<Coordinate>();
 
-                            while (isPixelInTeamColourRange(image, w - 1, c.y) && !group.contains(new Coordinate(w - 1, c.y))) {
-                                w--;
-                            }
-                            while (isPixelInTeamColourRange(image, e + 1, c.y) && !group.contains(new Coordinate(e + 1, c.y))) {
-                                e++;
-                            }
-                            //    System.out.println("w: " + c.x + ", e: " + c.y);
+						queue.add(new Coordinate(j,i));
+						while (!queue.isEmpty()) {
+							Coordinate c = queue.poll();
+							int w = c.x;
+							int e = c.x;
 
-                            for (int k = w; k < e + 1; k++) {
-                                group.add(new Coordinate(k, c.y));
-                                alreadyProcessed.add(new Coordinate(k, c.y));
-                                if (isPixelInTeamColourRange(image, k, c.y - 1) && !group.contains(new Coordinate(k, c.y - 1))) {
-                                    queue.add(new Coordinate(k, c.y - 1));
-                                } if (isPixelInTeamColourRange(image, k, c.y + 1) && !group.contains(new Coordinate(k, c.y + 1))) {
-                                    queue.add(new Coordinate(k, c.y + 1));
-                                }
-                            }
-                        }
-                        if (group.size() < robotMinSize) {
-                            //            System.out.println("group was too small");
-                        } else {
-                            //identify robot
-                            //first get center
-                            int N = group.size();
-                            int xSum = 0;
-                            int ySum = 0;
+							while (isPixelInTeamColourRange(image, w - 1, c.y) && !group.contains(new Coordinate(w - 1, c.y))) {
+								w--;
+							}
+							while (isPixelInTeamColourRange(image, e + 1, c.y) && !group.contains(new Coordinate(e + 1, c.y))) {
+								e++;
+							}
+							//    System.out.println("w: " + c.x + ", e: " + c.y);
 
-                            for (Coordinate c: group) {
-                                xSum += c.x;
-                                ySum += c.y;
-                            }
-                            Coordinate centre = new Coordinate(xSum/N, ySum/N);
+							for (int k = w; k < e + 1; k++) {
+								group.add(new Coordinate(k, c.y));
+								alreadyProcessed.add(new Coordinate(k, c.y));
+								if (isPixelInTeamColourRange(image, k, c.y - 1) && !group.contains(new Coordinate(k, c.y - 1))) {
+									queue.add(new Coordinate(k, c.y - 1));
+								} if (isPixelInTeamColourRange(image, k, c.y + 1) && !group.contains(new Coordinate(k, c.y + 1))) {
+									queue.add(new Coordinate(k, c.y + 1));
+								}
+							}
+						}
+						if (group.size() < robotMinSize) {
+							//            System.out.println("group was too small");
+						} else {
+							//identify robot
+							//first get center
+							int N = group.size();
+							int xSum = 0;
+							int ySum = 0;
 
-                            //now get variance
-                            int xVarSum = 0;
-                            int yVarSum = 0;
-                            int topRightQuadrant = 0;
-                            int topLeftQuadrant = 0;
-                            //use this to get angle
-                            for (Coordinate c: group) {
-                                xVarSum += squared(c.x - centre.x);
-                                yVarSum += squared(c.y - centre.y);
-                                if (c.y < centre.y) {
-                                    if (c.x > centre.x) {
-                                        topRightQuadrant++;
-                                    } else {
-                                        topLeftQuadrant++;
-                                    }
-                                }
-                            }
-                            double xVar = xVarSum / N;
-                            double yVar = yVarSum / N;
-                            double theta = Math.atan2(yVar, xVar); //original estimated theta
+							for (Coordinate c: group) {
+								xSum += c.x;
+								ySum += c.y;
+							}
+							Coordinate centre = new Coordinate(xSum/N, ySum/N);
 
-                            if (topLeftQuadrant > topRightQuadrant) {
-                                theta = Math.PI - theta;
-                            }
-                     //       System.out.println(Math.toDegrees(theta));
+							//now get variance
+							int xVarSum = 0;
+							int yVarSum = 0;
+							int topRightQuadrant = 0;
+							int topLeftQuadrant = 0;
+							//use this to get angle
+							for (Coordinate c: group) {
+								xVarSum += squared(c.x - centre.x);
+								yVarSum += squared(c.y - centre.y);
+								if (c.y < centre.y) {
+									if (c.x > centre.x) {
+										topRightQuadrant++;
+									} else {
+										topLeftQuadrant++;
+									}
+								}
+							}
+							double xVar = xVarSum / N;
+							double yVar = yVarSum / N;
+							double theta = Math.atan2(yVar, xVar); //original estimated theta
 
-                            boolean greenQuadrants[] = new boolean[4];
-                            int robotNum = 0;
+							if (topLeftQuadrant > topRightQuadrant) {
+								theta = Math.PI - theta;
+							}
+							//       System.out.println(Math.toDegrees(theta));
 
-                            for (int t = 0; t < 4; t++) {
-                                double testTheta = theta + t * Math.PI/2 + Math.PI/4;
-                                int testX = centre.x + (int)(suitableLength*Math.cos(testTheta));
-                                int testY = centre.y - (int)(suitableLength*Math.sin(testTheta));
-                         //       System.out.println("test theta: " + testTheta);
-                                greenQuadrants[t] = isPixelInGreenColourRange(image, testX, testY, 2); //this gives 3 tries to detect green
-                            }
-                            if (greenQuadrants[0]) {
-                                if (greenQuadrants[3]) {
-                                    if (greenQuadrants[1]) {
-                                        robotNum = 4;
-                                    } else if (greenQuadrants[2]) {
-                                        robotNum = 5;
-                                    } else {
-                                        robotNum = 3;
-                                    }
-                                } else if (greenQuadrants[1]) {
-                                    robotNum = 5;
-                                    theta = theta - Math.PI;
-                                } else {
-                                    robotNum = 1;
-                                }
-                            } else if (greenQuadrants[1]) {
-                                if (greenQuadrants[2]) {
-                                    if (greenQuadrants[3]) {
-                                        robotNum = 4;
-                                        theta = theta - Math.PI;
-                                    } else {
-                                        robotNum = 3;
-                                        theta = theta - Math.PI;
-                                    }
-                                } else {
-                                    robotNum = 2;
-                                    theta = theta - Math.PI;
-                                }
-                            } else if (greenQuadrants[2]) {
-                                robotNum = 1;
-                                theta = theta - Math.PI;
-                            } else if (greenQuadrants[3]) {
-                                robotNum = 2;
-                            }
-      //                      System.out.println("1st: " + greenQuadrants[0] + ", 2nd: " + greenQuadrants[1] + ", 3rd: " + greenQuadrants[2] + ", 4th: " + greenQuadrants[3]);
-      //                      System.out.println(robotNum + (theta > 0 ? " up":" down"));
+							boolean greenQuadrants[] = new boolean[4];
+							int robotNum = 0;
 
-                            if (robotNum > 0) {
-                                publish(new VisionData(new Coordinate(centre.x, centre.y), theta, "robot:" + robotNum));
-                            }
-                        }
-                    }
-                }
-            }
+							for (int t = 0; t < 4; t++) {
+								double testTheta = theta + t * Math.PI/2 + Math.PI/4;
+								int testX = centre.x + (int)(suitableLength*Math.cos(testTheta));
+								int testY = centre.y - (int)(suitableLength*Math.sin(testTheta));
+								//       System.out.println("test theta: " + testTheta);
+								greenQuadrants[t] = isPixelInGreenColourRange(image, testX, testY, 2); //this gives 3 tries to detect green
+							}
+							if (greenQuadrants[0]) {
+								if (greenQuadrants[3]) {
+									if (greenQuadrants[1]) {
+										robotNum = 4;
+									} else if (greenQuadrants[2]) {
+										robotNum = 5;
+									} else {
+										robotNum = 3;
+									}
+								} else if (greenQuadrants[1]) {
+									robotNum = 5;
+									theta = theta - Math.PI;
+								} else {
+									robotNum = 1;
+								}
+							} else if (greenQuadrants[1]) {
+								if (greenQuadrants[2]) {
+									if (greenQuadrants[3]) {
+										robotNum = 4;
+										theta = theta - Math.PI;
+									} else {
+										robotNum = 3;
+										theta = theta - Math.PI;
+									}
+								} else {
+									robotNum = 2;
+									theta = theta - Math.PI;
+								}
+							} else if (greenQuadrants[2]) {
+								robotNum = 1;
+								theta = theta - Math.PI;
+							} else if (greenQuadrants[3]) {
+								robotNum = 2;
+							}
+							//                      System.out.println("1st: " + greenQuadrants[0] + ", 2nd: " + greenQuadrants[1] + ", 3rd: " + greenQuadrants[2] + ", 4th: " + greenQuadrants[3]);
+							//                      System.out.println(robotNum + (theta > 0 ? " up":" down"));
 
-              alreadyProcessed.clear();
-              //System.out.println("Time: " + (System.currentTimeMillis() - startTime));
+							if (robotNum > 0) {
+								publish(new VisionData(new Coordinate(centre.x, centre.y), theta, "robot:" + robotNum));
+							}
+						}
+					}
+				}
+			}
 
-        } catch (Exception e) {
-            System.out.println("wtf");
-            e.printStackTrace();
-        }
+			alreadyProcessed.clear();
+			//System.out.println("Time: " + (System.currentTimeMillis() - startTime));
 
-        return null;
-    }
+		} catch (Exception e) {
+			System.out.println("wtf");
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
 
-    @Override
-    public void process(List<VisionData> chunks) {
-        for (VisionData v : chunks) {
-            for (VisionListener l : listeners) {
-                l.receive(v);
-            }
-        }
-    }
+	@Override
+	public void process(List<VisionData> chunks) {
+		for (VisionData v : chunks) {
+			for (VisionListener l : listeners) {
+				l.receive(v);
+			}
+		}
+	}
 
-    public void addListener(VisionListener listener) {
-        listeners.add(listener);
-    }
+	public void addListener(VisionListener listener) {
+		listeners.add(listener);
+	}
 
-    protected int squared (int x) {
-        return x * x;
-    }
+	protected int squared (int x) {
+		return x * x;
+	}
 
-    private boolean isPixelInBallColourRange(BufferedImage image, int xPos, int yPos) {
-        try {
-            Color color = new Color(image.getRGB(xPos, yPos));
-            int r = color.getRed();
-            int g = color.getGreen();
-            int b = color.getBlue();
+	private boolean isPixelInBallColourRange(BufferedImage image, int xPos, int yPos) {
+		try {
+			Color color = new Color(image.getRGB(xPos, yPos));
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
 
-            int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
-            int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
-            int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
+			int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
+			int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
+			int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
 
-            return isBall(y, u, v);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("pixel out of bounds!");
-            return false;
-        }
-    }
+			return isBall(y, u, v);
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			System.out.println("pixel out of bounds!");
+			return false;
+		}
+	}
 
-     private boolean isPixelInTeamColourRange(BufferedImage image, int xPos, int yPos) {
-         try {
-             Color color = new Color(image.getRGB(xPos, yPos));
-             int r = color.getRed();
-             int g = color.getGreen();
-             int b = color.getBlue();
+	private boolean isPixelInTeamColourRange(BufferedImage image, int xPos, int yPos) {
+		try {
+			Color color = new Color(image.getRGB(xPos, yPos));
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
 
-             int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
-             int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
-             int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
+			int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
+			int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
+			int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
 
-             return isTeam(y, u, v);
-         } catch (ArrayIndexOutOfBoundsException ex) {
-             System.out.println("pixel out of bounds!");
-             return false;
-         }
-     }
+			return isTeam(y, u, v);
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			System.out.println("pixel out of bounds!");
+			return false;
+		}
+	}
 
-    private boolean isPixelInGreenColourRange(BufferedImage image, int xPos, int yPos, int tryNum) {
-        try {
-            Color color = new Color(image.getRGB(xPos, yPos));
-            int r = color.getRed();
-            int g = color.getGreen();
-            int b = color.getBlue();
+	private boolean isPixelInGreenColourRange(BufferedImage image, int xPos, int yPos, int tryNum) {
+		try {
+			Color color = new Color(image.getRGB(xPos, yPos));
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
 
-            int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
-            int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
-            int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
+			int y = ((76 * r + 150 * g + 29 * b + 128) >> 8);
+			int u = ((-43 * r - 84 * g + 127 * b + 128) >> 8) + 128;
+			int v = ((127 * r - 106 * g - 21 * b + 128) >> 8) + 128;
 
-            if (isGreen(y, u, v)) {
-                return true;
-            } else if (tryNum == 0) {
-                return false;
-            } else {
-                return isPixelInGreenColourRange(image, xPos - 2, yPos - 2, tryNum - 1);
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("pixel out of bounds!");
-            return false;
-        }
-    }
+			if (isGreen(y, u, v)) {
+				return true;
+			} else if (tryNum == 0) {
+				return false;
+			} else {
+				return isPixelInGreenColourRange(image, xPos - 2, yPos - 2, tryNum - 1);
+			}
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			System.out.println("pixel out of bounds!");
+			return false;
+		}
+	}
 
-    private boolean isBall(int y, int u, int v) {
-    	
-        return (y > ballMin[0] && y < ballMax[0] &&
-                u > ballMin[1] && u < ballMax[1] &&
-                v > ballMin[2] && v < ballMax[2]);  
-    
-    	/*
-    	
+	private boolean isBall(int y, int u, int v) {
+
+		return (y > ballMin[0] && y < ballMax[0] &&
+				u > ballMin[1] && u < ballMax[1] &&
+				v > ballMin[2] && v < ballMax[2]);  
+
+		/*
+
     	return ( ((LookupTable.YTable[y] >> LookupTable.BALL_BIT_POS) & 1) &&
     			LookupTable.UTable[u] == LookupTable.BALL_COLOUR &&
     			LookupTable.VTable[v] == LookupTable.BALL_COLOUR); 
-    			*/
-    }
+		 */
+	}
 
-    private boolean isTeam(int y, int u, int v) {
-    	
-        return (y > teamMin[0] && y < teamMax[0] &&
-                u > teamMin[1] && u < teamMax[1] &&
-                v > teamMin[2] && v < teamMax[2]); 
-         /*
+	private boolean isTeam(int y, int u, int v) {
+
+		return (y > teamMin[0] && y < teamMax[0] &&
+				u > teamMin[1] && u < teamMax[1] &&
+				v > teamMin[2] && v < teamMax[2]); 
+		/*
     	return (LookupTable.YTable[y] == LookupTable.TEAM_COLOUR &&
     			LookupTable.UTable[u] == LookupTable.TEAM_COLOUR &&
     			LookupTable.VTable[v] == LookupTable.TEAM_COLOUR); */
-    	
-    }
 
-    private boolean isGreen(int y, int u, int v) {
-    	
-    	
-        return (y > greenMin[0] && y < greenMax[0] &&
-                u > greenMin[1] && u < greenMax[1] &&
-                v > greenMin[2] && v < greenMax[2]); 
-                
-    	
-        /*
+	}
+
+	private boolean isGreen(int y, int u, int v) {
+
+
+		return (y > greenMin[0] && y < greenMax[0] &&
+				u > greenMin[1] && u < greenMax[1] &&
+				v > greenMin[2] && v < greenMax[2]); 
+
+
+		/*
     	return (LookupTable.YTable[y] == LookupTable.GREEN_COLOUR &&
     			LookupTable.UTable[u] == LookupTable.GREEN_COLOUR &&
     			LookupTable.VTable[v] == LookupTable.GREEN_COLOUR);  */
-    	
-    }
+
+	}
 
 
 }

@@ -22,30 +22,30 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
+import vision.VisionSettingFile;
+import vision.VisionWorker;
 import bot.Robots;
+
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
+
 import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
 import controllers.VisionController;
 import controllers.WebcamController;
 import controllers.WindowController;
-import vision.VisionSettingFile;
-import vision.VisionWorker;
 
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 
 	public static final int DEFAULT_PORT_NUMBER = 31000;
 
-	private static String dllpathx64 = "C:\\Users\\Chang Kon\\workspace\\robot_soccer\\robotSoccer\\lib\\CLEyeMulticam.dll";
 	private JButton startButton, connectionButton, recordButton, saveStratButton, openStratButton;
 	private JTextArea taskOutput;
 
@@ -267,8 +267,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 				if (tabTitle.equals("Situation")){
 					fieldController.showArea(true);
-				}
-				else {
+				} else {
 					fieldController.showArea(false);
 				}
 

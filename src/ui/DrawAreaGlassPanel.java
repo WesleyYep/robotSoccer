@@ -14,48 +14,47 @@ import javax.swing.JPanel;
 public class DrawAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener{
 
 	private Point startPoint;
-    private Point endPoint;
-    
-    private boolean isMouseDrag;
+	private Point endPoint;
+
+	private boolean isMouseDrag;
 	private int mouseClicked;
-	
-	
+
 	private SituationPanel sPanel;
 	private Field field;
-    
+
 	public DrawAreaGlassPanel (Field panel, SituationPanel panel2) {
 		this.setOpaque(false);
 		this.setPreferredSize(panel.getPreferredSize());
-		
+
 		this.setBounds(0,0,panel.getPreferredSize().width, getPreferredSize().height);
 		field = panel;
 		sPanel = panel2;
-		
+
 		isMouseDrag = false;
 		addMouseListener(this);
-    	addMouseMotionListener(this);
+		addMouseMotionListener(this);
 	}
-	
-	
-	 @Override
+
+
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-	    if (isMouseDrag) {
-	    // drawRect does not take negative values hence values need to be calculated so it doesn't fill the rectangle.
-	    // Rectangle co-ordinates.
-		    int x, y, w, h;
-		    		
-		    x = Math.min(startPoint.x, endPoint.x);
-		    y = Math.min(startPoint.y, endPoint.y);
-		    		
-		    w = Math.abs(endPoint.x - startPoint.x);
-		    h = Math.abs(endPoint.y - startPoint.y);
-		    		
-		    g.setColor(Color.RED);
+		if (isMouseDrag) {
+			// drawRect does not take negative values hence values need to be calculated so it doesn't fill the rectangle.
+			// Rectangle co-ordinates.
+			int x, y, w, h;
+
+			x = Math.min(startPoint.x, endPoint.x);
+			y = Math.min(startPoint.y, endPoint.y);
+
+			w = Math.abs(endPoint.x - startPoint.x);
+			h = Math.abs(endPoint.y - startPoint.y);
+
+			g.setColor(Color.RED);
 			g.drawRect(x, y, w, h);
-	    }
-			
+		}
+
 	}
 
 
@@ -77,19 +76,19 @@ public class DrawAreaGlassPanel extends JPanel implements MouseListener, MouseMo
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+
 	}
 
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		
+
 	}
 
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		
+
 	}
 
 

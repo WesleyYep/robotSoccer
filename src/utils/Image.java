@@ -12,6 +12,14 @@ import java.awt.image.BufferedImage;
 
 public class Image {
 	
+	/**
+	 * <p>Takes a source image and resizes it to the given width and height value</p>
+	 * @param image
+	 * @param width
+	 * @param height
+	 * @return resized bufferedimage
+	 */
+	
 	public static BufferedImage resize(BufferedImage image, int width, int height) {
 		BufferedImage resize = new BufferedImage(width, height, image.getType());
 		Graphics2D g2d = resize.createGraphics();
