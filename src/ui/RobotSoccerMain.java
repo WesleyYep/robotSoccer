@@ -86,6 +86,10 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private JButton saveVisionButton;
 	private WindowController windowController;
 	
+	private JButton runStratButton;
+	private JButton stopStratButton;
+	private JLabel	stratStatusLbl;
+	
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
 	private final static String CAMSTRING = "Card with Cam";
@@ -107,6 +111,15 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         startButton.setActionCommand("start");
         startButton.addActionListener(this);
         portField = new JTextField();
+        
+        runStratButton = new JButton("Run Strat");
+        stopStratButton = new JButton("Stop Strat");
+        stratStatusLbl = new JLabel("Stopped");
+        
+        JPanel stratControlPanel = new JPanel(new MigLayout());
+        stratControlPanel.add(runStratButton);
+        stratControlPanel.add(stopStratButton);
+        stratControlPanel.add(stratStatusLbl);
         
         saveStratButton = new JButton("Save Strat");
         openStratButton = new JButton("Open Strat");
@@ -242,6 +255,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         add(settingPanel, "span 3, width 300:300:300, wrap");
         add(webcamComponentPanel, "span 3, width 300:300:300");
         add(testComContainerPanel, "span 3, width 300:300:300");
+        add(stratControlPanel, "span 3, width 300:300:300");
 
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -313,6 +327,26 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         
         gameTick = new Tick(field, bots, testComPanel);
         setUpGame();
+        
+        runStratButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				gameTick.runStrategy(true);
+				stratStatusLbl.setText("Running");
+			}
+        	
+        });
+        
+        stopStratButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				gameTick.runStrategy(false);
+				stratStatusLbl.setText("Stopped");
+			}
+        	
+        });
         
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();

@@ -90,6 +90,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
                     //ball detection
                     if (!ballFound && isBall(y, u, v)) {
+                    	System.out.println("here");
                         Queue<Coordinate> queue = new LinkedList<Coordinate>();
                         List<Coordinate> group = new ArrayList<Coordinate>();
                         queue.add(new Coordinate(j,i));
@@ -349,21 +350,44 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     }
 
     private boolean isBall(int y, int u, int v) {
+    	
         return (y > ballMin[0] && y < ballMax[0] &&
                 u > ballMin[1] && u < ballMax[1] &&
-                v > ballMin[2] && v < ballMax[2]);
+                v > ballMin[2] && v < ballMax[2]);  
+    
+    	/*
+    	
+    	return ( ((LookupTable.YTable[y] >> LookupTable.BALL_BIT_POS) & 1) &&
+    			LookupTable.UTable[u] == LookupTable.BALL_COLOUR &&
+    			LookupTable.VTable[v] == LookupTable.BALL_COLOUR); 
+    			*/
     }
 
     private boolean isTeam(int y, int u, int v) {
+    	
         return (y > teamMin[0] && y < teamMax[0] &&
                 u > teamMin[1] && u < teamMax[1] &&
-                v > teamMin[2] && v < teamMax[2]);
+                v > teamMin[2] && v < teamMax[2]); 
+         /*
+    	return (LookupTable.YTable[y] == LookupTable.TEAM_COLOUR &&
+    			LookupTable.UTable[u] == LookupTable.TEAM_COLOUR &&
+    			LookupTable.VTable[v] == LookupTable.TEAM_COLOUR); */
+    	
     }
 
     private boolean isGreen(int y, int u, int v) {
+    	
+    	
         return (y > greenMin[0] && y < greenMax[0] &&
                 u > greenMin[1] && u < greenMax[1] &&
-                v > greenMin[2] && v < greenMax[2]);
+                v > greenMin[2] && v < greenMax[2]); 
+                
+    	
+        /*
+    	return (LookupTable.YTable[y] == LookupTable.GREEN_COLOUR &&
+    			LookupTable.UTable[u] == LookupTable.GREEN_COLOUR &&
+    			LookupTable.VTable[v] == LookupTable.GREEN_COLOUR);  */
+    	
     }
 
 

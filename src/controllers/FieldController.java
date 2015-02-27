@@ -49,7 +49,15 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
     public void setComPanel(TestComPanel p) {
     	comPanel = p;
     }
-
+    
+    public void removeAllSituationArea() {
+    	for (Component c : field.getComponents()) {
+    		if ( c instanceof SituationArea) {
+    			field.remove(c);
+    		}
+    	}
+    }
+ 
     @Override
     public void action(List<String> chunks) {
     	//System.out.println("Received: simulation: " + comPanel.isSimulation());

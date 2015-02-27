@@ -28,7 +28,14 @@ public class Tick extends TimerTask implements SenderListener{
 
 	public void run() {
 		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
-		field.executeStrategy();
+		if (!comPanel.isManualControl()) {
+			if (runStrat) {
+				field.executeStrategy();
+			}
+			else {
+				bots.stopAllMovement();
+			}
+		}
         field.repaint();
 
         if (comPanel.isSimulation()) {
@@ -57,6 +64,10 @@ public class Tick extends TimerTask implements SenderListener{
 	
 	public void startGame(boolean start) {
 		runStrat = start;
+	}
+	
+	public void runStrategy(boolean run) {
+		runStrat = run;
 	}
 	
 

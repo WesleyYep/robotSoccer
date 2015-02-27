@@ -117,6 +117,11 @@ public class WebcamController {
     		return null;
     	}
     }
+
+//    private IplImage getBlurredImage(IplImage originalImage) {
+//        cvSmooth(originalImage, originalImage, CV_GAUSSIAN, 5, 0, 0, 0);
+//        return originalImage;
+//    }
     
     public WebcamDisplayPanel getWebcamDisplayPanel() {
     	return webcamDisplayPanel;
@@ -146,7 +151,6 @@ public class WebcamController {
               //      cancel(true);
                 } else {
    //                 cvCvtColor(img, img, CV_RGB2BGR);
-
 //                    if (canvas == null) {
 //                        canvas = new CanvasFrame("My Image", 1);
 //                    }

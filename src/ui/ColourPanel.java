@@ -19,6 +19,11 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+
+import vision.ColourRangeListener;
+import vision.LookupTable;
+import data.Coordinate;
+
 import net.miginfocom.swing.MigLayout;
 import controllers.WebcamController;
 import data.Coordinate;
@@ -26,7 +31,7 @@ import data.Coordinate;
 /**
  * Created by Wesley on 2/02/2015.
  */
-public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
+public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, ColourRangeListener {
     public SamplingPanel ballSamplingPanel;
     public SamplingPanel teamSamplingPanel;
     public SamplingPanel groundSamplingPanel;
@@ -38,6 +43,7 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
     private JLabel robotSizeLabel = new JLabel("100");
     private JLabel ballSizeLabel = new JLabel("100");
     private JTabbedPane tabPane = new JTabbedPane();
+
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
     private JTextField robotDimensionField = new JTextField("8");
@@ -90,6 +96,11 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         add(new JLabel("Ball Pixel Minimum"), "wrap");
         add(ballSizeSlider, "wrap");
         add(ballSizeLabel, "wrap");
+        
+        ballSamplingPanel.addColourRangeListener(this);
+        teamSamplingPanel.addColourRangeListener(this);
+        greenSamplingPanel.addColourRangeListener(this);
+        
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
 
@@ -98,6 +109,9 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
             public void stateChanged(ChangeEvent e) {
                 robotSizeLabel.setText(robotSizeSlider.getValue() + "");
             }
+            
+            
+            
         });
 
         ballSizeSlider.addChangeListener(new ChangeListener() {
@@ -187,6 +201,50 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener {
         //do nothing
     }
 
+	@Override
+	public void yRangeChanged(int max, int min, SamplingPanel panel) {
+		byte temp = 0;
+		if (panel.equals(this.teamSamplingPanel)) {
+			temp = (1 << LookupTable.TEAM_BIT_POS);
+		}
+		else if (panel.equals(this.greenSamplingPanel)) {
+			temp = (1 << LookupTable.GREEN_BIT_POS);
+		}
+		else if (panel.equals(this.ballSamplingPanel)) {
+			temp = (1 << LookupTable.BALL_BIT_POS);
+		}
+		LookupTable.setYTable(max, min, temp);
+	}
+
+	@Override
+	public void uRangeChanged(int max, int min, SamplingPanel panel) {
+		byte temp = 0;
+		if (panel.equals(this.teamSamplingPanel)) {
+			temp = (1 << LookupTable.TEAM_BIT_POS);
+		}
+		else if (panel.equals(this.greenSamplingPanel)) {
+			temp = (1 << LookupTable.GREEN_BIT_POS);
+		}
+		else if (panel.equals(this.ballSamplingPanel)) {
+			temp = (1 << LookupTable.BALL_BIT_POS);
+		}
+		LookupTable.setUTable(max, min, temp);
+	}
+
+	@Override
+	public void vRangeChanged(int max, int min, SamplingPanel panel) {
+		byte temp = 0;
+		if (panel.equals(this.teamSamplingPanel)) {
+			temp = (1 << LookupTable.TEAM_BIT_POS);
+		}
+		else if (panel.equals(this.greenSamplingPanel)) {
+			temp = (1 << LookupTable.GREEN_BIT_POS);
+		}
+		else if (panel.equals(this.ballSamplingPanel)) {
+			temp = (1 << LookupTable.BALL_BIT_POS);
+		}
+		LookupTable.setVTable(max, min, temp);
+	}
     protected int squared (int x) {
         return x * x;
     }

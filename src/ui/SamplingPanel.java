@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -21,6 +23,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+import vision.ColourRangeListener;
 import net.miginfocom.swing.MigLayout;
 import utils.ColorSpace;
 import controllers.WebcamController;
@@ -40,6 +43,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JPanel optionPanePanel;
     private JTextField lowValueTextField, highValueTextField;
     private JComboBox<String> YUVCombo;
+    private List<ColourRangeListener> colourRangeListeners;
     
     public boolean isSampling = false;
     
@@ -49,6 +53,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
         this.setLayout(new MigLayout());
         this.webcamController = wc;
 
+        colourRangeListeners = new ArrayList<ColourRangeListener>();
         lowYLabel = new JLabel();
         highYLabel = new JLabel();
         lowULabel = new JLabel();
@@ -86,6 +91,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			public void stateChanged(ChangeEvent e) {
 				lowYLabel.setText(YSlider.getLowValue() + "");
 				highYLabel.setText(YSlider.getHighValue() + "");
+				
+				for (ColourRangeListener c : colourRangeListeners) {
+					c.yRangeChanged(YSlider.getHighValue(), YSlider.getLowValue(),SamplingPanel.this);
+				}
 			}
         	
         });
@@ -96,6 +105,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			public void stateChanged(ChangeEvent e) {
 				lowULabel.setText(USlider.getLowValue() + "");
 				highULabel.setText(USlider.getHighValue() + "");
+				
+				for (ColourRangeListener c : colourRangeListeners) {
+					c.uRangeChanged(USlider.getHighValue(), USlider.getLowValue(),SamplingPanel.this);
+				}
 			}
         	
         });
@@ -106,6 +119,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			public void stateChanged(ChangeEvent e) {
 				lowVLabel.setText(VSlider.getLowValue() + "");
 				highVLabel.setText(VSlider.getHighValue() + "");
+				
+				for (ColourRangeListener c : colourRangeListeners) {
+					c.vRangeChanged(VSlider.getHighValue(), VSlider.getLowValue(),SamplingPanel.this);
+				}
 			}
         	
         });
@@ -165,6 +182,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
         YSlider.repaint();
         USlider.repaint();
         VSlider.repaint();
+    }
+    
+    public void addColourRangeListener(ColourRangeListener c) {
+    	colourRangeListeners.add(c);
     }
 
     public int getLowerBoundForY() {
