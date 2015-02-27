@@ -1,7 +1,9 @@
 package controllers;
 
 import static org.bytedeco.javacpp.opencv_core.cvFlip;
+import static org.bytedeco.javacpp.opencv_imgproc.*;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -12,9 +14,7 @@ import javax.swing.SwingWorker;
 
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.IPCameraFrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.javacv.*;
 
 import ui.WebcamDisplayPanel;
 
@@ -72,7 +72,14 @@ public class WebcamController {
 	public void connect() {
         // Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
-		grabber = new OpenCVFrameGrabber(0);
+  //      try {
+       //     System.load("C:\\javaProjects\\robotSoccer\\lib\\CLEyeMulticam.dll");
+      //      grabber = new PS3EyeFrameGrabber(0);
+            grabber = new OpenCVFrameGrabber(2);
+//        } catch (FrameGrabber.Exception e) {
+//            System.out.println(e.getMessage());
+//            e.printStackTrace();
+//        }
         grabby = new Grabby();
         grabby.execute();
 	}
@@ -84,13 +91,13 @@ public class WebcamController {
 	 */
 	
 	public void connect(String url) {
-		try {
-			grabber = new IPCameraFrameGrabber(url);
-			grabby = new Grabby();
-			grabby.execute();
-		} catch (MalformedURLException e) {
-			System.err.println("Could not connect to IP webcam.");
-		}
+//		try {
+//			grabber = new IPCameraFrameGrabber(url);
+//			grabby = new Grabby();
+//			grabby.execute();
+//		} catch (MalformedURLException e) {
+//			System.err.println("Could not connect to IP webcam.");
+//		}
 		
 	}
 	
@@ -119,7 +126,7 @@ public class WebcamController {
     	return img;
     }
 
-
+    //try this
 
     /**
      * Handles grabbing an image from the webcam (following JavaCV examples)
@@ -130,19 +137,28 @@ public class WebcamController {
         	
             System.out.println("Initializing camera");
             grabber.start();
-            
+            CanvasFrame canvas = null;
+
             while (!isCancelled()) {
                 //insert grabbed video from to IplImage img
                 img = grabber.grab();
-
                 if (img == null) {
-                	cancel(true);
+              //      cancel(true);
+                } else {
+   //                 cvCvtColor(img, img, CV_RGB2BGR);
+
+//                    if (canvas == null) {
+//                        canvas = new CanvasFrame("My Image", 1);
+//                    }
+//                    canvas.showImage(img);
+                    //Flip image horizontally
+                    // cvFlip(img, img, 1);
+                    //Show video frame in canvas
+                 //   IplImage img2 = IplIm
+                 //   cvCvtColor(img, img, CV_YUV2RGB_I420);
+                    webcamDisplayPanel.update(img);
+
                 }
-                
-                //Flip image horizontally
-               // cvFlip(img, img, 1);
-                //Show video frame in canvas
-                webcamDisplayPanel.update(img);
             }
             
             // All done; clean up
@@ -151,6 +167,7 @@ public class WebcamController {
             
 	        // Notify webcamdisplaypanel.
 	        webcamDisplayPanel.update((IplImage)null);
+            System.out.println("after");
             return null;
         }
 

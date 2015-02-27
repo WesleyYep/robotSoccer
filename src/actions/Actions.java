@@ -8,7 +8,7 @@ import strategy.Action;
 public class Actions {
 
     private static Action[] actions = new Action[] { null, new chaseBall(), new chaseBall2(), new basicGoalKeep(), new wait(),
-            new TurnToFaceBall(), new TurnToFaceBall2(), new goalKeepTest() };
+            new TurnToFaceBall(), new TurnToFaceBall2(), new goalKeepTest(), new strikerTest() };
 
 
     public Action getAction(int index) {

@@ -58,7 +58,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
         greenMax = new int []{ greenSp.getUpperBoundForY(), greenSp.getUpperBoundForU(), greenSp.getUpperBoundForV() };
 
         while (!isCancelled()) try {
-
+            long startTime = System.currentTimeMillis();
             BufferedImage image = webcamController.getImageFromWebcam();
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
@@ -260,7 +260,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             }
 
               alreadyProcessed.clear();
-              //System.out.println("Time: " + (System.currentTimeMillis() - startTime));
+              System.out.println("Time: " + (System.currentTimeMillis() - startTime));
 
         } catch (Exception e) {
             System.out.println("wtf");
@@ -301,7 +301,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
             return isBall(y, u, v);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("pixel out of bounds!");
+        //    System.out.println("pixel out of bounds!");
             return false;
         }
     }
@@ -319,7 +319,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
              return isTeam(y, u, v);
          } catch (ArrayIndexOutOfBoundsException ex) {
-             System.out.println("pixel out of bounds!");
+     //        System.out.println("pixel out of bounds!");
              return false;
          }
      }
@@ -343,7 +343,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 return isPixelInGreenColourRange(image, xPos - 2, yPos - 2, tryNum - 1);
             }
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("pixel out of bounds!");
+     //       System.out.println("pixel out of bounds!");
             return false;
         }
     }

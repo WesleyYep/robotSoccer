@@ -44,6 +44,8 @@ import vision.VisionWorker;
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 	
 	public static final int DEFAULT_PORT_NUMBER = 31000;
+    public static final int TICK_TIME_MS = 5;
+
     private JButton startButton, connectionButton, recordButton, saveStratButton, openStratButton;
     private JTextArea taskOutput;
 
@@ -326,7 +328,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
     public void setUpGame() {
         java.util.Timer timer = new java.util.Timer();
-        timer.schedule(gameTick, 0, 5);
+        timer.schedule(gameTick, 0, TICK_TIME_MS);
     }
     
     public WindowController getWindowController() {

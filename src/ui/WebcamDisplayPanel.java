@@ -122,7 +122,8 @@ public class WebcamDisplayPanel extends JPanel {
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-            final BufferedImage image = img.getBufferedImage();
+           final BufferedImage image = img.getBufferedImage();
+       //     final BufferedImage image = cvToImage(img);
 
             if (isFiltering) {
                 for (int j = 0; j < image.getHeight(); j++) {
@@ -186,6 +187,16 @@ public class WebcamDisplayPanel extends JPanel {
 			g.drawString(displayMessage, displayMessageX, displayMessageY);
 		}
 	}
+
+    BufferedImage cvToImage(IplImage input) {
+        // no worries with grayscale images
+        if (input.nChannels()==1)
+            return input.getBufferedImage();
+        // otherwise: the order in IplImage is BGR, so create a BufferedImage accordingly
+        BufferedImage result=new BufferedImage(input.width(), input.height(), BufferedImage.TYPE_3BYTE_BGR);
+        input.copyTo(result);
+        return result;
+    }
 
     public boolean isDetected(int y, int u, int v) {
         if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {

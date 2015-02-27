@@ -34,8 +34,8 @@ public class StraightLinePath extends Path {
         int distanceY = endPointY - startPointY;
         int numPoints = 10;
         for (int i = 1; i <= numPoints; i++) {
-            pointsXAlongPath.add(startPointX + (1/numPoints)*distanceX);
-            pointsYAlongPath.add(startPointY + (1/numPoints)*distanceY);
+            pointsXAlongPath.add(startPointX + (1.0/numPoints)*distanceX);
+            pointsYAlongPath.add(startPointY + (1.0/numPoints)*distanceY);
         }
     }
 }
