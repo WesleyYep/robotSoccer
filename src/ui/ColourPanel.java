@@ -65,6 +65,18 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         tabPane.addTab("Ground", groundSamplingPanel);
         tabPane.addTab("Opponent", opponentSamplingPanel);
         
+        tabPane.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				for (int i = 0; i < tabPane.getComponentCount(); i++) {
+					SamplingPanel sp = (SamplingPanel)tabPane.getComponentAt(i);
+					sp.resetButton();
+				}
+			}
+        	
+        });
+        
         zoomLabel = new JLabel();
         zoomLabel.setSize(new Dimension(150, 150));
         zoomLabel.setPreferredSize(new Dimension(150, 150));

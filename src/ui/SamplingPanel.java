@@ -239,6 +239,18 @@ public class SamplingPanel extends JPanel implements ActionListener {
     	VSlider.setLowValue(i);
     }
 
+    /**
+     * <p>Changes the detect button to default value and stops sampling</p>
+     */
+    
+    public void resetButton() {
+    	webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+    	detectButton.setText(DETECTSTRING[0]);
+    	
+    	sampleButton.setText("Start Sample");
+    	isSampling = false;
+    }
+    
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == sampleButton) {
