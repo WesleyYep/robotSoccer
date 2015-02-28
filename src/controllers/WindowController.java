@@ -5,6 +5,7 @@ import java.awt.event.WindowListener;
 
 import ui.WebcamDisplayPanel.ViewState;
 
+
 public class WindowController implements WindowListener {
 	
 	private WebcamController webcamController;

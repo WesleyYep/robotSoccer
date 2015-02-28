@@ -14,6 +14,7 @@ import org.bytedeco.javacv.PS3EyeFrameGrabber;
 
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
+
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
  * <p>{@link ui.WebcamDisplayPanel}</p>
