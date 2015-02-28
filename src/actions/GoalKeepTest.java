@@ -5,7 +5,7 @@ import bot.Robot;
 import strategy.Action;
 import ui.Field;
 
-public class goalKeepTest extends Action{
+public class GoalKeepTest extends Action{
 	private double goalKeepCentreX = 10;
     private double goalKeepCentreY = 100;
     private int goalKeepTopLimit = 70;
@@ -58,7 +58,7 @@ public class goalKeepTest extends Action{
         } else if (distance < 10) { //goalkeeper needs to get back to line
             r.linearVelocity = 0.5;
             r.angularVelocity = difference / (2*distance/100);
-        }  else {
+        } else {
             r.linearVelocity = 1;
             r.angularVelocity = difference / (distance/100);
         }

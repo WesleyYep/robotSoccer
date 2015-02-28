@@ -28,9 +28,9 @@ import strategy.Play;
 import strategy.StrategyListener;
 
 public class SituationPanel extends JPanel implements StrategyListener{
-	
+
 	private List<Situation> listOfSituations;
-	
+
 	private JButton addButton;
 	private JButton removeButton;
 	private JButton addPlayButton = new JButton("Add play");
@@ -50,7 +50,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 	private JScrollPane scrollTableAllPlays;
 
 	private FieldController fieldController;
-	
+
 	private DrawAreaGlassPanel glassPanel;
 
 	private CurrentStrategy currentStrategy;
@@ -59,50 +59,50 @@ public class SituationPanel extends JPanel implements StrategyListener{
 	private Play lastSelectedPlay;
 	private Play lastSelectedAddedPlay;
 
-	
+
 	public SituationPanel(FieldController fieldController, final CurrentStrategy currentStrategy) {
 		this.fieldController = fieldController;
 		this.setLayout(new BorderLayout());
 		this.currentStrategy = currentStrategy;
 		currentStrategy.addListener(this);
-		
+
 		listOfSituations = new ArrayList<Situation>();
 		situationModel = new SituationTableModel(listOfSituations);
 		tableOfSituations = new JTable(situationModel);
-		
+
 		tableOfSituations.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ListSelectionModel rowSM = tableOfSituations.getSelectionModel();
-        rowSM.addListSelectionListener(new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    //Ignore extra messages.
-                    if (e.getValueIsAdjusting()) return;
- 
-                    ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-                    if (lsm.isSelectionEmpty()) {
-                       
-                    } else {
-                    	for (Situation s : listOfSituations) {
-        					s.setAreaActive(false);
-        				}
-                        int selectedRow = lsm.getMinSelectionIndex();
-                        Situation sit = ((Situation) situationModel.getValueAt(selectedRow, 0));
-						sit.setAreaActive(true);
-						playsModel.setListOfPlays(sit.getPlays());
-						playsModel.fireTableDataChanged();
-						lastSelectedSituation = sit;
-                        SituationPanel.this.fieldController.setSelectedArea(sit.getArea());
-                    }
-                }
-       });
-		
+		ListSelectionModel rowSM = tableOfSituations.getSelectionModel();
+		rowSM.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				//Ignore extra messages.
+				if (e.getValueIsAdjusting()) return;
+
+				ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+				if (lsm.isSelectionEmpty()) {
+
+				} else {
+					for (Situation s : listOfSituations) {
+						s.setAreaActive(false);
+					}
+					int selectedRow = lsm.getMinSelectionIndex();
+					Situation sit = ((Situation) situationModel.getValueAt(selectedRow, 0));
+					sit.setAreaActive(true);
+					playsModel.setListOfPlays(sit.getPlays());
+					playsModel.fireTableDataChanged();
+					lastSelectedSituation = sit;
+					SituationPanel.this.fieldController.setSelectedArea(sit.getArea());
+				}
+			}
+		});
+
 		removeButton = new JButton("Remove");
 		addButton = new JButton("Add");
-		
+
 		scrollTable = new JScrollPane(tableOfSituations);
 		scrollTable.setPreferredSize(new Dimension(300, 100));
-		
+
 		JPanel buttonPanel = new JPanel();
-		
+
 		buttonPanel.setLayout(new FlowLayout());
 		buttonPanel.add(addButton);
 		buttonPanel.add(removeButton);
@@ -164,7 +164,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(scrollTable, BorderLayout.CENTER);
 		this.add(playsPanel, BorderLayout.SOUTH);
-		
+
 		addButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -172,30 +172,30 @@ public class SituationPanel extends JPanel implements StrategyListener{
 				SituationPanel.this.fieldController.bringComponentToTheTop(glassPanel);
 				glassPanel.setVisible(true);
 			}
-			
+
 		});
-		
-		
+
+
 		removeButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int selectedRow = tableOfSituations.getSelectedRow();
-				
+
 				if (listOfSituations.size() > 0 && selectedRow >= 0  && selectedRow < listOfSituations.size()) {
-					
+
 					Situation removeSituation= ((Situation)situationModel.getValueAt(selectedRow, 0));
-					
+
 					listOfSituations.remove(removeSituation);
-					
+
 					SituationPanel.this.fieldController.removeArea(removeSituation.getArea());
-					
+
 					SituationPanel.this.fieldController.repaintField();
 					situationModel.fireTableDataChanged();
 					currentStrategy.setSituations(listOfSituations);
 				}
 			}
-			
+
 		});
 
 		addPlayButton.addActionListener(new ActionListener() {
@@ -246,10 +246,10 @@ public class SituationPanel extends JPanel implements StrategyListener{
 			}
 		});
 	}
-	
-	
+
+
 	public void addSituations(Rectangle r) {
-				
+
 		SituationArea newArea = new SituationArea((int)r.getWidth(),(int)r.getHeight());
 		newArea.addAreaListener(SituationPanel.this.fieldController);
 		Situation newSituation = new Situation(newArea, "new situation " + (listOfSituations.size()+1));
@@ -257,20 +257,20 @@ public class SituationPanel extends JPanel implements StrategyListener{
 
 		listOfSituations.add(newSituation);
 		SituationPanel.this.fieldController.addArea(newArea);
-		
+
 		situationModel.fireTableDataChanged();
 		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
-		
+
 		newArea.setBounds((int)r.getX(), (int)r.getY(),newArea.getWidth(), newArea.getHeight());
-		
+
 		fieldController.setSelectedArea(newArea);
 		currentStrategy.setSituations(listOfSituations);
 	}
-	
+
 	public void setGlassPanel(DrawAreaGlassPanel panel) {
 		glassPanel = panel;
 	}
-	
+
 	public void updateSituationTable () {
 		situationModel.fireTableDataChanged();
 		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
@@ -294,12 +294,12 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		allPlaysModel.fireTableDataChanged();
 		listOfSituations = currentStrategy.getSituations();
 		situationModel.setListOfSituations(listOfSituations);
-				
+
 		situationModel.fireTableDataChanged();
 		System.out.println(listOfSituations.get(0).getPlays().size());
 		playsModel.setListOfPlays(listOfSituations.get(0).getPlays());
 		//add anything else here?
-		
+
 		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
 		((JTabbedPane)this.getParent()).setSelectedComponent(this);
 	}

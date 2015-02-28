@@ -18,7 +18,7 @@ public abstract class Path {
     protected int endPointY;
     protected Robot robot;
 
-    public abstract boolean hasReachedTarget();
+	public abstract boolean hasReachedTarget();
 
     public abstract void setPoints();
 
@@ -45,6 +45,5 @@ public abstract class Path {
     protected double squared (double x) {
         return x * x;
     }
-
 
 }

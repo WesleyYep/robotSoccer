@@ -110,8 +110,6 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
                 robotSizeLabel.setText(robotSizeSlider.getValue() + "");
             }
             
-            
-            
         });
 
         ballSizeSlider.addChangeListener(new ChangeListener() {

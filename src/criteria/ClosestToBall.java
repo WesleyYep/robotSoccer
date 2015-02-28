@@ -1,16 +1,21 @@
 package criteria;
 
 import bot.Robot;
+import bot.Robots;
 import strategy.Criteria;
 
 /**
  * Created by Wesley on 21/01/2015.
  */
-public class closestToBall extends Criteria{
+public class ClosestToBall extends Criteria {
     @Override
     public String getName() {
         return "Closest to Ball";
     }
+
+    /**
+     * <p>Checks if the robot is the closest to the ball</p>
+     */
 
     @Override
     public boolean isMet() {
@@ -19,7 +24,7 @@ public class closestToBall extends Criteria{
         double y = r.getYPosition();
         double distance = Math.sqrt(squared(x-ballX) + squared(y-ballY));
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < Robots.BOTTEAMMEMBERCOUNT; i++) {
             if (i == index) {
                 continue;
             } else {

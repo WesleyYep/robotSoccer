@@ -3,7 +3,7 @@ package actions;
 import bot.Robot;
 import strategy.Action;
 
-public class wait extends Action{
+public class Wait extends Action {
 
 	@Override
 	public String getName() {

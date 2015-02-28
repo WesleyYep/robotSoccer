@@ -7,7 +7,7 @@ import strategy.Action;
 /**
  * Created by Wesley on 21/01/2015.
  */
-public class chaseBall2 extends Action{
+public class ChaseBall2 extends Action{
     @Override
     public String getName() {
         return "Chase Ball (smooth)";

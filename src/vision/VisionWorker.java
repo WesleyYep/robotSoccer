@@ -10,12 +10,9 @@ import data.Coordinate;
 import data.VisionData;
 import ui.ColourPanel;
 import ui.SamplingPanel;
-
 import javax.swing.*;
-
 import org.bytedeco.javacpp.opencv_core.CvScalar;
 import org.bytedeco.javacpp.opencv_core.IplImage;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -381,28 +378,24 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     	
         return (y > teamMin[0] && y < teamMax[0] &&
                 u > teamMin[1] && u < teamMax[1] &&
-                v > teamMin[2] && v < teamMax[2]); 
-         /*
-    	return (LookupTable.YTable[y] == LookupTable.TEAM_COLOUR &&
-    			LookupTable.UTable[u] == LookupTable.TEAM_COLOUR &&
-    			LookupTable.VTable[v] == LookupTable.TEAM_COLOUR); */
-    	
-    }
+                v > teamMin[2] && v < teamMax[2]);
 
-    private boolean isGreen(int y, int u, int v) {
-    	
-    	
-        return (y > greenMin[0] && y < greenMax[0] &&
-                u > greenMin[1] && u < greenMax[1] &&
-                v > greenMin[2] && v < greenMax[2]); 
-                
-    	
-        /*
+	}
+
+	private boolean isGreen(int y, int u, int v) {
+
+
+		return (y > greenMin[0] && y < greenMax[0] &&
+				u > greenMin[1] && u < greenMax[1] &&
+				v > greenMin[2] && v < greenMax[2]); 
+
+
+		/*
     	return (LookupTable.YTable[y] == LookupTable.GREEN_COLOUR &&
     			LookupTable.UTable[u] == LookupTable.GREEN_COLOUR &&
     			LookupTable.VTable[v] == LookupTable.GREEN_COLOUR);  */
-    	
-    }
+
+	}
 
 
 }

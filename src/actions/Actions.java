@@ -1,5 +1,8 @@
 package actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import strategy.Action;
 
 /**
@@ -7,10 +10,41 @@ import strategy.Action;
  */
 public class Actions {
 
-    private static Action[] actions = new Action[] { null, new chaseBall(), new chaseBall2(), new basicGoalKeep(), new wait(),
-            new TurnToFaceBall(), new TurnToFaceBall2(), new goalKeepTest(), new strikerTest() };
+	// Contains all the actions in an array.
+    private static Action[] actions = new Action[] {
+    	null,
+    	new ChaseBall(),
+    	new ChaseBall2(),
+    	new BasicGoalKeep(),
+    	new Wait(),
+        new TurnToFaceBall(),
+        new TurnToFaceBall2(),
+        new GoalKeepTest()
+    	};
 
-
+    /*
+     * Suggestion:
+     * private static List<Action> actions = new ArrayList<Action>() {{
+     * 		add(new ChaseBall());
+     * 		add(new ChaseBall2());
+     * 		add(new BasicGoalKeep());
+     * 		add(new Wait());
+     * 		add(new TurnToFaceBall());
+     * 		add(new TurnToFaceBall2());
+     * 		add(new GoalKeepTest());
+     * }};
+     * 
+     * public Action getAction(Class<? extends Action> className) {
+     * 		for (Action a : actions) {
+     * 			if (a.getClass() == className) {
+     * 				return a;
+     * 			}
+     * 		}
+     * 		return null;
+     * }
+     * 
+     */
+    
     public Action getAction(int index) {
         return actions[index];
     }

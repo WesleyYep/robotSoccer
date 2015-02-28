@@ -25,6 +25,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/opencv-windows-x86.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/opencv.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cleyemulticam.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

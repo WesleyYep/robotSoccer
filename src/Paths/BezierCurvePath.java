@@ -5,7 +5,7 @@ import bot.Robot;
 /**
  * Created by Wesley on 27/02/2015.
  */
-public class bezierCurvePath extends Path {
+public class BezierCurvePath extends Path {
     //control points
     private int P0X;
     private int P1X;
@@ -17,7 +17,7 @@ public class bezierCurvePath extends Path {
     private int P3Y;
     private double numPoints = 200;
 
-    public bezierCurvePath(Robot r, int startX, int startY) {
+    public BezierCurvePath(Robot r, int startX, int startY) {
         startPointX = startX;
         startPointY = startY;
         endPointX = startPointX + 150;

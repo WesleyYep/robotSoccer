@@ -1,14 +1,14 @@
 package actions;
 
-import Paths.bezierCurvePath;
-import bot.Robot;
 import strategy.Action;
 import ui.RobotSoccerMain;
+import Paths.BezierCurvePath;
+import bot.Robot;
 
 /**
  * Created by Wesley on 27/02/2015.
  */
-public class strikerTest extends Action {
+public class StrikerTest extends Action {
     @Override
     public String getName() {
         return "Striker test1";
@@ -20,7 +20,7 @@ public class strikerTest extends Action {
 
         if (Math.abs(r.getTheta()) < 10 && r.getYPosition() > 100) { //is robot facing horizontally towards other side
             if (path == null) {
-                path = new bezierCurvePath(r, (int)r.getXPosition(), (int)r.getYPosition());
+                path = new BezierCurvePath(r, (int)r.getXPosition(), (int)r.getYPosition());
             }
         }
 
