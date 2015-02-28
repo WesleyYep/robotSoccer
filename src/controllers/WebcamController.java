@@ -111,17 +111,18 @@ public class WebcamController {
 	
     public BufferedImage getImageFromWebcam() {
     	if (img != null) {
-    		return img.getBufferedImage();
+  //          return getBlurredImage(img).getBufferedImage();
+          return img.getBufferedImage();
     	}
     	else {
     		return null;
     	}
     }
 
-//    private IplImage getBlurredImage(IplImage originalImage) {
-//        cvSmooth(originalImage, originalImage, CV_GAUSSIAN, 5, 0, 0, 0);
-//        return originalImage;
-//    }
+    private IplImage getBlurredImage(IplImage originalImage) {
+        cvSmooth(originalImage, originalImage, CV_GAUSSIAN, 5, 0, 0, 0);
+        return originalImage;
+    }
     
     public WebcamDisplayPanel getWebcamDisplayPanel() {
     	return webcamDisplayPanel;
@@ -160,7 +161,8 @@ public class WebcamController {
                     //Show video frame in canvas
                  //   IplImage img2 = IplIm
                  //   cvCvtColor(img, img, CV_YUV2RGB_I420);
-                    webcamDisplayPanel.update(img);
+                  webcamDisplayPanel.update(img);
+//                    webcamDisplayPanel.update(getBlurredImage(img));
 
                 }
             }

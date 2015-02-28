@@ -355,7 +355,14 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         testColourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visionWorker.execute();
+                if (visionWorker.isTestingColor()) {
+                    visionWorker.cancel(true);
+                    visionWorker.setCancelled();
+                } else {
+                    visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
+                    visionWorker.addListener(fieldController);
+                    visionWorker.execute();
+                }
             }
         });
     }

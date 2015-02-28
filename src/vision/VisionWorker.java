@@ -35,6 +35,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     private int[] teamMax = new int[3];
     private int[] greenMin = new int[3];
     private int[] greenMax = new int[3];
+    private boolean isTestingColour = false;
     private List<VisionListener> listeners = new ArrayList<VisionListener>();
     private List<Coordinate> alreadyProcessed = new ArrayList<Coordinate>();
 
@@ -46,6 +47,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
 
     @Override
     protected Void doInBackground() throws Exception {
+        isTestingColour = true;
         SamplingPanel ballSP = colourPanel.ballSamplingPanel;
         SamplingPanel teamSp = colourPanel.teamSamplingPanel;
         SamplingPanel greenSp = colourPanel.greenSamplingPanel;
@@ -62,13 +64,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             BufferedImage image = webcamController.getImageFromWebcam();
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
+            int numberOfGroups = 0;
 
-            boolean previous = false;
-            int rowWidth = 0;
-            int highestRowWidth = 0;
-            int ballX = 0;
-            int ballY = 0;
-            
             int robotMinSize = colourPanel.getRobotSizeMinimum();
             int ballMinSize = colourPanel.getBallSizeMinimum();
             int suitableLength = colourPanel.getRobotDimension(); //change this if it doesn't work
@@ -167,17 +164,24 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                         if (group.size() < robotMinSize) {
                             //            System.out.println("group was too small");
                         } else {
+                            numberOfGroups++;
                             //identify robot
                             //first get center
-                            int N = group.size();
-                            int xSum = 0;
-                            int ySum = 0;
+                            double N = group.size();
+                            double xSum = 0;
+                            double ySum = 0;
+                            double xySum = 0;
+                            double xxSum = 0;
+                            double yySum = 0;
 
                             for (Coordinate c: group) {
                                 xSum += c.x;
                                 ySum += c.y;
+                                xxSum += c.x * c.x;
+                                xySum += c.x * c.y;
+                                yySum += c.y * c.y;
                             }
-                            Coordinate centre = new Coordinate(xSum/N, ySum/N);
+                            Coordinate centre = new Coordinate((int)(xSum/N), (int)(ySum/N));
 
                             //now get variance
                             int xVarSum = 0;
@@ -203,8 +207,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                             if (topLeftQuadrant > topRightQuadrant) {
                                 theta = Math.PI - theta;
                             }
-                     //       System.out.println(Math.toDegrees(theta));
-
+                            //  System.out.println("theta: " + Math.toDegrees(theta));
                             boolean greenQuadrants[] = new boolean[4];
                             int robotNum = 0;
 
@@ -248,6 +251,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                                 theta = theta - Math.PI;
                             } else if (greenQuadrants[3]) {
                                 robotNum = 2;
+                            } else {
+                                System.out.println("could not identify");
                             }
       //                      System.out.println("1st: " + greenQuadrants[0] + ", 2nd: " + greenQuadrants[1] + ", 3rd: " + greenQuadrants[2] + ", 4th: " + greenQuadrants[3]);
       //                      System.out.println(robotNum + (theta > 0 ? " up":" down"));
@@ -259,6 +264,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                     }
                 }
             }
+            System.out.println("number of robot groups: " + numberOfGroups);
+            numberOfGroups = 0;
 
               alreadyProcessed.clear();
               System.out.println("Time: " + (System.currentTimeMillis() - startTime));
@@ -271,7 +278,6 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
         return null;
     }
 
-
     @Override
     public void process(List<VisionData> chunks) {
         for (VisionData v : chunks) {
@@ -279,6 +285,14 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 l.receive(v);
             }
         }
+    }
+
+    public void setCancelled() {
+        isTestingColour = false;
+    }
+
+    public boolean isTestingColor() {
+        return isTestingColour;
     }
 
     public void addListener(VisionListener listener) {
