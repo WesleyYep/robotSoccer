@@ -18,7 +18,8 @@ public class Coordinate {
 	 * @return Co ordinates are equal
 	 */
 
-	public boolean equals(Coordinate other) {
-		return (x == other.x && y == other.y);
-	}
-}
+    @Override
+    public boolean equals(Object other) {
+        Coordinate c = (Coordinate) other;
+        return (x == c.x && y == c.y);
+    }}
