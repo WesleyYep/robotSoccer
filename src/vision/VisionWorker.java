@@ -433,6 +433,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     private int ballMinSize;
     private int suitableLength;
     private Coordinate[] oldRobotPositions = null;
+    private int[] oldRobotOrientations = new int[5];
     private int numberOfGroups = 0;
 
     public VisionWorker(WebcamController wc, ColourPanel colourPanel, VisionController vc) {
@@ -473,10 +474,11 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 for (int k = 0; k < 5; k++) {
                     Coordinate oldRobotPos = oldRobotPositions[k];
                     if (oldRobotPos != null) {
-                        locateRobot(oldRobotPos.x, oldRobotPos.y, image);
+                        locateRobot(oldRobotPos.x, oldRobotPos.y, image, k);
                     }
                 }
-                Coordinate[] oldRobotPositions = null;
+                oldRobotPositions = null;
+
             }
 
             //loop through every 10th row
@@ -547,7 +549,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                      if (numberOfGroups < 5) {
                         oldRobotPositions = new Coordinate[5];
                         if (isTeam(y, u, v) && !alreadyProcessed.contains(new Coordinate(j, i))) {
-                            locateRobot(j, i, image);
+                            locateRobot(j, i, image, -1);
                         }
                      }
                 }
@@ -569,7 +571,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
         return null;
     }
 
-    public void locateRobot(int j, int i, BufferedImage image) {
+    public void locateRobot(int j, int i, BufferedImage image, int oldRobotNum) {
         Queue<Coordinate> queue = new LinkedList<Coordinate>();
         List<Coordinate> group = new ArrayList<Coordinate>();
 
@@ -607,16 +609,10 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             double N = group.size();
             double xSum = 0;
             double ySum = 0;
-            double xySum = 0;
-            double xxSum = 0;
-            double yySum = 0;
 
             for (Coordinate c : group) {
                 xSum += c.x;
                 ySum += c.y;
-                xxSum += c.x * c.x;
-                xySum += c.x * c.y;
-                yySum += c.y * c.y;
             }
             Coordinate centre = new Coordinate((int) (xSum / N), (int) (ySum / N));
 
@@ -647,6 +643,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             //  System.out.println("theta: " + Math.toDegrees(theta));
             boolean greenQuadrants[] = new boolean[4];
             int robotNum = 0;
+            int orientation = 1; //1 for normal, 0 for opposite
 
             for (int t = 0; t < 4; t++) {
                 double testTheta = theta + t * Math.PI / 2 + Math.PI / 4;
@@ -667,6 +664,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 } else if (greenQuadrants[1]) {
                     robotNum = 5;
                     theta = theta - Math.PI;
+                    orientation = 0;
                 } else {
                     robotNum = 1;
                 }
@@ -675,21 +673,33 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                     if (greenQuadrants[3]) {
                         robotNum = 4;
                         theta = theta - Math.PI;
+                        orientation = 0;
                     } else {
                         robotNum = 3;
                         theta = theta - Math.PI;
+                        orientation = 0;
                     }
                 } else {
                     robotNum = 2;
                     theta = theta - Math.PI;
+                    orientation = 0;
                 }
             } else if (greenQuadrants[2]) {
                 robotNum = 1;
                 theta = theta - Math.PI;
+                orientation = 0;
             } else if (greenQuadrants[3]) {
                 robotNum = 2;
             } else {
-                System.out.println("could not identify");
+                if (oldRobotNum >= 0) {
+                    robotNum = oldRobotNum;
+                    if (oldRobotOrientations[oldRobotNum] == 0) {
+                        theta = theta - Math.PI;
+                        orientation = 0;
+                    }
+                } else {
+                    System.out.println("could not identify");
+                }
             }
             //                      System.out.println("1st: " + greenQuadrants[0] + ", 2nd: " + greenQuadrants[1] + ", 3rd: " + greenQuadrants[2] + ", 4th: " + greenQuadrants[3]);
             //                      System.out.println(robotNum + (theta > 0 ? " up":" down"));
@@ -697,6 +707,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             if (robotNum > 0) {
                 publish(new VisionData(new Coordinate(centre.x, centre.y), theta, "robot:" + robotNum));
                 oldRobotPositions[robotNum-1] = new Coordinate(centre.x, centre.y);
+                oldRobotOrientations[robotNum-1] = orientation;
             }
         }
     }
