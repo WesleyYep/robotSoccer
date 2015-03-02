@@ -38,12 +38,12 @@ public class ColorSpace {
 	 * @return Array of size 3. [0] = y, [1] = u, [2] = v
 	 */
 	
-	public static double[] RGBToYUV(double r, double g, double b) {
+	public static double[] RGBToYUV(double r, double g, double b) { //NOTE: DOESN'T DO ANYTHING ATM, change later when we switch to HSV
 		double[] yuv = new double[3];
 		
-		yuv[0] = clip((0.299 * r + 0.587 * g + 0.114 * b));
-		yuv[1] = clip(((-0.169 * r + -0.331 * g + 0.5 * b) + 128));
-		yuv[2] = clip(((0.5 * r + -0.419 * g + -0.081 * b) + 128));
+		yuv[0] = b;//clip((0.299 * r + 0.587 * g + 0.114 * b));
+		yuv[1] = g;//clip(((-0.169 * r + -0.331 * g + 0.5 * b) + 128));
+		yuv[2] = r;//clip(((0.5 * r + -0.419 * g + -0.081 * b) + 128));
 		
 		return yuv;
 	}
@@ -57,12 +57,12 @@ public class ColorSpace {
 	 * @return Array of size 3. [0] = r, [1] = g, [2] = b
 	 */
 	
-	public static double[] YUVToRGB(double y, double u, double v) {
+	public static double[] YUVToRGB(double y, double u, double v) { //NOTE: DOESN'T DO ANYTHING ATM, change later when we switch to HSV
 		double[] rgb = new double[3];
 		
-		rgb[0] = clip((y + 1.4 * (v - 128)));
-		rgb[1] = clip(((y + -0.343 * (u - 128) + -0.711 * (v - 128))));
-		rgb[2] = clip(((y + 1.765 * (u - 128))));
+		rgb[0] = y;//clip((y + 1.4 * (v - 128)));
+		rgb[1] = u;//clip(((y + -0.343 * (u - 128) + -0.711 * (v - 128))));
+		rgb[2] = v;//clip(((y + 1.765 * (u - 128))));
 		
 		return rgb;
 	}

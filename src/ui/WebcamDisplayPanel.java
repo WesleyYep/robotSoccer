@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,8 +24,10 @@ import javax.swing.SwingUtilities;
 
 import org.opencv.core.*;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import utils.ColorSpace;
 import controllers.VisionController;
+import vision.VisionWorker;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -45,7 +48,7 @@ public class WebcamDisplayPanel extends JPanel {
     private boolean isFiltering = false;
     private BufferedImage zoomCursorImg;
     private Cursor zoomCursor;
-    
+
 	public WebcamDisplayPanel() {
 		super();
 		
@@ -105,7 +108,7 @@ public class WebcamDisplayPanel extends JPanel {
 	 * @param webcam
 	 */
 	
-	public void update(final Mat mat) {
+	public void update(Mat mat) {
 
 		if (mat == null) {
 			
@@ -123,10 +126,12 @@ public class WebcamDisplayPanel extends JPanel {
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-           final BufferedImage image = toBufferedImage(mat);
        //     final BufferedImage image = cvToImage(img);
 
-            if (isFiltering) {
+            final BufferedImage image = toBufferedImage(mat);
+
+            if (isFiltering){
+                //old stuff
                 for (int j = 0; j < image.getHeight(); j++) {
                     for (int i = 0; i < image.getWidth(); i++) {
                         Color color = new Color(image.getRGB(i, j));
@@ -138,6 +143,7 @@ public class WebcamDisplayPanel extends JPanel {
                         }
                     }
                 }
+                //
             }
 
             /*

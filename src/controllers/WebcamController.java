@@ -101,9 +101,9 @@ public class WebcamController {
 	 * @return webcam resolution
 	 */
 	
-    public BufferedImage getImageFromWebcam() {
+    public Mat getImageFromWebcam() {
     	if (webcamImageMat != null) {
-          return toBufferedImage(webcamImageMat);
+          return webcamImageMat;
     	}
     	else {
     		return null;
@@ -161,7 +161,7 @@ public class WebcamController {
 
             while (!isCancelled() && grabber.isOpened()) {
                 grabber.read(webcamImageMat);
-                webcamDisplayPanel.update(webcamImageMat);
+             //   webcamDisplayPanel.update(webcamImageMat);
             }
 
 

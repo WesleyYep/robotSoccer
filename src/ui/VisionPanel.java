@@ -42,7 +42,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				webcamImage = webcamController.getImageFromWebcam();
+				webcamImage = webcamController.toBufferedImage(webcamController.getImageFromWebcam());
 				if (webcamImage != null) {
 					if (webcamImage != null) {
 						dialog.setBoardImage(webcamImage);

@@ -85,6 +85,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private JButton openVisionButton;
 	private JButton saveVisionButton;
 	private WindowController windowController;
+    private WebcamDisplayPanel webcamDisplayPanel;
 
 	private JButton runStratButton;
 	private JButton stopStratButton;
@@ -223,7 +224,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
-		WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel();
+		webcamDisplayPanel = new WebcamDisplayPanel();
 		webcamController = new WebcamController(webcamDisplayPanel);
 		colourPanel = new ColourPanel(webcamController);
 		visionController = new VisionController();
@@ -233,7 +234,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
 		cards.add(field, FIELDSTRING);
 		cards.add(webcamDisplayPanel, CAMSTRING);
-		visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
+		visionWorker = new VisionWorker(colourPanel, webcamController, webcamDisplayPanel);
 		visionWorker.addListener(fieldController);
 
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
@@ -355,7 +356,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
                     visionWorker.cancel(true);
                     visionWorker.setCancelled();
                 } else {
-                    visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
+                    visionWorker = new VisionWorker(colourPanel, webcamController, webcamDisplayPanel);
                     visionWorker.addListener(fieldController);
                     visionWorker.execute();
                 }
@@ -404,11 +405,14 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     			} else {
     				//webcamController.connect(webcamURLField.getText());
     			}
-    			
-    		} else {
-    			
+                try {
+                    Thread.sleep(2000);
+                    testColourButton.doClick();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
     			webcamController.disconnect();
-    			
     		}
     	} else if (evt.getSource() == recordButton) {
     		

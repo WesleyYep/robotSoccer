@@ -39,9 +39,9 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
     public SamplingPanel greenSamplingPanel;
     private SamplingPanel[] samplingPanels;
     private JSlider robotSizeSlider = new JSlider(0, 1000, 100);
-    private JSlider ballSizeSlider = new JSlider(0, 1000, 100);
+    private JSlider ballSizeSlider = new JSlider(0, 1000, 10);
     private JLabel robotSizeLabel = new JLabel("100");
-    private JLabel ballSizeLabel = new JLabel("100");
+    private JLabel ballSizeLabel = new JLabel("10");
     private JTabbedPane tabPane = new JTabbedPane();
 
     private JLabel zoomLabel;
