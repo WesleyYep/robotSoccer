@@ -11,6 +11,7 @@ import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -20,10 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.opencv.core.*;
+import org.opencv.core.Mat;
 import utils.ColorSpace;
 import controllers.VisionController;
-import static org.bytedeco.javacpp.opencv_core.*;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -104,9 +105,9 @@ public class WebcamDisplayPanel extends JPanel {
 	 * @param webcam
 	 */
 	
-	public void update(final IplImage img) {
+	public void update(final Mat mat) {
 
-		if (img == null) {
+		if (mat == null) {
 			
 			/* 
 			 * This assumes that you cannot have a connection fail if you're already connected hence you are disconnecting.
@@ -122,7 +123,7 @@ public class WebcamDisplayPanel extends JPanel {
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-           final BufferedImage image = img.getBufferedImage();
+           final BufferedImage image = toBufferedImage(mat);
        //     final BufferedImage image = cvToImage(img);
 
             if (isFiltering) {
@@ -162,6 +163,23 @@ public class WebcamDisplayPanel extends JPanel {
 		// Thread safe call.
 		repaint();
 	}
+
+    public BufferedImage toBufferedImage(Mat matrix) {
+        int type = BufferedImage.TYPE_BYTE_GRAY;
+
+        if ( matrix.channels() > 1 ) {
+            type = BufferedImage.TYPE_3BYTE_BGR;
+        }
+        int bufferSize = matrix.channels()*matrix.cols()*matrix.rows();
+        byte [] b = new byte[bufferSize];
+
+        matrix.get(0, 0, b); // get all the pixels
+        BufferedImage image = new BufferedImage(matrix.cols(), matrix.rows(), type);
+        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
+        System.arraycopy(b, 0, targetPixels, 0, b.length);
+        return image;
+    }
 	
 	@Override
 	protected void paintComponent(Graphics g) {

@@ -402,7 +402,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     			if (defaultWebcamRadioButton.isSelected()) {
     				webcamController.connect();
     			} else {
-    				webcamController.connect(webcamURLField.getText());
+    				//webcamController.connect(webcamURLField.getText());
     			}
     			
     		} else {

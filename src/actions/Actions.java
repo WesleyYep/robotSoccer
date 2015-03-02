@@ -19,7 +19,8 @@ public class Actions {
     	new Wait(),
         new TurnToFaceBall(),
         new TurnToFaceBall2(),
-        new GoalKeepTest()
+        new GoalKeepTest(),
+        new StrikerTest()
     	};
 
     /*

@@ -1,18 +1,16 @@
 package controllers;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.net.MalformedURLException;
 
 import javax.swing.SwingWorker;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.IPCameraFrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
-
+import org.opencv.core.*;
+import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
 
@@ -36,14 +34,19 @@ public class WebcamController {
 	protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
 	protected int width, height;					// the size of the grabbed images (scaled if so specified)
 	protected BufferedImage image;					// image grabbed from webcam (if any)
-	protected opencv_core.IplImage img;
 	private Grabby grabby;							// handles webcam grabbing
-	private FrameGrabber grabber;					// JavaCV
+	//private FrameGrabber grabber;					// JavaCV
+    private VideoCapture grabber;
+    private int cameraNumber = 0;
+    private Mat webcamImageMat;
 
 	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		this.webcamDisplayPanel = webcamDisplayPanel;
-		grabby = new Grabby();
-	}
+        grabber = new VideoCapture(cameraNumber);
+        grabby = new Grabby();
+
+    }
 
 	/**
 	 * <p>Initially tries to connect to PS3 webcam. If not found, connects to usb webcam.</p>
@@ -53,23 +56,7 @@ public class WebcamController {
 	public void connect() {
 		// Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
-//		try {
-//			grabber = new PS3EyeFrameGrabber(0);
-//		} catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
-//			e.printStackTrace();
-//			System.out.println("Could not find PS3 camera, will not try to connect to usb webcam.");
-//			grabber = new OpenCVFrameGrabber(0);
-//		}
-//		
-//		grabby.execute();
-  //      try {
-       //     System.load("C:\\javaProjects\\robotSoccer\\lib\\CLEyeMulticam.dll");
-      //      grabber = new PS3EyeFrameGrabber(0);
-            grabber = new OpenCVFrameGrabber(0);
-//        } catch (FrameGrabber.Exception e) {
-//            System.out.println(e.getMessage());
-//            e.printStackTrace();
-//        }
+
         grabby.execute();
 	}
 
@@ -79,14 +66,14 @@ public class WebcamController {
 	 * @param url
 	 */
 
-	public void connect(String url) {
-		try {
-			grabber = new IPCameraFrameGrabber(url);
-			grabby.execute();
-		} catch (MalformedURLException e) {
-			System.err.println("Could not connect to IP webcam.");
-		}
-	}
+//	public void connect(String url) {
+//		try {
+//			grabber = new IPCameraFrameGrabber(url);
+//			grabby.execute();
+//		} catch (MalformedURLException e) {
+//			System.err.println("Could not connect to IP webcam.");
+//		}
+//	}
 
 	/**
 	 * <p>Disconnect the webcam</p>
@@ -114,9 +101,9 @@ public class WebcamController {
 	 * @return
 	 */
 
-	public IplImage getIplImage() {
-		return img;
-	}
+//	public IplImage getIplImage() {
+//		return img;
+//	}
 
 	/**
 	 * <p>Retrieve the webcam resolution. If the webcam is not running, it will return null.</p>
@@ -124,26 +111,39 @@ public class WebcamController {
 	 */
 	
     public BufferedImage getImageFromWebcam() {
-    	if (img != null) {
-  //          return getBlurredImage(img).getBufferedImage();
-          return img.getBufferedImage();
+    	if (webcamImageMat != null) {
+          return toBufferedImage(webcamImageMat);
     	}
     	else {
     		return null;
     	}
     }
 
-    private IplImage getBlurredImage(IplImage originalImage) {
-        cvSmooth(originalImage, originalImage, CV_GAUSSIAN, 5, 0, 0, 0);
-        return originalImage;
+//    private IplImage getBlurredImage(IplImage originalImage) {
+//        cvSmooth(originalImage, originalImage, CV_GAUSSIAN, 5, 0, 0, 0);
+//        return originalImage;
+//    }
+
+    public BufferedImage toBufferedImage(Mat matrix) {
+        int type = BufferedImage.TYPE_BYTE_GRAY;
+
+        if ( matrix.channels() > 1 ) {
+            type = BufferedImage.TYPE_3BYTE_BGR;
+        }
+        int bufferSize = matrix.channels()*matrix.cols()*matrix.rows();
+        byte [] b = new byte[bufferSize];
+
+        matrix.get(0, 0, b); // get all the pixels
+        BufferedImage image = new BufferedImage(matrix.cols(), matrix.rows(), type);
+        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
+        System.arraycopy(b, 0, targetPixels, 0, b.length);
+        return image;
     }
-
-    //try this
-
-
-	public Dimension getWebcamResolution() {
-		return grabber == null ? null : new Dimension(grabber.getImageWidth(), grabber.getImageHeight());
-	}
+//
+//	public Dimension getWebcamResolution() {
+//		return grabber == null ? null : new Dimension(grabber.getImageWidth(), grabber.getImageHeight());
+//	}
 	
 	/**
 	 * <p>Returns the webcam status. This method returns the webcam display panel status.</p>
@@ -161,29 +161,23 @@ public class WebcamController {
 	 * Handles grabbing an image from the webcam (following JavaCV examples)
 	 * storing it in image, and telling the canvas to repaint itself.
 	 */
-	private class Grabby extends SwingWorker<Void, IplImage> {
+	private class Grabby extends SwingWorker<Void, Void> {
 		protected Void doInBackground() throws Exception {
 
 			System.out.println("Initializing camera");
-			grabber.start();
+            grabber.open(0);
+            webcamImageMat = new Mat();
 
-			while (!isCancelled()) {
-				//insert grabbed video from to IplImage img
-				img = grabber.grab();
+            while (!isCancelled() && grabber.isOpened()) {
+                grabber.read(webcamImageMat);
+                webcamDisplayPanel.update(webcamImageMat);
+            }
 
-				if (img != null) {
-					webcamDisplayPanel.update(img);
-				}
-				
-			}
 
-			// All done; clean up
-			grabber.stop();
-			grabber = null;
-
-			// Notify webcamdisplaypanel.
-			webcamDisplayPanel.update((IplImage)null);
-			return null;
+            // All done; clean up
+            grabber.release();
+            grabber = null;
+            return null;
 		}
 
 	}
