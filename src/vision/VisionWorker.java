@@ -462,6 +462,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
         while (!isCancelled()) try {
             long startTime = System.currentTimeMillis();
             BufferedImage image = webcamController.getImageFromWebcam();
+
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
             numberOfGroups = 0;
@@ -561,7 +562,7 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             numberOfGroups = 0;
 
               alreadyProcessed.clear();
-              System.out.println("Time: " + (System.currentTimeMillis() - startTime));
+            System.out.println("Time: " + (System.currentTimeMillis() - startTime));
 
         } catch (Exception e) {
             System.out.println("wtf");
