@@ -1,21 +1,12 @@
 package controllers;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.net.MalformedURLException;
-
 import javax.swing.SwingWorker;
-
 import org.opencv.core.*;
 import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
-
-import static org.bytedeco.javacpp.opencv_imgproc.CV_GAUSSIAN;
-import static org.bytedeco.javacpp.opencv_imgproc.cvSmooth;
 
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
