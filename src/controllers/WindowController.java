@@ -3,6 +3,9 @@ package controllers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import ui.WebcamDisplayPanel.ViewState;
+
+
 public class WindowController implements WindowListener {
 	
 	private WebcamController webcamController;
@@ -19,7 +22,8 @@ public class WindowController implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		if (webcamController.getImageFromWebcam() != null) {
+		ViewState webcamStatus = webcamController.getWebcamStatus();
+		if (webcamStatus == ViewState.CONNECTED) {
 			webcamController.disconnect();
 		}
 	}

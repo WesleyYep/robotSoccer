@@ -1,27 +1,24 @@
 package controllers;
 
-import static org.bytedeco.javacpp.opencv_core.cvFlip;
-
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.net.MalformedURLException;
-import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.IPCameraFrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
-
+import org.opencv.core.*;
+import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import ui.WebcamDisplayPanel;
+import ui.WebcamDisplayPanel.ViewState;
+
+import static org.bytedeco.javacpp.opencv_imgproc.CV_GAUSSIAN;
+import static org.bytedeco.javacpp.opencv_imgproc.cvSmooth;
 
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
- * <strong>Note:</strong> In this class, uses two methods, Webcam.setDriver and Webcam.resetDriver 
- * which are <strong>not thread-safe</strong>. It changes a volatile field.<p>
  * <p>{@link ui.WebcamDisplayPanel}</p>
  * <p>{@link ui.RobotSoccerMain}</p>
  * @author Chang Kon, Wesley, John
@@ -32,48 +29,34 @@ public class WebcamController {
 
 	private WebcamDisplayPanel webcamDisplayPanel;
 	private final static String IPWEBCAMDEVICENAME = "BLAZE";
-	
+
 	//javaCV stuff
-    protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
-    protected int width, height;					// the size of the grabbed images (scaled if so specified)
-    protected BufferedImage image;					// image grabbed from webcam (if any)
-    protected opencv_core.IplImage img;
-    private Grabby grabby;							// handles webcam grabbing
-    private JLabel imgLabel = new JLabel();
-    private JButton captureBtn = new JButton("Capture");
-    private FrameGrabber grabber;					// JavaCV
-	
+	protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
+	protected int width, height;					// the size of the grabbed images (scaled if so specified)
+	protected BufferedImage image;					// image grabbed from webcam (if any)
+	private Grabby grabby;							// handles webcam grabbing
+	//private FrameGrabber grabber;					// JavaCV
+    private VideoCapture grabber;
+    private int cameraNumber = 0;
+    private Mat webcamImageMat;
+
 	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		this.webcamDisplayPanel = webcamDisplayPanel;
+        grabber = new VideoCapture(cameraNumber);
+        grabby = new Grabby();
 
-        // Repeated attempts following discussion on javacv forum, fall 2013 (might be fixed internally in future versions)
-//        final int MAX_ATTEMPTS = 60;
-//        int attempt = 0;
-//        while (attempt < MAX_ATTEMPTS) {
-//            attempt++;
-//            try {
-//                grabber.start();
-//                break;
-//            }
-//            catch (Exception e) { }
-//        }
-//        if (attempt == MAX_ATTEMPTS) {
-//            System.err.println("Failed after "+attempt+" attempts");
-//            return;
-//        }
+    }
 
-	}
-	
 	/**
-	 * <p>Connects to a default webcam. <strong>Examples:</strong> USB connected or built in.</p>
+	 * <p>Initially tries to connect to PS3 webcam. If not found, connects to usb webcam.</p>
 	 * <p>After connection attempt, update the webcamDisplayPanel.</p>
 	 */
-	
+
 	public void connect() {
-        // Spawn a separate thread to handle grabbing.
+		// Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
-		grabber = new OpenCVFrameGrabber(0);
-        grabby = new Grabby();
+
         grabby.execute();
 	}
 
@@ -82,78 +65,121 @@ public class WebcamController {
 	 * <p>After connection attempt, update the webcamDisplayPanel.</p>
 	 * @param url
 	 */
-	
-	public void connect(String url) {
-		try {
-			grabber = new IPCameraFrameGrabber(url);
-			grabby = new Grabby();
-			grabby.execute();
-		} catch (MalformedURLException e) {
-			System.err.println("Could not connect to IP webcam.");
-		}
-		
-	}
-	
+
+//	public void connect(String url) {
+//		try {
+//			grabber = new IPCameraFrameGrabber(url);
+//			grabby.execute();
+//		} catch (MalformedURLException e) {
+//			System.err.println("Could not connect to IP webcam.");
+//		}
+//	}
+
 	/**
 	 * <p>Disconnect the webcam</p>
 	 */
-	
+
 	public void disconnect() {
-		grabby.cancel(true);
+		if (grabby != null && !grabby.isCancelled()) {
+			grabby.cancel(true);
+		} else {
+			System.err.println("Could not disconnect webcam. Could be not connected in the first place or is already cancelled");
+		}
 	}
+
+	/**
+	 * <p>Returns the current webcam image</p>
+	 * @return image from webcam.
+	 */
+
+	public WebcamDisplayPanel getWebcamDisplayPanel() {
+		return webcamDisplayPanel;
+	}
+
+	/**
+	 * <p>Retrieve the current IplImage from the webcam</p>
+	 * @return
+	 */
+
+//	public IplImage getIplImage() {
+//		return img;
+//	}
+
+	/**
+	 * <p>Retrieve the webcam resolution. If the webcam is not running, it will return null.</p>
+	 * @return webcam resolution
+	 */
 	
     public BufferedImage getImageFromWebcam() {
-    	if (img != null) {
-    		return img.getBufferedImage();
+    	if (webcamImageMat != null) {
+          return toBufferedImage(webcamImageMat);
     	}
     	else {
     		return null;
     	}
     }
-    
-    public WebcamDisplayPanel getWebcamDisplayPanel() {
-    	return webcamDisplayPanel;
-    }
-    
-    public IplImage getIplImage () {
-    	return img;
-    }
 
+//    private IplImage getBlurredImage(IplImage originalImage) {
+//        cvSmooth(originalImage, originalImage, CV_GAUSSIAN, 5, 0, 0, 0);
+//        return originalImage;
+//    }
 
+    public BufferedImage toBufferedImage(Mat matrix) {
+        int type = BufferedImage.TYPE_BYTE_GRAY;
 
-    /**
-     * Handles grabbing an image from the webcam (following JavaCV examples)
-     * storing it in image, and telling the canvas to repaint itself.
-     */
-    private class Grabby extends SwingWorker<Void, IplImage> {
-        protected Void doInBackground() throws Exception {
-        	
-            System.out.println("Initializing camera");
-            grabber.start();
-            
-            while (!isCancelled()) {
-                //insert grabbed video from to IplImage img
-                img = grabber.grab();
-
-                if (img == null) {
-                	cancel(true);
-                }
-                
-                //Flip image horizontally
-               // cvFlip(img, img, 1);
-                //Show video frame in canvas
-                webcamDisplayPanel.update(img);
-            }
-            
-            // All done; clean up
-			grabber.stop();
-            grabber = null;
-            
-	        // Notify webcamdisplaypanel.
-	        webcamDisplayPanel.update((IplImage)null);
-            return null;
+        if ( matrix.channels() > 1 ) {
+            type = BufferedImage.TYPE_3BYTE_BGR;
         }
+        int bufferSize = matrix.channels()*matrix.cols()*matrix.rows();
+        byte [] b = new byte[bufferSize];
 
+        matrix.get(0, 0, b); // get all the pixels
+        BufferedImage image = new BufferedImage(matrix.cols(), matrix.rows(), type);
+        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
+        System.arraycopy(b, 0, targetPixels, 0, b.length);
+        return image;
     }
+//
+//	public Dimension getWebcamResolution() {
+//		return grabber == null ? null : new Dimension(grabber.getImageWidth(), grabber.getImageHeight());
+//	}
+	
+	/**
+	 * <p>Returns the webcam status. This method returns the webcam display panel status.</p>
+	 * <p><strong>UNCONNECTED</strong></p>
+	 * <p><strong>CONNECTED</strong></p>
+	 * <p><strong>ERROR</strong></p>
+	 * @return Webcam Status
+	 */
+	
+	public ViewState getWebcamStatus() {
+		return webcamDisplayPanel.getViewState();
+	}
+	
+	/**
+	 * Handles grabbing an image from the webcam (following JavaCV examples)
+	 * storing it in image, and telling the canvas to repaint itself.
+	 */
+	private class Grabby extends SwingWorker<Void, Void> {
+		protected Void doInBackground() throws Exception {
+
+			System.out.println("Initializing camera");
+            grabber.open(0);
+            webcamImageMat = new Mat();
+
+            while (!isCancelled() && grabber.isOpened()) {
+                grabber.read(webcamImageMat);
+                webcamDisplayPanel.update(webcamImageMat);
+            }
+
+
+            // All done; clean up
+            grabber.release();
+            grabber = null;
+            return null;
+		}
+
+	}
 
 }

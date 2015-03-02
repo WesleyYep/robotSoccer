@@ -5,21 +5,17 @@ import ui.Field;
 import Paths.StraightLinePath;
 import bot.Robot;
 
-public class basicGoalKeep extends Action{
+public class BasicGoalKeep extends Action {
 	
 	private boolean onGoalKeepLine = false;
 	private boolean keepRotate = false;
 	private boolean goStraight = false;
 	private boolean inPosition = false;
 	
-	
 	private double goalKeepLine = 10;
-	
 	private double error = 3;
-	@Override
-    public String getName() {
-        return "Basic Goal Keep";
-    }
+
+   
 
     @Override
     public void execute() {
@@ -67,10 +63,10 @@ public class basicGoalKeep extends Action{
          }
         
         
-        
+     
         
         if (onGoalKeepLine == false) {
-        	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(),(int)goalKeepLine, Field.OUTER_BOUNDARY_HEIGHT/2);
+        	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(), (int)goalKeepLine, Field.OUTER_BOUNDARY_HEIGHT/2);
         	path.setPoints();
         	
         	double theta = Math.atan2(Field.OUTER_BOUNDARY_HEIGHT/2-r.getYPosition(), goalKeepLine - r.getXPosition());        	
@@ -91,7 +87,6 @@ public class basicGoalKeep extends Action{
         		else {
         			difference = diff2;
         		}
-        		System.out.println(diff1 + " " + diff2);
         	}
         	else if ( Math.toDegrees(theta*-1) <= 0 && r.getTheta() > 0) {
         		diff1 = -1*Math.abs(Math.toDegrees(theta*-1)) + r.getTheta();
@@ -108,6 +103,8 @@ public class basicGoalKeep extends Action{
         	else {
         		difference = Math.toDegrees(theta*-1) - r.getTheta();
         	}
+        	
+        	
         	
         	if ( Math.abs(difference) > 135) {
         		r.angularVelocity = 2*Math.PI;
@@ -127,17 +124,6 @@ public class basicGoalKeep extends Action{
         	else if (Math.abs(difference) > 1) {
         		r.angularVelocity = Math.abs(difference)/50;
         	}
-
-        	if (difference > 0 ) {
-        		r.angularVelocity *=1;
-       
-        	}
-        	else if (difference < 0) {
-        		r.angularVelocity *=-1;
-        	}
-        	else {
-        		r.angularVelocity = 0;
-        	}
         	
         	//System.out.println(difference + " " +  r.getTheta() + " "  + Math.toDegrees(theta*-1) + " " + r.getYPosition());
         	//System.out.println(difference + " " + (r.getTheta() - Math.toDegrees(theta*-1)));
@@ -155,8 +141,13 @@ public class basicGoalKeep extends Action{
         	}
       
         }
-
-        
-
     }
+
+
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

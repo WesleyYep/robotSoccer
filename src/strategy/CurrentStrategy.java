@@ -1,21 +1,23 @@
 package strategy;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JFileChooser;
+
+import ui.SituationArea;
 import actions.Actions;
 import config.ConfigFile;
 import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
-import ui.RobotSoccerMain;
-import ui.SituationArea;
-import ui.SituationPanel;
-
-import javax.swing.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Wesley on 23/01/2015.

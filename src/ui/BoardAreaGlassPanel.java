@@ -77,23 +77,18 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	public void mousePressed(MouseEvent e) {
 		if (isTopLeft(e)) {
 			pointMoving = TOP_LEFT;
-		}
-		else if (isTopRight(e)) {
+		} else if (isTopRight(e)) {
 			pointMoving = TOP_RIGHT;
-		}
-		else if (isBotRight(e)) {
+		} else if (isBotRight(e)) {
 			pointMoving = BOT_RIGHT;
 			
-		}
-		else if (isBotLeft(e)) {
+		} else if (isBotLeft(e)) {
 			pointMoving = BOT_LEFT;
-		}
-		else {
+		} else {
 			pointMoving = NONE;
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				vc.rotatePointAntiClockwise();
-			}
-			else if (e.getButton() == MouseEvent.BUTTON3) {
+			} else if (e.getButton() == MouseEvent.BUTTON3) {
 				vc.rotatePointClockwise();
 			}
 			vc.createTransformMatrix();
@@ -112,14 +107,11 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	public void mouseDragged(MouseEvent e) {
 		if (pointMoving == TOP_LEFT) {
 			vc.setTopLeft(e.getPoint());
-		}
-		else if (pointMoving == TOP_RIGHT) {
+		} else if (pointMoving == TOP_RIGHT) {
 			vc.setTopRight(e.getPoint());
-		}
-		else if (pointMoving == BOT_LEFT) {
+		} else if (pointMoving == BOT_LEFT) {
 			vc.setBottomLeft(e.getPoint());
-		}
-		else if (pointMoving == BOT_RIGHT) {
+		} else if (pointMoving == BOT_RIGHT) {
 			vc.setBottomRight(e.getPoint());
 		}
 		this.repaint();
@@ -130,8 +122,7 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	public void mouseMoved(MouseEvent e) {
 		if (isTopLeft(e) || isTopRight(e) || isBotLeft(e) || isBotRight(e)) {
 			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-		}
-		else {
+		} else {
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		}
 	}

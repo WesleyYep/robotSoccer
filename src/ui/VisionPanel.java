@@ -76,8 +76,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		
 		if (parent.getSelectedComponent().equals(this)) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}

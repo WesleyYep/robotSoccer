@@ -7,7 +7,8 @@ import strategy.Action;
 /**
  * Created by Wesley on 21/01/2015.
  */
-public class chaseBall extends Action{
+public class ChaseBall extends Action {
+	
     @Override
     public String getName() {
         return "Chase Ball";
@@ -25,8 +26,6 @@ public class chaseBall extends Action{
         //Should try to use the path here, rather than just hard coding some velocities
 
         double ballTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
- //       System.out.println("ballTheta: " + ballTheta);
- //       System.out.println("robot ballTheta: " + Math.toRadians(r.getTheta()));
         double difference = ballTheta - Math.toRadians(r.getTheta());
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
@@ -46,8 +45,6 @@ public class chaseBall extends Action{
             r.angularVelocity = 0;
         }
 
-
-    //    System.out.println(System.currentTimeMillis());
 
     }
 

@@ -8,6 +8,6 @@ import data.VisionData;
  */
 public interface VisionListener {
 
-    public void receive(VisionData data);
+	public void receive(VisionData data);
 
 }
