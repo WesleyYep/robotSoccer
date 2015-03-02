@@ -309,6 +309,20 @@ public class SamplingPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	
+	public void deactiviate() {
+		if (isSampling) {
+			sampleButton.setText("Start Sample");
+            isSampling = false;
+		}
+		
+		if (!detectButton.getText().equals(DETECTSTRING[0])) {
+			detectButton.setText(DETECTSTRING[0]);
+			webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+			webcamController.getWebcamDisplayPanel().repaint();
+        } 	
+	}
+	
 	/**
 	 * <p>Filters the text inserted into textfield for YUV values.</p>
 	 * @author Chang Kon, Wesley, John

@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.opencv.core.*;
-import org.opencv.core.Mat;
 import utils.ColorSpace;
 import controllers.VisionController;
 
