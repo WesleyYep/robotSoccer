@@ -58,5 +58,13 @@ public class Image {
 	public static IplImage BufferedImageToIplImage(BufferedImage input) {
 		return IplImage.createFrom(input);
 	}
-	
+
+
+    public static double euclideanDistance(org.opencv.core.Point p1, org.opencv.core.Point p2) {
+        return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));
+    }
+
+    public static double angleBetweenTwoPoints(org.opencv.core.Point p1, org.opencv.core.Point p2) {
+        return Math.toDegrees(Math.atan2(p2.y - p1.y, p2.x - p1.x));
+    }
 }

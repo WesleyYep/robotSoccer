@@ -40,8 +40,11 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
     private SamplingPanel[] samplingPanels;
     private JSlider robotSizeSlider = new JSlider(0, 1000, 100);
     private JSlider ballSizeSlider = new JSlider(0, 1000, 10);
+    private JSlider greenSizeSlider = new JSlider(0, 1000, 50);
     private JLabel robotSizeLabel = new JLabel("100");
     private JLabel ballSizeLabel = new JLabel("10");
+    private JLabel greenSizeLabel = new JLabel("50");
+
     private JTabbedPane tabPane = new JTabbedPane();
 
     private JLabel zoomLabel;
@@ -93,6 +96,9 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         add(new JLabel("Robot Pixel Minimum"), "wrap");
         add(robotSizeSlider, "wrap");
         add(robotSizeLabel, "wrap");
+        add(new JLabel("Green Pixel Minimum"), "wrap");
+        add(greenSizeSlider, "wrap");
+        add(greenSizeLabel, "wrap");
         add(new JLabel("Ball Pixel Minimum"), "wrap");
         add(ballSizeSlider, "wrap");
         add(ballSizeLabel, "wrap");
@@ -118,6 +124,11 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
             }
         });
 
+        greenSizeSlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                greenSizeLabel.setText(greenSizeSlider.getValue() + "");
+            }
+        });
 
         setRobotDimensionButton.addActionListener(new ActionListener() {
             @Override
@@ -151,6 +162,22 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 
     public int getBallSizeMinimum() {
         return ballSizeSlider.getValue();
+    }
+
+    public int getGreenSizeMinimum() {
+        return greenSizeSlider.getValue();
+    }
+
+    public void setRobotSizeMinimum(int value) {
+        robotSizeSlider.setValue(value);
+    }
+
+    public void setGreenSizeMinimum(int value) {
+        greenSizeSlider.setValue(value);
+    }
+
+    public void setBallSizeMinimum(int value) {
+        ballSizeSlider.setValue(value);
     }
 
     public void takeSample(double xPos, double yPos) {
