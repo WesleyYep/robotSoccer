@@ -100,6 +100,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 	private final static String[] WEBCAMCONNECTIONTYPE = {"Default", "IP"};
 
+
 	public RobotSoccerMain() throws MalformedURLException {
 		// Auto wrap after 12 columns.
 		// https://www.youtube.com/watch?v=U6xJfP7-HCc

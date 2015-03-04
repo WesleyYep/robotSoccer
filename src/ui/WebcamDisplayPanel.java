@@ -7,27 +7,20 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import org.opencv.core.*;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import utils.ColorSpace;
 import controllers.VisionController;
-import vision.VisionWorker;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>

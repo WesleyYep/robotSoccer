@@ -21,8 +21,8 @@ import java.util.List;
 import data.RobotData;
 
 /**
-* Created by Wesley on 6/02/2015.
-*/
+ * Created by Wesley on 6/02/2015.
+ */
 public class VisionWorker extends SwingWorker<Void, VisionData> {
     private Scalar ballMin;
     private Scalar ballMax;
