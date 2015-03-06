@@ -85,6 +85,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private JButton openVisionButton;
 	private JButton saveVisionButton;
 	private WindowController windowController;
+    private WebcamDisplayPanel webcamDisplayPanel;
 
 	private JButton runStratButton;
 	private JButton stopStratButton;
@@ -98,6 +99,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private final static String[] VIDEOCAPTURE = {"Record", "Stop"};
 
 	private final static String[] WEBCAMCONNECTIONTYPE = {"Default", "IP"};
+
 
 	public RobotSoccerMain() throws MalformedURLException {
 		// Auto wrap after 12 columns.
@@ -223,7 +225,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
-		WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel();
+		webcamDisplayPanel = new WebcamDisplayPanel();
 		webcamController = new WebcamController(webcamDisplayPanel);
 		colourPanel = new ColourPanel(webcamController);
 		visionController = new VisionController();
@@ -233,7 +235,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
 		cards.add(field, FIELDSTRING);
 		cards.add(webcamDisplayPanel, CAMSTRING);
-		visionWorker = new VisionWorker(webcamController, colourPanel, visionController);
+		visionWorker = new VisionWorker(colourPanel, webcamController, webcamDisplayPanel);
 		visionWorker.addListener(fieldController);
 
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
@@ -342,25 +344,91 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 				gameTick.runStrategy(false);
 				stratStatusLbl.setText("Stopped");
 			}
+        });
+        
+        //setting up configuration for the program
+        ConfigFile configFile = ConfigFile.getInstance();
+        configFile.createConfigFile();
 
-		});
+        testColourButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (visionWorker.isTestingColor()) {
+                    visionWorker.cancel(true);
+                    visionWorker.setCancelled();
+                } else {
+                    visionWorker = new VisionWorker(colourPanel, webcamController, webcamDisplayPanel);
+                    visionWorker.addListener(fieldController);
+                    visionWorker.execute();
+                }
+            }
+        });
+    }
+    
+    /**
+     * Invoked when the user presses the start button.
+     */
+    public void actionPerformed(ActionEvent evt) {
+        //Instances of javax.swing.SwingWorker are not reusuable, so
+        //we create new instances as needed.
+    	if (evt.getSource() == startButton) {
+    		if (startButton.getText() == "Start") {
+    	    	
+    	    	int portNumber;
+    	    	try {
+    	    		portNumber = Integer.parseInt(portField.getText());
+    	    	}	catch (NumberFormatException e) {
+    	    		portNumber = DEFAULT_PORT_NUMBER;
+    	    		taskOutput.append("\nIncorrect character, will use default port: 31000\n");
+    	    	}
+    	    	
 
-		//setting up configuration for the program
-		ConfigFile configFile = ConfigFile.getInstance();
-		configFile.createConfigFile();
+    	    	serverSocket = new NetworkSocket(portNumber, taskOutput, startButton);
+    	    	System.out.println("created new socket");
+    	    	serverSocket.execute();
+    	    	serverSocket.addReceiverListener(fieldController);
+    	    	serverSocket.addSenderListener(gameTick);
+    	    	serverSocket.addSenderListener(testComPanel);
+    		} else {
+        		//tell the serverSocket to begin the closing procedure;
+        		serverSocket.close();
+    		}
+    	} else if (evt.getSource() == defaultWebcamRadioButton) {
+    		webcamURLField.setEditable(false);
+    	} else if (evt.getSource() == IPWebcamRadioButton) {
+    		webcamURLField.setEditable(true);
+    	} else if (evt.getSource() == connectionButton) {
+    		if (connectionButton.getText().equals(CONNECTION[0])) {
 
-		testColourButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				visionWorker.execute();
-			}
-		});
-	}
+    			// Only one of the radio buttons can be selected at a time
+    			if (defaultWebcamRadioButton.isSelected()) {
+    				webcamController.connect();
+    			} else {
+    				//webcamController.connect(webcamURLField.getText());
+    			}
+                try {
+                    Thread.sleep(2000);
+                    testColourButton.doClick();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+    			webcamController.disconnect();
+    		}
+    	} else if (evt.getSource() == recordButton) {
+    		
+    		if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
+    			recordButton.setText(VIDEOCAPTURE[1]);
+    		} else {
+    			recordButton.setText(VIDEOCAPTURE[0]);
+    		}
+    	}
+    }
 
-	public void changeCard(String cardName) {
-		CardLayout layout = (CardLayout)cards.getLayout();
-		layout.show(cards, cardName);
-	}
+    public void changeCard(String cardName) {
+    	CardLayout layout = (CardLayout)cards.getLayout();
+    	layout.show(cards, cardName);
+    }
 
 	public void setUpGame() {
 		java.util.Timer timer = new java.util.Timer();
@@ -369,63 +437,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 	public WindowController getWindowController() {
 		return windowController;
-	}
-
-	/**
-	 * Invoked when the user presses the start button.
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		//Instances of javax.swing.SwingWorker are not reusuable, so
-		//we create new instances as needed.
-		if (evt.getSource() == startButton) {
-			if (startButton.getText() == "Start") {
-
-				int portNumber;
-				try {
-					portNumber = Integer.parseInt(portField.getText());
-				}	catch (NumberFormatException e) {
-					portNumber = DEFAULT_PORT_NUMBER;
-					taskOutput.append("\nIncorrect character, will use default port: 31000\n");
-				}
-
-
-				serverSocket = new NetworkSocket(portNumber, taskOutput, startButton);
-				System.out.println("created new socket");
-				serverSocket.execute();
-				serverSocket.addReceiverListener(fieldController);
-				serverSocket.addSenderListener(gameTick);
-				serverSocket.addSenderListener(testComPanel);
-			} else {
-				//tell the serverSocket to begin the closing procedure;
-				serverSocket.close();
-			}
-		} else if (evt.getSource() == defaultWebcamRadioButton) {
-			webcamURLField.setEditable(false);
-		} else if (evt.getSource() == IPWebcamRadioButton) {
-			webcamURLField.setEditable(true);
-		} else if (evt.getSource() == connectionButton) {
-			if (connectionButton.getText().equals(CONNECTION[0])) {
-
-				// Only one of the radio buttons can be selected at a time
-				if (defaultWebcamRadioButton.isSelected()) {
-					webcamController.connect();
-				} else {
-					webcamController.connect(webcamURLField.getText());
-				}
-
-			} else {
-
-				webcamController.disconnect();
-
-			}
-		} else if (evt.getSource() == recordButton) {
-
-			if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
-				recordButton.setText(VIDEOCAPTURE[1]);
-			} else {
-				recordButton.setText(VIDEOCAPTURE[0]);
-			}
-		}
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import utils.Image;
 import net.miginfocom.swing.MigLayout;
 import controllers.VisionController;
 import controllers.WebcamController;
@@ -42,7 +43,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				webcamImage = webcamController.getImageFromWebcam();
+				webcamImage = Image.toBufferedImage(webcamController.getImageFromWebcam());
 				if (webcamImage != null) {
 					if (webcamImage != null) {
 						dialog.setBoardImage(webcamImage);

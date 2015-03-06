@@ -18,7 +18,7 @@ public class StrikerTest extends Action {
     public void execute() {
         Robot r = bots.getRobot(index);
 
-        if (Math.abs(r.getTheta()) < 10 && r.getYPosition() > 100) { //is robot facing horizontally towards other side
+        if (Math.abs(r.getTheta()) < 10 /*&& r.getYPosition() > 100*/) { //is robot facing horizontally towards other side
             if (path == null) {
                 path = new BezierCurvePath(r, (int)r.getXPosition(), (int)r.getYPosition());
             }

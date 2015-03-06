@@ -20,6 +20,7 @@ if () {
 } else if () {
 }
 </pre>
+
 Simulation currently only works if it's not connected to the c++ program, and only testForward is supported in simulation.
 
 Authors: Wesley Yep, John Law, Chang Kon Han

@@ -7,10 +7,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -20,10 +20,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.opencv.core.Mat;
+
 import utils.ColorSpace;
+import utils.Image;
 import controllers.VisionController;
-import static org.bytedeco.javacpp.opencv_core.*;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -44,7 +45,7 @@ public class WebcamDisplayPanel extends JPanel {
     private boolean isFiltering = false;
     private BufferedImage zoomCursorImg;
     private Cursor zoomCursor;
-    
+
 	public WebcamDisplayPanel() {
 		super();
 		
@@ -104,9 +105,9 @@ public class WebcamDisplayPanel extends JPanel {
 	 * @param webcam
 	 */
 	
-	public void update(final IplImage img) {
+	public void update(Mat mat) {
 
-		if (img == null) {
+		if (mat == null) {
 			
 			/* 
 			 * This assumes that you cannot have a connection fail if you're already connected hence you are disconnecting.
@@ -122,10 +123,11 @@ public class WebcamDisplayPanel extends JPanel {
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-           final BufferedImage image = img.getBufferedImage();
-       //     final BufferedImage image = cvToImage(img);
 
-            if (isFiltering) {
+            final BufferedImage image = Image.toBufferedImage(mat);
+
+            if (isFiltering){
+                //old stuff
                 for (int j = 0; j < image.getHeight(); j++) {
                     for (int i = 0; i < image.getWidth(); i++) {
                         Color color = new Color(image.getRGB(i, j));

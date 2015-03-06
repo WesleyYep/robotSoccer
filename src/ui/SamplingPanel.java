@@ -63,21 +63,21 @@ public class SamplingPanel extends JPanel implements ActionListener {
         
         int minorTickSpacing = 5, majorTickSpacing = 25;
         
-        YSlider = new ColourSlider(0, 255);
+        YSlider = new ColourSlider(0, 260);
         YSlider.setMinorTickSpacing(minorTickSpacing);
         YSlider.setMajorTickSpacing(majorTickSpacing);
         YSlider.setLabelTable(YSlider.createStandardLabels(majorTickSpacing));
         YSlider.setPaintTicks(true);
         YSlider.setPaintLabels(true);
         
-        USlider = new ColourSlider(0, 255);
+        USlider = new ColourSlider(0, 260);
         USlider.setMinorTickSpacing(minorTickSpacing);
         USlider.setMajorTickSpacing(majorTickSpacing);
         USlider.setLabelTable(USlider.createStandardLabels(majorTickSpacing));
         USlider.setPaintTicks(true);
         USlider.setPaintLabels(true);
         
-        VSlider = new ColourSlider(0, 255);
+        VSlider = new ColourSlider(0, 260);
         VSlider.setMinorTickSpacing(minorTickSpacing);
         VSlider.setMajorTickSpacing(majorTickSpacing);
         VSlider.setLabelTable(VSlider.createStandardLabels(majorTickSpacing));
@@ -319,6 +319,20 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			USlider.clearData();
 			VSlider.clearData();
 		}
+	}
+	
+	
+	public void deactiviate() {
+		if (isSampling) {
+			sampleButton.setText("Start Sample");
+            isSampling = false;
+		}
+		
+		if (!detectButton.getText().equals(DETECTSTRING[0])) {
+			detectButton.setText(DETECTSTRING[0]);
+			webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+			webcamController.getWebcamDisplayPanel().repaint();
+        } 	
 	}
 	
 	/**

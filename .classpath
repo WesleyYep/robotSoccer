@@ -15,17 +15,13 @@
 	<classpathentry exported="true" kind="lib" path="lib/httpmime-4.2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jai_codec.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jai_core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/javacpp.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/javacv.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jbox2d-library-2.1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jide-oss-3.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jssc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/opencv-windows-x86_64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/opencv-windows-x86.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/opencv.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/cleyemulticam.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opencv-2.4.10"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV-2.4.10"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
