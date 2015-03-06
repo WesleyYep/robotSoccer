@@ -11,7 +11,7 @@ public class RobotData {
 	private PairPoint greenPatch1 = null;
 	private PairPoint greenPatch2 = null;
 	private double thresholdDistance;
-	private final static double THRESHOLDANGLE = 8;
+	private final static double THRESHOLDANGLE = 20;
     private int robotNum;
     private double theta;
 	
@@ -122,13 +122,14 @@ public class RobotData {
 
 		if (greenPatch1 != null && greenPatch2 != null) {
 			// Must be either 5, 4, 3
-			if (!isLongPatch(greenPatch1) && !isLongPatch(greenPatch2)) {
+		//	if (!isLongPatch(greenPatch1) && !isLongPatch(greenPatch2)) {
+            if (Math.abs(greenPatch1.getEuclideanDistance() - greenPatch2.getEuclideanDistance()) < 1) { //change 1 if needed
 				isRobotNumThree = true;
                 shortMidPoint = greenPatch1.getSecond(); //any green patch will work
 			} else {
                 // Must be either 5, 4
                 isLongPatchPresent = true;
-                if (isLongPatch(greenPatch1)) {
+                if (greenPatch1.getEuclideanDistance() - greenPatch2.getEuclideanDistance() > 0) {
                     shortMidPoint = greenPatch2.getSecond();
                 } else {
                     shortMidPoint = greenPatch1.getSecond();

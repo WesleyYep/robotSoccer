@@ -2,7 +2,6 @@ bin/*
 .settings/*
 .project
 RobotSoccerConfiguration.config
-RobotSoccerConfiguration.config
 out/*
 .idea/*
 /bin/
