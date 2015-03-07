@@ -15,7 +15,7 @@ public class Actions {
     	null,
     	new ChaseBall(),
     	new ChaseBall2(),
-    	new BasicGoalKeep(),
+//    	new BasicGoalKeep(),
     	new Wait(),
         new TurnToFaceBall(),
         new TurnToFaceBall2(),

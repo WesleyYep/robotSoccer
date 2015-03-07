@@ -12,7 +12,6 @@ public class RobotData {
 	private PairPoint greenPatch2 = null;
 	private double thresholdDistance;
 	private final static double THRESHOLDANGLE = 8;
-    private int robotNum;
     private double theta;
 	
 	public RobotData(Point[] teamRectPoint, Point teamCenterPoint) {
@@ -111,7 +110,8 @@ public class RobotData {
 	 */
 	
 	public int robotIdentification() {
-
+		int robotNum = -1;
+		
         if (greenPatch1 == null && greenPatch2 == null) {
             return -1;
         }
@@ -198,18 +198,13 @@ public class RobotData {
             }
         }
 
-//			System.out.println("quadrant: " + quadrant);
-//			System.out.println("\nrobot O: " + robotOrientation);
-//			System.out.println("normA: " + normAngle);
-//			System.out.println("angleToRobot: " + shortAngleToRobot);
-//            System.out.println("robot num: " + robotNum);
-//            System.out.println("theta: " + theta);
         return robotNum;
 	}
 	
 	public double getTheta() {
         return Math.toRadians(-theta);
     }
+	
 	public class PairPoint {
 		
 		private Point first;

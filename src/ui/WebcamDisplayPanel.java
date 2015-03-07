@@ -13,12 +13,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 import org.opencv.core.Mat;
+
 import utils.ColorSpace;
 import controllers.VisionController;
 
@@ -119,7 +122,6 @@ public class WebcamDisplayPanel extends JPanel {
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
-       //     final BufferedImage image = cvToImage(img);
 
             final BufferedImage image = toBufferedImage(mat);
 
@@ -136,7 +138,6 @@ public class WebcamDisplayPanel extends JPanel {
                         }
                     }
                 }
-                //
             }
 
             /*
@@ -169,6 +170,7 @@ public class WebcamDisplayPanel extends JPanel {
         if ( matrix.channels() > 1 ) {
             type = BufferedImage.TYPE_3BYTE_BGR;
         }
+
         int bufferSize = matrix.channels()*matrix.cols()*matrix.rows();
         byte [] b = new byte[bufferSize];
 
