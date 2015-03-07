@@ -1,26 +1,24 @@
-package actions;
+package criteria;
 
+import actions.TurnToFaceBall;
 import bot.Robot;
-import strategy.Action;
+import strategy.Criteria;
 
 /**
- * Created by Wesley on 21/01/2015.
+ * Created by Wesley on 7/03/2015.
  */
-public class TurnToFaceBall2 extends Action{
-    private int time = 0;
-    private double lastDifference = 0;
-    private double originalDifference = 0;
+public class PointingAtBall extends Criteria {
     @Override
     public String getName() {
-        return "Turn to ball (trial2)";
+        return "PointAlmostToBall";
     }
 
     @Override
-    public void execute() {
+    public boolean isMet() {
         Robot r = bots.getRobot(index);
-
         double ballTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
         double difference = ballTheta - Math.toRadians(r.getTheta());
+
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
@@ -28,11 +26,11 @@ public class TurnToFaceBall2 extends Action{
             difference += (2 * Math.PI);
         }
 
+        if (Math.abs(difference) <= TurnToFaceBall.ERROR_MARGIN) {
+            return true;
+        } else {
+            return false;
+        }
 
-
-    }
-
-    protected double squared (double x) {
-        return x * x;
     }
 }

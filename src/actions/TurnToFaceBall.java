@@ -1,6 +1,5 @@
 package actions;
 
-import Paths.StraightLinePath;
 import bot.Robot;
 import strategy.Action;
 
@@ -8,6 +7,8 @@ import strategy.Action;
  * Created by Wesley on 21/01/2015.
  */
 public class TurnToFaceBall extends Action{
+    public static final double ERROR_MARGIN = 0.8;
+
     @Override
     public String getName() {
         return "Turn to ball (trial)";
@@ -26,24 +27,23 @@ public class TurnToFaceBall extends Action{
             difference += (2 * Math.PI);
         }
 
-        double errorMargin = 0.8;
-        if (Math.abs(difference) >= errorMargin) {
+        if (Math.abs(difference) >= ERROR_MARGIN) {
             if (difference > 0) {
                 r.angularVelocity = 2*Math.PI;
             } else {
                 r.angularVelocity = -2*Math.PI;
             }
-        } else if (Math.abs(difference) >= errorMargin/2) {
+        } else if (Math.abs(difference) >= ERROR_MARGIN /2) {
             if (difference > 0) {
-                r.angularVelocity = Math.PI;
+                r.angularVelocity = Math.PI/2;
             } else {
-                r.angularVelocity = Math.PI;
+                r.angularVelocity = -Math.PI/2;
             }
-        } else if (Math.abs(difference) >= errorMargin/4) {
+        } else if (Math.abs(difference) >= ERROR_MARGIN /4) {
             if (difference > 0) {
-                r.angularVelocity = Math.PI/2;
+                r.angularVelocity = Math.PI/4;
             } else {
-                r.angularVelocity = Math.PI/2;
+                r.angularVelocity = -Math.PI/4;
             }
             r.linearVelocity = 0;
         } else {
