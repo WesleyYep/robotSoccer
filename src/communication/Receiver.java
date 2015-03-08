@@ -39,7 +39,6 @@ public class Receiver extends SwingWorker<Void, String> {
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 			//Initialize progress property.
 			while (!isCancelled()) {
-				
 				String message = bufferedReader.readLine();
 				
 				if (message.equals("closing")) {
@@ -49,7 +48,6 @@ public class Receiver extends SwingWorker<Void, String> {
 				if (message != null) {
 					publish(message);
 				}
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
