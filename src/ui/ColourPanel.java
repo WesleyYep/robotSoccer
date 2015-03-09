@@ -274,15 +274,14 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
             	for (int x=(int) (xPos-selectRadius); x<xPos+selectRadius; x++) {
             		
             		for (int y=(int) (yPos-selectRadius); y<yPos+selectRadius; y++) {
-            			if ( Math.pow((x-xPos),2) + Math.pow((y-yPos),2) <= Math.pow(selectRadius, 2)){
+            			if ( Math.pow((x-xPos),2) + Math.pow((y-yPos),2) <= Math.pow(selectRadius-1, 2)){
             				ImageIcon icon = (ImageIcon)zoomLabel.getIcon();
                         	BufferedImage image = (BufferedImage)icon.getImage();
                             sp.takeSample(image,  x, y);
             			}
                 	}
             	}
-            	
-            	
+            	//sp.setRange();
             }
         }
     }

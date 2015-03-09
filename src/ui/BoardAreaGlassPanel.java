@@ -21,7 +21,7 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	final public static int BOT_RIGHT = 4;
 	
 	private int pointMoving = NONE;
-	
+	private int errorMargin = 10;
 	private VisionController vc;
 	
 	public BoardAreaGlassPanel(VisionController vc) {
@@ -34,8 +34,8 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	protected void paintComponent(Graphics g) {
 		super.paintComponents(g);
 		
-		g.setColor(Color.black);
-		
+		g.setColor(Color.red);
+
 		g.drawLine((int)Math.round(vc.getTopLeft().getX())
 				, (int)Math.round(vc.getTopLeft().getY())
 				, (int)Math.round(vc.getTopRight().getX())
@@ -128,19 +128,19 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 	}
 	
 	private boolean isTopLeft(MouseEvent e) {
-		return (e.getX() < (vc.getTopLeft().getX()+5) && e.getX() > (vc.getTopLeft().getX()-5) && e.getY() < (vc.getTopLeft().getY()+5) && e.getY() > (vc.getTopLeft().getY()-5));
+		return (e.getX() < (vc.getTopLeft().getX()+errorMargin) && e.getX() > (vc.getTopLeft().getX()-errorMargin) && e.getY() < (vc.getTopLeft().getY()+errorMargin) && e.getY() > (vc.getTopLeft().getY()-errorMargin));
 	}
 	
 	private boolean isTopRight(MouseEvent e) {
-		return (e.getX() < (vc.getTopRight().getX()+5) && e.getX() > (vc.getTopRight().getX()-5) && e.getY() < (vc.getTopRight().getY()+5) && e.getY() > (vc.getTopRight().getY()-5));
+		return (e.getX() < (vc.getTopRight().getX()+errorMargin) && e.getX() > (vc.getTopRight().getX()-errorMargin) && e.getY() < (vc.getTopRight().getY()+errorMargin) && e.getY() > (vc.getTopRight().getY()-errorMargin));
 	}
 	
 	private boolean isBotLeft(MouseEvent e) {
-		return (e.getX() < (vc.getBottomLeft().getX()+5) && e.getX() > (vc.getBottomLeft().getX()-5) && e.getY() < (vc.getBottomLeft().getY()+5) && e.getY() > (vc.getBottomLeft().getY()-5));
+		return (e.getX() < (vc.getBottomLeft().getX()+errorMargin) && e.getX() > (vc.getBottomLeft().getX()-errorMargin) && e.getY() < (vc.getBottomLeft().getY()+errorMargin) && e.getY() > (vc.getBottomLeft().getY()-errorMargin));
 	}
 	
 	private boolean isBotRight(MouseEvent e) {
-		return (e.getX() < (vc.getBottomRight().getX()+5) && e.getX() > (vc.getBottomRight().getX()-5) && e.getY() < (vc.getBottomRight().getY()+5) && e.getY() > (vc.getBottomRight().getY()-5));
+		return (e.getX() < (vc.getBottomRight().getX()+errorMargin) && e.getX() > (vc.getBottomRight().getX()-errorMargin) && e.getY() < (vc.getBottomRight().getY()+errorMargin) && e.getY() > (vc.getBottomRight().getY()-errorMargin));
 	}
 	
 	

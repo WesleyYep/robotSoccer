@@ -44,7 +44,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JTextField lowValueTextField, highValueTextField;
     private JComboBox<String> YUVCombo;
     private List<ColourRangeListener> colourRangeListeners;
-    
+    private int yMax = -1, yMin = -1, uMax = -1, uMin = -1, vMax = -1, vMin = -1;
     public boolean isSampling = false;
     
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
@@ -181,10 +181,54 @@ public class SamplingPanel extends JPanel implements ActionListener {
         YSlider.addToData((int)yuv[0]);
         USlider.addToData((int)yuv[1]);
         VSlider.addToData((int)yuv[2]);
+        
+        if (yMax == -1 || yuv[0] > yMax) {
+        	yMax = (int) yuv[0];
+        }
+        
+        if (yMin == -1 || yuv[0] < yMin) {
+        	yMin = (int) yuv[0];
+        }
+        
+        if (uMax == -1 || yuv[1] > uMax) {
+        	uMax = (int) yuv[1];
+        }
+        
+        if (uMin == -1 || yuv[1] < uMin) {
+        	uMin = (int) yuv[1];
+        }
+        
+        if (vMax == -1 || yuv[2] > vMax) {
+        	vMax = (int) yuv[2];
+        }
+        
+        if (vMin == -1 || yuv[2] < vMin) {
+        	vMin = (int) yuv[2];
+        }
+        
 
         YSlider.repaint();
         USlider.repaint();
         VSlider.repaint();
+    }
+    
+    public void setRange() {
+    	System.out.println("");
+    	System.out.println(yMin + " " + yMax);
+    	System.out.println(uMin + " " + uMax);
+    	System.out.println(vMin + " " + vMax);
+    	
+    	YSlider.setLowValue(yMin);
+    	YSlider.setHighValue(yMax);
+    	
+    	USlider.setLowValue(uMin);
+    	USlider.setHighValue(uMax);
+    	
+    	VSlider.setLowValue(vMin);
+    	VSlider.setHighValue(vMax);
+    	 YSlider.repaint();
+         USlider.repaint();
+         VSlider.repaint(); 
     }
     
     public void addColourRangeListener(ColourRangeListener c) {
@@ -306,6 +350,15 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			YSlider.clearData();
 			USlider.clearData();
 			VSlider.clearData();
+			
+			yMax = -1;
+			yMin = -1;
+			
+			uMax = -1;
+			uMin = -1;
+			
+			vMax = -1;
+			vMin = -1;
 		}
 	}
 	
