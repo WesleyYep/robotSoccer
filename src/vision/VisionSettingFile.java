@@ -91,11 +91,11 @@ public class VisionSettingFile {
 
 			SamplingPanel ballSP = colourPanel.ballSamplingPanel;
 
-			saveSetting.addProperty("ballYUpper", ballSP.getUpperBoundForY());
-			saveSetting.addProperty("ballYLower", ballSP.getLowerBoundForY());
+			saveSetting.addProperty("ballHUpper", ballSP.getUpperBoundForH());
+			saveSetting.addProperty("ballHLower", ballSP.getLowerBoundForH());
 
-			saveSetting.addProperty("ballUUpper", ballSP.getUpperBoundForU());
-			saveSetting.addProperty("ballULower", ballSP.getLowerBoundForU());
+			saveSetting.addProperty("ballSUpper", ballSP.getUpperBoundForS());
+			saveSetting.addProperty("ballSLower", ballSP.getLowerBoundForS());
 
 			saveSetting.addProperty("ballVUpper", ballSP.getUpperBoundForV());
 			saveSetting.addProperty("ballVLower", ballSP.getLowerBoundForV());
@@ -103,44 +103,44 @@ public class VisionSettingFile {
 
 			SamplingPanel teamSp = colourPanel.teamSamplingPanel;
 
-			saveSetting.addProperty("teamYUpper", teamSp.getUpperBoundForY());
-			saveSetting.addProperty("teamYLower", teamSp.getLowerBoundForY());
+			saveSetting.addProperty("teamHUpper", teamSp.getUpperBoundForH());
+			saveSetting.addProperty("teamHLower", teamSp.getLowerBoundForH());
 
-			saveSetting.addProperty("teamUUpper", teamSp.getUpperBoundForU());
-			saveSetting.addProperty("teamULower", teamSp.getLowerBoundForU());
+			saveSetting.addProperty("teamSUpper", teamSp.getUpperBoundForS());
+			saveSetting.addProperty("teamSLower", teamSp.getLowerBoundForS());
 
 			saveSetting.addProperty("teamVUpper", teamSp.getUpperBoundForV());
 			saveSetting.addProperty("teamVLower", teamSp.getLowerBoundForV());
 
 			SamplingPanel greenSp = colourPanel.greenSamplingPanel;
 
-			saveSetting.addProperty("greenYUpper", greenSp.getUpperBoundForY());
-			saveSetting.addProperty("greenYLower", greenSp.getLowerBoundForY());
+			saveSetting.addProperty("greenHUpper", greenSp.getUpperBoundForH());
+			saveSetting.addProperty("greenHLower", greenSp.getLowerBoundForH());
 
-			saveSetting.addProperty("greenUUpper", greenSp.getUpperBoundForU());
-			saveSetting.addProperty("greenULower", greenSp.getLowerBoundForU());
+			saveSetting.addProperty("greenSUpper", greenSp.getUpperBoundForS());
+			saveSetting.addProperty("greenSLower", greenSp.getLowerBoundForS());
 
 			saveSetting.addProperty("greenVUpper", greenSp.getUpperBoundForV());
 			saveSetting.addProperty("greenVLower", greenSp.getLowerBoundForV());
 
 			SamplingPanel groundSp = colourPanel.groundSamplingPanel;
 
-			saveSetting.addProperty("groundYUpper", groundSp.getUpperBoundForY());
-			saveSetting.addProperty("groundYLower", groundSp.getLowerBoundForY());
+			saveSetting.addProperty("groundHUpper", groundSp.getUpperBoundForH());
+			saveSetting.addProperty("groundHLower", groundSp.getLowerBoundForH());
 
-			saveSetting.addProperty("groundUUpper", groundSp.getUpperBoundForU());
-			saveSetting.addProperty("groundULower", groundSp.getLowerBoundForU());
+			saveSetting.addProperty("groundSUpper", groundSp.getUpperBoundForS());
+			saveSetting.addProperty("groundSLower", groundSp.getLowerBoundForS());
 
 			saveSetting.addProperty("groundVUpper", groundSp.getUpperBoundForV());
 			saveSetting.addProperty("groundVLower", groundSp.getLowerBoundForV());
 
 			SamplingPanel opponentSp = colourPanel.opponentSamplingPanel;
 
-			saveSetting.addProperty("opponentYUpper", opponentSp.getUpperBoundForY());
-			saveSetting.addProperty("opponentYLower", opponentSp.getLowerBoundForY());
+			saveSetting.addProperty("opponentHUpper", opponentSp.getUpperBoundForH());
+			saveSetting.addProperty("opponentHLower", opponentSp.getLowerBoundForH());
 
-			saveSetting.addProperty("opponentUUpper", opponentSp.getUpperBoundForU());
-			saveSetting.addProperty("opponentULower", opponentSp.getLowerBoundForU());
+			saveSetting.addProperty("opponentSUpper", opponentSp.getUpperBoundForS());
+			saveSetting.addProperty("opponentSLower", opponentSp.getLowerBoundForS());
 
 			saveSetting.addProperty("opponentVUpper", opponentSp.getUpperBoundForV());
 			saveSetting.addProperty("opponentVLower", opponentSp.getLowerBoundForV());
@@ -205,52 +205,52 @@ public class VisionSettingFile {
 
 			SamplingPanel ballSP = colourPanel.ballSamplingPanel;
 
-			ballSP.setLowerBoundForY(openSetting.getInt("ballYLower"));
-			ballSP.setLowerBoundForU(openSetting.getInt("ballULower"));
+			ballSP.setLowerBoundForH(openSetting.getInt("ballHLower"));
+			ballSP.setLowerBoundForS(openSetting.getInt("ballSLower"));
 			ballSP.setLowerBoundForV(openSetting.getInt("ballVLower"));
 			
-			ballSP.setUpperBoundForY(openSetting.getInt("ballYUpper"));
-			ballSP.setUpperBoundForU(openSetting.getInt("ballUUpper"));
+			ballSP.setUpperBoundForH(openSetting.getInt("ballHUpper"));
+			ballSP.setUpperBoundForS(openSetting.getInt("ballSUpper"));
 			ballSP.setUpperBoundForV(openSetting.getInt("ballVUpper"));
 
 			SamplingPanel teamSp = colourPanel.teamSamplingPanel;
 
-			teamSp.setLowerBoundForY(openSetting.getInt("teamYLower"));
-			teamSp.setLowerBoundForU(openSetting.getInt("teamULower"));
+			teamSp.setLowerBoundForH(openSetting.getInt("teamHLower"));
+			teamSp.setLowerBoundForS(openSetting.getInt("teamSLower"));
 			teamSp.setLowerBoundForV(openSetting.getInt("teamVLower"));
 			
-			teamSp.setUpperBoundForY(openSetting.getInt("teamYUpper"));
-			teamSp.setUpperBoundForU(openSetting.getInt("teamUUpper"));
+			teamSp.setUpperBoundForH(openSetting.getInt("teamHUpper"));
+			teamSp.setUpperBoundForS(openSetting.getInt("teamSUpper"));
 			teamSp.setUpperBoundForV(openSetting.getInt("teamVUpper"));
 
 			SamplingPanel greenSp = colourPanel.greenSamplingPanel;
 
-			greenSp.setLowerBoundForY(openSetting.getInt("greenYLower"));
-			greenSp.setLowerBoundForU(openSetting.getInt("greenULower"));
+			greenSp.setLowerBoundForH(openSetting.getInt("greenHLower"));
+			greenSp.setLowerBoundForS(openSetting.getInt("greenSLower"));
 			greenSp.setLowerBoundForV(openSetting.getInt("greenVLower"));
 			
-			greenSp.setUpperBoundForY(openSetting.getInt("greenYUpper"));
-			greenSp.setUpperBoundForU(openSetting.getInt("greenUUpper"));
+			greenSp.setUpperBoundForH(openSetting.getInt("greenHUpper"));
+			greenSp.setUpperBoundForS(openSetting.getInt("greenSUpper"));
 			greenSp.setUpperBoundForV(openSetting.getInt("greenVUpper"));
 
 			SamplingPanel groundSp = colourPanel.groundSamplingPanel;
 
-			groundSp.setLowerBoundForY(openSetting.getInt("groundYLower"));
-			groundSp.setLowerBoundForU(openSetting.getInt("groundULower"));
+			groundSp.setLowerBoundForH(openSetting.getInt("groundHLower"));
+			groundSp.setLowerBoundForS(openSetting.getInt("groundSLower"));
 			groundSp.setLowerBoundForV(openSetting.getInt("groundVLower"));
 			
-			groundSp.setUpperBoundForY(openSetting.getInt("groundYUpper"));
-			groundSp.setUpperBoundForU(openSetting.getInt("groundUUpper"));
+			groundSp.setUpperBoundForH(openSetting.getInt("groundHUpper"));
+			groundSp.setUpperBoundForS(openSetting.getInt("groundSUpper"));
 			groundSp.setUpperBoundForV(openSetting.getInt("groundVUpper"));
 
 			SamplingPanel opponentSp = colourPanel.opponentSamplingPanel;
 
-			opponentSp.setLowerBoundForY(openSetting.getInt("opponentYLower"));
-			opponentSp.setLowerBoundForU(openSetting.getInt("opponentULower"));
+			opponentSp.setLowerBoundForH(openSetting.getInt("opponentHLower"));
+			opponentSp.setLowerBoundForS(openSetting.getInt("opponentSLower"));
 			opponentSp.setLowerBoundForV(openSetting.getInt("opponentVLower"));
 			
-			opponentSp.setUpperBoundForY(openSetting.getInt("opponentYUpper"));
-			opponentSp.setUpperBoundForU(openSetting.getInt("opponentUUpper"));
+			opponentSp.setUpperBoundForH(openSetting.getInt("opponentHUpper"));
+			opponentSp.setUpperBoundForS(openSetting.getInt("opponentSUpper"));
 			opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
 
             colourPanel.setRobotSizeMinimum(openSetting.getInt("robotMinSize"));

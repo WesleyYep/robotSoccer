@@ -190,12 +190,12 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 	}
 
-    public boolean isDetected(int y, int u, int v) {
-        if (!((y >= samplingPanel.getLowerBoundForY()) && (y <= samplingPanel.getUpperBoundForY()))) {
+    public boolean isDetected(int h, int s, int v) {
+        if (!((h >= samplingPanel.getLowerBoundForH()) && (h <= samplingPanel.getUpperBoundForH()))) {
             return false;
         }
 
-        if (!((u >= samplingPanel.getLowerBoundForU()) && (u <= samplingPanel.getUpperBoundForU()))) {
+        if (!((s >= samplingPanel.getLowerBoundForS()) && (s <= samplingPanel.getUpperBoundForS()))) {
             return false;
         }
 

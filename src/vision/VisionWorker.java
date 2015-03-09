@@ -66,19 +66,19 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
             try {
                 long startTime = System.currentTimeMillis();
 
-                double[] rgbBallMin = utils.ColorSpace.YUVToRGB(ballSP.getLowerBoundForY(), ballSP.getLowerBoundForU(), ballSP.getLowerBoundForV());
-                double[] rgbBallMax = utils.ColorSpace.YUVToRGB(ballSP.getUpperBoundForY(), ballSP.getUpperBoundForU(), ballSP.getUpperBoundForV());
-                double[] rgbTeamMin = utils.ColorSpace.YUVToRGB(teamSp.getLowerBoundForY(), teamSp.getLowerBoundForU(), teamSp.getLowerBoundForV());
-                double[] rgbTeamMax = utils.ColorSpace.YUVToRGB(teamSp.getUpperBoundForY(), teamSp.getUpperBoundForU(), teamSp.getUpperBoundForV());
-                double[] rgbGreenMin = utils.ColorSpace.YUVToRGB(greenSp.getLowerBoundForY(), greenSp.getLowerBoundForU(), greenSp.getLowerBoundForV());
-                double[] rgbGreenMax = utils.ColorSpace.YUVToRGB(greenSp.getUpperBoundForY(), greenSp.getUpperBoundForU(), greenSp.getUpperBoundForV());
+                double[] hsvBallMin = utils.ColorSpace.YUVToRGB(ballSP.getLowerBoundForH(), ballSP.getLowerBoundForS(), ballSP.getLowerBoundForV());
+                double[] hsvBallMax = utils.ColorSpace.YUVToRGB(ballSP.getUpperBoundForH(), ballSP.getUpperBoundForS(), ballSP.getUpperBoundForV());
+                double[] hsvTeamMin = utils.ColorSpace.YUVToRGB(teamSp.getLowerBoundForH(), teamSp.getLowerBoundForS(), teamSp.getLowerBoundForV());
+                double[] hsvTeamMax = utils.ColorSpace.YUVToRGB(teamSp.getUpperBoundForH(), teamSp.getUpperBoundForS(), teamSp.getUpperBoundForV());
+                double[] hsvGreenMin = utils.ColorSpace.YUVToRGB(greenSp.getLowerBoundForH(), greenSp.getLowerBoundForS(), greenSp.getLowerBoundForV());
+                double[] hsvGreenMax = utils.ColorSpace.YUVToRGB(greenSp.getUpperBoundForH(), greenSp.getUpperBoundForS(), greenSp.getUpperBoundForV());
 
-                ballMin = new Scalar(rgbBallMin[0], rgbBallMin[1], rgbBallMin[2]);
-                ballMax = new Scalar(rgbBallMax[0], rgbBallMax[1], rgbBallMax[2]);
-                teamMin = new Scalar(rgbTeamMin[0], rgbTeamMin[1], rgbTeamMin[2]);
-                teamMax = new Scalar(rgbTeamMax[0], rgbTeamMax[1], rgbTeamMax[2]);
-                greenMin = new Scalar(rgbGreenMin[0], rgbGreenMin[1], rgbGreenMin[2]);
-                greenMax = new Scalar(rgbGreenMax[0], rgbGreenMax[1], rgbGreenMax[2]);
+                ballMin = new Scalar(hsvBallMin[0], hsvBallMin[1], hsvBallMin[2]);
+                ballMax = new Scalar(hsvBallMax[0], hsvBallMax[1], hsvBallMax[2]);
+                teamMin = new Scalar(hsvTeamMin[0], hsvTeamMin[1], hsvTeamMin[2]);
+                teamMax = new Scalar(hsvTeamMax[0], hsvTeamMax[1], hsvTeamMax[2]);
+                greenMin = new Scalar(hsvGreenMin[0], hsvGreenMin[1], hsvGreenMin[2]);
+                greenMax = new Scalar(hsvGreenMax[0], hsvGreenMax[1], hsvGreenMax[2]);
                 
                 List<MatOfPoint> ballContours = new ArrayList<MatOfPoint>();
                 List<MatOfPoint> teamContours = new ArrayList<MatOfPoint>();

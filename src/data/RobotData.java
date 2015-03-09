@@ -3,7 +3,7 @@ package data;
 import org.opencv.core.Point;
 import utils.Image;
 
-public class RobotData extends Data {
+public class RobotData {
 	private Point[] teamRectPoint;
 	private Point teamCenterPoint;
 	private PairPoint shortPair;
@@ -186,6 +186,22 @@ public class RobotData extends Data {
         }
 
         return robotNum;
+	}
+	
+	/**
+	 * <p>Return the given angle between -180 to 180 range.</p>
+	 * @param angle
+	 * @return clipped angle
+	 */
+	
+	public static double clip(double angle) {
+		if (angle > 180) {
+			return angle -= 360;
+		} else if (angle < -180) {
+			return angle += 360;
+		} else {
+			return angle;
+		}
 	}
 	
 	public static int getQuadrant(double angle) {
