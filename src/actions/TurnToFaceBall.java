@@ -26,29 +26,32 @@ public class TurnToFaceBall extends Action{
         } else if (difference < -Math.PI) {
             difference += (2 * Math.PI);
         }
-
+        
+        r.linearVelocity = 0;
         if (Math.abs(difference) >= ERROR_MARGIN) {
             if (difference > 0) {
-                r.angularVelocity = 2*Math.PI;
+                r.angularVelocity = 2*Math.PI/2;
             } else {
-                r.angularVelocity = -2*Math.PI;
+                r.angularVelocity = -2*Math.PI/2;
             }
         } else if (Math.abs(difference) >= ERROR_MARGIN /2) {
-            if (difference > 0) {
-                r.angularVelocity = Math.PI/2;
-            } else {
-                r.angularVelocity = -Math.PI/2;
-            }
-        } else if (Math.abs(difference) >= ERROR_MARGIN /4) {
             if (difference > 0) {
                 r.angularVelocity = Math.PI/4;
             } else {
                 r.angularVelocity = -Math.PI/4;
             }
-        } else {
-            r.angularVelocity = 0;
+        } /*else if (Math.abs(difference) >= ERROR_MARGIN /4) {
+            if (difference > 0) {
+                r.angularVelocity = Math.PI/8;
+            } else {
+                r.angularVelocity = -Math.PI/8;
+            }
+        } */else {
+        	double distance = Math.sqrt(squared(r.getXPosition()-ballX) + squared(r.getYPosition()-ballY));
+            r.linearVelocity = 1;
+            r.angularVelocity = squared(2*difference) / (distance/100);
+      //      System.out.println(r.angularVelocity);
         }
-        r.linearVelocity = 0;
 
 
     }

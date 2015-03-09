@@ -1,153 +1,184 @@
 package actions;
 
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
 import ui.Field;
 import Paths.StraightLinePath;
 import bot.Robot;
 
 public class BasicGoalKeep extends Action {
-	
-	private boolean onGoalKeepLine = false;
-	private boolean keepRotate = false;
-	private boolean goStraight = false;
-	private boolean inPosition = false;
-	
-	private double goalKeepLine = 10;
-	private double error = 3;
-
    
-
+	private double error = 5;
+	private double goalLine = 6;
+	
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
-        if (r.getXPosition()  <= (goalKeepLine+error) && r.getXPosition() >= (goalKeepLine-error)) {
-        	onGoalKeepLine = true;
-        	r.linearVelocity = 0;
-       	 	r.angularVelocity = 0;
-        }
-        else {
-        	onGoalKeepLine = false;
-        }
-        
-        
-        
-         if (onGoalKeepLine == true) {
-        	 if ( (r.getTheta() <= (90+error) && r.getTheta() >= (90-error)) || (r.getTheta() <=(-90+error) &&r.getTheta() >= (-90-error))) { 
-        		 r.angularVelocity = 0;
-        		// System.out.println("here");
-        		
-        		 
-        		if ((r.getYPosition() <= this.ballY+error && r.getYPosition() >= this.ballY-error) || 
-        				r.getYPosition() < Field.OUTER_BOUNDARY_HEIGHT/2-Field.GOAL_AREA_HEIGHT/2 ||
-        				r.getYPosition() > Field.OUTER_BOUNDARY_HEIGHT/2+Field.GOAL_AREA_HEIGHT/2) {
-        			System.out.println(r.getYPosition() + " " + this.ballY);
-        			r.linearVelocity = 0;
-        		}
-        		else {
-        			if (r.getYPosition() < this.ballY) {
-        				r.linearVelocity = 0.1;
-        			}
-        			else {
-        				r.linearVelocity = -0.1;
-        			}
-        			
-        			if (r.getTheta() > 0) {
-        				r.linearVelocity *= -1;
-        			}
-        		}
-        		  
-        	 }
-        	 else {
-        		 r.angularVelocity = (Math.PI/180)*10;
-        	 }
-         }
-        
-        
-     
-        
-        if (onGoalKeepLine == false) {
-        	path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(), (int)goalKeepLine, Field.OUTER_BOUNDARY_HEIGHT/2);
-        	path.setPoints();
-        	
-        	double theta = Math.atan2(Field.OUTER_BOUNDARY_HEIGHT/2-r.getYPosition(), goalKeepLine - r.getXPosition());        	
-        	double sign;
-
-        	
-        	//double difference = Math.toDegrees(theta*-1) - r.getTheta();
-        	double difference;
-        	double diff1;
-        	double diff2;
-        	if ( Math.toDegrees(theta*-1) > 0 && r.getTheta() <= 0) {
-        		diff1 = Math.toDegrees(theta*-1) + Math.abs(r.getTheta());
-        		diff2 = -1*(180-Math.toDegrees(theta*-1)) + Math.abs(-180-r.getTheta());
-        		
-        		if (diff1 <= diff2) {
-        			difference = diff1;
-        		}
-        		else {
-        			difference = diff2;
-        		}
-        	}
-        	else if ( Math.toDegrees(theta*-1) <= 0 && r.getTheta() > 0) {
-        		diff1 = -1*Math.abs(Math.toDegrees(theta*-1)) + r.getTheta();
-        		diff2 = Math.abs(-180-Math.toDegrees(theta*-1)) + (180-r.getTheta());
-        		
-        		if (diff1 <= diff2) {
-        			difference = diff1;
-        		}
-        		else {
-        			difference = diff2;
-        		}
-        		System.out.println(diff1 + " " + diff2);
-        	}
-        	else {
-        		difference = Math.toDegrees(theta*-1) - r.getTheta();
-        	}
-        	
-        	
-        	
-        	if ( Math.abs(difference) > 135) {
-        		r.angularVelocity = 2*Math.PI;
-        	}
-        	else if ( Math.abs(difference) > 90) { 
-        		r.angularVelocity = Math.PI;
-        	}
-        	else if ( Math.abs(difference) > 45) {
-        		r.angularVelocity = Math.PI/2;
-        	}
-        	else if (Math.abs(difference) > 20) {
-        		r.angularVelocity = Math.PI/4;
-        	}
-        	else if (Math.abs(difference) > 10) {
-        		r.angularVelocity = Math.PI/8;
-        	}
-        	else if (Math.abs(difference) > 1) {
-        		r.angularVelocity = Math.abs(difference)/50;
-        	}
-        	
-        	//System.out.println(difference + " " +  r.getTheta() + " "  + Math.toDegrees(theta*-1) + " " + r.getYPosition());
-        	//System.out.println(difference + " " + (r.getTheta() - Math.toDegrees(theta*-1)));
-        	//System.out.println(Math.abs(difference) + " " + difference + " " + r.getTheta() + " " + Math.toDegrees(theta*-1));
- 
-        	
-        	if (r.getXPosition()  <= 20 && r.getXPosition() >= 50) {
-        		r.linearVelocity = 0.1;
-        	}
-        	else if (r.getXPosition()  <= 50 && r.getXPosition() >= 100) {
-        		r.linearVelocity = 0.2;
-        	}
-        	else {
-        		r.linearVelocity = 0.3;
-        	}
+    	Robot r = bots.getRobot(index);
+    	
+    	if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
+    		setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true);
+    	}
+    	else if ( ( r.getTheta() > 90+error && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+error)) {
+    		r.angularVelocity = -Math.PI/9;
+    		r.linearVelocity = 0;
+    	}
+    	else if ( (r.getTheta() < 90-error && r.getTheta() >= 0) || (r.getTheta() < -90-error && r.getTheta() >= -180)) {
+    		r.angularVelocity = Math.PI/9;
+    		r.linearVelocity = 0;
+    	}
+    	else{
+    		boolean isFacingTop = true;
+    		boolean isBallTop = true;
+    		
+    		boolean reverseTheta = true;
+    		
+    		if (r.getTheta() < 0) {
+    			isFacingTop = false;
+    		}
+    		
+    		if (ballY > r.getYPosition()) {
+    			isBallTop = false;
+    		}
+    		 
+    		if (isBallTop != isFacingTop) {
+    			reverseTheta = false;
+    		}
+    		System.out.println(ballY);
+    		if (ballY >= 70 && ballY <= 110 ) {
+    			setVelocityToTarget(goalLine,ballY, reverseTheta);
+    		}
+    		else if (ballY < 70) {
+    			setVelocityToTarget(goalLine,70,reverseTheta);
+    		}
+    		else if (ballY > 110) {
+    			setVelocityToTarget(goalLine,110,reverseTheta);
+    		}
+    		
+    	}
+    	
+    	
+    }
+    
+    public void setVelocityToTarget(double x, double y, boolean front) {
+    	 Robot r = bots.getRobot(index);
+    	 double targetDist = 0;
+         double targetTheta = 0;
+         
+         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
+         
+         targetTheta = Math.atan2(y-r.getYPosition(), x - r.getXPosition());  
       
-        }
+         
+        double difference;
+     	double diff1;
+     	double diff2;
+     	if ( Math.toDegrees(targetTheta*-1) > 0 && r.getTheta() <= 0) {
+     		diff1 = Math.toDegrees(targetTheta*-1) + Math.abs(r.getTheta());
+     		diff2 = -1*(180-Math.toDegrees(targetTheta*-1)) + Math.abs(-180-r.getTheta());
+     		
+     		if (diff1 <= diff2) {
+     			difference = diff1;
+     		}
+     		else {
+     			difference = diff2;
+     		}
+     	}
+     	else if ( Math.toDegrees(targetTheta*-1) <= 0 && r.getTheta() > 0) {
+     		diff1 = -1*Math.abs(Math.toDegrees(targetTheta*-1)) + r.getTheta();
+     		diff2 = Math.abs(-180-Math.toDegrees(targetTheta*-1)) + (180-r.getTheta());
+     		
+     		if (diff1 <= diff2) {
+     			difference = diff1;
+     		}
+     		else {
+     			difference = diff2;
+     		}
+     	}
+     	else {
+     		difference = Math.toDegrees(targetTheta*-1) - r.getTheta();
+     	}
+     	
+     	targetTheta = difference;
+     	
+         String filename = "tipper.fcl";
+ 		FIS fis = FIS.load(filename, true);
+
+ 		if (fis == null) {
+ 			System.err.println("Can't load file: '" + filename + "'");
+ 			System.exit(1);
+ 		}
+
+ 		// Get default function block
+ 		FunctionBlock fb = fis.getFunctionBlock(null);
+ 		//JFuzzyChart.get().chart(fb);
+ 		// Set inputs
+ 		//fb.setVariable("food", 8.5);
+ 		//fb.setVariable("service", 7.5);
+ 		fb.setVariable("obstacleTheta", Math.PI);
+ 		fb.setVariable("obstacleDist", 10);
+ 		fb.setVariable("targetTheta", Math.toRadians(targetTheta));
+ 		fb.setVariable("targetDist", targetDist);
+ 		
+ 		// Evaluate
+ 		fb.evaluate();
+
+ 		// Show output variable's chart
+ 		fb.getVariable("angSpeedError").defuzzify();
+ 		
+
+ 		// Print ruleSet
+ 		//System.out.println(fb);
+// 		System.out.println("theta: " + targetTheta );
+// 		System.out.println("dist: " + targetTheta );
+// 		System.out.println("ang speed: " + Math.toDegrees(fb.getVariable("angSpeedError").getValue()));
+// 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
+ 		
+ 		r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
+ 		System.out.println(r.angularVelocity);
+ 		r.linearVelocity= ((targetDist-2)/10)*0.05+0.15;
+ 		
+ 		if (isCloseToWall()) {
+ 			r.linearVelocity = 0.2;
+ 		}
+ 		
+ 		if (front == false) {
+ 			r.linearVelocity*= -1;
+ 		}
+ 		
+ 		checkRobotPosition(x,y);
     }
 
+    private void checkRobotPosition(double x, double y) {
+    	 Robot r = bots.getRobot(index);
+    	if (r.getXPosition() >= x-error && r.getXPosition() <= x+error && r.getYPosition() >= y-error && r.getYPosition() <= y+error) {
+			r.angularVelocity = 0;
+			r.linearVelocity = 0;
+		}
+    }
+    
+    private boolean isCloseToWall() {
+    	 Robot r = bots.getRobot(index);
+    	if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
+    		return true;
+    	}
+    	else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-10 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT) {
+    		return true;
+    	}
+    	else if (r.getXPosition() >= 0 && r.getXPosition() <= 10 ) {
+    		return true;
+    	}
+    	else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-10 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
 
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "Basic Goal Keeper";
 	}
 }

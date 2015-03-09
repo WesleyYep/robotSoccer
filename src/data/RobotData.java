@@ -11,7 +11,7 @@ public class RobotData {
 	private PairPoint greenPatch1 = null;
 	private PairPoint greenPatch2 = null;
 	private double thresholdDistance;
-	private final static double THRESHOLDANGLE = 20;
+	private final static double THRESHOLDANGLE = 10;
     private int robotNum;
     private double theta;
 	
@@ -76,6 +76,12 @@ public class RobotData {
 			greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
 		} else if (greenPatch2 == null) {
 			greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+		} else { //long patch should override green patch
+			if (!isLongPatch(greenPatch1) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
+				greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			} else if (!isLongPatch(greenPatch2) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
+				greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			}
 		}
 		
 	}
@@ -85,11 +91,12 @@ public class RobotData {
 		double longPairTheta = longPair.getTheta();
 		
 		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.second));
-		
-		if ((differenceTheta % 90) > 90 - THRESHOLDANGLE && (differenceTheta % 90) < THRESHOLDANGLE + 90) {
+//		System.out.println(differenceTheta);
+		//if ((differenceTheta % 90) > 90 - THRESHOLDANGLE && (differenceTheta % 90) < THRESHOLDANGLE + 90) {
+		if (!((differenceTheta % 90) > 20 && (differenceTheta % 90) < 70)) {
 			return true;
 		}
-		
+//		System.out.println(differenceTheta % 90);
 		return false;
 	}
 	
@@ -122,14 +129,16 @@ public class RobotData {
 
 		if (greenPatch1 != null && greenPatch2 != null) {
 			// Must be either 5, 4, 3
-		//	if (!isLongPatch(greenPatch1) && !isLongPatch(greenPatch2)) {
-            if (Math.abs(greenPatch1.getEuclideanDistance() - greenPatch2.getEuclideanDistance()) < 1) { //change 1 if needed
+			if (!isLongPatch(greenPatch1) && !isLongPatch(greenPatch2)) {
+			//if (Math.abs(greenPatch1.getEuclideanDistance() - greenPatch2.getEuclideanDistance()) < 1) { //change 1 if needed
+//				System.out.println("is robot 3!");
 				isRobotNumThree = true;
                 shortMidPoint = greenPatch1.getSecond(); //any green patch will work
 			} else {
                 // Must be either 5, 4
                 isLongPatchPresent = true;
-                if (greenPatch1.getEuclideanDistance() - greenPatch2.getEuclideanDistance() > 0) {
+                if (isLongPatch(greenPatch1)) {
+              //  if (greenPatch1.getEuclideanDistance() - greenPatch2.getEuclideanDistance() > 0) {
                     shortMidPoint = greenPatch2.getSecond();
                 } else {
                     shortMidPoint = greenPatch1.getSecond();

@@ -15,5 +15,6 @@
     <orderEntry type="library" name="opencv-windows-x86" level="project" />
     <orderEntry type="library" name="cleyemulticam" level="project" />
     <orderEntry type="library" name="opencv-2411" level="project" />
+    <orderEntry type="library" name="jFuzzyLogic" level="project" />
   </component>
 </module>
