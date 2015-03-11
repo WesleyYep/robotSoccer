@@ -36,9 +36,15 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
     private WebcamController webcamController;
     private ColourPanel colourPanel;
     private WebcamDisplayPanel webcamDisplayPanel;
+    
     private int robotMinSize;
     private int ballMinSize;
     private int greenMinSize;
+    
+    private int robotMaxSize;
+    private int ballMaxSize;
+    private int greenMaxSize;
+    
     private int suitableLength;
     private Coordinate[] oldRobotPositions = null;
     private int[] oldRobotOrientations = new int[5];
@@ -85,6 +91,11 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 ballMinSize = colourPanel.getBallSizeMinimum();
                 robotMinSize = colourPanel.getRobotSizeMinimum();
                 greenMinSize = colourPanel.getGreenSizeMinimum();
+                
+                
+                robotMaxSize = colourPanel.getRobotSizeMaximum();
+                ballMaxSize = colourPanel.getBallSizeMaximum();
+                greenMaxSize = colourPanel.getGreenSizeMaximum();
 
                 Mat webcamImageMat = webcamController.getImageFromWebcam();
                 ballBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
@@ -100,7 +111,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 int ballX = 0, ballY = 0;
                 for (int i = 0; i < ballContours.size(); i++) {
                     double areaThreshold = ballMinSize;
-                    if (areaThreshold < Imgproc.contourArea(ballContours.get(i))) {
+                    double area = Imgproc.contourArea(ballContours.get(i));
+                    if (areaThreshold < area && area < ballMaxSize) {
                         Moments m = Imgproc.moments(ballContours.get(i));
                         ballX = (int) (m.get_m10() / m.get_m00());
                         ballY = (int) (m.get_m01() / m.get_m00());
@@ -121,7 +133,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 int teamX = 0, teamY = 0;
                 for (int i = 0; i < teamContours.size(); i++) {
                     double areaThreshold = robotMinSize;
-                    if (areaThreshold < Imgproc.contourArea(teamContours.get(i))) {
+                    double area = Imgproc.contourArea(teamContours.get(i));
+                    if (areaThreshold < area && area < robotMaxSize) {
                         Moments m = Imgproc.moments(teamContours.get(i));
                         teamX = (int) (m.get_m10() / m.get_m00());
                         teamY = (int) (m.get_m01() / m.get_m00());
@@ -130,9 +143,16 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                         teamContours.get(i).convertTo(teamContour2f, CvType.CV_32FC2);
                         RotatedRect patch = Imgproc.minAreaRect(teamContour2f);
                         org.opencv.core.Point[] p = new org.opencv.core.Point[4];
-                        patch.points(p);
+                        patch.points(p); 
+                        
                         data[numRobots] = new RobotData(p, new org.opencv.core.Point(teamX, teamY));
+                        
+                        //double ratio = data[numRobots].getLongPair().getEuclideanDistance()/data[numRobots].getShortPair().getEuclideanDistance();
+                       // if (ratio < 2.5) { 
+                        	data[numRobots] = null;
+                       // } else {
                         numRobots++;
+                       // }
                         for (int k = 0; k < p.length; k++) {
                             Core.line(webcamImageMat, p[k], p[(k + 1) % 4], new Scalar(255, 255, 255));
                         }
@@ -152,7 +172,8 @@ public class VisionWorker extends SwingWorker<Void, VisionData> {
                 int greenX = 0, greenY = 0;
                 for (int i = 0; i < greenContours.size(); i++) {
                     double areaThreshold = greenMinSize;
-                    if (areaThreshold < Imgproc.contourArea(greenContours.get(i))) {
+                    double area = Imgproc.contourArea(greenContours.get(i));
+                    if (areaThreshold < area && area < greenMaxSize) {
                         Moments m = Imgproc.moments(greenContours.get(i));
                         greenX = (int) (m.get_m10() / m.get_m00());
                         greenY = (int) (m.get_m01() / m.get_m00());
