@@ -59,13 +59,13 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
   //  private JSlider robotSizeSlider = new JSlider(0, 1000, 100);
   //  private JSlider ballSizeSlider = new JSlider(0, 1000, 10);
   //  private JSlider greenSizeSlider = new JSlider(0, 1000, 50);
-    private JLabel robotMinSizeLabel = new JLabel("250");
-    private JLabel ballMinSizeLabel = new JLabel("250");
-    private JLabel greenMinSizeLabel = new JLabel("250");
+    private JLabel robotMinSizeLabel = new JLabel("10");
+    private JLabel ballMinSizeLabel = new JLabel("10");
+    private JLabel greenMinSizeLabel = new JLabel("10");
     
-    private JLabel robotMaxSizeLabel = new JLabel("250");
-    private JLabel ballMaxSizeLabel = new JLabel("250");
-    private JLabel greenMaxSizeLabel = new JLabel("250");
+    private JLabel robotMaxSizeLabel = new JLabel("100");
+    private JLabel ballMaxSizeLabel = new JLabel("100");
+    private JLabel greenMaxSizeLabel = new JLabel("100");
     
     private RangeSlider robotSizeSlider = new RangeSlider(0,500);
     private RangeSlider greenSizeSlider = new RangeSlider(0,500);
@@ -86,6 +86,14 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
         
+        
+        robotSizeSlider.setLowValue(10);
+        ballSizeSlider.setLowValue(10);
+        greenSizeSlider.setLowValue(10);
+        
+        robotSizeSlider.setHighValue(100);
+        ballSizeSlider.setHighValue(100);
+        greenSizeSlider.setHighValue(100);
         
         ballSamplingPanel = new SamplingPanel(wc);
         teamSamplingPanel = new SamplingPanel(wc);
