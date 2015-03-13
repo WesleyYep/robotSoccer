@@ -1,12 +1,8 @@
 package ui;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,32 +17,18 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
-
-
-
-
-
-
-
-
-
-<<<<<<< HEAD
+import net.miginfocom.swing.MigLayout;
 import ui.WebcamDisplayPanel.ViewState;
-=======
-import com.jidesoft.swing.RangeSlider;
-
->>>>>>> 1812a4a1837980d97d28ba2f23c5fd3de058e013
 import vision.ColourRangeListener;
 import vision.LookupTable;
-import data.Coordinate;
-import net.miginfocom.swing.MigLayout;
+
+import com.jidesoft.swing.RangeSlider;
+
 import controllers.WebcamController;
 import data.Coordinate;
 

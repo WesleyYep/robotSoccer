@@ -93,7 +93,7 @@ public class RobotData {
 		
 		double longPairTheta = longPair.getTheta();
 		
-		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.second));
+		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.getSecond()));
 
 		if (!((differenceTheta % 90) > THRESHOLDANGLE && (differenceTheta % 90) < 90 - THRESHOLDANGLE)) {
 			return true;

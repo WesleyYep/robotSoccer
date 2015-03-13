@@ -189,24 +189,24 @@ public class SamplingPanel extends JPanel implements ActionListener {
         VSlider.addToData((int)hsv[2]);
     }
     
-    public void setRange() {
-    	System.out.println("");
-    	System.out.println(yMin + " " + yMax);
-    	System.out.println(uMin + " " + uMax);
-    	System.out.println(vMin + " " + vMax);
-    	
-    	YSlider.setLowValue(yMin);
-    	YSlider.setHighValue(yMax);
-    	
-    	USlider.setLowValue(uMin);
-    	USlider.setHighValue(uMax);
-    	
-    	VSlider.setLowValue(vMin);
-    	VSlider.setHighValue(vMax);
-    	 YSlider.repaint();
-         USlider.repaint();
-         VSlider.repaint(); 
-    }
+//    public void setRange() {
+//    	System.out.println("");
+//    	System.out.println(yMin + " " + yMax);
+//    	System.out.println(uMin + " " + uMax);
+//    	System.out.println(vMin + " " + vMax);
+//    	
+//    	YSlider.setLowValue(yMin);
+//    	YSlider.setHighValue(yMax);
+//    	
+//    	USlider.setLowValue(uMin);
+//    	USlider.setHighValue(uMax);
+//    	
+//    	VSlider.setLowValue(vMin);
+//    	VSlider.setHighValue(vMax);
+//    	 YSlider.repaint();
+//         USlider.repaint();
+//         VSlider.repaint(); 
+//    }
     
     public void addColourRangeListener(ColourRangeListener c) {
     	colourRangeListeners.add(c);
