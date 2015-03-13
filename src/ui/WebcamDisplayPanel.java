@@ -127,7 +127,7 @@ public class WebcamDisplayPanel extends JPanel {
 
             final BufferedImage image = Image.toBufferedImage(mat);
 
-            if (isFiltering){
+            if (isFiltering) {
                 //old stuff
                 for (int j = 0; j < image.getHeight(); j++) {
                     for (int i = 0; i < image.getWidth(); i++) {

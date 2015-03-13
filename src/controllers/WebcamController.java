@@ -154,7 +154,7 @@ public class WebcamController {
                 if (webcamImageMat == null) {
                 	cancel(true);
                 }
-                
+
                 webcamDisplayPanel.update(webcamImageMat);
             }
 
