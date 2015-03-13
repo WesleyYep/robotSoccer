@@ -5,6 +5,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 /**
@@ -76,6 +77,19 @@ public class Image {
 
         System.arraycopy(b, 0, targetPixels, 0, b.length);
         return image;
+    }
+    
+    /**
+     * <p>Transforms bufferedimage to Mat</p>
+     * @param BufferedImage image
+     * @return Mat
+     */
+    
+    public static Mat toMat(BufferedImage image) {
+    	byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+    	Mat mat = new Mat(image.getHeight(), image.getWidth(), CvType.CV_8UC3);
+    	mat.put(0, 0, data);
+    	return mat;
     }
     
 }

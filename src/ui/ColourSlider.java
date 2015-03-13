@@ -48,8 +48,8 @@ public class ColourSlider extends RangeSlider {
 	}
 
 	/**
-	 * <p>Adds the YUV value to the list</p> 
-	 * @param YUV value. 0-255
+	 * <p>Adds the HSV value to the list</p> 
+	 * @param HSV value. 0-255
 	 */
 	
 	public void addToData(int value) {

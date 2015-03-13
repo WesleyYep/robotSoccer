@@ -96,7 +96,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				highHLabel.setText(HSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.yRangeChanged(HSlider.getHighValue(), HSlider.getLowValue(),SamplingPanel.this);
+					c.hRangeChanged(HSlider.getHighValue(), HSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
@@ -110,7 +110,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				highSLabel.setText(SSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.uRangeChanged(SSlider.getHighValue(), SSlider.getLowValue(),SamplingPanel.this);
+					c.sRangeChanged(SSlider.getHighValue(), SSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
@@ -182,15 +182,11 @@ public class SamplingPanel extends JPanel implements ActionListener {
     public void takeSample(BufferedImage image, double xPos, double yPos) {
         Color color = new Color(image.getRGB((int)xPos, (int)yPos));
         
-        double[] yuv = ColorSpace.RGBToYUV(color.getRed(), color.getGreen(), color.getBlue());
-
-        HSlider.addToData((int)yuv[0]);
-        SSlider.addToData((int)yuv[1]);
-        VSlider.addToData((int)yuv[2]);
-
-        HSlider.repaint();
-        SSlider.repaint();
-        VSlider.repaint();
+        float[] hsv = ColorSpace.RGBToHSV(color.getRed(), color.getGreen(), color.getBlue());
+        
+        HSlider.addToData((int)hsv[0]);
+        SSlider.addToData((int)hsv[1]);
+        VSlider.addToData((int)hsv[2]);
     }
     
     public void addColourRangeListener(ColourRangeListener c) {

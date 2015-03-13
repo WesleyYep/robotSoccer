@@ -1,7 +1,9 @@
 package data;
 
 import org.opencv.core.Point;
+
 import utils.Image;
+import utils.PairPoint;
 
 public class RobotData {
 	private Point[] teamRectPoint;
@@ -57,8 +59,8 @@ public class RobotData {
 	}
 	
 	private void assignThresholdDistance() {
-		double endX = shortPair.second.x + shortPair.euclideanDistance * Math.cos(Math.toRadians(shortPair.theta));
-		double endY = shortPair.second.y + shortPair.euclideanDistance * Math.sin(Math.toRadians(shortPair.theta));
+		double endX = shortPair.getSecond().x + shortPair.getEuclideanDistance() * Math.cos(Math.toRadians(shortPair.getTheta()));
+		double endY = shortPair.getSecond().y + shortPair.getEuclideanDistance() * Math.sin(Math.toRadians(shortPair.getTheta()));
 		Point endPoint = new Point(endX, endY);
 		thresholdDistance = Image.euclideanDistance(teamCenterPoint, endPoint);
 	}
@@ -83,7 +85,7 @@ public class RobotData {
 		
 		double longPairTheta = longPair.getTheta();
 		
-		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.second));
+		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.getSecond()));
 		
 		if ((differenceTheta % 90) > 90 - THRESHOLDANGLE && (differenceTheta % 90) < THRESHOLDANGLE + 90) {
 			return true;
@@ -217,36 +219,5 @@ public class RobotData {
 	public double getTheta() {
         return Math.toRadians(-theta);
     }
-	
-	public class PairPoint {
-		
-		private Point first;
-		private Point second;
-		private double euclideanDistance;
-		private double theta;
-		
-		public PairPoint(Point first, Point second, double euclideanDistance, double theta) {
-			this.first = first;
-			this.second = second;
-			this.euclideanDistance = euclideanDistance;
-			this.theta = theta;
-		}
-		
-		public Point getFirst() {
-			return first;
-		}
-		
-		public Point getSecond() {
-			return second;
-		}
-		
-		public double getEuclideanDistance() {
-			return euclideanDistance;
-		}
-		
-		public double getTheta() {
-			return theta;
-		}
-	}
 	
 }

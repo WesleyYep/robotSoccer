@@ -46,7 +46,7 @@ import data.Coordinate;
 /**
  * Created by Wesley on 2/02/2015.
  */
-public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, ColourRangeListener {
+public class ColourPanel extends JPanel implements ColourRangeListener {
     public SamplingPanel ballSamplingPanel;
     public SamplingPanel teamSamplingPanel;
     public SamplingPanel groundSamplingPanel;
@@ -320,13 +320,8 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 //        }
 //    }
 
-    @Override
-    public void viewStateChanged() {
-        //do nothing
-    }
-
 	@Override
-	public void yRangeChanged(int max, int min, SamplingPanel panel) {
+	public void hRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
 			temp = (1 << LookupTable.TEAM_BIT_POS);
@@ -341,7 +336,7 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 	}
 
 	@Override
-	public void uRangeChanged(int max, int min, SamplingPanel panel) {
+	public void sRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
 			temp = (1 << LookupTable.TEAM_BIT_POS);

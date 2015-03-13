@@ -45,7 +45,7 @@ public class WebcamDisplayPanel extends JPanel {
     private boolean isFiltering = false;
     private BufferedImage zoomCursorImg;
     private Cursor zoomCursor;
-
+    
 	public WebcamDisplayPanel() {
 		super();
 		
@@ -71,8 +71,7 @@ public class WebcamDisplayPanel extends JPanel {
                         ColourPanel cp = (ColourPanel) listener;
                         
                         // Get the current bufferedimage.
-                        ImageIcon icon = (ImageIcon)webcamImageLabel.getIcon();
-                        BufferedImage image = (BufferedImage)icon.getImage();
+                        BufferedImage image = getWebcamBufferedImage();
 
                         int x = e.getX() - zoomCursorImg.getWidth() / 2;
                         int y = e.getY() - zoomCursorImg.getHeight() / 2;
@@ -106,7 +105,9 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void update(Mat mat) {
-
+		
+		ViewState oldViewState = currentViewState;
+		
 		if (mat == null) {
 			
 			/* 
@@ -132,9 +133,9 @@ public class WebcamDisplayPanel extends JPanel {
                     for (int i = 0; i < image.getWidth(); i++) {
                         Color color = new Color(image.getRGB(i, j));
 
-                        double[] yuv = ColorSpace.RGBToYUV(color.getRed(), color.getGreen(), color.getBlue());
+                        float[] hsv = ColorSpace.RGBToHSV(color.getRed(), color.getGreen(), color.getBlue());
 
-                        if (isDetected((int)yuv[0], (int)yuv[1], (int)yuv[2])) {
+                        if (isDetected((int)hsv[0], (int)hsv[1], (int)hsv[2])) {
                             image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
                         }
                     }
@@ -157,10 +158,14 @@ public class WebcamDisplayPanel extends JPanel {
 				}
             	
             });
-
+            
+            notifyImageUpdate(image);
 		}
 		
-		notifyWebcamDisplayPanelListeners();
+		if (oldViewState != currentViewState) {
+			notifyViewStateChange(currentViewState);
+		}
+
 		// Thread safe call.
 		repaint();
 	}
@@ -212,9 +217,18 @@ public class WebcamDisplayPanel extends JPanel {
 
     public void setSamplingPanel(SamplingPanel sp) {
         this.samplingPanel = sp;
-
     }
-
+    
+    /**
+     * <p>Gets the bufferedimage used in display</p>
+     * @return BufferedImage of webcam
+     */
+    
+    public BufferedImage getWebcamBufferedImage() {
+    	ImageIcon icon = (ImageIcon)webcamImageLabel.getIcon();
+    	return (BufferedImage)icon.getImage();
+    }
+    
 	/**
 	 * <p>Add instance to be an observer</p>
 	 * @param WebcamDisplayPanelListener instance
@@ -234,15 +248,26 @@ public class WebcamDisplayPanel extends JPanel {
 	}
 	
 	/**
-	 * <p>Notify all observers of change</p>
+	 * <p>Notify all observers of view state change</p>
 	 */
 	
-	public void notifyWebcamDisplayPanelListeners() {
+	public void notifyViewStateChange(ViewState currentViewState) {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
-			l.viewStateChanged();
+			l.viewStateChanged(currentViewState);
 		}
 	}
 
+	/**
+	 * <p>Notify all observers of image update on webcamImageLabel</p>
+	 * @param image
+	 */
+	
+	public void notifyImageUpdate(BufferedImage image) {
+		for (WebcamDisplayPanelListener l : wdpListeners) {
+			l.imageUpdated(image);
+		}
+	}
+	
 	public void setZoomCursor() {
 		setCursor(zoomCursor);
 	}

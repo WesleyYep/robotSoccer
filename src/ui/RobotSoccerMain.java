@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
 import javax.swing.BorderFactory;
@@ -31,10 +32,8 @@ import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
 import bot.Robots;
-
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
-
 import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
@@ -79,7 +78,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	private VisionPanel visionPanel;
 	private VisionSettingFile visionSetting;
 
-	private JButton testColourButton = new JButton("Test");
 	private VisionWorker visionWorker;
 	private VisionController visionController;
 	private JButton openVisionButton;
@@ -221,28 +219,33 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		webcamComponentPanel.add(IPWebcamRadioButton, "wrap");
 		webcamComponentPanel.add(connectionButton, "w 50%");
 		webcamComponentPanel.add(recordButton, "w 50%, wrap");
-		webcamComponentPanel.add(testColourButton);
 
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
+		
 		webcamDisplayPanel = new WebcamDisplayPanel();
 		webcamController = new WebcamController(webcamDisplayPanel);
+		
 		colourPanel = new ColourPanel(webcamController);
-		visionController = new VisionController();
-
+		
+		visionWorker = new VisionWorker(colourPanel);
+		visionWorker.addListener(fieldController);
+		
 		// Add listener
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
-		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
+		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
+		
+		visionController = new VisionController();
+
+
+		
 		cards.add(field, FIELDSTRING);
 		cards.add(webcamDisplayPanel, CAMSTRING);
-		visionWorker = new VisionWorker(colourPanel, webcamController, webcamDisplayPanel);
-		visionWorker.addListener(fieldController);
 
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
 		tabPane.addTab("Colour", colourPanel);
 
 		visionPanel = new VisionPanel(webcamController,visionController);
-		webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
 		tabPane.addTab("Vision", visionPanel);
 
 		//window listener
@@ -349,20 +352,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();
         configFile.createConfigFile();
-
-        testColourButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (visionWorker.isTestingColor()) {
-                    visionWorker.cancel(true);
-                    visionWorker.setCancelled();
-                } else {
-                    visionWorker = new VisionWorker(colourPanel, webcamController, webcamDisplayPanel);
-                    visionWorker.addListener(fieldController);
-                    visionWorker.execute();
-                }
-            }
-        });
     }
     
     /**
@@ -398,23 +387,20 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
     	} else if (evt.getSource() == IPWebcamRadioButton) {
     		webcamURLField.setEditable(true);
     	} else if (evt.getSource() == connectionButton) {
+    		
     		if (connectionButton.getText().equals(CONNECTION[0])) {
 
     			// Only one of the radio buttons can be selected at a time
     			if (defaultWebcamRadioButton.isSelected()) {
     				webcamController.connect();
     			} else {
-    				//webcamController.connect(webcamURLField.getText());
+    				webcamController.connect(webcamURLField.getText());
     			}
-                try {
-                    Thread.sleep(2000);
-                    testColourButton.doClick();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                
             } else {
     			webcamController.disconnect();
     		}
+    		
     	} else if (evt.getSource() == recordButton) {
     		
     		if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
@@ -440,8 +426,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	}
 
 	@Override
-	public void viewStateChanged() {
-		ViewState currentViewState = webcamController.getWebcamStatus();
+	public void viewStateChanged(ViewState currentViewState) {
 
 		switch(currentViewState) {
 		case CONNECTED:
@@ -453,6 +438,10 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		}
 	}
 
+	@Override
+	public void imageUpdated(BufferedImage image) {
+	}
+	
 	/**
 	 * Create the GUI and show it. As with all GUI code, this must run
 	 * on the event-dispatching thread.

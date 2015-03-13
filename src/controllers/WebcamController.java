@@ -2,15 +2,17 @@ package controllers;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 
 import javax.swing.SwingWorker;
 
-import org.opencv.core.*;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
 
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
+import vision.VisionWorker;
 
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
@@ -30,13 +32,11 @@ public class WebcamController {
 	protected int width, height;					// the size of the grabbed images (scaled if so specified)
 	protected BufferedImage image;					// image grabbed from webcam (if any)
 	private Grabby grabby;							// handles webcam grabbing
-	//private FrameGrabber grabber;					// JavaCV
     private VideoCapture grabber;
     private int cameraNumber = 0;
     private Mat webcamImageMat;
 
 	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		this.webcamDisplayPanel = webcamDisplayPanel;
         grabby = new Grabby();
     }
@@ -59,14 +59,10 @@ public class WebcamController {
 	 * @param url
 	 */
 
-//	public void connect(String url) {
-//		try {
-//			grabber = new IPCameraFrameGrabber(url);
-//			grabby.execute();
-//		} catch (MalformedURLException e) {
-//			System.err.println("Could not connect to IP webcam.");
-//		}
-//	}
+	public void connect(String url) {
+		grabber = new VideoCapture(url);
+		grabby.execute();
+	}
 
 	/**
 	 * <p>Disconnect the webcam</p>
@@ -100,6 +96,24 @@ public class WebcamController {
     	} else {
     		return null;
     	}
+    }
+    
+    /**
+     * <p>Retrieve the HSV webcam mat. If the webcam is not running, it will return null</p>
+     * @return hsv image mat
+     */
+    
+    public Mat getHSVImageFromWebcam() {
+    	if (webcamImageMat == null) {
+    		return null;
+    	}
+    	
+    	Mat hsvMat = new Mat(webcamImageMat.size(), CvType.CV_8UC3);
+    	
+    	// Full range HSV. Range 0-255.
+    	Imgproc.cvtColor(webcamImageMat, hsvMat, Imgproc.COLOR_BGR2HSV_FULL);
+    	
+    	return hsvMat;
     }
     
     /**

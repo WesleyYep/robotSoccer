@@ -16,7 +16,7 @@ import net.miginfocom.swing.MigLayout;
 import controllers.VisionController;
 import controllers.WebcamController;
 
-public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
+public class VisionPanel extends JPanel {
 	
 	
 	private WebcamController webcamController;
@@ -80,11 +80,6 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		} else {
 			return false;
 		}
-	}
-
-	@Override
-	public void viewStateChanged() {
-		
 	}
 
 }
