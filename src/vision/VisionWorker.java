@@ -28,6 +28,7 @@ import data.VisionData;
 /**
  * Created by Wesley on 6/02/2015.
  */
+
 public class VisionWorker implements WebcamDisplayPanelListener {
 
 	private Mat dilateKernel, erodeKernel;
@@ -290,5 +291,4 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	protected int squared (int x) {
 		return x * x;
 	}
-
 }

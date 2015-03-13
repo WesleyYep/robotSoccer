@@ -1,6 +1,5 @@
 package actions;
 
-import Paths.StraightLinePath;
 import bot.Robot;
 import strategy.Action;
 
@@ -8,6 +7,8 @@ import strategy.Action;
  * Created by Wesley on 21/01/2015.
  */
 public class TurnToFaceBall extends Action{
+    public static final double ERROR_MARGIN = 0.8;
+
     @Override
     public String getName() {
         return "Turn to ball (trial)";
@@ -25,31 +26,32 @@ public class TurnToFaceBall extends Action{
         } else if (difference < -Math.PI) {
             difference += (2 * Math.PI);
         }
-
-        double errorMargin = 0.8;
-        if (Math.abs(difference) >= errorMargin) {
-            if (difference > 0) {
-                r.angularVelocity = 2*Math.PI;
-            } else {
-                r.angularVelocity = -2*Math.PI;
-            }
-        } else if (Math.abs(difference) >= errorMargin/2) {
-            if (difference > 0) {
-                r.angularVelocity = Math.PI;
-            } else {
-                r.angularVelocity = Math.PI;
-            }
-        } else if (Math.abs(difference) >= errorMargin/4) {
-            if (difference > 0) {
-                r.angularVelocity = Math.PI/2;
-            } else {
-                r.angularVelocity = Math.PI/2;
-            }
-            r.linearVelocity = 0;
-        } else {
-            r.angularVelocity = 0;
-        }
+        
         r.linearVelocity = 0;
+        if (Math.abs(difference) >= ERROR_MARGIN) {
+            if (difference > 0) {
+                r.angularVelocity = 2*Math.PI/2;
+            } else {
+                r.angularVelocity = -2*Math.PI/2;
+            }
+        } else if (Math.abs(difference) >= ERROR_MARGIN /2) {
+            if (difference > 0) {
+                r.angularVelocity = Math.PI/4;
+            } else {
+                r.angularVelocity = -Math.PI/4;
+            }
+        } /*else if (Math.abs(difference) >= ERROR_MARGIN /4) {
+            if (difference > 0) {
+                r.angularVelocity = Math.PI/8;
+            } else {
+                r.angularVelocity = -Math.PI/8;
+            }
+        } */else {
+        	double distance = Math.sqrt(squared(r.getXPosition()-ballX) + squared(r.getYPosition()-ballY));
+            r.linearVelocity = 1;
+            r.angularVelocity = squared(2*difference) / (distance/100);
+      //      System.out.println(r.angularVelocity);
+        }
 
 
     }

@@ -148,6 +148,10 @@ public class VisionSettingFile {
             saveSetting.addProperty("robotMinSize", colourPanel.getRobotSizeMinimum());
             saveSetting.addProperty("greenMinSize", colourPanel.getGreenSizeMinimum());
             saveSetting.addProperty("ballMinSize", colourPanel.getBallSizeMinimum());
+            
+            saveSetting.addProperty("robotMaxSize", colourPanel.getRobotSizeMaximum());
+            saveSetting.addProperty("greenMaxSize", colourPanel.getGreenSizeMaximum());
+            saveSetting.addProperty("ballMaxSize", colourPanel.getBallSizeMaximum());
 
 			saveSetting.save();
 
@@ -253,9 +257,13 @@ public class VisionSettingFile {
 			opponentSp.setUpperBoundForS(openSetting.getInt("opponentSUpper"));
 			opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
 
-            colourPanel.setRobotSizeMinimum(openSetting.getInt("robotMinSize"));
-            colourPanel.setGreenSizeMinimum(openSetting.getInt("greenMinSize"));
-            colourPanel.setBallSizeMinimum(openSetting.getInt("ballMinSize"));
+            colourPanel.setRobotSizeMinimum(openSetting.getInt("robotMinSize",0));
+            colourPanel.setGreenSizeMinimum(openSetting.getInt("greenMinSize",0));
+            colourPanel.setBallSizeMinimum(openSetting.getInt("ballMinSize",0));
+            
+            colourPanel.setRobotSizeMaximum(openSetting.getInt("robotMaxSize",0));
+            colourPanel.setGreenSizeMaximum(openSetting.getInt("greenMaxSize",0));
+            colourPanel.setBallSizeMaximum(openSetting.getInt("ballMaxSize",0));
 
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block

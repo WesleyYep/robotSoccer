@@ -1,8 +1,5 @@
 package actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import strategy.Action;
 
 /**
@@ -18,7 +15,7 @@ public class Actions {
 //    	new BasicGoalKeep(),
     	new Wait(),
         new TurnToFaceBall(),
-        new TurnToFaceBall2(),
+        new MoveToSpot(),
         new GoalKeepTest(),
         new StrikerTest()
     	};

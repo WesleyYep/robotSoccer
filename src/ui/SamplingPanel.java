@@ -44,7 +44,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JTextField lowValueTextField, highValueTextField;
     private JComboBox<String> HSVCombo;
     private List<ColourRangeListener> colourRangeListeners;
-    
+    private int yMax = -1, yMin = -1, uMax = -1, uMin = -1, vMax = -1, vMin = -1;
     public boolean isSampling = false;
     
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
@@ -189,6 +189,25 @@ public class SamplingPanel extends JPanel implements ActionListener {
         VSlider.addToData((int)hsv[2]);
     }
     
+    public void setRange() {
+    	System.out.println("");
+    	System.out.println(yMin + " " + yMax);
+    	System.out.println(uMin + " " + uMax);
+    	System.out.println(vMin + " " + vMax);
+    	
+    	YSlider.setLowValue(yMin);
+    	YSlider.setHighValue(yMax);
+    	
+    	USlider.setLowValue(uMin);
+    	USlider.setHighValue(uMax);
+    	
+    	VSlider.setLowValue(vMin);
+    	VSlider.setHighValue(vMax);
+    	 YSlider.repaint();
+         USlider.repaint();
+         VSlider.repaint(); 
+    }
+    
     public void addColourRangeListener(ColourRangeListener c) {
     	colourRangeListeners.add(c);
     }
@@ -320,6 +339,15 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			HSlider.clearData();
 			SSlider.clearData();
 			VSlider.clearData();
+			
+			yMax = -1;
+			yMin = -1;
+			
+			uMax = -1;
+			uMin = -1;
+			
+			vMax = -1;
+			vMin = -1;
 		}
 	}
 	

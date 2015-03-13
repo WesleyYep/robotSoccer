@@ -1,0 +1,17 @@
+Role:gkrole
+permanent-Goal Keep 1
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+gkrole
+null
+null
+null
+null
+-----
+Situation:new situation 1:21:3:471:370
+new play
+-----
