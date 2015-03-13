@@ -11,12 +11,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import ui.WebcamDisplayPanel.ViewState;
 import utils.Image;
 import net.miginfocom.swing.MigLayout;
 import controllers.VisionController;
 import controllers.WebcamController;
 
-public class VisionPanel extends JPanel {
+public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 	
 	
 	private WebcamController webcamController;
@@ -80,6 +81,20 @@ public class VisionPanel extends JPanel {
 		} else {
 			return false;
 		}
+	}
+
+
+	@Override
+	public void viewStateChanged(ViewState currentViewState) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void imageUpdated(BufferedImage image) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

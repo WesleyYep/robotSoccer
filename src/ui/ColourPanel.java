@@ -36,6 +36,8 @@ import javax.swing.event.ChangeListener;
 
 
 
+
+import ui.WebcamDisplayPanel.ViewState;
 import vision.ColourRangeListener;
 import vision.LookupTable;
 import data.Coordinate;
@@ -46,7 +48,7 @@ import data.Coordinate;
 /**
  * Created by Wesley on 2/02/2015.
  */
-public class ColourPanel extends JPanel implements ColourRangeListener {
+public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDisplayPanelListener {
     public SamplingPanel ballSamplingPanel;
     public SamplingPanel teamSamplingPanel;
     public SamplingPanel groundSamplingPanel;
@@ -367,5 +369,17 @@ public class ColourPanel extends JPanel implements ColourRangeListener {
     protected int squared (int x) {
         return x * x;
     }
+
+	@Override
+	public void viewStateChanged(ViewState currentViewState) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void imageUpdated(BufferedImage image) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

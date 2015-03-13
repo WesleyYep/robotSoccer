@@ -27,13 +27,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.opencv.core.Core;
+
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
 import bot.Robots;
+
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
+
 import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
@@ -234,6 +239,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		// Add listener
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
+		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
+		
 		
 		visionController = new VisionController();
 
@@ -245,7 +252,8 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
 		tabPane.addTab("Colour", colourPanel);
 
-		visionPanel = new VisionPanel(webcamController,visionController);
+		visionPanel = new VisionPanel(webcamController, visionController);
+		webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
 		tabPane.addTab("Vision", visionPanel);
 
 		//window listener
@@ -468,6 +476,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
+		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
