@@ -44,7 +44,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JTextField lowValueTextField, highValueTextField;
     private JComboBox<String> HSVCombo;
     private List<ColourRangeListener> colourRangeListeners;
-    private int yMax = -1, yMin = -1, uMax = -1, uMin = -1, vMax = -1, vMin = -1;
+    private int hMax = -1, hMin = -1, sMax = -1, sMin = -1, vMax = -1, vMin = -1;
     public boolean isSampling = false;
     
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
@@ -187,26 +187,50 @@ public class SamplingPanel extends JPanel implements ActionListener {
         HSlider.addToData((int)hsv[0]);
         SSlider.addToData((int)hsv[1]);
         VSlider.addToData((int)hsv[2]);
+        
+        if (hMax == -1 || hsv[0] > hMax) {
+        	hMax = (int) hsv[0];
+        }
+        
+        if (hMin == -1 || hsv[0] < hMin) {
+        	hMin = (int) hsv[0];
+        }
+        
+        if (sMax == -1 || hsv[1] > sMax) {
+        	sMax = (int) hsv[1];
+        }
+        
+        if (sMin == -1 || hsv[1] < sMin) {
+        	sMin = (int) hsv[1];
+        }
+        
+        if (vMax == -1 || hsv[2] > vMax) {
+        	vMax = (int) hsv[2];
+        }
+        
+        if (vMin == -1 || hsv[2] < vMin) {
+        	vMin = (int) hsv[2];
+        }
     }
     
-//    public void setRange() {
-//    	System.out.println("");
-//    	System.out.println(yMin + " " + yMax);
-//    	System.out.println(uMin + " " + uMax);
-//    	System.out.println(vMin + " " + vMax);
-//    	
-//    	YSlider.setLowValue(yMin);
-//    	YSlider.setHighValue(yMax);
-//    	
-//    	USlider.setLowValue(uMin);
-//    	USlider.setHighValue(uMax);
-//    	
-//    	VSlider.setLowValue(vMin);
-//    	VSlider.setHighValue(vMax);
-//    	 YSlider.repaint();
-//         USlider.repaint();
-//         VSlider.repaint(); 
-//    }
+    public void setRange() {
+    	//System.out.println("");
+    	//System.out.println(hMin + " " + hMax);
+    	//System.out.println(sMin + " " + sMax);
+    	//System.out.println(vMin + " " + vMax);
+    	
+    	HSlider.setLowValue(hMin);
+    	HSlider.setHighValue(hMax);
+    	
+    	SSlider.setLowValue(sMin);
+    	SSlider.setHighValue(sMax);
+    	
+    	VSlider.setLowValue(vMin);
+    	VSlider.setHighValue(vMax);
+    	 HSlider.repaint();
+         SSlider.repaint();
+         VSlider.repaint(); 
+    }
     
     public void addColourRangeListener(ColourRangeListener c) {
     	colourRangeListeners.add(c);
@@ -340,11 +364,11 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			SSlider.clearData();
 			VSlider.clearData();
 			
-			yMax = -1;
-			yMin = -1;
+			hMax = -1;
+			hMin = -1;
 			
-			uMax = -1;
-			uMin = -1;
+			sMax = -1;
+			sMin = -1;
 			
 			vMax = -1;
 			vMin = -1;
