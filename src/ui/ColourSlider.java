@@ -53,9 +53,10 @@ public class ColourSlider extends RangeSlider {
 	 */
 	
 	public void addToData(int value) {
-		double difference = getMaximum() - getMinimum();
-		value = (int)((value - getMinimum())/difference * getWidth());
-		data.add(value);
+	//	double difference = getMaximum() - getMinimum();
+		value = (int)(value/255.0 * (getWidth()-20) + 10);
+        //System.out.println(value);
+        data.add(value);
 		repaint();
 	}
 
