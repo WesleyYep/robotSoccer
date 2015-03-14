@@ -14,7 +14,7 @@ public class RobotData {
 	private PairPoint greenPatch2 = null;
 	private double thresholdDistance;
 	
-	private final static double THRESHOLDANGLE = 10;
+	private final static double THRESHOLDANGLE = 20;
     
     private double theta;
 	

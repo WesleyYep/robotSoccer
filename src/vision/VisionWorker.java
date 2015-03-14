@@ -21,7 +21,6 @@ import ui.SamplingPanel;
 import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
 import utils.Image;
-import data.Coordinate;
 import data.RobotData;
 import data.VisionData;
 
@@ -37,7 +36,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private boolean isTestingColour = false;
 
 	private List<VisionListener> listeners = new ArrayList<VisionListener>();
-	private List<Coordinate> alreadyProcessed = new ArrayList<Coordinate>();
 	private List<MatOfPoint> ballContours, teamContours, greenContours, opponentContours;
 
 	private ColourPanel colourPanel;
@@ -45,12 +43,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private int robotMinSize;
 	private int ballMinSize;
 	private int greenMinSize;
-	private int suitableLength;
 
-	private Coordinate[] oldRobotPositions = null;
-	private int[] oldRobotOrientations = new int[5];
-	private int numberOfGroups = 0;
-	private List<Point> centerPoint = new ArrayList<Point>();
+	private Point[] oldRobotPositions = {new Point(),new Point(),new Point(),new Point(),new Point()};
 
 	private ViewState webcamDisplayPanelState;
 	
@@ -58,9 +52,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
 	public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
-		suitableLength = cp.getRobotDimension(); //change this if it doesn't work
-
-
 
 		ballSP = colourPanel.ballSamplingPanel;
 		teamSP = colourPanel.teamSamplingPanel;
@@ -161,7 +152,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					//centerPoint.add(new Point(ballX, ballY));
 
 					// Ball position update.
-					notifyListeners(new VisionData(new Coordinate(ballX, ballY), 0, "ball"));
+					notifyListeners(new VisionData(new Point(ballX, ballY), 0, "ball"));
 				}
 			}
 
@@ -241,8 +232,14 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					int robotNum = rd.robotIdentification();
 
 					if (robotNum > 0) {
-						notifyListeners(new VisionData(new Coordinate((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y), rd.getTheta(), "robot:" + robotNum));
-					}
+                        Point pos = new Point((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y);
+                        double distance =  Image.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
+
+                        if (distance < 15) {
+                            notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+                        }
+                        oldRobotPositions[robotNum-1] = pos;
+                    }
 
 				}
 			}
