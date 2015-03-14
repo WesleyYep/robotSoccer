@@ -319,7 +319,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
             			}
                 	}
             	}
-           // 	sp.setRange();
+            	sp.setRange();
             }
         }
     }
