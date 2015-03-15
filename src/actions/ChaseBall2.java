@@ -2,12 +2,18 @@ package actions;
 
 import Paths.StraightLinePath;
 import bot.Robot;
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
+import ui.Field;
 
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class ChaseBall2 extends Action{
+
+    private double error = 5;
+
     @Override
     public String getName() {
         return "Chase Ball (smooth)";
@@ -16,45 +22,124 @@ public class ChaseBall2 extends Action{
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
-        //r.linearVelocity = 0.5;
-        if (path == null || path.hasReachedTarget()) {
-            path = new StraightLinePath(r, (int)r.getXPosition(), (int)r.getYPosition(), (int)ballX, (int)ballY);
-            path.setPoints();
-        }
-
-        //Should try to use the path here, rather than just hard coding some velocities
-
-        double ballTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
-        double difference = ballTheta - Math.toRadians(r.getTheta());
-        if (difference > Math.PI) {
-            difference -= (2 * Math.PI);
-        } else if (difference < -Math.PI) {
-            difference += (2 * Math.PI);
-        }
-        double distance = Math.sqrt(squared(r.getXPosition()-ballX) + squared(r.getYPosition()-ballY));
-        r.linearVelocity = 1;
-        r.angularVelocity = difference / (distance/100);
-
-
-
-        //       System.out.println("ballTheta: " + ballTheta);
-        //       System.out.println("robot ballTheta: " + Math.toRadians(r.getTheta()));
-//        if (Math.abs(ballTheta - Math.toRadians(r.getTheta())) >= 0.8) {
-//            if (ballTheta - Math.toRadians(r.getTheta()) > 0) {
-//                r.angularVelocity = 2*Math.PI;
-//            } else {
-//                r.angularVelocity = -2*Math.PI;
-//            }
-//            r.linearVelocity = 0;
-//        } else {
-//            r.linearVelocity = 1;
-//            r.angularVelocity = 0;
-//        }
-
-
-
-
+        setVelocityToTarget(ballX, ballY, true);
     }
+
+    public void setVelocityToTarget(double x, double y, boolean front) {
+        Robot r = bots.getRobot(index);
+        double targetDist = 0;
+        double targetTheta = 0;
+
+        targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
+
+        targetTheta = Math.atan2(y-r.getYPosition(), x - r.getXPosition());
+
+
+        double difference;
+        double diff1;
+        double diff2;
+        if ( Math.toDegrees(targetTheta*-1) > 0 && r.getTheta() <= 0) {
+            diff1 = Math.toDegrees(targetTheta*-1) + Math.abs(r.getTheta());
+            diff2 = -1*(180-Math.toDegrees(targetTheta*-1)) + Math.abs(-180-r.getTheta());
+
+            if (diff1 <= diff2) {
+                difference = diff1;
+            }
+            else {
+                difference = diff2;
+            }
+        }
+        else if ( Math.toDegrees(targetTheta*-1) <= 0 && r.getTheta() > 0) {
+            diff1 = -1*Math.abs(Math.toDegrees(targetTheta*-1)) + r.getTheta();
+            diff2 = Math.abs(-180-Math.toDegrees(targetTheta*-1)) + (180-r.getTheta());
+
+            if (diff1 <= diff2) {
+                difference = diff1;
+            }
+            else {
+                difference = diff2;
+            }
+        }
+        else {
+            difference = Math.toDegrees(targetTheta*-1) - r.getTheta();
+        }
+
+        targetTheta = difference;
+
+        String filename = "tipper.fcl";
+        FIS fis = FIS.load(filename, true);
+
+        if (fis == null) {
+            System.err.println("Can't load file: '" + filename + "'");
+            System.exit(1);
+        }
+
+        // Get default function block
+        FunctionBlock fb = fis.getFunctionBlock(null);
+        //JFuzzyChart.get().chart(fb);
+        // Set inputs
+        //fb.setVariable("food", 8.5);
+        //fb.setVariable("service", 7.5);
+        fb.setVariable("obstacleTheta", Math.PI);
+        fb.setVariable("obstacleDist", 10);
+        fb.setVariable("targetTheta", Math.toRadians(targetTheta));
+        fb.setVariable("targetDist", targetDist);
+
+        // Evaluate
+        fb.evaluate();
+
+        // Show output variable's chart
+        fb.getVariable("angSpeedError").defuzzify();
+
+
+        // Print ruleSet
+        //System.out.println(fb);
+// 		System.out.println("theta: " + targetTheta );
+// 		System.out.println("dist: " + targetTheta );
+// 		System.out.println("ang speed: " + Math.toDegrees(fb.getVariable("angSpeedError").getValue()));
+// 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
+
+        r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
+        //       System.out.println(r.angularVelocity);
+        r.linearVelocity= 1;
+
+        if (isCloseToWall()) {
+            r.linearVelocity = 0.2;
+        }
+
+        if (front == false) {
+            r.linearVelocity*= -1;
+        }
+
+        checkRobotPosition(x,y);
+    }
+
+    private void checkRobotPosition(double x, double y) {
+        Robot r = bots.getRobot(index);
+        if (r.getXPosition() >= x-error && r.getXPosition() <= x+error && r.getYPosition() >= y-error && r.getYPosition() <= y+error) {
+            r.angularVelocity = 0;
+            r.linearVelocity = 0;
+        }
+    }
+
+    private boolean isCloseToWall() {
+        Robot r = bots.getRobot(index);
+        if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
+            return true;
+        }
+        else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-10 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT) {
+            return true;
+        }
+        else if (r.getXPosition() >= 0 && r.getXPosition() <= 10 ) {
+            return true;
+        }
+        else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-10 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     protected double squared (double x) {
         return x * x;
