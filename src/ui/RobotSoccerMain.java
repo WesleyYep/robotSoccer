@@ -180,6 +180,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		glassPanel = new DrawAreaGlassPanel(field, situationPanel);
 		glassPanel.setVisible(false);
 		field.add(glassPanel);
+		field.addComponentListener(glassPanel);
 		situationPanel.setGlassPanel(glassPanel);
 
 

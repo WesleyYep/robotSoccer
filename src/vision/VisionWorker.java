@@ -43,6 +43,10 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private int robotMinSize;
 	private int ballMinSize;
 	private int greenMinSize;
+	
+	private int robotMaxSize;
+    private int ballMaxSize;
+    private int greenMaxSize;
 
 	private Point[] oldRobotPositions = {new Point(),new Point(),new Point(),new Point(),new Point()};
 
@@ -127,6 +131,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			ballMinSize = colourPanel.getBallSizeMinimum();
 			robotMinSize = colourPanel.getRobotSizeMinimum();
 			greenMinSize = colourPanel.getGreenSizeMinimum();
+			
+			//Get the maximum length
+			ballMaxSize = colourPanel.getBallSizeMaximum();
+			robotMaxSize = colourPanel.getRobotSizeMaximum();
+			greenMaxSize = colourPanel.getGreenSizeMaximum();
 
 			// Create the binary matrix.
 			ballBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
@@ -142,9 +151,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			int ballX = 0, ballY = 0;
 
 			for (int i = 0; i < ballContours.size(); i++) {
-				double areaThreshold = ballMinSize;
-
-				if (areaThreshold < Imgproc.contourArea(ballContours.get(i))) {
+				double area = Imgproc.contourArea(ballContours.get(i));
+				if (ballMinSize <= area && area <= ballMaxSize) {
 					Moments m = Imgproc.moments(ballContours.get(i));
 					ballX = (int) (m.get_m10() / m.get_m00());
 					ballY = (int) (m.get_m01() / m.get_m00());
@@ -169,8 +177,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			int teamX = 0, teamY = 0;
 
 			for (int i = 0; i < teamContours.size(); i++) {
-				double areaThreshold = robotMinSize;
-				if (areaThreshold < Imgproc.contourArea(teamContours.get(i))) {
+				double area = Imgproc.contourArea(teamContours.get(i));
+				if (robotMinSize <= area && area <= robotMaxSize ) {
 					Moments m = Imgproc.moments(teamContours.get(i));
 					teamX = (int) (m.get_m10() / m.get_m00());
 					teamY = (int) (m.get_m01() / m.get_m00());
@@ -185,8 +193,15 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					patch.points(p);
 
 					data[numRobots] = new RobotData(p, new org.opencv.core.Point(teamX, teamY));
-					numRobots++;
-
+					
+					double longPairDist = data[numRobots].getLongPair().getEuclideanDistance();
+					double shortPairDist = data[numRobots].getShortPair().getEuclideanDistance();
+					
+					if ((longPairDist/shortPairDist) < 2.5) {
+						data[numRobots] = null;
+					} else {
+						numRobots++;
+					}
 					/*
 				for (int k = 0; k < p.length; k++) {
 					Core.line(webcamImageMat, p[k], p[(k + 1) % 4], new Scalar(255, 255, 255));
@@ -209,8 +224,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
 			int greenX = 0, greenY = 0;
 			for (int i = 0; i < greenContours.size(); i++) {
-				double areaThreshold = greenMinSize;
-				if (areaThreshold < Imgproc.contourArea(greenContours.get(i))) {
+				double area =  Imgproc.contourArea(greenContours.get(i));
+				if (greenMinSize <= area && area <= greenMaxSize) {
 					Moments m = Imgproc.moments(greenContours.get(i));
 					greenX = (int) (m.get_m10() / m.get_m00());
 					greenY = (int) (m.get_m01() / m.get_m00());
@@ -225,12 +240,14 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					//Imgproc.drawContours(webcamImageMat, greenContours, i, new Scalar(180, 105, 255));
 				}
 			}
-
+			
+			int[] robotNumber = new int[5];
+			int robotCount = 0;
 			// Update robot positions.
 			for (RobotData rd : data) {
 				if (rd != null) {
 					int robotNum = rd.robotIdentification();
-
+					robotNumber[robotCount] = robotNum-1;
 					if (robotNum > 0) {
                         Point pos = new Point((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y);
                         double distance =  Image.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
@@ -241,8 +258,24 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                         oldRobotPositions[robotNum-1] = pos;
                     }
 
+				} else {
+					robotNumber[robotCount] = -1;
+					robotCount++;	
 				}
 			}
+			/*
+			int[] robotDuplicate = new int[5];
+			boolean isDuplicate = false;
+			for (int i = 0; i<robotDuplicate.length; i++) {
+				if (robotNumber[i]>=0) {
+					robotDuplicate[robotNumber[i]]++;
+					if (robotDuplicate[robotNumber[i]] > 2) {
+						isDuplicate = true;
+						break;
+					}
+				}
+			} */
+			
 		}
 	}
 	
