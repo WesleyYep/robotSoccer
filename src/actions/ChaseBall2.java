@@ -100,11 +100,20 @@ public class ChaseBall2 extends Action{
 // 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
 
         r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
-        //       System.out.println(r.angularVelocity);
+        if (r.angularVelocity > 3) {
+        	r.angularVelocity = 3;
+        } else if (r.angularVelocity < -3) {
+        	r.angularVelocity = -3;
+        }
+   //           System.out.println(r.angularVelocity);
         r.linearVelocity= 1;
 
         if (isCloseToWall()) {
-            r.linearVelocity = 0.2;
+            if (Math.abs(targetTheta) < 10) {
+            	r.linearVelocity = 0.2;
+            } else {
+            	r.linearVelocity = 0;
+            }
         }
 
         if (front == false) {
@@ -124,16 +133,16 @@ public class ChaseBall2 extends Action{
 
     private boolean isCloseToWall() {
         Robot r = bots.getRobot(index);
-        if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
+        if (r.getYPosition() >= -20 && r.getYPosition() <= 20 ) {
             return true;
         }
-        else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-10 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT) {
+        else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-20 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT+20) {
             return true;
         }
-        else if (r.getXPosition() >= 0 && r.getXPosition() <= 10 ) {
+        else if (r.getXPosition() >= -20 && r.getXPosition() <= 20 ) {
             return true;
         }
-        else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-10 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH) {
+        else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-20 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH+20) {
             return true;
         }
 
