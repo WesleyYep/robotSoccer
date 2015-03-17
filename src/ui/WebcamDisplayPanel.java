@@ -88,7 +88,7 @@ public class WebcamDisplayPanel extends JPanel {
                         VisionPanel panel = (VisionPanel) listener;
                         if (panel.isSelectedTab()) {
              //               panel.updateMousePoint(e.getX(), e.getY(), img.getBufferedImage());
-                        	System.out.println(VisionController.imagePosToActualPos(e.getX(), e.getY()));
+                        	System.out.println(VisionController.imagePosToActualPos(new org.opencv.core.Point(e.getX(), e.getY())));
                         }
                     }
                 }

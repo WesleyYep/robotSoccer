@@ -136,11 +136,11 @@ public class BasicGoalKeep extends Action {
 // 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
  		
  		r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
- 		System.out.println(r.angularVelocity);
+ //		System.out.println(r.angularVelocity);
  		r.linearVelocity= ((targetDist-2)/10)*0.05+0.15;
  		
  		if (isCloseToWall()) {
- 			r.linearVelocity = 0.2;
+ 			r.linearVelocity = 0.3;
  		}
  		
  		if (front == false) {

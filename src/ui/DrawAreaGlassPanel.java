@@ -5,13 +5,15 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
-public class DrawAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener{
+public class DrawAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener{
 
 	private Point startPoint;
 	private Point endPoint;
@@ -111,4 +113,22 @@ public class DrawAreaGlassPanel extends JPanel implements MouseListener, MouseMo
 		}
 		this.setVisible(false);
 	}
+
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {}
+
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {}
+
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		this.setSize(arg0.getComponent().getWidth(), arg0.getComponent().getHeight());
+	}
+
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {}
 }
