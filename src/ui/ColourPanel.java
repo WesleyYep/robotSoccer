@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,6 +57,9 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     private RangeSlider ballSizeSlider = new RangeSlider(0,500);
 
     private JTabbedPane tabPane = new JTabbedPane();
+    
+    private JCheckBox autoRangeCheckBox;
+    private boolean isAutoRange = false;
 
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
@@ -70,6 +74,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
         
+        autoRangeCheckBox = new JCheckBox("Auto Range");
         
         robotSizeSlider.setLowValue(10);
         ballSizeSlider.setLowValue(10);
@@ -187,6 +192,8 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
+        
+        add(autoRangeCheckBox);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -218,6 +225,15 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
                 isGettingRobotDimension = true;
             }
         });
+        
+        autoRangeCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isAutoRange = !isAutoRange;
+				System.out.println(isAutoRange);
+			}    	
+        });
+        
     }
 
     protected void displayCircleOnIcon(MouseEvent e) {
@@ -319,7 +335,9 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
             			}
                 	}
             	}
-       //     	sp.setRange();
+            	if (isAutoRange) {
+            		sp.setRange();
+            	}
             }
         }
     }
