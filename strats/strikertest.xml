@@ -1,6 +1,6 @@
-Role:turner
-permanent-Chase Ball (smooth)
-null-null
+Role:striker
+Positive Situation-Chase Ball (smooth)
+permanent-Move to spot
 null-null
 null-null
 null-null
@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Play:new play
-turner
+striker
 new role
 new role
 new role

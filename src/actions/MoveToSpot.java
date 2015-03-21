@@ -8,7 +8,7 @@ import strategy.Action;
  * Created by Wesley on 21/01/2015.
  */
 public class MoveToSpot extends Action{
-    private Coordinate spot = new Coordinate(100,100);  //<-------- EDIT THIS TO CHANGE SPOT
+    private Coordinate spot = new Coordinate(50,18);  //<-------- EDIT THIS TO CHANGE SPOT
 
     @Override
     public String getName() {
@@ -18,6 +18,14 @@ public class MoveToSpot extends Action{
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
+
+        //change to left/right side depending on where robot is
+        if (r.getYPosition() > 90) {
+  //          System.out.println(r.getYPosition());
+            spot.y = 162;
+        } else {
+            spot.y = 18;
+        }
 
         double ballTheta = Math.atan2(r.getYPosition() - spot.y, spot.x - r.getXPosition());
         double difference = ballTheta - Math.toRadians(r.getTheta());
