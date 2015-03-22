@@ -55,6 +55,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private ViewState webcamDisplayPanelState;
 	private List<MatOfPoint> correctGreenContour;
 	private List<MatOfPoint> correctTeamContour;
+	private KalmanFilter kFilter;
 	
 	private static final int KERNELSIZE = 3;
 
@@ -84,7 +85,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			
 			dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
 			erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
-			
+			kFilter = new KalmanFilter();
 			// Get the sampling panel values.
 			double[] hsvBallMin = {
 					ballSP.getLowerBoundForH(),
@@ -165,6 +166,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					correctBallContour.add(ballContours.get(i));
 					ballX = (int) (m.get_m10() / m.get_m00());
 					ballY = (int) (m.get_m01() / m.get_m00());
+					
+					//kFilter.process(ballX, ballY);
+					//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY());
 					//Imgproc.drawContours(webcamImageMat, ballContours, i, new Scalar(255, 255, 255));
 					//centerPoint.add(new Point(ballX, ballY));
 

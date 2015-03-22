@@ -290,7 +290,7 @@ public class WebcamDisplayPanel extends JPanel {
 			if (l instanceof VisionWorker) {
 				ballContour = ((VisionWorker) l).getBallContours();
 				greenContour = ((VisionWorker) l).getGreenContours();
-				teamContour = ((VisionWorker) l).getTeamContours()
+				teamContour = ((VisionWorker) l).getTeamContours();
 			}
 		}
 	}
