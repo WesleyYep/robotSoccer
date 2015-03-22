@@ -48,14 +48,15 @@ public class ColourSlider extends RangeSlider {
 	}
 
 	/**
-	 * <p>Adds the YUV value to the list</p> 
-	 * @param YUV value. 0-255
+	 * <p>Adds the HSV value to the list</p> 
+	 * @param HSV value. 0-255
 	 */
 	
 	public void addToData(int value) {
-		double difference = getMaximum() - getMinimum();
-		value = (int)((value - getMinimum())/difference * getWidth());
-		data.add(value);
+	//	double difference = getMaximum() - getMinimum();
+		value = (int)(value/255.0 * (getWidth()-20) + 10);
+        //System.out.println(value);
+        data.add(value);
 		repaint();
 	}
 

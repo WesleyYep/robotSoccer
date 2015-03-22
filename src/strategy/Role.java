@@ -62,6 +62,7 @@ public class Role {
                 a.addRobot(bots, index);
                 a.setBallPosition(ballX, ballY);
                 a.execute();
+                break; //only have one action at a time!
             }
         }
     }

@@ -37,14 +37,14 @@ import controllers.WebcamController;
 public class SamplingPanel extends JPanel implements ActionListener {
 
     private WebcamController webcamController;
-    private ColourSlider YSlider, USlider, VSlider;
+    private ColourSlider HSlider, SSlider, VSlider;
     private JButton sampleButton, detectButton, setValueButton, clearAllButton;
-    private JLabel lowYLabel, highYLabel, lowULabel, highULabel, lowVLabel, highVLabel;
+    private JLabel lowHLabel, highHLabel, lowSLabel, highSLabel, lowVLabel, highVLabel, hueLabel, saturationLabel, valueLabel;
     private JPanel optionPanePanel;
     private JTextField lowValueTextField, highValueTextField;
-    private JComboBox<String> YUVCombo;
+    private JComboBox<String> HSVCombo;
     private List<ColourRangeListener> colourRangeListeners;
-    
+    private int hMax = -1, hMin = -1, sMax = -1, sMin = -1, vMax = -1, vMin = -1;
     public boolean isSampling = false;
     
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
@@ -54,30 +54,33 @@ public class SamplingPanel extends JPanel implements ActionListener {
         this.webcamController = wc;
 
         colourRangeListeners = new ArrayList<ColourRangeListener>();
-        lowYLabel = new JLabel();
-        highYLabel = new JLabel();
-        lowULabel = new JLabel();
-        highULabel = new JLabel();
+        lowHLabel = new JLabel();
+        highHLabel = new JLabel();
+        lowSLabel = new JLabel();
+        highSLabel = new JLabel();
         lowVLabel = new JLabel();
         highVLabel = new JLabel();
+        hueLabel = new JLabel("Hue");
+        saturationLabel = new JLabel("Saturation");
+        valueLabel = new JLabel("Value");
         
         int minorTickSpacing = 5, majorTickSpacing = 25;
         
-        YSlider = new ColourSlider(0, 260);
-        YSlider.setMinorTickSpacing(minorTickSpacing);
-        YSlider.setMajorTickSpacing(majorTickSpacing);
-        YSlider.setLabelTable(YSlider.createStandardLabels(majorTickSpacing));
-        YSlider.setPaintTicks(true);
-        YSlider.setPaintLabels(true);
+        HSlider = new ColourSlider(0, 255);
+        HSlider.setMinorTickSpacing(minorTickSpacing);
+        HSlider.setMajorTickSpacing(majorTickSpacing);
+        HSlider.setLabelTable(HSlider.createStandardLabels(majorTickSpacing));
+        HSlider.setPaintTicks(true);
+        HSlider.setPaintLabels(true);
         
-        USlider = new ColourSlider(0, 260);
-        USlider.setMinorTickSpacing(minorTickSpacing);
-        USlider.setMajorTickSpacing(majorTickSpacing);
-        USlider.setLabelTable(USlider.createStandardLabels(majorTickSpacing));
-        USlider.setPaintTicks(true);
-        USlider.setPaintLabels(true);
+        SSlider = new ColourSlider(0, 255);
+        SSlider.setMinorTickSpacing(minorTickSpacing);
+        SSlider.setMajorTickSpacing(majorTickSpacing);
+        SSlider.setLabelTable(SSlider.createStandardLabels(majorTickSpacing));
+        SSlider.setPaintTicks(true);
+        SSlider.setPaintLabels(true);
         
-        VSlider = new ColourSlider(0, 260);
+        VSlider = new ColourSlider(0, 255);
         VSlider.setMinorTickSpacing(minorTickSpacing);
         VSlider.setMajorTickSpacing(majorTickSpacing);
         VSlider.setLabelTable(VSlider.createStandardLabels(majorTickSpacing));
@@ -85,29 +88,29 @@ public class SamplingPanel extends JPanel implements ActionListener {
         VSlider.setPaintLabels(true);
         
         // Add change listener. Update labels.
-        YSlider.addChangeListener(new ChangeListener() {
+        HSlider.addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				lowYLabel.setText(YSlider.getLowValue() + "");
-				highYLabel.setText(YSlider.getHighValue() + "");
+				lowHLabel.setText(HSlider.getLowValue() + "");
+				highHLabel.setText(HSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.yRangeChanged(YSlider.getHighValue(), YSlider.getLowValue(),SamplingPanel.this);
+					c.hRangeChanged(HSlider.getHighValue(), HSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
         });
         
-        USlider.addChangeListener(new ChangeListener() {
+        SSlider.addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				lowULabel.setText(USlider.getLowValue() + "");
-				highULabel.setText(USlider.getHighValue() + "");
+				lowSLabel.setText(SSlider.getLowValue() + "");
+				highSLabel.setText(SSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.uRangeChanged(USlider.getHighValue(), USlider.getLowValue(),SamplingPanel.this);
+					c.sRangeChanged(SSlider.getHighValue(), SSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
@@ -140,25 +143,28 @@ public class SamplingPanel extends JPanel implements ActionListener {
         highValueTextField = new JTextField();
         ((AbstractDocument)highValueTextField.getDocument()).setDocumentFilter(new YUVFilter());
         
-		YUVCombo = new JComboBox<String>();
+		HSVCombo = new JComboBox<String>();
 		
-		YUVCombo.addItem("Y");
-		YUVCombo.addItem("U");
-		YUVCombo.addItem("V");
+		HSVCombo.addItem("H");
+		HSVCombo.addItem("S");
+		HSVCombo.addItem("V");
         
-		optionPanePanel.add(YUVCombo, "span, push, grow, wrap");
+		optionPanePanel.add(HSVCombo, "span, push, grow, wrap");
 		optionPanePanel.add(new JLabel("Choose values 0-255"), "span, push, grow, wrap");
 		optionPanePanel.add(new JLabel("Set low value"), "split 2, span");
         optionPanePanel.add(lowValueTextField, "push, grow, wrap");
         optionPanePanel.add(new JLabel("Set high value"), "split 2, span");
         optionPanePanel.add(highValueTextField, "push, grow");
         
-        add(lowYLabel, "width 30:30:30, split 3");
-        add(YSlider, "width 400:400:400");
-        add(highYLabel, "width 30:30:30, wrap 15");
-        add(lowULabel, "width 30:30:30, split 3");
-        add(USlider, "width 400:400:400");
-        add(highULabel, "width 30:30:30, wrap 15");
+        add(hueLabel, "span, wrap");
+        add(lowHLabel, "width 30:30:30, split 3");
+        add(HSlider, "width 400:400:400");
+        add(highHLabel, "width 30:30:30, wrap 15");
+        add(saturationLabel, "span, wrap");
+        add(lowSLabel, "width 30:30:30, split 3");
+        add(SSlider, "width 400:400:400");
+        add(highSLabel, "width 30:30:30, wrap 15");
+        add(valueLabel, "span, wrap");
         add(lowVLabel, "width 30:30:30, split 3");
         add(VSlider, "width 400:400:400");
         add(highVLabel, "width 30:30:30, wrap 15");
@@ -176,35 +182,74 @@ public class SamplingPanel extends JPanel implements ActionListener {
     public void takeSample(BufferedImage image, double xPos, double yPos) {
         Color color = new Color(image.getRGB((int)xPos, (int)yPos));
         
-        double[] yuv = ColorSpace.RGBToYUV(color.getRed(), color.getGreen(), color.getBlue());
-
-        YSlider.addToData((int)yuv[0]);
-        USlider.addToData((int)yuv[1]);
-        VSlider.addToData((int)yuv[2]);
-
-        YSlider.repaint();
-        USlider.repaint();
-        VSlider.repaint();
+        float[] hsv = ColorSpace.RGBToHSV(color.getRed(), color.getGreen(), color.getBlue());
+       // System.out.println("H: " + hsv[0] + "S: " + hsv[1] + "V: " + hsv[2]);
+        HSlider.addToData((int)hsv[0]);
+        SSlider.addToData((int)hsv[1]);
+        VSlider.addToData((int)hsv[2]);
+        
+        if (hMax == -1 || hsv[0] > hMax) {
+        	hMax = (int) hsv[0];
+        }
+        
+        if (hMin == -1 || hsv[0] < hMin) {
+        	hMin = (int) hsv[0];
+        }
+        
+        if (sMax == -1 || hsv[1] > sMax) {
+        	sMax = (int) hsv[1];
+        }
+        
+        if (sMin == -1 || hsv[1] < sMin) {
+        	sMin = (int) hsv[1];
+        }
+        
+        if (vMax == -1 || hsv[2] > vMax) {
+        	vMax = (int) hsv[2];
+        }
+        
+        if (vMin == -1 || hsv[2] < vMin) {
+        	vMin = (int) hsv[2];
+        }
+    }
+    
+    public void setRange() {
+//    	System.out.println("");
+//    	System.out.println(yMin + " " + yMax);
+//    	System.out.println(uMin + " " + uMax);
+//    	System.out.println(vMin + " " + vMax);
+    	
+    	HSlider.setLowValue(hMin);
+    	HSlider.setHighValue(hMax);
+    	
+    	SSlider.setLowValue(sMin);
+    	SSlider.setHighValue(sMax);
+    	
+    	VSlider.setLowValue(vMin);
+    	VSlider.setHighValue(vMax);
+    	 HSlider.repaint();
+         SSlider.repaint();
+         VSlider.repaint(); 
     }
     
     public void addColourRangeListener(ColourRangeListener c) {
     	colourRangeListeners.add(c);
     }
 
-    public int getLowerBoundForY() {
-        return YSlider.getLowValue();
+    public int getLowerBoundForH() {
+        return HSlider.getLowValue();
     }
 
-    public int getUpperBoundForY() {
-        return YSlider.getHighValue();
+    public int getUpperBoundForH() {
+        return HSlider.getHighValue();
     }
 
-    public int getLowerBoundForU() {
-        return USlider.getLowValue();
+    public int getLowerBoundForS() {
+        return SSlider.getLowValue();
     }
 
-    public int getUpperBoundForU() {
-        return USlider.getHighValue();
+    public int getUpperBoundForS() {
+        return SSlider.getHighValue();
     }
 
     public int getLowerBoundForV() {
@@ -215,20 +260,20 @@ public class SamplingPanel extends JPanel implements ActionListener {
         return VSlider.getHighValue();
     }
     
-    public void setUpperBoundForY(int i) {
-    	YSlider.setHighValue(i);
+    public void setUpperBoundForH(int i) {
+    	HSlider.setHighValue(i);
     }
     
-    public void setLowerBoundForY(int i) {
-    	YSlider.setLowValue(i);
+    public void setLowerBoundForH(int i) {
+    	HSlider.setLowValue(i);
     }
     
-    public void setUpperBoundForU(int i) {
-    	USlider.setHighValue(i);
+    public void setUpperBoundForS(int i) {
+    	SSlider.setHighValue(i);
     }
     
-    public void setLowerBoundForU(int i) {
-    	USlider.setLowValue(i);
+    public void setLowerBoundForS(int i) {
+    	SSlider.setLowValue(i);
     }
     
     public void setUpperBoundForV(int i) {
@@ -239,6 +284,18 @@ public class SamplingPanel extends JPanel implements ActionListener {
     	VSlider.setLowValue(i);
     }
 
+    /**
+     * <p>Changes the detect button to default value and stops sampling</p>
+     */
+    
+    public void resetButton() {
+    	webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+    	detectButton.setText(DETECTSTRING[0]);
+    	
+    	sampleButton.setText("Start Sample");
+    	isSampling = false;
+    }
+    
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == sampleButton) {
@@ -269,7 +326,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			
 			if (selection == JOptionPane.OK_OPTION) {
 				try {
-					String YUVSelection = (String)YUVCombo.getSelectedItem();
+					String HSVSelection = (String)HSVCombo.getSelectedItem();
 					int lowValue = Integer.parseInt(lowValueTextField.getText());
 					int highValue = Integer.parseInt(highValueTextField.getText());
 					
@@ -277,16 +334,16 @@ public class SamplingPanel extends JPanel implements ActionListener {
 						JOptionPane.showMessageDialog(null, "Cannot have low value greater than high value");
 					} else {
 						
-						switch(YUVSelection) {
-						case "Y":
+						switch(HSVSelection) {
+						case "H":
 							
-							YSlider.setLowValue(lowValue);
-							YSlider.setHighValue(highValue);
+							HSlider.setLowValue(lowValue);
+							HSlider.setHighValue(highValue);
 							break;
-						case "U":
+						case "S":
 							
-							USlider.setLowValue(lowValue);
-							USlider.setHighValue(highValue);
+							SSlider.setLowValue(lowValue);
+							SSlider.setHighValue(highValue);
 							break;
 						case "V":
 							
@@ -303,9 +360,18 @@ public class SamplingPanel extends JPanel implements ActionListener {
 			}
 			
 		} else if (e.getSource() == clearAllButton) {
-			YSlider.clearData();
-			USlider.clearData();
+			HSlider.clearData();
+			SSlider.clearData();
 			VSlider.clearData();
+			
+			hMax = -1;
+			hMin = -1;
+			
+			sMax = -1;
+			sMin = -1;
+			
+			vMax = -1;
+			vMin = -1;
 		}
 	}
 	

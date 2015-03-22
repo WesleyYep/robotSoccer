@@ -1,12 +1,8 @@
 package ui;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,49 +14,52 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
-
-
-
-
-
-
-
-
+import net.miginfocom.swing.MigLayout;
+import ui.WebcamDisplayPanel.ViewState;
 import vision.ColourRangeListener;
 import vision.LookupTable;
-import data.Coordinate;
-import net.miginfocom.swing.MigLayout;
+
+import com.jidesoft.swing.RangeSlider;
+
 import controllers.WebcamController;
 import data.Coordinate;
 
 /**
  * Created by Wesley on 2/02/2015.
  */
-public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, ColourRangeListener {
+public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDisplayPanelListener {
     public SamplingPanel ballSamplingPanel;
     public SamplingPanel teamSamplingPanel;
     public SamplingPanel groundSamplingPanel;
     public SamplingPanel opponentSamplingPanel;
     public SamplingPanel greenSamplingPanel;
     private SamplingPanel[] samplingPanels;
-    private JSlider robotSizeSlider = new JSlider(0, 1000, 100);
-    private JSlider ballSizeSlider = new JSlider(0, 1000, 10);
-    private JSlider greenSizeSlider = new JSlider(0, 1000, 50);
-    private JLabel robotSizeLabel = new JLabel("100");
-    private JLabel ballSizeLabel = new JLabel("10");
-    private JLabel greenSizeLabel = new JLabel("50");
+
+    private JLabel robotMinSizeLabel = new JLabel("10");
+    private JLabel ballMinSizeLabel = new JLabel("10");
+    private JLabel greenMinSizeLabel = new JLabel("10");
+    
+    private JLabel robotMaxSizeLabel = new JLabel("100");
+    private JLabel ballMaxSizeLabel = new JLabel("100");
+    private JLabel greenMaxSizeLabel = new JLabel("100");
+    
+    private RangeSlider robotSizeSlider = new RangeSlider(0,500);
+    private RangeSlider greenSizeSlider = new RangeSlider(0,500);
+    private RangeSlider ballSizeSlider = new RangeSlider(0,500);
 
     private JTabbedPane tabPane = new JTabbedPane();
+    
+    private JCheckBox autoRangeCheckBox;
+    private boolean isAutoRange = false;
 
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
@@ -74,6 +73,17 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
+        
+        autoRangeCheckBox = new JCheckBox("Auto Range");
+        
+        robotSizeSlider.setLowValue(10);
+        ballSizeSlider.setLowValue(10);
+        greenSizeSlider.setLowValue(10);
+        
+        robotSizeSlider.setHighValue(100);
+        ballSizeSlider.setHighValue(100);
+        greenSizeSlider.setHighValue(100);
+        
         ballSamplingPanel = new SamplingPanel(wc);
         teamSamplingPanel = new SamplingPanel(wc);
         greenSamplingPanel = new SamplingPanel(wc);
@@ -90,13 +100,14 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				System.out.println("here");
-				SamplingPanel panel = (SamplingPanel) tabPane.getSelectedComponent();
-				panel.deactiviate();
-				panel.repaint();
+				for (int i = 0; i < tabPane.getComponentCount(); i++) {
+					SamplingPanel sp = (SamplingPanel)tabPane.getComponentAt(i);
+					sp.resetButton();
+				}
 			}
         	
         });
+        
         zoomLabel = new JLabel();
         zoomLabel.setSize(new Dimension(150, 150));
         zoomLabel.setPreferredSize(new Dimension(150, 150));
@@ -163,14 +174,17 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         add(new JLabel("Robot Pixel Range"), "wrap");
         add(tabPane, "wrap");
         add(new JLabel("Robot Pixel Minimum"), "wrap");
-        add(robotSizeSlider, "wrap");
-        add(robotSizeLabel, "wrap");
+        add(robotSizeSlider, "grow, wrap");
+        add(robotMinSizeLabel);
+        add(robotMaxSizeLabel, "wrap");
         add(new JLabel("Green Pixel Minimum"), "wrap");
-        add(greenSizeSlider, "wrap");
-        add(greenSizeLabel, "wrap");
+        add(greenSizeSlider, "grow, wrap");
+        add(greenMinSizeLabel);
+        add(greenMaxSizeLabel, "wrap");
         add(new JLabel("Ball Pixel Minimum"), "wrap");
-        add(ballSizeSlider, "wrap");
-        add(ballSizeLabel, "wrap");
+        add(ballSizeSlider, "grow,wrap");
+        add(ballMinSizeLabel);
+        add(ballMaxSizeLabel,"wrap");
         
         ballSamplingPanel.addColourRangeListener(this);
         teamSamplingPanel.addColourRangeListener(this);
@@ -178,24 +192,29 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
+        
+        add(autoRangeCheckBox);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                robotSizeLabel.setText(robotSizeSlider.getValue() + "");
+                robotMinSizeLabel.setText(robotSizeSlider.getLowValue() + "");
+                robotMaxSizeLabel.setText(robotSizeSlider.getHighValue() + "");
             }
             
         });
 
         ballSizeSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                ballSizeLabel.setText(ballSizeSlider.getValue() + "");
+                ballMinSizeLabel.setText(ballSizeSlider.getLowValue() + "");
+                ballMaxSizeLabel.setText(ballSizeSlider.getHighValue() + "");
             }
         });
 
         greenSizeSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                greenSizeLabel.setText(greenSizeSlider.getValue() + "");
+                greenMinSizeLabel.setText(greenSizeSlider.getLowValue() + "");
+                greenMaxSizeLabel.setText(greenSizeSlider.getHighValue() + "");
             }
         });
 
@@ -206,6 +225,15 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
                 isGettingRobotDimension = true;
             }
         });
+        
+        autoRangeCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isAutoRange = !isAutoRange;
+				System.out.println(isAutoRange);
+			}    	
+        });
+        
     }
 
     protected void displayCircleOnIcon(MouseEvent e) {
@@ -238,28 +266,54 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         return Integer.parseInt(robotDimensionField.getText());
     }
 
+    //getter
     public int getRobotSizeMinimum() {
-        return robotSizeSlider.getValue();
+        return robotSizeSlider.getLowValue();
     }
 
     public int getBallSizeMinimum() {
-        return ballSizeSlider.getValue();
+        return ballSizeSlider.getLowValue();
     }
 
     public int getGreenSizeMinimum() {
-        return greenSizeSlider.getValue();
+        return greenSizeSlider.getLowValue();
+    }
+    
+    public int getRobotSizeMaximum() {
+        return robotSizeSlider.getHighValue();
     }
 
+    public int getBallSizeMaximum() {
+        return ballSizeSlider.getHighValue();
+    }
+
+    public int getGreenSizeMaximum() {
+        return greenSizeSlider.getHighValue();
+    }
+
+    //setter
     public void setRobotSizeMinimum(int value) {
-        robotSizeSlider.setValue(value);
+        robotSizeSlider.setLowValue(value);
     }
 
     public void setGreenSizeMinimum(int value) {
-        greenSizeSlider.setValue(value);
+        greenSizeSlider.setLowValue(value);
     }
 
     public void setBallSizeMinimum(int value) {
-        ballSizeSlider.setValue(value);
+        ballSizeSlider.setLowValue(value);
+    }
+    
+    public void setRobotSizeMaximum(int value) {
+        robotSizeSlider.setHighValue(value);
+    }
+
+    public void setGreenSizeMaximum(int value) {
+        greenSizeSlider.setHighValue(value);
+    }
+
+    public void setBallSizeMaximum(int value) {
+        ballSizeSlider.setHighValue(value);
     }
 
     public void takeSample(double xPos, double yPos) {
@@ -274,15 +328,16 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
             	for (int x=(int) (xPos-selectRadius); x<xPos+selectRadius; x++) {
             		
             		for (int y=(int) (yPos-selectRadius); y<yPos+selectRadius; y++) {
-            			if ( Math.pow((x-xPos),2) + Math.pow((y-yPos),2) <= Math.pow(selectRadius, 2)){
+            			if ( Math.pow((x-xPos),2) + Math.pow((y-yPos),2) <= Math.pow(selectRadius-1, 2)){
             				ImageIcon icon = (ImageIcon)zoomLabel.getIcon();
                         	BufferedImage image = (BufferedImage)icon.getImage();
                             sp.takeSample(image,  x, y);
             			}
                 	}
             	}
-            	
-            	
+            	if (isAutoRange) {
+            		sp.setRange();
+            	}
             }
         }
     }
@@ -306,26 +361,9 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         return isGettingRobotDimension;
     }
 
-//    public void saveColourData(String fileName) {
-//        try {
-//            FileWriter fileWriter = new FileWriter(fileName, true);
-//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-//
-//            bufferedWriter.write();
-//
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    @Override
-    public void viewStateChanged() {
-        //do nothing
-    }
 
 	@Override
-	public void yRangeChanged(int max, int min, SamplingPanel panel) {
+	public void hRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
 			temp = (1 << LookupTable.TEAM_BIT_POS);
@@ -340,7 +378,7 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
 	}
 
 	@Override
-	public void uRangeChanged(int max, int min, SamplingPanel panel) {
+	public void sRangeChanged(int max, int min, SamplingPanel panel) {
 		byte temp = 0;
 		if (panel.equals(this.teamSamplingPanel)) {
 			temp = (1 << LookupTable.TEAM_BIT_POS);
@@ -372,4 +410,13 @@ public class ColourPanel extends JPanel implements WebcamDisplayPanelListener, C
         return x * x;
     }
 
+	@Override
+	public void viewStateChanged(ViewState currentViewState) {		
+	}
+
+	@Override
+	public void imageUpdated(BufferedImage image) {		
+	}
+
 }
+

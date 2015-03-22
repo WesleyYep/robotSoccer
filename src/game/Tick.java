@@ -27,7 +27,7 @@ public class Tick extends TimerTask implements SenderListener {
 	}
 
 	public void run() {
-		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.
+		//link to actions class somewhere here, set linearVelocity and angularVelocity of robots.;
 		if (!comPanel.isManualControl()) {
 			if (runStrat) {
 				field.executeStrategy();
@@ -50,9 +50,12 @@ public class Tick extends TimerTask implements SenderListener {
 		StringBuilder outputMessage = new StringBuilder();
 		Robot[] botArray = bots.getRobots();
 		for (int i = 0; i < Robots.BOTTEAMMEMBERCOUNT; i++) {
-			outputMessage.append("lin bot" + i + ": " + botArray[i].linearVelocity + System.lineSeparator());
-			outputMessage.append("ang bot" + i + ": " + botArray[i].angularVelocity + System.lineSeparator());
-		}
+            //test adjusting simulation to match actual
+			outputMessage.append("lin bot" + i + ": " + botArray[i].linearVelocity/18.52*21.90 + System.lineSeparator());
+			outputMessage.append("ang bot" + i + ": " + botArray[i].angularVelocity/34.39*40.03 + System.lineSeparator());
+//            outputMessage.append("lin bot" + i + ": " + botArray[i].linearVelocity + System.lineSeparator());
+//            outputMessage.append("ang bot" + i + ": " + botArray[i].angularVelocity + System.lineSeparator());
+        }
 		return outputMessage.toString();
 	}
 

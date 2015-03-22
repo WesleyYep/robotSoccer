@@ -11,11 +11,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import ui.WebcamDisplayPanel.ViewState;
+import utils.Image;
 import net.miginfocom.swing.MigLayout;
 import controllers.VisionController;
 import controllers.WebcamController;
 
-public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
+public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 	
 	
 	private WebcamController webcamController;
@@ -42,7 +44,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				webcamImage = webcamController.toBufferedImage(webcamController.getImageFromWebcam());
+				webcamImage = Image.toBufferedImage(webcamController.getImageFromWebcam());
 				if (webcamImage != null) {
 					if (webcamImage != null) {
 						dialog.setBoardImage(webcamImage);
@@ -81,8 +83,17 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener{
 		}
 	}
 
+
 	@Override
-	public void viewStateChanged() {
+	public void viewStateChanged(ViewState currentViewState) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void imageUpdated(BufferedImage image) {
+		// TODO Auto-generated method stub
 		
 	}
 

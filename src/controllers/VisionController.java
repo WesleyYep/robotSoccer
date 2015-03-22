@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 
 import javax.media.jai.PerspectiveTransform;
 
+import data.Coordinate;
+import org.opencv.core.Point;
 import ui.Field;
 
 public class VisionController {
@@ -62,14 +64,17 @@ public class VisionController {
 		}
 	}
 	
-	public static Point2D imagePosToActualPos (double x, double y) {
+	public static Point imagePosToActualPos (Point p) {
+        double x = p.x;
+        double y = p.y;
+
 		if (t != null ) {
 			Point2D selectedPoint = new Point2D.Double();
 			t.transform(new Point2D.Double(x,y), selectedPoint);
 			double actualX = (selectedPoint.getX() - mapLeft) / ((mapRight-mapLeft)/(double)Field.OUTER_BOUNDARY_WIDTH);
 			double actualY = (selectedPoint.getY() - mapTop) / ((mapBot-mapTop)/(double)Field.OUTER_BOUNDARY_HEIGHT);
 			
-			return new Point2D.Double(actualX,actualY);
+			return new Point(actualX,actualY);
 		} else {
 			return null;
 		}

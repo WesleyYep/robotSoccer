@@ -1,7 +1,9 @@
 package data;
 
 import org.opencv.core.Point;
+
 import utils.Image;
+import utils.PairPoint;
 
 public class RobotData {
 	private Point[] teamRectPoint;
@@ -11,8 +13,9 @@ public class RobotData {
 	private PairPoint greenPatch1 = null;
 	private PairPoint greenPatch2 = null;
 	private double thresholdDistance;
-	private final static double THRESHOLDANGLE = 8;
-    private int robotNum;
+	
+	private final static double THRESHOLDANGLE = 20; //change this if needed //todo
+    
     private double theta;
 	
 	public RobotData(Point[] teamRectPoint, Point teamCenterPoint) {
@@ -58,8 +61,8 @@ public class RobotData {
 	}
 	
 	private void assignThresholdDistance() {
-		double endX = shortPair.second.x + shortPair.euclideanDistance * Math.cos(Math.toRadians(shortPair.theta));
-		double endY = shortPair.second.y + shortPair.euclideanDistance * Math.sin(Math.toRadians(shortPair.theta));
+		double endX = shortPair.getSecond().x + shortPair.getEuclideanDistance() * Math.cos(Math.toRadians(shortPair.getTheta()));
+		double endY = shortPair.getSecond().y + shortPair.getEuclideanDistance() * Math.sin(Math.toRadians(shortPair.getTheta()));
 		Point endPoint = new Point(endX, endY);
 		thresholdDistance = Image.euclideanDistance(teamCenterPoint, endPoint);
 	}
@@ -76,6 +79,12 @@ public class RobotData {
 			greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
 		} else if (greenPatch2 == null) {
 			greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+		} else { //long patch should override green patch
+			if (!isLongPatch(greenPatch1) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
+				greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			} else if (!isLongPatch(greenPatch2) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
+				greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			}
 		}
 		
 	}
@@ -84,12 +93,12 @@ public class RobotData {
 		
 		double longPairTheta = longPair.getTheta();
 		
-		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.second));
-		
-		if ((differenceTheta % 90) > 90 - THRESHOLDANGLE && (differenceTheta % 90) < THRESHOLDANGLE + 90) {
+		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.getSecond()));
+
+		if (!((differenceTheta % 90) > THRESHOLDANGLE && (differenceTheta % 90) < 90 - THRESHOLDANGLE)) {
 			return true;
 		}
-		
+
 		return false;
 	}
 	
@@ -111,7 +120,8 @@ public class RobotData {
 	 */
 	
 	public int robotIdentification() {
-
+		int robotNum = -1;
+		
         if (greenPatch1 == null && greenPatch2 == null) {
             return -1;
         }
@@ -145,21 +155,8 @@ public class RobotData {
         double normAngle  = Math.toDegrees(Math.atan2(shortMidPoint.y - robotMidPoint.y, shortMidPoint.x - robotMidPoint.x));
         double shortAngleToRobot = normAngle - robotOrientation;
 
-        //some hack to make the difference -180 < theta < 180
-        if (shortAngleToRobot > 180) {
-            shortAngleToRobot -= (2 * 180);
-        } else if (shortAngleToRobot < -180) {
-            shortAngleToRobot += (2 * 180);
-        }
-
-        int quadrant = -1;
-
-        for (int i = 0; i < 4; i++) {
-            if (-180+90*i < shortAngleToRobot && shortAngleToRobot < -180+90*(i+1)) {
-                quadrant = i;
-                break;
-            }
-        }
+        shortAngleToRobot = clip(shortAngleToRobot);
+        int quadrant = getQuadrant(shortAngleToRobot);
 
         if (isRobotNumThree) {
             robotNum = 3;
@@ -198,47 +195,37 @@ public class RobotData {
             }
         }
 
-//			System.out.println("quadrant: " + quadrant);
-//			System.out.println("\nrobot O: " + robotOrientation);
-//			System.out.println("normA: " + normAngle);
-//			System.out.println("angleToRobot: " + shortAngleToRobot);
-//            System.out.println("robot num: " + robotNum);
-//            System.out.println("theta: " + theta);
         return robotNum;
+	}
+	
+	/**
+	 * <p>Return the given angle between -180 to 180 range.</p>
+	 * @param angle
+	 * @return clipped angle
+	 */
+	
+	public static double clip(double angle) {
+		if (angle > 180) {
+			return angle -= 360;
+		} else if (angle < -180) {
+			return angle += 360;
+		} else {
+			return angle;
+		}
+	}
+	
+	public static int getQuadrant(double angle) {
+		for (int i = 0; i < 4; i++) {
+			if (-180+90*i < angle && angle < -180+90*(i+1)) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 	
 	public double getTheta() {
         return Math.toRadians(-theta);
     }
-	public class PairPoint {
-		
-		private Point first;
-		private Point second;
-		private double euclideanDistance;
-		private double theta;
-		
-		public PairPoint(Point first, Point second, double euclideanDistance, double theta) {
-			this.first = first;
-			this.second = second;
-			this.euclideanDistance = euclideanDistance;
-			this.theta = theta;
-		}
-		
-		public Point getFirst() {
-			return first;
-		}
-		
-		public Point getSecond() {
-			return second;
-		}
-		
-		public double getEuclideanDistance() {
-			return euclideanDistance;
-		}
-		
-		public double getTheta() {
-			return theta;
-		}
-	}
 	
 }

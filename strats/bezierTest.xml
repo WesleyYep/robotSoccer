@@ -1,0 +1,17 @@
+Role:pathfindTest
+permanent-Striker test1
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+pathfindTest
+null
+null
+null
+null
+-----
+Situation:new situation 1:37:0:446:374
+new play
+-----
