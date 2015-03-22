@@ -59,7 +59,9 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     private JTabbedPane tabPane = new JTabbedPane();
     
     private JCheckBox autoRangeCheckBox;
+    private JCheckBox contourCheckBox;
     private boolean isAutoRange = false;
+    private boolean isContour = false;
 
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
@@ -75,6 +77,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         this.setLayout(new MigLayout());
         
         autoRangeCheckBox = new JCheckBox("Auto Range");
+        contourCheckBox = new JCheckBox("Contours");
         
         robotSizeSlider.setLowValue(10);
         ballSizeSlider.setLowValue(10);
@@ -194,6 +197,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         add(robotDimensionField, "wrap, w 50");
         
         add(autoRangeCheckBox);
+        add(contourCheckBox);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -230,10 +234,20 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				isAutoRange = !isAutoRange;
-				System.out.println(isAutoRange);
 			}    	
         });
         
+        contourCheckBox.addActionListener(new ActionListener() {
+        	@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isContour = !isContour;
+			}   
+        });
+        
+    }
+    
+    public boolean isContour() {
+    	return isContour;
     }
 
     protected void displayCircleOnIcon(MouseEvent e) {

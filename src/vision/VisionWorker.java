@@ -47,10 +47,14 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private int robotMaxSize;
     private int ballMaxSize;
     private int greenMaxSize;
+    
+    private List<MatOfPoint> correctBallContour;
 
 	private Point[] oldRobotPositions = {new Point(),new Point(),new Point(),new Point(),new Point()};
 
 	private ViewState webcamDisplayPanelState;
+	private List<MatOfPoint> correctGreenContour;
+	private List<MatOfPoint> correctTeamContour;
 	
 	private static final int KERNELSIZE = 3;
 
@@ -60,6 +64,10 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		ballSP = colourPanel.ballSamplingPanel;
 		teamSP = colourPanel.teamSamplingPanel;
 		greenSP = colourPanel.greenSamplingPanel;
+		
+		correctBallContour = new ArrayList<MatOfPoint>();
+		correctTeamContour = new ArrayList<MatOfPoint>();
+		correctGreenContour = new ArrayList<MatOfPoint>();
 
 	}
 
@@ -149,11 +157,12 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			Imgproc.findContours(ballBinary, ballContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
 			int ballX = 0, ballY = 0;
-
+			correctBallContour.clear();
 			for (int i = 0; i < ballContours.size(); i++) {
 				double area = Imgproc.contourArea(ballContours.get(i));
 				if (ballMinSize <= area && area <= ballMaxSize) {
 					Moments m = Imgproc.moments(ballContours.get(i));
+					correctBallContour.add(ballContours.get(i));
 					ballX = (int) (m.get_m10() / m.get_m00());
 					ballY = (int) (m.get_m01() / m.get_m00());
 					//Imgproc.drawContours(webcamImageMat, ballContours, i, new Scalar(255, 255, 255));
@@ -175,14 +184,14 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
 			int numRobots = 0;
 			int teamX = 0, teamY = 0;
-
+			correctTeamContour.clear();
 			for (int i = 0; i < teamContours.size(); i++) {
 				double area = Imgproc.contourArea(teamContours.get(i));
 				if (robotMinSize <= area && area <= robotMaxSize ) {
 					Moments m = Imgproc.moments(teamContours.get(i));
 					teamX = (int) (m.get_m10() / m.get_m00());
 					teamY = (int) (m.get_m01() / m.get_m00());
-
+					correctTeamContour.add(teamContours.get(i));
 					//Imgproc.drawContours(webcamImageMat, teamContours, i, new Scalar(0, 255, 128));
 
 					// Get the rotated rect and find the points.
@@ -221,7 +230,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			Imgproc.erode(greenBinary, greenBinary, erodeKernel);
 			Imgproc.dilate(greenBinary, greenBinary, dilateKernel);
 			Imgproc.findContours(greenBinary, greenContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
+			correctGreenContour.clear();
 			int greenX = 0, greenY = 0;
 			for (int i = 0; i < greenContours.size(); i++) {
 				double area =  Imgproc.contourArea(greenContours.get(i));
@@ -229,7 +238,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					Moments m = Imgproc.moments(greenContours.get(i));
 					greenX = (int) (m.get_m10() / m.get_m00());
 					greenY = (int) (m.get_m01() / m.get_m00());
-
+					correctGreenContour.add(greenContours.get(i));
 					for (int j = 0; j < data.length; j++) {
 						if (data[j] != null) {
 							data[j].addGreenPatch(new org.opencv.core.Point(greenX, greenY));
@@ -291,20 +300,21 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
 	public List<MatOfPoint> getBallContours() {
-		return ballContours;
+		return correctBallContour;
 	}
 
 	public List<MatOfPoint> getTeamContours() {
-		return teamContours;
+		return correctTeamContour;
 	}
 
 	public List<MatOfPoint> getGreenContours() {
-		return greenContours;
+		return correctGreenContour;
 	}
 
 	public List<MatOfPoint> getOpponentContours() {
 		return opponentContours;
 	}
+	
 
 	public void setCancelled() {
 		isTestingColour = false;
