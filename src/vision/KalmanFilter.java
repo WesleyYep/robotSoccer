@@ -14,6 +14,8 @@ public class KalmanFilter {
 	private Mat Q;
 	private Mat lastX;
 	private Mat lastP;
+	private Mat predX;
+
 	//https://www.cs.utexas.edu/~teammco/misc/kalman_filter/kalmanFilter.js
 	//http://stackoverflow.com/questions/27212167/unable-to-multiply-matrix-in-opencv-java
 	public KalmanFilter() {
@@ -29,6 +31,8 @@ public class KalmanFilter {
 		
 		H = Mat.eye(4, 4,CvType.CV_32F);
 		Q = Mat.zeros(4, 4, CvType.CV_32F);
+		Q.put(0, 0, 0.001);
+		Q.put(1, 1, 0.001);
 		R = Mat.eye(4, 4,CvType.CV_32F);
 		Core.multiply(R, new Scalar(0.1), R);
 		//System.out.println(R.dump());
@@ -99,7 +103,19 @@ public class KalmanFilter {
 		
 		lastX = curX;
 		lastP = curP;		
-		
+	}
+	
+	public void predict() {
+		predX = lastX;
+		Mat tempA = new Mat();
+		Mat tempB = new Mat();
+		Mat control = Mat.zeros(1, 4, CvType.CV_32F);
+		for (int i =0; i<60; i++){
+			Core.gemm( predX,A,1,new Mat(),0, tempA);
+			Core.gemm(control,B,1,new Mat(),0, tempB);
+			Core.add(tempA, tempB, predX);
+
+		}
 	}
 	
 	public int getEstimatedX() {
