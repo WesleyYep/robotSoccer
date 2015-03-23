@@ -29,5 +29,14 @@ public class Defender extends Action {
 		r.angularVelocity = 0;
 		
 	}
+	
+	/*
+	 * Step 1
+	 * PairPoint defendZone: two points of the defending line (a,b)
+	 * Point ballPoint : location of the ball (c)
+	 * 
+	 * Create a triangle with point a,b,c
+	 * if one of the angle within the trian > 90
+	 */
 
 }

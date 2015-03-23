@@ -263,6 +263,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					robotCount++;	
 				}
 			}
+			
+		
 			/*
 			int[] robotDuplicate = new int[5];
 			boolean isDuplicate = false;
