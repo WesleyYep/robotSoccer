@@ -9,7 +9,10 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -382,7 +385,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 				Play p = situations.get(i).getPlays().get(0); //get the first play
 				if (p == null) { break; }
 				for (int j = 0; j < 5; j++) {
-					Role role = p.getRoles()[j];
+					Role role = currentStrategy.mapRoles(p.getRoles())[j];
 					if (role == null) { continue; }
 					role.addRobot(bots, j);
 					role.setBallPosition(getBallX(), getBallY());

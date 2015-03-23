@@ -45,7 +45,7 @@ public class BasicGoalKeep extends Action {
     		if (isBallTop != isFacingTop) {
     			reverseTheta = false;
     		}
-    		System.out.println(ballY);
+   // 		System.out.println(ballY);
     		if (ballY >= 70 && ballY <= 110 ) {
     			setVelocityToTarget(goalLine,ballY, reverseTheta);
     		}
