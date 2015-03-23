@@ -167,8 +167,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					ballX = (int) (m.get_m10() / m.get_m00());
 					ballY = (int) (m.get_m01() / m.get_m00());
 					
-					//kFilter.process(ballX, ballY);
-					//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY());
+					
 					//Imgproc.drawContours(webcamImageMat, ballContours, i, new Scalar(255, 255, 255));
 					//centerPoint.add(new Point(ballX, ballY));
 

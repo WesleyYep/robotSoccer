@@ -21,6 +21,7 @@ import ui.*;
 import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
+import vision.KalmanFilter;
 import vision.VisionListener;
 
 public class FieldController implements ReceiverListener, AreaListener, VisionListener {
@@ -34,10 +35,13 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	private SituationArea selectedArea;
 
+	private KalmanFilter kFilter;
+
 	public FieldController(Field field, Robots bots, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
 		this.field = field;
+		kFilter = new KalmanFilter();
 		field.setBackground(Color.green);
 	}
 
@@ -203,6 +207,9 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			//Point2D p = VisionController.imagePosToActualPos(ballCoord.x, ballCoord.y);
 			ball.setX((int) p.x); //hardcoded for now
 			ball.setY((int)p.y);
+			
+			//kFilter.process(p.x, p.y);
+			//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY() + " " + p.x + " " + p.y);
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);

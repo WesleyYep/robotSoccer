@@ -82,7 +82,11 @@ public class WebcamController {
 	 */
 
 	public WebcamDisplayPanel getWebcamDisplayPanel() {
-		return webcamDisplayPanel;
+		if (webcamDisplayPanel != null)
+			return webcamDisplayPanel;
+		else {
+			return null;
+		}
 	}
 
 	/**

@@ -18,7 +18,7 @@ public class BasicGoalKeep extends Action {
     	Robot r = bots.getRobot(index);
     	
     	if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
-    		setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true);
+    		setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true, false);
     	}
     	else if ( ( r.getTheta() > 90+error && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+error)) {
     		r.angularVelocity = -Math.PI/9;
@@ -47,13 +47,13 @@ public class BasicGoalKeep extends Action {
     		}
    // 		System.out.println(ballY);
     		if (ballY >= 70 && ballY <= 110 ) {
-    			setVelocityToTarget(goalLine,ballY, reverseTheta);
+    			setVelocityToTarget(goalLine,ballY, reverseTheta, true);
     		}
     		else if (ballY < 70) {
-    			setVelocityToTarget(goalLine,70,reverseTheta);
+    			setVelocityToTarget(goalLine,70,reverseTheta, true);
     		}
     		else if (ballY > 110) {
-    			setVelocityToTarget(goalLine,110,reverseTheta);
+    			setVelocityToTarget(goalLine,110,reverseTheta, true);
     		}
     		
     	}
@@ -61,7 +61,7 @@ public class BasicGoalKeep extends Action {
     	
     }
     
-    public void setVelocityToTarget(double x, double y, boolean front) {
+    public void setVelocityToTarget(double x, double y, boolean front, boolean onGoalLine) {
     	 Robot r = bots.getRobot(index);
     	 double targetDist = 0;
          double targetTheta = 0;
@@ -135,24 +135,30 @@ public class BasicGoalKeep extends Action {
 // 		System.out.println("ang speed: " + Math.toDegrees(fb.getVariable("angSpeedError").getValue()));
 // 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
  		
- 		r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
- //		System.out.println(r.angularVelocity);
- 		r.linearVelocity= ((targetDist-2)/10)*0.05+0.15;
- 		
- 		if (isCloseToWall()) {
+ 		if (onGoalLine) {
+ 			r.angularVelocity = 0;
  			r.linearVelocity = 0.3;
+ 		} else {
+	 		r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
+	 //		System.out.println(r.angularVelocity);
+	 		r.linearVelocity= ((targetDist-2)/10)*0.05+0.15;
+	 		
+	 		if (isCloseToWall()) {
+	 			r.linearVelocity = 0.3;
+	 		}
  		}
  		
  		if (front == false) {
  			r.linearVelocity*= -1;
  		}
- 		
+	
  		checkRobotPosition(x,y);
     }
 
     private void checkRobotPosition(double x, double y) {
     	 Robot r = bots.getRobot(index);
-    	if (r.getXPosition() >= x-error && r.getXPosition() <= x+error && r.getYPosition() >= y-error && r.getYPosition() <= y+error) {
+    	 int xError = 10;
+    	if (r.getXPosition() >= x-xError && r.getXPosition() <= x+xError && r.getYPosition() >= y-error && r.getYPosition() <= y+error) {
 			r.angularVelocity = 0;
 			r.linearVelocity = 0;
 		}

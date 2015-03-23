@@ -44,9 +44,10 @@ public class KalmanFilter {
 	
 	public void process(double x, double y) {
 		
-		double velX = x-lastX.get(0, 0)[0];
-		double velY = y-lastX.get(0,1)[0];
+		double velX = x-lastX.get(0,0)[0];
+		double velY = x-lastX.get(0,1)[0];
 		
+		//System.out.println(lastX.get(0, 0)[0] + " " + lastX.get(0, 0).length);
 		Mat measurement = new Mat(1,4,CvType.CV_32F);
 		measurement.put(0, 0, x);
 		measurement.put(0, 1, y);
@@ -60,14 +61,14 @@ public class KalmanFilter {
 		Mat tempB = new Mat();
 		Mat tempC = new Mat();
 		
-		
+		//System.out.println("inside process: " +  measurement.dump());
 		//prediction
 		Core.gemm( lastX,A,1,new Mat(),0, tempA);
 		
 		Core.gemm(control,B,1,new Mat(),0, tempB);
 		Mat xMat = new Mat();
 		Core.add(tempA, tempB, xMat);
-
+		System.out.println(xMat.dump());
 		
 		Mat p = new Mat();
 		Core.gemm(lastP,A,1,new Mat(),0, tempA);
@@ -118,11 +119,11 @@ public class KalmanFilter {
 		}
 	}
 	
-	public int getEstimatedX() {
-		return (int) lastX.get(0, 0)[0];
+	public double getEstimatedX() {
+		return (double) lastX.get(0, 0)[0];
 	}
 	
-	public int getEstimatedY() {
-		return (int) lastX.get(0, 1)[0];
+	public double getEstimatedY() {
+		return (double) lastX.get(0, 1)[0];
 	}
 }

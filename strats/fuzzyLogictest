@@ -12,11 +12,18 @@ null-null
 null-null
 null-null
 -----
+Role:gk
+permanent-Basic Goal Keeper
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
 new role
+gk
 new role
 new role
-turner
 new role
 -----
 Situation:new situation 1:29:1:451:367
