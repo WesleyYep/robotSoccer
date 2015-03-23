@@ -227,11 +227,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
-		colourPanel = new ColourPanel(webcamController);
 		
-		webcamDisplayPanel = new WebcamDisplayPanel(colourPanel);
+		
+		webcamDisplayPanel = new WebcamDisplayPanel();
 		webcamController = new WebcamController(webcamDisplayPanel);
-		
+		colourPanel = new ColourPanel(webcamController);
 		
 		visionWorker = new VisionWorker(colourPanel);
 		visionWorker.addListener(fieldController);

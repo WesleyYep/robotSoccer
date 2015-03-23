@@ -55,11 +55,10 @@ public class WebcamDisplayPanel extends JPanel {
 	private List<MatOfPoint> greenContour;
 	private List<MatOfPoint> teamContour;
 
-	private ColourPanel colourPanel;
+	private ColourPanel colourPanel = null;
     
-	public WebcamDisplayPanel(ColourPanel panel) {
+	public WebcamDisplayPanel() {
 		super();
-		colourPanel = panel;
 		// Initially not connected to anything.
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
@@ -275,6 +274,9 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void addWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
+		if (l instanceof ColourPanel) {
+			colourPanel = (ColourPanel) l;
+		}
 		wdpListeners.add(l);
 	}
 	
@@ -366,5 +368,6 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 		
 	}
+
 
 }
