@@ -18,6 +18,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -51,20 +52,20 @@ public class WebcamDisplayPanel extends JPanel {
     private BufferedImage zoomCursorImg;
     private Cursor zoomCursor;
     private List<MatOfPoint> ballContour;
-    private ColourPanel colourPanel;
 	private List<MatOfPoint> greenContour;
 	private List<MatOfPoint> teamContour;
+
+	private ColourPanel colourPanel;
     
 	public WebcamDisplayPanel(ColourPanel panel) {
 		super();
-		
+		colourPanel = panel;
 		// Initially not connected to anything.
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		
-		colourPanel = panel;
 		ballContour = null;
 		try {
 			zoomCursorImg = ImageIO.read(getClass().getClassLoader().getResourceAsStream("zoom.png"));
@@ -136,9 +137,10 @@ public class WebcamDisplayPanel extends JPanel {
 		} else {
 			currentViewState = ViewState.connectionSuccess();
 
-            BufferedImage image = Image.toBufferedImage(mat);
-            notifyImageUpdate(image);
+            final BufferedImage image = Image.toBufferedImage(mat);
             
+            
+            notifyImageUpdate(image);
             if (isFiltering) {
                 //old stuff
                 for (int j = 0; j < image.getHeight(); j++) {
@@ -155,12 +157,16 @@ public class WebcamDisplayPanel extends JPanel {
             }
             
             final Mat tempMat = Image.toMat(image);
-            if (colourPanel.isContour()) {
+           // JOptionPane.showMessageDialog(null, new ImageIcon(Image.toBufferedImage(tempMat)));
+           
+            
+            if (colourPanel.isContourActive()) {
             	if (ballContour != null) {
             		for (int i = 0; i<ballContour.size(); i++) {
             			Imgproc.drawContours(tempMat, ballContour, i, new Scalar(0, 255, 128));
             		}
             	}
+            	
             	
             	if (greenContour != null) {
             		for (int i = 0; i<greenContour.size(); i++) {
@@ -172,9 +178,10 @@ public class WebcamDisplayPanel extends JPanel {
             		for (int i = 0; i<teamContour.size(); i++) {
             			Imgproc.drawContours(tempMat, teamContour, i, new Scalar(0, 255, 128));
             		}
-            	}
-            }
-
+            	} 
+            } 
+            
+            
             /*
              * This method is not being called EDT thread so to update the GUI use invokeLater.
              */
@@ -359,5 +366,5 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 		
 	}
-	
+
 }

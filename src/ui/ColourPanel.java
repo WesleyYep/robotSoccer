@@ -72,6 +72,8 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     
     private BufferedImage originalImage = null;
     private int selectRadius = 5;
+    
+    private WebcamDisplayPanel wcPanel = null;
 
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
@@ -246,7 +248,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         
     }
     
-    public boolean isContour() {
+    public boolean isContourActive() {
     	return isContour;
     }
 
@@ -431,6 +433,11 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 	@Override
 	public void imageUpdated(BufferedImage image) {		
 	}
+	
+	public void setWcPanel(WebcamDisplayPanel panel) {
+		wcPanel = panel;
+	}
+		
 
 }
 
