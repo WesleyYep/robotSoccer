@@ -18,7 +18,9 @@ public class Ball extends JPanel{
 	private double y = 70;
 	private double theta;
 	private double linearVelocity;
-
+	private ArrayList<Integer> pastX = new ArrayList<Integer>();
+	private ArrayList<Integer> pastY = new ArrayList<Integer>();
+	
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private boolean focused;
 
