@@ -5,10 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.JFileChooser;
 
@@ -28,26 +25,29 @@ public class CurrentStrategy {
     private List<Situation> situations;
     private List<StrategyListener> listeners = new ArrayList<StrategyListener>();
     private FieldController fieldController;
-    private Map<String, Integer> robotMapping = new HashMap<String, Integer>();
+    private int[] robotMapping = new int[] {0, 1, 2, 3, 4};
 
     public CurrentStrategy (FieldController fieldController) {
         roles = new ArrayList<Role>();
         plays = new ArrayList<Play>();
         situations = new ArrayList<Situation>();
-        this.fieldController = fieldController;
-        robotMapping.put("A", 1);
-        robotMapping.put("B", 2);
-        robotMapping.put("C", 3);
-        robotMapping.put("D", 4);
-        robotMapping.put("E", 5);
+        this.fieldController = fieldController;;
     }
 
     public void changeMapping(int a, int b, int c, int d, int e) {
-        robotMapping.put("a", a);
-        robotMapping.put("b", b);
-        robotMapping.put("c", c);
-        robotMapping.put("d", d);
-        robotMapping.put("e", e);
+        robotMapping[0] = a-1;
+        robotMapping[1] = b-1;
+        robotMapping[2] = c-1;
+        robotMapping[3] = d-1;
+        robotMapping[4] = e-1;
+    }
+
+    public Role[] mapRoles(Role[] originalRoles) {
+        Role[] mappedRoles = new Role[5];
+        for (int i = 0; i < 5; i++) {
+            mappedRoles[i] = originalRoles[robotMapping[i]];
+        }
+        return mappedRoles;
     }
 
     public void addListener(StrategyListener listener) {

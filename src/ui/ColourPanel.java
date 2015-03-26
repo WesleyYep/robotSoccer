@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,6 +57,11 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     private RangeSlider ballSizeSlider = new RangeSlider(0,500);
 
     private JTabbedPane tabPane = new JTabbedPane();
+    
+    private JCheckBox autoRangeCheckBox;
+    private JCheckBox contourCheckBox;
+    private boolean isAutoRange = false;
+    private boolean isContour = false;
 
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
@@ -66,10 +72,14 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     
     private BufferedImage originalImage = null;
     private int selectRadius = 5;
+    
+    private WebcamDisplayPanel wcPanel = null;
 
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
         
+        autoRangeCheckBox = new JCheckBox("Auto Range");
+        contourCheckBox = new JCheckBox("Contours");
         
         robotSizeSlider.setLowValue(10);
         ballSizeSlider.setLowValue(10);
@@ -187,6 +197,9 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
+        
+        add(autoRangeCheckBox);
+        add(contourCheckBox);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -218,6 +231,25 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
                 isGettingRobotDimension = true;
             }
         });
+        
+        autoRangeCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isAutoRange = !isAutoRange;
+			}    	
+        });
+        
+        contourCheckBox.addActionListener(new ActionListener() {
+        	@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isContour = !isContour;
+			}   
+        });
+        
+    }
+    
+    public boolean isContourActive() {
+    	return isContour;
     }
 
     protected void displayCircleOnIcon(MouseEvent e) {
@@ -319,7 +351,9 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
             			}
                 	}
             	}
-       //     	sp.setRange();
+            	if (isAutoRange) {
+            		sp.setRange();
+            	}
             }
         }
     }
@@ -399,6 +433,11 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 	@Override
 	public void imageUpdated(BufferedImage image) {		
 	}
+	
+	public void setWcPanel(WebcamDisplayPanel panel) {
+		wcPanel = panel;
+	}
+		
 
 }
 

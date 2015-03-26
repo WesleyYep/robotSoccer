@@ -13,17 +13,23 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import utils.ColorSpace;
 import utils.Image;
+import vision.VisionWorker;
 import controllers.VisionController;
 
 /**
@@ -45,16 +51,21 @@ public class WebcamDisplayPanel extends JPanel {
     private boolean isFiltering = false;
     private BufferedImage zoomCursorImg;
     private Cursor zoomCursor;
+    private List<MatOfPoint> ballContour;
+	private List<MatOfPoint> greenContour;
+	private List<MatOfPoint> teamContour;
+
+	private ColourPanel colourPanel = null;
     
 	public WebcamDisplayPanel() {
 		super();
-		
 		// Initially not connected to anything.
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		
+		ballContour = null;
 		try {
 			zoomCursorImg = ImageIO.read(getClass().getClassLoader().getResourceAsStream("zoom.png"));
 			zoomCursor = Toolkit.getDefaultToolkit().createCustomCursor(zoomCursorImg, new Point(zoomCursorImg.getWidth() / 2, zoomCursorImg.getHeight() / 2), "Zoom cursor");
@@ -126,7 +137,9 @@ public class WebcamDisplayPanel extends JPanel {
 			currentViewState = ViewState.connectionSuccess();
 
             final BufferedImage image = Image.toBufferedImage(mat);
-
+            
+            
+            notifyImageUpdate(image);
             if (isFiltering) {
                 //old stuff
                 for (int j = 0; j < image.getHeight(); j++) {
@@ -141,7 +154,33 @@ public class WebcamDisplayPanel extends JPanel {
                     }
                 }
             }
-
+            
+            final Mat tempMat = Image.toMat(image);
+           // JOptionPane.showMessageDialog(null, new ImageIcon(Image.toBufferedImage(tempMat)));
+           
+            
+            if (colourPanel.isContourActive()) {
+            	if (ballContour != null) {
+            		for (int i = 0; i<ballContour.size(); i++) {
+            			Imgproc.drawContours(tempMat, ballContour, i, new Scalar(0, 255, 128));
+            		}
+            	}
+            	
+            	
+            	if (greenContour != null) {
+            		for (int i = 0; i<greenContour.size(); i++) {
+            			Imgproc.drawContours(tempMat, greenContour, i, new Scalar(0, 255, 128));
+            		}
+            	}
+            	
+            	if (teamContour != null) {
+            		for (int i = 0; i<teamContour.size(); i++) {
+            			Imgproc.drawContours(tempMat, teamContour, i, new Scalar(0, 255, 128));
+            		}
+            	} 
+            } 
+            
+            
             /*
              * This method is not being called EDT thread so to update the GUI use invokeLater.
              */
@@ -150,7 +189,7 @@ public class WebcamDisplayPanel extends JPanel {
 				@Override
 				public void run() {
 					// Update the image.
-					webcamImageLabel.setIcon(new ImageIcon(image));
+					webcamImageLabel.setIcon(new ImageIcon(Image.toBufferedImage(tempMat)));
 					
 					if (webcamImageLabel.getParent() == null) {
 						add(webcamImageLabel, BorderLayout.CENTER);
@@ -159,7 +198,7 @@ public class WebcamDisplayPanel extends JPanel {
             	
             });
             
-            notifyImageUpdate(image);
+            
 		}
 		
 		if (oldViewState != currentViewState) {
@@ -235,6 +274,9 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void addWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
+		if (l instanceof ColourPanel) {
+			colourPanel = (ColourPanel) l;
+		}
 		wdpListeners.add(l);
 	}
 	
@@ -254,6 +296,11 @@ public class WebcamDisplayPanel extends JPanel {
 	public void notifyViewStateChange(ViewState currentViewState) {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
 			l.viewStateChanged(currentViewState);
+			if (l instanceof VisionWorker) {
+				ballContour = ((VisionWorker) l).getBallContours();
+				greenContour = ((VisionWorker) l).getGreenContours();
+				teamContour = ((VisionWorker) l).getTeamContours();
+			}
 		}
 	}
 
@@ -321,5 +368,6 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 		
 	}
-	
+
+
 }

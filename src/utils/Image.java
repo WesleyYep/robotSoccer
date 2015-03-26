@@ -64,9 +64,12 @@ public class Image {
      */
     
     public static Mat toMat(BufferedImage image) {
+    	
     	byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
     	Mat mat = new Mat(image.getHeight(), image.getWidth(), CvType.CV_8UC3);
     	mat.put(0, 0, data);
+    	
+    	
     	return mat;
     }
     

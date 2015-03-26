@@ -289,7 +289,9 @@ public class SamplingPanel extends JPanel implements ActionListener {
      */
     
     public void resetButton() {
-    	webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+    	if (webcamController.getWebcamDisplayPanel() != null) {
+    		webcamController.getWebcamDisplayPanel().setIsFiltering(false);
+    	}
     	detectButton.setText(DETECTSTRING[0]);
     	
     	sampleButton.setText("Start Sample");

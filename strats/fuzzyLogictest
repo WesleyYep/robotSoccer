@@ -1,6 +1,6 @@
-Role:striker
-Positive Situation-Chase Ball (smooth)
-permanent-Move to spot
+Role:turner
+permanent-Chase Ball (smooth)
+null-null
 null-null
 null-null
 null-null
@@ -12,9 +12,16 @@ null-null
 null-null
 null-null
 -----
+Role:gk
+permanent-Basic Goal Keeper
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
-striker
 new role
+gk
 new role
 new role
 new role

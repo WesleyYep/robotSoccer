@@ -28,7 +28,7 @@ public abstract class Defender extends Action {
 	protected Path getPath() {
 		return path;
 	}
-	
+
 	protected void setPath(Path path) {
 		this.path = path;
 	}

@@ -16,7 +16,6 @@ public class Actions {
     	new Wait(),
         new TurnToFaceBall(),
         new MoveToSpot(),
-        new GoalKeepTest(),
         new StrikerTest()
     	};
 

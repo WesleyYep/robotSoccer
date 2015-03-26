@@ -32,13 +32,12 @@ import org.opencv.core.Core;
 
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
+import vision.KalmanFilter;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
 import bot.Robots;
-
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
-
 import config.ConfigFile;
 import controllers.BallController;
 import controllers.FieldController;
@@ -229,9 +228,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
 		
+		
 		webcamDisplayPanel = new WebcamDisplayPanel();
 		webcamController = new WebcamController(webcamDisplayPanel);
-		
 		colourPanel = new ColourPanel(webcamController);
 		
 		visionWorker = new VisionWorker(colourPanel);
