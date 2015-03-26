@@ -32,28 +32,6 @@ public class Image {
 		g2d.dispose();
 		return resize;
 	}
-
-	/**
-	 * <p>Finds the euclidean distance between two points and returns it</p>
-	 * @param p1
-	 * @param p2
-	 * @return euclidean distance between two points
-	 */
-	
-    public static double euclideanDistance(org.opencv.core.Point p1, org.opencv.core.Point p2) {
-        return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));
-    }
-
-    /**
-     * <p>Calculates the angle between the two points, respect to the x axis in degrees</p>
-     * @param p1
-     * @param p2
-     * @return angle between two points in degrees, respect to x axis. <strong>Note:</strong> range -180 to 180.
-     */
-    
-    public static double angleBetweenTwoPoints(org.opencv.core.Point p1, org.opencv.core.Point p2) {
-        return Math.toDegrees(Math.atan2(p2.y - p1.y, p2.x - p1.x));
-    }
     
     /**
      * <p>Transforms mat matrix into bufferedImage</p>

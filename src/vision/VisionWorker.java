@@ -20,6 +20,7 @@ import ui.ColourPanel;
 import ui.SamplingPanel;
 import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
+import utils.Geometry;
 import utils.Image;
 import data.RobotData;
 import data.VisionData;
@@ -250,7 +251,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					robotNumber[robotCount] = robotNum-1;
 					if (robotNum > 0) {
                         Point pos = new Point((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y);
-                        double distance =  Image.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
+                        double distance =  Geometry.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
 
                         if (distance < 15) { //change this if needed //todo
                             notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));

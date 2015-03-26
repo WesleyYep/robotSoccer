@@ -2,7 +2,7 @@ package data;
 
 import org.opencv.core.Point;
 
-import utils.Image;
+import utils.Geometry;
 import utils.PairPoint;
 
 public class RobotData {
@@ -29,14 +29,14 @@ public class RobotData {
 		Point referencePoint = teamRectPoint[0];
 		
 		// find the distance between this reference point and every other point.
-		double d1 = Image.euclideanDistance(referencePoint, teamRectPoint[1]);
-		double d2 = Image.euclideanDistance(referencePoint, teamRectPoint[2]);
-		double d3 = Image.euclideanDistance(referencePoint, teamRectPoint[3]);
+		double d1 = Geometry.euclideanDistance(referencePoint, teamRectPoint[1]);
+		double d2 = Geometry.euclideanDistance(referencePoint, teamRectPoint[2]);
+		double d3 = Geometry.euclideanDistance(referencePoint, teamRectPoint[3]);
 		
 		// find the angle between this reference point and every other point.
-		double a1 = Image.angleBetweenTwoPoints(referencePoint, teamRectPoint[1]);
-		double a2 = Image.angleBetweenTwoPoints(referencePoint, teamRectPoint[2]);
-		double a3 = Image.angleBetweenTwoPoints(referencePoint, teamRectPoint[3]);
+		double a1 = Geometry.angleBetweenTwoPoints(referencePoint, teamRectPoint[1]);
+		double a2 = Geometry.angleBetweenTwoPoints(referencePoint, teamRectPoint[2]);
+		double a3 = Geometry.angleBetweenTwoPoints(referencePoint, teamRectPoint[3]);
 		
 		// find the short pair.
 		double shortPair = Math.min(d1, Math.min(d2, d3));
@@ -64,26 +64,26 @@ public class RobotData {
 		double endX = shortPair.getSecond().x + shortPair.getEuclideanDistance() * Math.cos(Math.toRadians(shortPair.getTheta()));
 		double endY = shortPair.getSecond().y + shortPair.getEuclideanDistance() * Math.sin(Math.toRadians(shortPair.getTheta()));
 		Point endPoint = new Point(endX, endY);
-		thresholdDistance = Image.euclideanDistance(teamCenterPoint, endPoint);
+		thresholdDistance = Geometry.euclideanDistance(teamCenterPoint, endPoint);
 	}
 	
 	public void addGreenPatch(Point greenCenterPoint) {
 		
-		double distance = Image.euclideanDistance(teamCenterPoint, greenCenterPoint);
+		double distance = Geometry.euclideanDistance(teamCenterPoint, greenCenterPoint);
 		
 		if (distance > thresholdDistance) {
 			return;
 		}
 		
 		if (greenPatch1 == null) {
-			greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Geometry.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
 		} else if (greenPatch2 == null) {
-			greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Geometry.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
 		} else { //long patch should override green patch
-			if (!isLongPatch(greenPatch1) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
-				greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
-			} else if (!isLongPatch(greenPatch2) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
-				greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Image.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			if (!isLongPatch(greenPatch1) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Geometry.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
+				greenPatch1 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Geometry.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
+			} else if (!isLongPatch(greenPatch2) && isLongPatch(new PairPoint(teamCenterPoint, greenCenterPoint, distance, Geometry.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint)))) {
+				greenPatch2 = new PairPoint(teamCenterPoint, greenCenterPoint, distance, Geometry.angleBetweenTwoPoints(teamCenterPoint, greenCenterPoint));
 			}
 		}
 		
@@ -93,7 +93,7 @@ public class RobotData {
 		
 		double longPairTheta = longPair.getTheta();
 		
-		double differenceTheta = Math.abs(longPairTheta - Image.angleBetweenTwoPoints(teamCenterPoint, greenPatch.getSecond()));
+		double differenceTheta = Math.abs(longPairTheta - Geometry.angleBetweenTwoPoints(teamCenterPoint, greenPatch.getSecond()));
 
 		if (!((differenceTheta % 90) > THRESHOLDANGLE && (differenceTheta % 90) < 90 - THRESHOLDANGLE)) {
 			return true;
