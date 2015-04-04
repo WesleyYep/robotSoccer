@@ -13,10 +13,12 @@ import ui.Field;
 public class ChaseBall2 extends Action{
 
     private double error = 5;
+    private int goalX = 220;
+    private int goalY = 90;
 
     @Override
     public String getName() {
-        return "Chase Ball (smooth)";
+        return "Chase Ball (Striker)";
     }
 
     @Override
@@ -31,13 +33,12 @@ public class ChaseBall2 extends Action{
         double targetTheta = 0;
 
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-
         targetTheta = Math.atan2(y-r.getYPosition(), x - r.getXPosition());
-
 
         double difference;
         double diff1;
         double diff2;
+
         if ( Math.toDegrees(targetTheta*-1) > 0 && r.getTheta() <= 0) {
             diff1 = Math.toDegrees(targetTheta*-1) + Math.abs(r.getTheta());
             diff2 = -1*(180-Math.toDegrees(targetTheta*-1)) + Math.abs(-180-r.getTheta());
@@ -66,61 +67,60 @@ public class ChaseBall2 extends Action{
 
         targetTheta = difference;
 
-        String filename = "tipper.fcl";
-        FIS fis = FIS.load(filename, true);
+        if (targetDist < 20 &&  targetTheta < 10) {
+            double goalTheta = Math.atan2(r.getYPosition() - goalY, goalX - r.getXPosition());
+            double goalDifference = goalTheta - Math.toRadians(r.getTheta());
+      //      double goalDist =  Math.sqrt(Math.pow((goalX-r.getXPosition()),2) + Math.pow((goalY-r.getYPosition()),2));
 
-        if (fis == null) {
-            System.err.println("Can't load file: '" + filename + "'");
-            System.exit(1);
-        }
+            r.angularVelocity = 2*goalDifference;// / (goalDist);
+            r.linearVelocity = 0.5;
 
-        // Get default function block
-        FunctionBlock fb = fis.getFunctionBlock(null);
-        //JFuzzyChart.get().chart(fb);
-        // Set inputs
-        //fb.setVariable("food", 8.5);
-        //fb.setVariable("service", 7.5);
-        fb.setVariable("obstacleTheta", Math.PI);
-        fb.setVariable("obstacleDist", 10);
-        fb.setVariable("targetTheta", Math.toRadians(targetTheta));
-        fb.setVariable("targetDist", targetDist);
+     //       System.out.println("Kick now! " + i);
+     //       i++;
+        } else {
 
-        // Evaluate
-        fb.evaluate();
+            String filename = "tipper.fcl";
+            FIS fis = FIS.load(filename, true);
 
-        // Show output variable's chart
-        fb.getVariable("angSpeedError").defuzzify();
+            if (fis == null) {
+                System.err.println("Can't load file: '" + filename + "'");
+                System.exit(1);
+            }
 
+            // Get default function block
+            FunctionBlock fb = fis.getFunctionBlock(null);
+            fb.setVariable("obstacleTheta", Math.PI);
+            fb.setVariable("obstacleDist", 10);
+            fb.setVariable("targetTheta", Math.toRadians(targetTheta));
+            fb.setVariable("targetDist", targetDist);
 
-        // Print ruleSet
-        //System.out.println(fb);
-// 		System.out.println("theta: " + targetTheta );
-// 		System.out.println("dist: " + targetTheta );
-// 		System.out.println("ang speed: " + Math.toDegrees(fb.getVariable("angSpeedError").getValue()));
-// 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
+            // Evaluate
+            fb.evaluate();
 
-        r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
-        if (r.angularVelocity > 3) {
-        	r.angularVelocity = 3;
-        } else if (r.angularVelocity < -3) {
-        	r.angularVelocity = -3;
-        }
-   //           System.out.println(r.angularVelocity);
-        r.linearVelocity= 1;
+            // Show output variable's chart
+            fb.getVariable("angSpeedError").defuzzify();
 
-        if (isCloseToWall()) {
-            if (Math.abs(targetTheta) < 10) {
-            	r.linearVelocity = 0.2;
-            } else {
-            	r.linearVelocity = 0;
+            r.angularVelocity = fb.getVariable("angSpeedError").getValue() * 0.5;
+            if (r.angularVelocity > 3) {
+                r.angularVelocity = 3;
+            } else if (r.angularVelocity < -3) {
+                r.angularVelocity = -3;
+            }
+            r.linearVelocity = 1;
+
+            if (isCloseToWall()) {
+                if (Math.abs(targetTheta) < 10) {
+                    r.linearVelocity = 0.2;
+                } else {
+                    r.linearVelocity = 0;
+                }
+            }
+
+            if (front == false) {
+                r.linearVelocity *= -1;
             }
         }
-
-        if (front == false) {
-            r.linearVelocity*= -1;
-        }
-
-        checkRobotPosition(x,y);
+        //checkRobotPosition(x,y);
     }
 
     private void checkRobotPosition(double x, double y) {
