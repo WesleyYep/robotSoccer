@@ -9,14 +9,15 @@ public class Actions {
 
 	// Contains all the actions in an array.
     private static Action[] actions = new Action[] {
-    	null,
-    	new ChaseBall(),
-    	new ChaseBall2(),
-    	new BasicGoalKeep(),
-    	new Wait(),
-        new TurnToFaceBall(),
-        new MoveToSpot(),
-        new StrikerTest()
+            null,
+            new ChaseBall(),
+            new ChaseBall2(),
+            new BasicGoalKeep(),
+            new Wait(),
+            new TurnToFaceBall(),
+            new MoveToSpot(),
+            new StrikerTest(),
+            new GoalKeepTest()
     	};
 
     /*
