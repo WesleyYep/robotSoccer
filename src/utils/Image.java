@@ -1,12 +1,11 @@
 package utils;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 /**
  * <p>Consists of static utility classes when working with images</p>

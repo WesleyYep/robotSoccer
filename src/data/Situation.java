@@ -1,11 +1,11 @@
 package data;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
 import strategy.Play;
 import ui.SituationArea;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Situation {
 

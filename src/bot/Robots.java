@@ -1,11 +1,10 @@
 package bot;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
-import controllers.RobotController;
 import communication.SerialPortCommunicator;
+import controllers.RobotController;
 import ui.Field;
+
+import java.awt.*;
 
 public class Robots {
 	

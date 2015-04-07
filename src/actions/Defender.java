@@ -1,11 +1,10 @@
 package actions;
 
+import Paths.Path;
 import org.opencv.core.Point;
-
 import strategy.Action;
 import utils.Geometry;
 import utils.PairPoint;
-import Paths.Path;
 
 public abstract class Defender extends Action {
 

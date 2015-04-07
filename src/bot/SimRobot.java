@@ -1,5 +1,4 @@
 package bot;
-import org.jbox2d.collision.shapes.PolygonShape;
 
 public class SimRobot extends Robot {
 

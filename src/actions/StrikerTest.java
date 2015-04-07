@@ -1,9 +1,9 @@
 package actions;
 
-import strategy.Action;
-import ui.RobotSoccerMain;
 import Paths.BezierCurvePath;
 import bot.Robot;
+import strategy.Action;
+import ui.RobotSoccerMain;
 
 /**
  * Created by Wesley on 27/02/2015.

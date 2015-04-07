@@ -1,12 +1,10 @@
 package actions;
 
+import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
 import ui.Field;
-import Paths.StraightLinePath;
-import bot.Robot;
 
 public class BasicGoalKeep extends Action {
    

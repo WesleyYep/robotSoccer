@@ -1,14 +1,13 @@
 package game;
 
-import java.util.TimerTask;
-
-import communication.Receiver;
+import bot.Robot;
+import bot.Robots;
 import communication.Sender;
 import communication.SenderListener;
 import ui.Field;
-import bot.Robot;
-import bot.Robots;
 import ui.TestComPanel;
+
+import java.util.TimerTask;
 
 public class Tick extends TimerTask implements SenderListener {
 	private Field field;

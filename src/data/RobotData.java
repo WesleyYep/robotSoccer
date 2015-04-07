@@ -1,7 +1,6 @@
 package data;
 
 import org.opencv.core.Point;
-
 import utils.Geometry;
 import utils.PairPoint;
 

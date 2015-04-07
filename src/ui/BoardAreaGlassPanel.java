@@ -1,15 +1,12 @@
 package ui;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics;
+import controllers.VisionController;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.JPanel;
-
-import controllers.VisionController;
 
 public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener {
 

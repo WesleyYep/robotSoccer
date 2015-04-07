@@ -1,10 +1,9 @@
 package actions;
 
-import org.opencv.core.Point;
-
-import utils.Geometry;
-import bot.Robot;
 import Paths.Path;
+import bot.Robot;
+import org.opencv.core.Point;
+import utils.Geometry;
 
 public class BasicDefender extends Defender {
 

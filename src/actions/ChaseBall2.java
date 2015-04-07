@@ -1,6 +1,5 @@
 package actions;
 
-import Paths.StraightLinePath;
 import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;

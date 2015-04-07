@@ -1,21 +1,15 @@
 package ui;
 
+import controllers.VisionController;
+import controllers.WebcamController;
+import net.miginfocom.swing.MigLayout;
+import ui.WebcamDisplayPanel.ViewState;
+import utils.Image;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import ui.WebcamDisplayPanel.ViewState;
-import utils.Image;
-import net.miginfocom.swing.MigLayout;
-import controllers.VisionController;
-import controllers.WebcamController;
 
 public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 	

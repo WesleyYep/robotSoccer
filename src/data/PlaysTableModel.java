@@ -1,10 +1,9 @@
 package data;
 
-import java.util.List;
+import strategy.Play;
 
 import javax.swing.table.AbstractTableModel;
-
-import strategy.Play;
+import java.util.List;
 
 public class PlaysTableModel extends AbstractTableModel {
 

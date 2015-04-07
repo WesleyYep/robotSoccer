@@ -1,28 +1,14 @@
 package controllers;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.swing.JPanel;
-
-import data.Coordinate;
-import data.VisionData;
-import ui.*;
-import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
+import data.VisionData;
+import ui.*;
 import vision.KalmanFilter;
 import vision.VisionListener;
+
+import java.awt.*;
+import java.util.List;
 
 public class FieldController implements ReceiverListener, AreaListener, VisionListener {
 

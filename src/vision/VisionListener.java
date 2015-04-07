@@ -1,6 +1,5 @@
 package vision;
 
-import data.Coordinate;
 import data.VisionData;
 
 /**

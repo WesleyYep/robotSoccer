@@ -1,9 +1,9 @@
 package controllers;
 
+import ui.WebcamDisplayPanel.ViewState;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
-import ui.WebcamDisplayPanel.ViewState;
 
 
 public class WindowController implements WindowListener {

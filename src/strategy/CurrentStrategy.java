@@ -1,20 +1,16 @@
 package strategy;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
-import javax.swing.JFileChooser;
-
-import ui.SituationArea;
 import actions.Actions;
 import config.ConfigFile;
 import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
+import ui.SituationArea;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wesley on 23/01/2015.

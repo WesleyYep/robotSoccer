@@ -1,49 +1,26 @@
 package ui;
 
-import game.Tick;
-
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import net.miginfocom.swing.MigLayout;
-
-import org.opencv.core.Core;
-
-import strategy.CurrentStrategy;
-import ui.WebcamDisplayPanel.ViewState;
-import vision.KalmanFilter;
-import vision.VisionSettingFile;
-import vision.VisionWorker;
 import bot.Robots;
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
 import config.ConfigFile;
-import controllers.BallController;
-import controllers.FieldController;
-import controllers.VisionController;
-import controllers.WebcamController;
-import controllers.WindowController;
+import controllers.*;
+import game.Tick;
+import net.miginfocom.swing.MigLayout;
+import org.opencv.core.Core;
+import strategy.CurrentStrategy;
+import ui.WebcamDisplayPanel.ViewState;
+import vision.VisionSettingFile;
+import vision.VisionWorker;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
 
 public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
 

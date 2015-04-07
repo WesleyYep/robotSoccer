@@ -1,9 +1,7 @@
 package actions;
 
-import Paths.StraightLinePath;
 import bot.Robot;
 import strategy.Action;
-import ui.Field;
 
 public class GoalKeepTest extends Action{
 	private double goalKeepCentreX = 10;

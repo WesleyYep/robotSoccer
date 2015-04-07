@@ -1,7 +1,5 @@
 package bot;
 
-import java.util.List;
-
 public class RealRobot extends Robot {
 
 	public RealRobot (double x, double y, double theta, int id) {

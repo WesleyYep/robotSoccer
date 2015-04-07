@@ -1,37 +1,19 @@
 package ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import com.jidesoft.swing.RangeSlider;
+import controllers.WebcamController;
+import data.Coordinate;
 import net.miginfocom.swing.MigLayout;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.ColourRangeListener;
 import vision.LookupTable;
 
-import com.jidesoft.swing.RangeSlider;
-
-import controllers.WebcamController;
-import data.Coordinate;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Wesley on 2/02/2015.

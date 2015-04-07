@@ -1,18 +1,15 @@
 package controllers;
 
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-
-import javax.swing.SwingWorker;
-
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
-
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
-import vision.VisionWorker;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.

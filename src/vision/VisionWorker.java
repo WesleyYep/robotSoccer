@@ -1,29 +1,20 @@
 package vision;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.RotatedRect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+import data.RobotData;
+import data.VisionData;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-
 import ui.ColourPanel;
 import ui.SamplingPanel;
 import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
 import utils.Image;
-import data.RobotData;
-import data.VisionData;
+
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wesley on 6/02/2015.

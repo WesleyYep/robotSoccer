@@ -3,10 +3,9 @@ package ui;
 import actions.Actions;
 import criteria.Criterias;
 import data.RolesTableModel;
-import data.Situation;
 import net.miginfocom.swing.MigLayout;
-import strategy.*;
 import strategy.Action;
+import strategy.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

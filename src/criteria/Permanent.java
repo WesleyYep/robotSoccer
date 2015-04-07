@@ -1,7 +1,7 @@
 package criteria;
 
-import strategy.Criteria;
 import bot.Robot;
+import strategy.Criteria;
 
 public class Permanent extends Criteria {
     @Override

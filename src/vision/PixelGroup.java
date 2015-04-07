@@ -2,8 +2,6 @@ package vision;
 
 import data.Coordinate;
 
-import java.awt.geom.Point2D;
-
 /**
  * Created by Wesley on 7/02/2015.
  */

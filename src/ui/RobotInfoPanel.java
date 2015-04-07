@@ -1,17 +1,12 @@
 package ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-
 import bot.Robot;
 import bot.RobotListener;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import java.awt.*;
 
 public class RobotInfoPanel extends JPanel implements RobotListener, FocusListener {
 

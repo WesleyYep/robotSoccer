@@ -1,6 +1,6 @@
 package utils;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * <p>Contains static methods which have conversions from one colour space to another</p>

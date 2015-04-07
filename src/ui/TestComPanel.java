@@ -1,21 +1,15 @@
 package ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
-import jssc.SerialPortList;
-import net.miginfocom.swing.MigLayout;
 import bot.Robots;
-
 import communication.Sender;
 import communication.SenderListener;
-
 import communication.SerialPortCommunicator;
+import jssc.SerialPortList;
+import net.miginfocom.swing.MigLayout;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class TestComPanel extends JPanel implements SenderListener{
 

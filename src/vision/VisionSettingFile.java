@@ -1,26 +1,17 @@
 package vision;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-
-import strategy.Play;
-import strategy.Role;
-import ui.ColourPanel;
-import ui.SamplingPanel;
 import config.ConfigFile;
 import controllers.VisionController;
 import controllers.WebcamController;
-import data.Situation;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import ui.ColourPanel;
+import ui.SamplingPanel;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.geom.Point2D;
+import java.io.File;
 
 public class VisionSettingFile {
 
