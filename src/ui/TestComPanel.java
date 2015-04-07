@@ -1,15 +1,22 @@
 package ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.util.Arrays;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
+import jssc.SerialPortList;
+import net.miginfocom.swing.MigLayout;
 import bot.Robots;
 import communication.Sender;
 import communication.SenderListener;
 import communication.SerialPortCommunicator;
-import jssc.SerialPortList;
-import net.miginfocom.swing.MigLayout;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class TestComPanel extends JPanel implements SenderListener{
 
@@ -28,7 +35,7 @@ public class TestComPanel extends JPanel implements SenderListener{
 	private boolean manualControl = false;
 	private boolean testingForward = false;
 	private boolean testingRotate = false;
-
+	private boolean isManualComList = true;
 	private SerialPortCommunicator serialCom;
 
 	public TestComPanel (SerialPortCommunicator s, Robots bots) {
@@ -59,12 +66,44 @@ public class TestComPanel extends JPanel implements SenderListener{
 
 		comboBox.addActionListener(new ActionListener() {
 
+			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				serialCom.closePort();
-				serialCom.openPort((String) comboBox.getSelectedItem());
+				
+				
+				if (isManualComList) {
+					serialCom.closePort();
+					serialCom.openPort((String) comboBox.getSelectedItem());	
+				}
+				else {
+					isManualComList = true;
+				}
 			}
 
+		});
+		
+		comboBox.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {}
+
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+				
+				String[] names = SerialPortList.getPortNames();
+				if (Arrays.equals(comboBox.getSelectedObjects(), names)|| comboBox.getSelectedObjects().length != names.length) {
+					isManualComList = false;
+					comboBox.removeAllItems();
+					
+					for(int i=0; i<names.length; i++) {
+						isManualComList = false;
+						comboBox.addItem(names[i]);
+					}
+					comboBox.repaint();
+				}	 
+			}
+			
 		});
 
 		testRotateBtn.addActionListener(new ActionListener() {
@@ -81,19 +120,6 @@ public class TestComPanel extends JPanel implements SenderListener{
 					manualControl = false;
 					robots.stopAllMovement();
 				}
-				//		} else {
-				//					if (currentWorker != null) {
-				//						currentWorker.cancel(true);
-				//					}
-				//
-				//					for (int i = 0; i < 11; i++) {
-				//						linearVelocity[i] = 0;
-				//						angularVelocity[i] = (3.14159265358979323846) / 2;
-				//						;
-				//					}
-				//					currentWorker = new TestWorker();
-				//					currentWorker.execute();
-				//				}
 			}
 
 		});
@@ -111,18 +137,6 @@ public class TestComPanel extends JPanel implements SenderListener{
 					manualControl = false;
 					robots.stopAllMovement();
 				}
-				//				} else {
-				//					if (currentWorker != null) {
-				//						currentWorker.cancel(true);
-				//					}
-				//
-				//					for (int i = 0; i < 11; i++) {
-				//						linearVelocity[i] = 0.1;
-				//						angularVelocity[i] = 0;
-				//					}
-				//					currentWorker = new TestWorker();
-				//					currentWorker.execute();
-				//				}
 			}
 
 		});
