@@ -114,7 +114,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		startButton.setActionCommand("start");
 		startButton.addActionListener(this);
 		portField = new JTextField();
-
 		runStratButton = new JButton("Run Strat");
 		stopStratButton = new JButton("Stop Strat");
 		stratStatusLbl = new JLabel("Stopped");

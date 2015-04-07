@@ -15,13 +15,13 @@ public class KalmanFilter {
 	private Mat lastX;
 	private Mat lastP;
 	private Mat predX;
+	private double dT;
 
+	private long previousTime = 0;
 	//https://www.cs.utexas.edu/~teammco/misc/kalman_filter/kalmanFilter.js
 	//http://stackoverflow.com/questions/27212167/unable-to-multiply-matrix-in-opencv-java
 	public KalmanFilter() {
 		A = Mat.eye(4, 4, CvType.CV_32F);
-		A.put(0, 2, 0.2);
-		A.put(1, 3, 0.2);
 		
 		//System.out.println(A.dump());
 		
@@ -42,6 +42,10 @@ public class KalmanFilter {
 		
 	}
 	
+	/** predict the ball current position then correct it with the given sensor input
+	 * @param x position from the sensor
+	 * @param y position from the sensor
+	 */
 	public void process(double x, double y) {
 		
 		double velX = x-lastX.get(0,0)[0];
@@ -60,6 +64,14 @@ public class KalmanFilter {
 		Mat tempA = new Mat();
 		Mat tempB = new Mat();
 		Mat tempC = new Mat();
+		
+		
+		if (previousTime != 0 ) {
+			dT = System.currentTimeMillis()-previousTime;
+			A.put(0, 2, dT/1000);
+			A.put(1, 3, dT/1000);
+		}
+		previousTime = System.currentTimeMillis();
 		
 		//System.out.println("inside process: " +  measurement.dump());
 		//prediction
@@ -106,16 +118,23 @@ public class KalmanFilter {
 		lastP = curP;		
 	}
 	
-	public void predict() {
+	
+	/**
+	 * predict the ball next n position
+	 * @param n is the time in seconds
+	 * 
+	 */
+	public void predict(double n) {
 		predX = lastX;
 		Mat tempA = new Mat();
 		Mat tempB = new Mat();
-		Mat control = Mat.zeros(1, 4, CvType.CV_32F);
-		for (int i =0; i<60; i++){
+		Mat control = Mat.zeros(4, 1, CvType.CV_32F);
+		//dT is in ms
+		int count = (int) Math.round(n/dT);
+		for (int i =0; i<count; i++){
 			Core.gemm( A,predX,1,new Mat(),0, tempA);
 			Core.gemm(B,control,1,new Mat(),0, tempB);
 			Core.add(tempA, tempB, predX);
-
 		}
 	}
 	
