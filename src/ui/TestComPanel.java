@@ -35,7 +35,7 @@ public class TestComPanel extends JPanel implements SenderListener{
 	private boolean manualControl = false;
 	private boolean testingForward = false;
 	private boolean testingRotate = false;
-
+	private boolean isManualComList = true;
 	private SerialPortCommunicator serialCom;
 
 	public TestComPanel (SerialPortCommunicator s, Robots bots) {
@@ -66,11 +66,19 @@ public class TestComPanel extends JPanel implements SenderListener{
 
 		comboBox.addActionListener(new ActionListener() {
 
+			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				serialCom.closePort();
-				serialCom.openPort((String) comboBox.getSelectedItem());
+				
+				if (isManualComList) {
+					serialCom.closePort();
+					serialCom.openPort((String) comboBox.getSelectedItem());	
+				}
+				else {
+					isManualComList = true;
+				}
 			}
 
 		});
@@ -82,16 +90,18 @@ public class TestComPanel extends JPanel implements SenderListener{
 
 			@Override
 			public void mouseMoved(MouseEvent arg0) {
-				String[] names = SerialPortList.getPortNames();
 				
-				if ( Arrays.equals(comboBox.getSelectedObjects(), names)|| comboBox.getSelectedObjects().length != names.length) {
+				String[] names = SerialPortList.getPortNames();
+				if (Arrays.equals(comboBox.getSelectedObjects(), names)|| comboBox.getSelectedObjects().length != names.length) {
+					isManualComList = false;
 					comboBox.removeAllItems();
 					
 					for(int i=0; i<names.length; i++) {
+						isManualComList = false;
 						comboBox.addItem(names[i]);
 					}
 					comboBox.repaint();
-				}	
+				}	 
 			}
 			
 		});
