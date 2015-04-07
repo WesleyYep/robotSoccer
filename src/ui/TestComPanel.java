@@ -2,6 +2,9 @@ package ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -11,10 +14,8 @@ import javax.swing.JPanel;
 import jssc.SerialPortList;
 import net.miginfocom.swing.MigLayout;
 import bot.Robots;
-
 import communication.Sender;
 import communication.SenderListener;
-
 import communication.SerialPortCommunicator;
 
 public class TestComPanel extends JPanel implements SenderListener{
@@ -67,10 +68,32 @@ public class TestComPanel extends JPanel implements SenderListener{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				serialCom.closePort();
 				serialCom.openPort((String) comboBox.getSelectedItem());
 			}
 
+		});
+		
+		comboBox.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {}
+
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+				String[] names = SerialPortList.getPortNames();
+				
+				if ( Arrays.equals(comboBox.getSelectedObjects(), names)|| comboBox.getSelectedObjects().length != names.length) {
+					comboBox.removeAllItems();
+					
+					for(int i=0; i<names.length; i++) {
+						comboBox.addItem(names[i]);
+					}
+					comboBox.repaint();
+				}	
+			}
+			
 		});
 
 		testRotateBtn.addActionListener(new ActionListener() {
@@ -87,19 +110,6 @@ public class TestComPanel extends JPanel implements SenderListener{
 					manualControl = false;
 					robots.stopAllMovement();
 				}
-				//		} else {
-				//					if (currentWorker != null) {
-				//						currentWorker.cancel(true);
-				//					}
-				//
-				//					for (int i = 0; i < 11; i++) {
-				//						linearVelocity[i] = 0;
-				//						angularVelocity[i] = (3.14159265358979323846) / 2;
-				//						;
-				//					}
-				//					currentWorker = new TestWorker();
-				//					currentWorker.execute();
-				//				}
 			}
 
 		});
@@ -117,18 +127,6 @@ public class TestComPanel extends JPanel implements SenderListener{
 					manualControl = false;
 					robots.stopAllMovement();
 				}
-				//				} else {
-				//					if (currentWorker != null) {
-				//						currentWorker.cancel(true);
-				//					}
-				//
-				//					for (int i = 0; i < 11; i++) {
-				//						linearVelocity[i] = 0.1;
-				//						angularVelocity[i] = 0;
-				//					}
-				//					currentWorker = new TestWorker();
-				//					currentWorker.execute();
-				//				}
 			}
 
 		});
