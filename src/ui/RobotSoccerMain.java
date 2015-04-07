@@ -1,6 +1,7 @@
 package ui;
 
 import bot.Robots;
+import com.alee.laf.WebLookAndFeel;
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
 import config.ConfigFile;
@@ -22,12 +23,12 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
-public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDisplayPanelListener {
+public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener {
 
 	public static final int DEFAULT_PORT_NUMBER = 31000;
 	public static final int TICK_TIME_MS = 5;
 
-	private JButton startButton, connectionButton, recordButton, saveStratButton, openStratButton;
+	private JButton startButton, connectionButton, recordButton;
 	private JTextArea taskOutput;
 
 	private NetworkSocket serverSocket;
@@ -61,8 +62,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 
 	private VisionWorker visionWorker;
 	private VisionController visionController;
-	private JButton openVisionButton;
-	private JButton saveVisionButton;
 	private WindowController windowController;
     private WebcamDisplayPanel webcamDisplayPanel;
 
@@ -84,7 +83,11 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		// Auto wrap after 12 columns.
 		// https://www.youtube.com/watch?v=U6xJfP7-HCc
 		// Layout constraint, column constraint
-		super(new MigLayout("wrap 12"));
+		super("BLAZE Robot Soccer");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+		JPanel contentPane = new JPanel(new MigLayout("wrap 12"));
 		//Create the demo's UI.
 		//create start button and text field for port number
 		startButton = new JButton("Start");
@@ -100,21 +103,9 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		stratControlPanel.add(stopStratButton);
 		stratControlPanel.add(stratStatusLbl);
 
-		saveStratButton = new JButton("Save Strat");
-		openStratButton = new JButton("Open Strat");
-
-		saveVisionButton = new JButton("Save Vision/Colour");
-		openVisionButton = new JButton("Open Vision/Colour");
-
 		JPanel portPanel = new JPanel(new MigLayout());
 		portPanel.add(startButton);
 		portPanel.add(portField, "pushx, growx");
-
-		JPanel settingPanel = new JPanel(new MigLayout());
-		settingPanel.add(openStratButton);
-		settingPanel.add(saveStratButton, "wrap");
-		settingPanel.add(openVisionButton);
-		settingPanel.add(saveVisionButton);
 
 		taskOutput = new JTextArea(5, 20);
 		taskOutput.setMargin(new Insets(5,5,5,5));
@@ -235,18 +226,17 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		//window listener
 		windowController = new WindowController(webcamController);
 
-		add(cards, "span 6, width 640:640:640, height 480:480:480");
-		add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
-		add(infoPanel, "span 6, width 600:600:600, wrap");
-		add(portPanel, "span 3, width 300:300:300");
-		add(settingPanel, "span 3, width 300:300:300, wrap");
-		add(webcamComponentPanel, "span 3, width 300:300:300");
-		add(testComContainerPanel, "span 3, width 300:300:300");
-		add(stratControlPanel, "span 3, width 300:300:300");
+		contentPane.add(cards, "span 6, width 640:640:640, height 480:480:480");
+		contentPane.add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
+		contentPane.add(infoPanel, "span 6, width 600:600:600, wrap");
+		contentPane.add(portPanel, "span 3, width 300:300:300");
+		contentPane.add(webcamComponentPanel, "span 3, width 300:300:300");
+		contentPane.add(testComContainerPanel, "span 3, width 300:300:300");
+		contentPane.add(stratControlPanel, "span 3, width 300:300:300");
 
-		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-		setPreferredSize(new Dimension(1290, 900));
+		contentPane.setPreferredSize(new Dimension(1290, 900));
 
 		tabPane.addChangeListener(new ChangeListener() {
 
@@ -255,7 +245,7 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 				int selectedIndex = tabPane.getSelectedIndex();
 				String tabTitle = tabPane.getTitleAt(selectedIndex);
 
-				if (tabTitle.equals("Situation")){
+				if (tabTitle.equals("Situation")) {
 					fieldController.showArea(true);
 				} else {
 					fieldController.showArea(false);
@@ -274,39 +264,6 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 				}
 
 				fieldController.repaintField();
-			}
-
-		});
-
-		saveStratButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String file = currentStrategy.saveToFile();
-				//      colourPanel.saveColourData(file);
-			}
-		});
-
-		openStratButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				currentStrategy.readFromFile();
-			}
-		});
-
-		saveVisionButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				visionSetting.saveVisionSetting();
-			}
-
-		});
-
-		openVisionButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				visionSetting.openVisionSetting();
 			}
 
 		});
@@ -336,6 +293,10 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();
         configFile.createConfigFile();
+
+		// Create the menu
+		createMenu();
+		add(contentPane);
     }
     
     /**
@@ -432,21 +393,76 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 	 * @throws MalformedURLException 
 	 */
 	private static void createAndShowGUI() throws MalformedURLException {
-		//Create and set up the window.
-		JFrame frame = new JFrame("Robot Soccer");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
 		//Create and set up the content pane.
-		JComponent newContentPane = new RobotSoccerMain();
-		frame.add(newContentPane);
-
-		if (((RobotSoccerMain)newContentPane).getWindowController() != null) {
-			frame.addWindowListener(((RobotSoccerMain)newContentPane).getWindowController());
-		}
+		JFrame frame = new RobotSoccerMain();
+		frame.setMinimumSize(new Dimension(1290, 1000));
+//		if (((RobotSoccerMain)newContentPane).getWindowController() != null) {
+//			frame.addWindowListener(((RobotSoccerMain)newContentPane).getWindowController());
+//		}
 
 		//Display the window.
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	/**
+	 * <p>Creates Menu</p>
+	 * @param
+	 */
+
+	private void createMenu() {
+		JMenuBar menuBar = new JMenuBar();
+
+		JMenu visionMenu = new JMenu("Vision");
+		JMenu stratMenu = new JMenu("Strategy");
+
+		JMenuItem openVisionMenuItem = new JMenuItem("Open Vision/Colour");
+		JMenuItem saveVisionMenuItem = new JMenuItem("Save Vision/Colour");
+
+		JMenuItem openStrategyMenuItem = new JMenuItem("Open Strat");
+		JMenuItem saveStrategyMenuItem = new JMenuItem("Save Strat");
+
+		// Listeners
+		openVisionMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visionSetting.openVisionSetting();
+			}
+		});
+
+		saveVisionMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visionSetting.saveVisionSetting();
+			}
+		});
+
+		openStrategyMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				currentStrategy.readFromFile();
+			}
+		});
+
+		saveStrategyMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String file = currentStrategy.saveToFile();
+			}
+		});
+
+		visionMenu.add(openVisionMenuItem);
+		visionMenu.add(saveVisionMenuItem);
+
+		stratMenu.add(openStrategyMenuItem);
+		stratMenu.add(saveStrategyMenuItem);
+
+		menuBar.add(visionMenu);
+		menuBar.add(stratMenu);
+
+		setJMenuBar(menuBar);
 	}
 
 	public static void main(String[] args) {
@@ -456,8 +472,17 @@ public class RobotSoccerMain extends JPanel implements ActionListener, WebcamDis
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel( WebLookAndFeel.class.getCanonicalName () );
 					createAndShowGUI();
 				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}
