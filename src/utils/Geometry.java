@@ -54,9 +54,9 @@ public class Geometry {
 		 * theta = arccos((a^2 + b^2 - c^2) / (2 * a * b))
 		 */
 
-		angles[0] = Math.acos((Math.pow(distancep1p2, 2) + Math.pow(distancep1p3, 2) - Math.pow(distancep2p3, 2) / (2 * distancep1p2 * distancep1p3)));
-		angles[1] = Math.acos((Math.pow(distancep2p3, 2) + Math.pow(distancep1p2, 2) - Math.pow(distancep1p3, 2) / (2 * distancep1p2 * distancep2p3)));
-		angles[2] = Math.acos((Math.pow(distancep1p3, 2) + Math.pow(distancep2p3, 2) - Math.pow(distancep1p2, 2) / (2 * distancep1p3 * distancep2p3)));
+		angles[0] = Math.acos(((Math.pow(distancep1p2, 2) + Math.pow(distancep1p3, 2) - Math.pow(distancep2p3, 2)) / (2 * distancep1p2 * distancep1p3)));
+		angles[1] = Math.acos(((Math.pow(distancep2p3, 2) + Math.pow(distancep1p2, 2) - Math.pow(distancep1p3, 2)) / (2 * distancep1p2 * distancep2p3)));
+		angles[2] = Math.acos(((Math.pow(distancep1p3, 2) + Math.pow(distancep2p3, 2) - Math.pow(distancep1p2, 2)) / (2 * distancep1p3 * distancep2p3)));
 
 		return angles;
 	}
