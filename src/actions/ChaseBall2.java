@@ -12,7 +12,6 @@ import utils.Geometry;
  */
 public class ChaseBall2 extends Action{
 
-    private double error = 5;
     private int goalX = 220;
     private int goalY = 90;
 
@@ -23,38 +22,13 @@ public class ChaseBall2 extends Action{
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
-        
-		double robotToBallDistance = Geometry.euclideanDistance(new org.opencv.core.Point(ballX, ballY), 
-				new org.opencv.core.Point(r.getXPosition(), r.getYPosition()));
-        
-        kFilter.process(ballX, ballY);
-		kFilter.predict(robotToBallDistance/100);
-		
-		// Find the distance between the kalman filter point and the current ball point.
-		double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ballX, ballY), 
-				new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
-		
-		// Find the point that is x distance from point 1 along the vector.
-		// TODO needs better way.
-		double[] vector = new double[2];
-		vector[0] = kFilter.getPredX() - ballX;
-		vector[1] = kFilter.getPredY() - ballY;
-		
-		double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
-		
-		double[] normalisedVector = new double[2];
-		normalisedVector[0] = vector[0] / magnitude;
-		normalisedVector[1] = vector[1] / magnitude;
-
-		// setVelocityToTarget(ballX, ballY, true);
-        setVelocityToTarget(ballX - distance * normalisedVector[0],  ballY - distance * normalisedVector[1], true);
+		setVelocityToTarget(ballX, ballY, true);
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {
         Robot r = bots.getRobot(index);
-        double targetDist = 0;
-        double targetTheta = 0;
+        double targetDist;
+        double targetTheta;
 
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
         targetTheta = Math.atan2(y-r.getYPosition(), x - r.getXPosition());
@@ -96,7 +70,7 @@ public class ChaseBall2 extends Action{
             double goalDifference = goalTheta - Math.toRadians(r.getTheta());
 
             r.angularVelocity = 2*goalDifference;// / (goalDist);
-            r.linearVelocity = 2;
+            r.linearVelocity = 1;
         } else {
 
             String filename = "tipper.fcl";
@@ -126,7 +100,7 @@ public class ChaseBall2 extends Action{
             } else if (r.angularVelocity < -3) {
                 r.angularVelocity = -3;
             }
-            r.linearVelocity = 0.5;
+            r.linearVelocity = targetDist/100.0;
 
             if (isCloseToWall()) {
                 if (Math.abs(targetTheta) < 10) {
