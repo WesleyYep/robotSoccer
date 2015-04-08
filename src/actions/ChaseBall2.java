@@ -5,6 +5,7 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import ui.Field;
+import utils.Geometry;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -23,7 +24,31 @@ public class ChaseBall2 extends Action{
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
-        setVelocityToTarget(ballX, ballY, true);
+        
+		double robotToBallDistance = Geometry.euclideanDistance(new org.opencv.core.Point(ballX, ballY), 
+				new org.opencv.core.Point(r.getXPosition(), r.getYPosition()));
+        
+        kFilter.process(ballX, ballY);
+		kFilter.predict(robotToBallDistance/100 * 2);
+		
+		// Find the distance between the kalman filter point and the current ball point.
+		double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ballX, ballY), 
+				new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
+		
+		// Find the point that is x distance from point 1 along the vector.
+		// TODO needs better way.
+		double[] vector = new double[2];
+		vector[0] = kFilter.getPredX() - ballX;
+		vector[1] = kFilter.getPredY() - ballY;
+		
+		double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+		
+		double[] normalisedVector = new double[2];
+		normalisedVector[0] = vector[0] / magnitude;
+		normalisedVector[1] = vector[1] / magnitude;
+
+		// setVelocityToTarget(ballX, ballY, true);
+        setVelocityToTarget(ballX - distance * normalisedVector[0],  ballY - distance * normalisedVector[1], true);
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {

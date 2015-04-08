@@ -1,5 +1,6 @@
 package strategy;
 
+import vision.KalmanFilter;
 import Paths.Path;
 import bot.Robots;
 
@@ -12,6 +13,7 @@ public abstract class Action {
 	protected double ballY;
 	protected int index;
 	protected Path path;
+	protected static KalmanFilter kFilter = new KalmanFilter();
 
 	public abstract String getName();
 
