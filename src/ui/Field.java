@@ -241,6 +241,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		bots.draw(g);
 		
 		//predict ball
+		g.setColor(Color.red);
 		g.fillOval(
 				(int)predX *Field.SCALE_FACTOR+Field.ORIGIN_X-(4*Field.SCALE_FACTOR/2),
 				(int)predY *Field.SCALE_FACTOR+Field.ORIGIN_Y-(4*Field.SCALE_FACTOR/2),
@@ -396,5 +397,10 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 			}
 		}
+	}
+
+	public void setPredPoint(double predX2, double predY2) {
+		predX = predX2;
+		predY = predY2;
 	}
 }

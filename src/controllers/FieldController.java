@@ -4,6 +4,7 @@ import bot.Robots;
 import communication.ReceiverListener;
 import data.VisionData;
 import ui.*;
+import utils.Geometry;
 import vision.KalmanFilter;
 import vision.VisionListener;
 
@@ -195,6 +196,27 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			ball.setY((int)p.y);
 			
 			kFilter.process(p.x, p.y);
+			
+			kFilter.predict(1);
+			
+			// Find the distance between the kalman filter point and the current ball point.
+			double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ball.getXPosition(), ball.getYPosition()), 
+					new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
+			
+			// Find the point that is x distance from point 1 along the vector.
+			// TODO needs better way.
+			double[] vector = new double[2];
+			vector[0] = kFilter.getPredX() - ball.getXPosition();
+			vector[1] = kFilter.getPredY() - ball.getYPosition();
+			
+			double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+			
+			double[] normalisedVector = new double[2];
+			normalisedVector[0] = vector[0] / magnitude;
+			normalisedVector[1] = vector[1] / magnitude;
+			
+			field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
+	
 			//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY());
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());

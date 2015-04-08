@@ -145,4 +145,12 @@ public class KalmanFilter {
 	public double getEstimatedY() {
 		return (double) lastX.get(1, 0)[0];
 	}
+	
+	public double getPredX() {
+		return (double) predX.get(0, 0)[0];
+	}
+	
+	public double getPredY() {
+		return (double) predX.get(1, 0)[0];
+	}
 }
