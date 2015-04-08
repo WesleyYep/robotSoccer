@@ -8,7 +8,7 @@ import strategy.Action;
  * Created by Wesley on 21/01/2015.
  */
 public class MoveToSpot extends Action{
-    private Coordinate spot = new Coordinate(50,18);  //<-------- EDIT THIS TO CHANGE SPOT
+    private Coordinate spot = new Coordinate(10,18);  //<-------- EDIT THIS TO CHANGE SPOT
 
     @Override
     public String getName() {

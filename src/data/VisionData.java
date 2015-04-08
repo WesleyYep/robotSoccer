@@ -4,10 +4,10 @@ package data;
 import org.opencv.core.Point;
 
 /**
- * Created by Wesley on 10/02/2015.
- */
+* Created by Wesley on 10/02/2015.
+*/
 public class VisionData {
-	
+
     private Point coordinate;
     private String type;
     private double theta;

@@ -29,7 +29,7 @@ public class ChaseBall2 extends Action{
 				new org.opencv.core.Point(r.getXPosition(), r.getYPosition()));
         
         kFilter.process(ballX, ballY);
-		kFilter.predict(robotToBallDistance/100 * 2);
+		kFilter.predict(robotToBallDistance/100);
 		
 		// Find the distance between the kalman filter point and the current ball point.
 		double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ballX, ballY), 
@@ -94,13 +94,9 @@ public class ChaseBall2 extends Action{
         if (targetDist < 20 &&  targetTheta < 10) {
             double goalTheta = Math.atan2(r.getYPosition() - goalY, goalX - r.getXPosition());
             double goalDifference = goalTheta - Math.toRadians(r.getTheta());
-      //      double goalDist =  Math.sqrt(Math.pow((goalX-r.getXPosition()),2) + Math.pow((goalY-r.getYPosition()),2));
 
             r.angularVelocity = 2*goalDifference;// / (goalDist);
-            r.linearVelocity = 0.5;
-
-     //       System.out.println("Kick now! " + i);
-     //       i++;
+            r.linearVelocity = 2;
         } else {
 
             String filename = "tipper.fcl";
@@ -144,16 +140,8 @@ public class ChaseBall2 extends Action{
                 r.linearVelocity *= -1;
             }
         }
-        //checkRobotPosition(x,y);
     }
 
-    private void checkRobotPosition(double x, double y) {
-        Robot r = bots.getRobot(index);
-        if (r.getXPosition() >= x-error && r.getXPosition() <= x+error && r.getYPosition() >= y-error && r.getYPosition() <= y+error) {
-            r.angularVelocity = 0;
-            r.linearVelocity = 0;
-        }
-    }
 
     private boolean isCloseToWall() {
         Robot r = bots.getRobot(index);

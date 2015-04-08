@@ -80,6 +80,29 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 				ball.setX((int) Math.round(x * 100));
 				ball.setY(Field.OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
+
+                kFilter.process(ball.getXPosition(), ball.getYPosition());
+
+                kFilter.predict(1);
+
+                // Find the distance between the kalman filter point and the current ball point.
+                double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ball.getXPosition(), ball.getYPosition()),
+                        new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
+
+                // Find the point that is x distance from point 1 along the vector.
+                // TODO needs better way.
+                double[] vector = new double[2];
+                vector[0] = kFilter.getPredX() - ball.getXPosition();
+                vector[1] = kFilter.getPredY() - ball.getYPosition();
+
+                double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+
+                double[] normalisedVector = new double[2];
+                normalisedVector[0] = vector[0] / magnitude;
+                normalisedVector[1] = vector[1] / magnitude;
+
+                field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
+
 			}
 		}
 

@@ -200,5 +200,7 @@
     </orderEntry>
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="opencv-2410" level="project" />
+    <orderEntry type="library" name="opencv-2411 (2)" level="project" />
+    <orderEntry type="library" name="weblaf-complete-1.28" level="project" />
   </component>
 </module>
