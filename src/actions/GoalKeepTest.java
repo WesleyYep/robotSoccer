@@ -48,7 +48,8 @@ public class GoalKeepTest extends Action {
             } else if (ballY > 130 || ballY < 50 || ballX > 55) { //gk should be half angle position
                 targetYPosition = getHalfAnglePosition();
             } else { //ball is very close to goal, so gk should be directly in front
-                targetYPosition = ballY;
+                targetYPosition = getHalfAnglePosition();
+            	//    targetYPosition = ballY;
             }
 
             if (targetYPosition > r.getYPosition()) {

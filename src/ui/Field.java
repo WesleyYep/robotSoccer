@@ -8,6 +8,7 @@ import strategy.Play;
 import strategy.Role;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -53,6 +54,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private boolean isMouseDrag;
 
 	private CurrentStrategy currentStrategy;
+	private double predX = 0;
+	private double predY = 0;
 
 	public Field(Robots bots, Ball ball) {
 		this.bots = bots;
@@ -236,6 +239,14 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 		//draw robots
 		bots.draw(g);
+		
+		//predict ball
+		g.fillOval(
+				(int)predX *Field.SCALE_FACTOR+Field.ORIGIN_X-(4*Field.SCALE_FACTOR/2),
+				(int)predY *Field.SCALE_FACTOR+Field.ORIGIN_Y-(4*Field.SCALE_FACTOR/2),
+				4*Field.SCALE_FACTOR,
+				4*Field.SCALE_FACTOR
+				);  
 
 		if (isMouseDrag) {
 			// drawRect does not take negative values hence values need to be calculated so it doesn't fill the rectangle.
