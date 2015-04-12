@@ -23,12 +23,15 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	private SituationArea selectedArea;
 
 	private KalmanFilter kFilter;
+	
+	private long time = 0;
+	private double oldX = 0;
 
 	public FieldController(Field field, Robots bots, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
 		this.field = field;
-		kFilter = new KalmanFilter();
+		//kFilter = new KalmanFilter();
 		field.setBackground(Color.green);
 	}
 
@@ -54,8 +57,9 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	@Override
 	public void action(List<String> chunks) {
+		System.out.println("^^^^^^^^^^^^^^^");
 		for (String s : chunks) {
-
+			//System.out.println(s);
 			// -1 doesn't exist.
 			if (s.indexOf("Robot") != -1) {
 				int idIndex = s.indexOf("id=");
@@ -68,7 +72,19 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
 				double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
 				double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
-
+				
+				
+				
+				if (id==0) { 
+					double dist = x-oldX;
+					System.out.println("bot x: " + x);
+					System.out.println((dist/0.039) + " " + System.currentTimeMillis());
+					oldX= x;
+				}
+				
+				long diff = System.currentTimeMillis()-time;
+				//if (id==0) System.out.println(x + " " + System.currentTimeMillis() + " " + diff);
+				time = System.currentTimeMillis();
 				bots.setIndividualBotPosition(id, x, y, theta);
 
 			} else if (s.indexOf("Ball") != -1) {
@@ -77,12 +93,12 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
 				double y = Double.parseDouble(s.substring(yIndex + 2, s.length()));
-
+				
 				ball.setX((int) Math.round(x * 100));
 				ball.setY(Field.OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
 			}
 		}
-
+		System.out.println("==========================");
 		field.repaint();
 	}
 
@@ -195,6 +211,8 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			ball.setX((int) p.x); //hardcoded for now
 			ball.setY((int)p.y);
 			
+			System.out.println(p.x + " " + p.y);
+			/*
 			kFilter.process(p.x, p.y);
 			
 			kFilter.predict(1);
@@ -216,7 +234,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			normalisedVector[1] = vector[1] / magnitude;
 			
 			field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
-	
+		*/
 			//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY());
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
