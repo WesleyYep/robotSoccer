@@ -36,6 +36,10 @@ public class Criterias {
 		return null;
 	}
 
+    public static Criteria[] getCriterias() {
+        return criterias;
+    }
+
 	/*
 	 * Same suggestion as Actions.
 	 * 

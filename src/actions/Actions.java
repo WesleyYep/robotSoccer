@@ -48,6 +48,10 @@ public class Actions {
         return actions[index];
     }
 
+    public static Action[] getActions() {
+        return actions;
+    }
+
     public int getLength() {
         return actions.length;
     }

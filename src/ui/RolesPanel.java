@@ -2,6 +2,7 @@ package ui;
 
 import actions.Actions;
 import criteria.Criterias;
+import data.CriteriaActionTableModel;
 import data.RolesTableModel;
 import net.miginfocom.swing.MigLayout;
 import strategy.Action;
@@ -10,6 +11,7 @@ import strategy.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,18 +26,17 @@ public class RolesPanel extends JPanel implements StrategyListener {
     private RolesTableModel rolesTableModel;
     private JTable rolesTable;
     private JScrollPane scrollRoles;
+
+    private CriteriaActionTableModel criteriaActionTableModel;
+    private JTable criteriaActionTable;
+    private JScrollPane scrollCriteriaActions;
+
     private JButton addButton = new JButton("Add");
     private JButton removeButton = new JButton("Remove");
+
     private JComboBox<Criteria> criteria1;
-    private JComboBox<Criteria> criteria2;
-    private JComboBox<Criteria> criteria3;
-    private JComboBox<Criteria> criteria4;
-    private JComboBox<Criteria> criteria5;
     private JComboBox<Action> action1;
-    private JComboBox<Action> action2;
-    private JComboBox<Action> action3;
-    private JComboBox<Action> action4;
-    private JComboBox<Action> action5;
+
     private JButton saveButton = new JButton("Save");
     private List<Role> rolesList = new ArrayList<Role>();
     private CurrentStrategy currentStrategy;
@@ -54,17 +55,13 @@ public class RolesPanel extends JPanel implements StrategyListener {
         scrollRoles = new JScrollPane(rolesTable);
         scrollRoles.setPreferredSize(new Dimension(300, 100));
 
-        (criteria1 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140, 10));
-        (criteria2 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
-        (criteria3 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
-        (criteria4 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
-        (criteria5 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
+        criteriaActionTableModel = new CriteriaActionTableModel();
+        criteriaActionTable = new JTable(criteriaActionTableModel);
+        scrollCriteriaActions = new JScrollPane(criteriaActionTable);
+        scrollCriteriaActions.setPreferredSize(new Dimension(500, 120));
 
+        (criteria1 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140, 10));
         (action1 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action2 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action3 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action4 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action5 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
 
         setComboBoxes();
 
@@ -73,19 +70,13 @@ public class RolesPanel extends JPanel implements StrategyListener {
         add(addButton, "split 2");
         add(removeButton, "wrap");
 
-        add(new JLabel("Criteria"), "split 2");
-        add(new JLabel("Action"), "gapleft 100, wrap");
+        TableColumn col = criteriaActionTable.getColumnModel().getColumn(0);
+        col.setCellEditor( new DefaultCellEditor(criteria1));
 
-        add(criteria1, "split 2");
-        add(action1, "wrap");
-        add(criteria2, "split 2");
-        add(action2, "wrap");
-        add(criteria3, "split 2");
-        add(action3, "wrap");
-        add(criteria4, "split 2");
-        add(action4, "wrap");
-        add(criteria5, "split 2");
-        add(action5, "wrap");
+        TableColumn col1 = criteriaActionTable.getColumnModel().getColumn(1);
+        col1.setCellEditor( new DefaultCellEditor(action1));
+
+        add(scrollCriteriaActions, "wrap");
         add(saveButton);
 
         rolesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -115,21 +106,12 @@ public class RolesPanel extends JPanel implements StrategyListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Role role = lastSelectedRole;
-                if (criteria1.getSelectedItem() != null && action1.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria1.getSelectedItem(), (Action) action1.getSelectedItem(), 0);
-                }
-                if (criteria2.getSelectedItem() != null && action2.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria2.getSelectedItem(), (Action) action2.getSelectedItem(), 1);
-                }
-                if (criteria3.getSelectedItem() != null && action3.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria3.getSelectedItem(), (Action) action3.getSelectedItem(), 2);
-                }
-                if (criteria4.getSelectedItem() != null && action4.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria4.getSelectedItem(), (Action) action4.getSelectedItem(), 3);
-                }
-                if (criteria5.getSelectedItem() != null && action5.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria5.getSelectedItem(), (Action) action5.getSelectedItem(), 4);
-                }
+                criteriaActionTableModel.getValueAt(0, 0);
+                role.setPair((Criteria) criteriaActionTableModel.getValueAt(0, 0), (Action) criteriaActionTableModel.getValueAt(0, 1), 0);
+                role.setPair((Criteria) criteriaActionTableModel.getValueAt(1, 0), (Action)criteriaActionTableModel.getValueAt(1, 1), 1);
+                role.setPair((Criteria) criteriaActionTableModel.getValueAt(2, 0), (Action)criteriaActionTableModel.getValueAt(2, 1), 2);
+                role.setPair((Criteria) criteriaActionTableModel.getValueAt(3, 0), (Action)criteriaActionTableModel.getValueAt(3, 1), 3);
+                role.setPair((Criteria) criteriaActionTableModel.getValueAt(4, 0), (Action)criteriaActionTableModel.getValueAt(4, 1), 4);
             }
         });
 
@@ -148,16 +130,11 @@ public class RolesPanel extends JPanel implements StrategyListener {
                     Role role = (Role) rolesTableModel.getValueAt(selectedRow, 0);
                     lastSelectedRole = role;
                     for (int i = 0; i < role.getActions().length; i++) {
-                        action1.setSelectedItem(role.getActions()[0]);
-                        action2.setSelectedItem(role.getActions()[1]);
-                        action3.setSelectedItem(role.getActions()[2]);
-                        action4.setSelectedItem(role.getActions()[3]);
-                        action5.setSelectedItem(role.getActions()[4]);
-                        criteria1.setSelectedItem(role.getCriterias()[0]);
-                        criteria2.setSelectedItem(role.getCriterias()[1]);
-                        criteria3.setSelectedItem(role.getCriterias()[2]);
-                        criteria4.setSelectedItem(role.getCriterias()[3]);
-                        criteria5.setSelectedItem(role.getCriterias()[4]);
+                        for (int j = 0; j < 5; j++) {
+                            criteriaActionTableModel.setValueAt(role.getCriterias()[j], j, 0);
+                            criteriaActionTableModel.setValueAt(role.getActions()[j], j, 1);
+                        }
+
                     }
                 }
 
@@ -169,18 +146,10 @@ public class RolesPanel extends JPanel implements StrategyListener {
         Criterias criterias = new Criterias();
         for (int i = 0; i < criterias.getLength(); i++) {
             criteria1.addItem(criterias.getAction(i));
-            criteria2.addItem(criterias.getAction(i));
-            criteria3.addItem(criterias.getAction(i));
-            criteria4.addItem(criterias.getAction(i));
-            criteria5.addItem(criterias.getAction(i));
         }
         Actions actions = new Actions();
         for (int i = 0; i < actions.getLength(); i++) {
             action1.addItem(actions.getAction(i));
-            action2.addItem(actions.getAction(i));
-            action3.addItem(actions.getAction(i));
-            action4.addItem(actions.getAction(i));
-            action5.addItem(actions.getAction(i));
         }
     }
 
