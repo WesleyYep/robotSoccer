@@ -19,8 +19,6 @@ public class Receiver extends SwingWorker<Void, String> {
 	private List<ReceiverListener> listeners = new ArrayList<ReceiverListener>();
 	private NetworkSocket serverSocket;
 	private boolean isClientClosing = false;
-	
-	public static long dT = 0;
 
 	public Receiver(Socket s, NetworkSocket nS) {
 		clientSocket = s;
@@ -50,8 +48,6 @@ public class Receiver extends SwingWorker<Void, String> {
 				if (message != null) {
 					publish(message);
 				}
-				Receiver.dT = System.currentTimeMillis() - start;
-				//System.out.println(dT);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

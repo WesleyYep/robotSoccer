@@ -6,185 +6,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
 public class KalmanFilter {
-	/*
-	private Mat A;
-	private Mat B;
-	private Mat H;
-	private Mat R;
-	private Mat Q;
-	private Mat lastX;
-	private Mat lastP;
-	private Mat predX;
-	private double dT;
-
-	private long previousTime = 0;
-	//https://www.cs.utexas.edu/~teammco/misc/kalman_filter/kalmanFilter.js
-	//http://stackoverflow.com/questions/27212167/unable-to-multiply-matrix-in-opencv-java
-	public KalmanFilter() {
-		A = Mat.eye(4, 4, CvType.CV_32F);
-		
-		//System.out.println(A.dump());
-		
-		B = Mat.zeros(4, 4,CvType.CV_32F);
-		
-		//System.out.println(B.dump());
-		
-		H = Mat.eye(4, 4,CvType.CV_32F);
-		//H.put(0, 0, 1);
-		//H.put(0,2, 1);
-		//H.put(1, 1, 1);
-		//H.put(1, 3, 1);
-		System.out.println(H.dump());
-		Q = Mat.zeros(4, 4, CvType.CV_32F);
-	//	Q.put(0, 0, 0);
-	//	Q.put(1, 1, 0);
-	//	Q.put(2, 2, 0);
-	//	Q.put(3, 3, 0);
-		R = Mat.eye(4, 4,CvType.CV_32F);
-		Core.multiply(R, new Scalar(0.2), R);
-		R.put(2, 2, 0.2);
-		R.put(3, 3, 0.2);
-		//System.out.println(R.dump());
-		lastX = Mat.zeros(4, 1, CvType.CV_32F);
-		
-		lastP = Mat.eye(4, 4, CvType.CV_32F);
-		//lastP = Mat.eye(4, 4, CvType.CV_32F);
-		
-	}
-	
-
-	public void process(double x, double y) {
-		
-		double velX = x-lastX.get(0,0)[0];
-		double velY = x-lastX.get(1,0)[0];
-		
-		System.out.println("Vel: " + velX + " " + velY);
-		//System.out.println(lastX.get(0, 0)[0] + " " + lastX.get(0, 0).length);
-		Mat measurement = new Mat(4,1,CvType.CV_32F);
-		measurement.put(0, 0, x);
-		measurement.put(1, 0, velX);
-		measurement.put(2, 0, y);
-		measurement.put(3, 0, velY);
-		Mat control = Mat.zeros(4, 1, CvType.CV_32F);
-		//System.out.println(measurement.dump());
-		//System.out.println(control.dump());
-		//temp variables to store matrix for calculation
-		Mat tempA = new Mat();
-		Mat tempB = new Mat();
-		Mat tempC = new Mat();
-		
-		
-		if (previousTime != 0 ) {
-			dT = System.currentTimeMillis()-previousTime;
-			System.out.println("DT: " + dT);
-			A.put(0, 1, dT/1000);
-			A.put(2, 3, dT/1000);
-		}
-		previousTime = System.currentTimeMillis(); 
-		
-		//System.out.println("inside process: " +  measurement.dump());
-		//prediction
-		//state prediction
-		Core.gemm( A,lastX,1,new Mat(),0, tempA);
-		Core.gemm(B,control,1,new Mat(),0, tempB);
-		Mat xMat = new Mat();
-		Core.add(tempA, tempB, xMat);
-		
-		//covariance prediction
-		Mat p = new Mat();
-		Core.gemm(A,lastP,1,new Mat(),0, tempA);
-		Core.transpose(A, tempB);
-		Core.gemm(tempA,tempB,1,new Mat(),0, tempC);
-		Core.add(tempC, Q, p);
-		
-		//correction
-		//innovation covariance
-		Mat s = new Mat();
-		Core.gemm(H,p,1,new Mat(),0, tempA);
-		Core.transpose(H,tempB);
-		Core.gemm(tempA,tempB,1,new Mat(),0, tempC);
-		Core.add(tempC,R,s);
-		
-		//kalman gain
-		Mat k = new Mat();
-		Core.transpose(H,tempA);
-		Core.gemm(p,tempA,1,new Mat(),0,tempB);
-		Core.invert(s, tempC);
-		Core.gemm(tempB,tempC,1,new Mat(),0, k);
-		
-		//innovation
-		Mat yMat = new Mat();
-		Core.gemm(H,xMat,1,new Mat(), 0, tempA);
-		Core.subtract(measurement, tempA, yMat);
-		
-		//state update
-		Mat curX = new Mat();
-		Core.gemm(k,yMat,1,new Mat(),0, tempA);
-		Core.add(xMat,tempA,curX);
-		
-		//covaraince update
-		Mat curP = new Mat();
-		Core.gemm(k,H,1,new Mat(), 0, tempA);
-		Core.subtract(Mat.eye(4, 4, CvType.CV_32F), tempA, tempB);
-		Core.gemm(tempB,p,1,new Mat(),0, curP);
-		
-		lastX = curX;
-		lastP = curP;		
-	}
-	
-	/*
-	
-	public void predict(double n) {
-		predX = lastX.clone();
-		Mat tempA = new Mat();
-		Mat tempB = new Mat();
-		Mat control = Mat.zeros(4, 1, CvType.CV_32F);
-		//dT is in ms
-		int count = (int) Math.round(n/(dT/1000));
-		//int count = 200;
-		//System.out.println(dT + " " + count);
-		//System.out.println(Q.dump());
-		//A.put(0, 2, n);
-		//A.put(1, 3, n);
-		//System.out.println("before: " + predX.dump());
-		for (int i =0; i<(2*count); i++){
-			Core.gemm( A,predX,1,new Mat(),0, tempA);
-			Core.gemm(B,control,1,new Mat(),0, tempB);
-			Core.add(tempA, tempB, predX);
-			
-			//A.put(0, 2, dT/1000);
-			//A.put(1, 3, dT/1000);
-		}
-		
-		
-		//System.out.println("after: " + predX.dump());
-	} 
-	
-	/*
-	public double getEstimatedX() {
-		return (double) lastX.get(0, 0)[0];
-	}
-	
-	public double getEstimatedY() {
-		return (double) lastX.get(1, 0)[0];
-	}
-	
-	public double getPredX() {
-		return (double) predX.get(0, 0)[0];
-	}
-	
-	public double getPredY() {
-		return (double) predX.get(1, 0)[0];
-	}
-	
-	public double getPredXVelocity() {
-		return (double) predX.get(2, 0)[0];
-	}
-	
-	public double getLinearVelocity() {
-		return (double) lastX.get(2, 0)[0];
-	}
-	*/
 	
 	public Mat statePre;
 	public Mat statePost;
@@ -290,14 +111,15 @@ public class KalmanFilter {
 		Mat tempA = new Mat();
 		statePost.copyTo(tempA);
 		
+		double dT = transitionMatrix.get(0, 2)[0];
+		if (dT == 0) return null;
 		
+		int count = (int)Math.round(n/dT);
 		//System.out.println("before " + tempA.dump());
-		for (int i = 0; i<200; i++) {
+		for (int i = 0; i<count; i++) {
 			Core.gemm(transitionMatrix,tempA,1,new Mat(), 0, tempA);
 		}
-		
 		//System.out.println("after " + tempA.dump());
-		
 		
 		return tempA;
 	}

@@ -21,11 +21,6 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	private TestComPanel comPanel;
 
 	private SituationArea selectedArea;
-
-	private KalmanFilter kFilter;
-	
-	private long time = 0;
-	private double oldX = 0;
 	
 	public FieldController(Field field, Robots bots, Ball ball) {
 		this.bots = bots;
@@ -57,9 +52,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	@Override
 	public void action(List<String> chunks) {
-		//System.out.println("^^^^^^^^^^^^^^^");
 		for (String s : chunks) {
-			//System.out.println(s);
 			// -1 doesn't exist.
 			if (s.indexOf("Robot") != -1) {
 				int idIndex = s.indexOf("id=");
@@ -73,18 +66,6 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
 				double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
 				
-				
-				
-				if (id==0) { 
-					double dist = x-oldX;
-					System.out.println("bot x: " + x);
-					System.out.println((dist/0.039) + " " + System.currentTimeMillis());
-					oldX= x;
-				}
-				
-				long diff = System.currentTimeMillis()-time;
-				//if (id==0) System.out.println(x + " " + System.currentTimeMillis() + " " + diff);
-				time = System.currentTimeMillis();
 				bots.setIndividualBotPosition(id, x, y, theta);
 
 			} else if (s.indexOf("Ball") != -1) {
@@ -97,32 +78,8 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				
 				ball.setX((int) Math.round(x * 100));
 				ball.setY(Field.OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
-				/*
-                kFilter.process(ball.getXPosition(), ball.getYPosition());
-
-                kFilter.predict(1);
-
-                // Find the distance between the kalman filter point and the current ball point.
-                double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ball.getXPosition(), ball.getYPosition()),
-                        new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
-
-                // Find the point that is x distance from point 1 along the vector.
-                // TODO needs better way.
-                double[] vector = new double[2];
-                vector[0] = kFilter.getPredX() - ball.getXPosition();
-                vector[1] = kFilter.getPredY() - ball.getYPosition();
-
-                double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
-
-                double[] normalisedVector = new double[2];
-                normalisedVector[0] = vector[0] / magnitude;
-                normalisedVector[1] = vector[1] / magnitude;
-
-                field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
-				*/
 			}
 		}
-		//System.out.println("==========================");
 		field.repaint();
 	}
 
@@ -235,33 +192,6 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			ball.setX((int) p.x); //hardcoded for now
 			ball.setY((int)p.y);
 			
-			System.out.println(p.x + " " + p.y);
-			/*
-			kFilter.process(p.x, p.y);
-			
-			kFilter.predict(1);
-			
-			// Find the distance between the kalman filter point and the current ball point.
-			double distance = Geometry.euclideanDistance(new org.opencv.core.Point(ball.getXPosition(), ball.getYPosition()), 
-					new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
-			
-			// Find the point that is x distance from point 1 along the vector.
-			// TODO needs better way.
-			double[] vector = new double[2];
-			vector[0] = kFilter.getPredX() - ball.getXPosition();
-			vector[1] = kFilter.getPredY() - ball.getYPosition();
-			
-			double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
-			
-			double[] normalisedVector = new double[2];
-			normalisedVector[0] = vector[0] / magnitude;
-			normalisedVector[1] = vector[1] / magnitude;
-			
-			field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
-		*/
-			//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY());
-			
-			//System.out.println(p.x + " " + p.y);
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);

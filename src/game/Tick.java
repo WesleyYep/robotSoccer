@@ -2,12 +2,10 @@ package game;
 
 import bot.Robot;
 import bot.Robots;
-import communication.Receiver;
 import communication.Sender;
 import communication.SenderListener;
 import ui.Field;
 import ui.TestComPanel;
-import utils.Geometry;
 import vision.KalmanFilter;
 
 import java.util.TimerTask;
@@ -84,6 +82,8 @@ public class Tick extends TimerTask implements SenderListener {
 		meas = new Mat(measSize,1,CvType.CV_32F);
 		
 		Core.setIdentity(kFilter.transitionMatrix);
+		kFilter.transitionMatrix.put(0, 2, 0.005);
+		kFilter.transitionMatrix.put(1, 3, 0.005);
 		
 		kFilter.measurementMatrix = Mat.zeros(measSize, stateSize, CvType.CV_32F);
 		kFilter.measurementMatrix.put(0, 0, 1.0f);
@@ -97,12 +97,8 @@ public class Tick extends TimerTask implements SenderListener {
 		kFilter.processNoiseCov.put(3, 4, 0.02);
 		kFilter.processNoiseCov.put(4, 5, 0.02);
 		kFilter.processNoiseCov.put(5, 5, 0.02);
-		kFilter.transitionMatrix.put(0, 2, 0.005);
-		kFilter.transitionMatrix.put(1, 3, 0.005);
-		Core.setIdentity(kFilter.measurementNoiseCov, new Scalar(0.1)); 
 		
-		
-	
+		Core.setIdentity(kFilter.measurementNoiseCov, new Scalar(0.1)); 	
 	}
 
 	public void run() {
@@ -169,8 +165,6 @@ public class Tick extends TimerTask implements SenderListener {
 			}
 			else {
 				kFilter.correct(meas); 
-		
-		
 				//System.out.println(kFilter.statePost.dump());
 				//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			}
@@ -181,48 +175,6 @@ public class Tick extends TimerTask implements SenderListener {
 			//System.out.println(field.getBallX() + " " + field.getBallY());
 		//	field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
 		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
-		
-		
-		/*
-		if (x != r.getXPosition()) {
-			kFilter.process(r.getXPosition(), r.getYPosition());
-			
-			x = r.getXPosition();
-			kFilter.predict(1);
-			System.out.println(count + " Estimated: " + kFilter.getEstimatedX() + " " + kFilter.getEstimatedY() + " " 
-			+ kFilter.getLinearVelocity() + " " + r.getXPosition() +  " " + r.getYPosition());
-			System.out.println(System.currentTimeMillis() + " Predicted: " + kFilter.getPredX() + " " + kFilter.getPredY()
-					+ " " + kFilter.getPredXVelocity());
-		}
-		
-		
-		
-		//System.out.println(r.getXPosition() + " " + r.getYPosition());
-		
-		// Find the distance between the kalman filter point and the current ball point.
-		double distance = Geometry.euclideanDistance(new org.opencv.core.Point(r.getXPosition(), r.getYPosition()), 
-				new org.opencv.core.Point(kFilter.getPredX(), kFilter.getPredY()));
-		
-		// Find the point that is x distance from point 1 along the vector.
-		// TODO needs better way.
-		double[] vector = new double[2];
-		vector[0] = kFilter.getPredX() - r.getXPosition();
-		vector[1] = kFilter.getPredY() - r.getYPosition();
-		
-		double magnitude = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
-		
-		double[] normalisedVector = new double[2];
-		normalisedVector[0] = vector[0] / magnitude;
-		normalisedVector[1] = vector[1] / magnitude;
-		
-		
-		
-		
-		System.out.println((r.getXPosition() - distance * normalisedVector[0]) + " " 
-				+ (r.getYPosition() - distance * normalisedVector[1])
-				+ " " + r.getXPosition()
-				+ " " + r.getYPosition()); */
-		//System.out.println("Time taken: " +  (System.currentTimeMillis()-start));
 
 		if (comPanel.isSimulation()) {
 			if (sender != null) {
