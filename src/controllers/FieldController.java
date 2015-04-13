@@ -26,7 +26,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	
 	private long time = 0;
 	private double oldX = 0;
-
+	
 	public FieldController(Field field, Robots bots, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
@@ -57,7 +57,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	@Override
 	public void action(List<String> chunks) {
-		System.out.println("^^^^^^^^^^^^^^^");
+		//System.out.println("^^^^^^^^^^^^^^^");
 		for (String s : chunks) {
 			//System.out.println(s);
 			// -1 doesn't exist.
@@ -88,6 +88,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				bots.setIndividualBotPosition(id, x, y, theta);
 
 			} else if (s.indexOf("Ball") != -1) {
+			
 				int xIndex = s.indexOf("x=");
 				int yIndex = s.indexOf("y=");
 
@@ -96,7 +97,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				
 				ball.setX((int) Math.round(x * 100));
 				ball.setY(Field.OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
-
+				/*
                 kFilter.process(ball.getXPosition(), ball.getYPosition());
 
                 kFilter.predict(1);
@@ -118,10 +119,10 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
                 normalisedVector[1] = vector[1] / magnitude;
 
                 field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
-
+				*/
 			}
 		}
-		System.out.println("==========================");
+		//System.out.println("==========================");
 		field.repaint();
 	}
 
@@ -259,6 +260,8 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			field.setPredPoint(ball.getXPosition() - distance * normalisedVector[0], ball.getYPosition() - distance * normalisedVector[1]);
 		*/
 			//System.out.println(kFilter.getEstimatedX() + " " + kFilter.getEstimatedY());
+			
+			//System.out.println(p.x + " " + p.y);
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);

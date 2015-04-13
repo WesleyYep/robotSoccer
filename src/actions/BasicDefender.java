@@ -1,9 +1,12 @@
 package actions;
 
+import javax.swing.JOptionPane;
+
 import Paths.Path;
 import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 
 import org.opencv.core.Point;
 
@@ -123,7 +126,8 @@ public class BasicDefender extends Defender {
 
  		// Get default function block
  		FunctionBlock fb = fis.getFunctionBlock(null);
- 		//JFuzzyChart.get().chart(fb);
+// 		JFuzzyChart.get().chart(fb);
+// 		JOptionPane.showMessageDialog(null, "ok");
  		// Set inputs
  		//fb.setVariable("food", 8.5);
  		//fb.setVariable("service", 7.5);

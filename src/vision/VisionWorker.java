@@ -77,7 +77,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			
 			dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
 			erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
-			kFilter = new KalmanFilter();
+			//kFilter = new KalmanFilter();
 			// Get the sampling panel values.
 			double[] hsvBallMin = {
 					ballSP.getLowerBoundForH(),

@@ -225,7 +225,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//window listener
 		windowController = new WindowController(webcamController);
-
 		contentPane.add(cards, "span 6, width 640:640:640, height 480:480:480");
 		contentPane.add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
 		contentPane.add(infoPanel, "span 6, width 600:600:600, wrap");
@@ -397,9 +396,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		//Create and set up the content pane.
 		JFrame frame = new RobotSoccerMain();
 		frame.setMinimumSize(new Dimension(1290, 1000));
-//		if (((RobotSoccerMain)newContentPane).getWindowController() != null) {
-//			frame.addWindowListener(((RobotSoccerMain)newContentPane).getWindowController());
-//		}
 
 		//Display the window.
 		frame.pack();

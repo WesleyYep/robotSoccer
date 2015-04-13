@@ -293,10 +293,7 @@ public class KalmanFilter {
 		
 		//System.out.println("before " + tempA.dump());
 		for (int i = 0; i<200; i++) {
-			
 			Core.gemm(transitionMatrix,tempA,1,new Mat(), 0, tempA);
-			
-			
 		}
 		
 		//System.out.println("after " + tempA.dump());

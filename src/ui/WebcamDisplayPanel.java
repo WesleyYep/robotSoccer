@@ -125,7 +125,6 @@ public class WebcamDisplayPanel extends JPanel {
 
             final BufferedImage image = Image.toBufferedImage(mat);
             
-            
             notifyImageUpdate(image);
             if (isFiltering) {
                 //old stuff

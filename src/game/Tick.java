@@ -46,6 +46,7 @@ public class Tick extends TimerTask implements SenderListener {
 		this.comPanel = comPanel;
 		//physics = new Physics();
 		
+		/*
 		meas = new Mat(measSize,1,CvType.CV_32F);
 		Core.setIdentity(kFilter.transitionMatrix);
 		kFilter.transitionMatrix.put(0, 1, 0.005);
@@ -57,11 +58,11 @@ public class Tick extends TimerTask implements SenderListener {
 		
 		kFilter.measurementMatrix = Mat.zeros(measSize, stateSize,CvType.CV_32F);
 		kFilter.measurementMatrix.put(0,0,1);
-		kFilter.measurementMatrix.put(1,1,1);
-		kFilter.measurementMatrix.put(2,3,1);
-		kFilter.measurementMatrix.put(3,4,1);
+		kFilter.measurementMatrix.put(1,3,1);
+		//kFilter.measurementMatrix.put(2,3,1);
+		//kFilter.measurementMatrix.put(3,4,1);
 		
-		//System.out.println(kFilter.measurementMatrix.dump());
+		System.out.println(kFilter.measurementMatrix.dump());
 		
 		kFilter.measurementNoiseCov = new Mat(measSize,measSize,CvType.CV_32F);
 		Core.multiply(kFilter.measurementNoiseCov, new Scalar(25), kFilter.measurementNoiseCov);
@@ -75,10 +76,10 @@ public class Tick extends TimerTask implements SenderListener {
 		kFilter.processNoiseCov.put(5, 5, 1);
 		
 		kFilter.errorCovPre = Mat.eye(stateSize, stateSize, CvType.CV_32F);
-		Core.multiply(kFilter.measurementNoiseCov, new Scalar(10000), kFilter.measurementNoiseCov); 
+		Core.multiply(kFilter.measurementNoiseCov, new Scalar(10000), kFilter.measurementNoiseCov); */
 		
 		
-		/*
+		
 		state = new Mat(stateSize,1,CvType.CV_32F);
 		meas = new Mat(measSize,1,CvType.CV_32F);
 		
@@ -92,16 +93,16 @@ public class Tick extends TimerTask implements SenderListener {
 		
 		kFilter.processNoiseCov.put(0, 0, 0.02);
 		kFilter.processNoiseCov.put(1, 1, 0.02);
-		kFilter.processNoiseCov.put(2, 2, 2.0f);
-		kFilter.processNoiseCov.put(3, 4, 1.0f);
+		kFilter.processNoiseCov.put(2, 2, 0.02);
+		kFilter.processNoiseCov.put(3, 4, 0.02);
 		kFilter.processNoiseCov.put(4, 5, 0.02);
 		kFilter.processNoiseCov.put(5, 5, 0.02);
 		kFilter.transitionMatrix.put(0, 2, 0.005);
 		kFilter.transitionMatrix.put(1, 3, 0.005);
-		Core.setIdentity(kFilter.measurementNoiseCov, new Scalar(0.1)); */
+		Core.setIdentity(kFilter.measurementNoiseCov, new Scalar(0.1)); 
 		
 		
-		
+	
 	}
 
 	public void run() {
@@ -118,38 +119,37 @@ public class Tick extends TimerTask implements SenderListener {
 		long start = System.currentTimeMillis();
 		Robot r = bots.getRobot(0);
 		
-		
+		/*
 		if (!firstTime) {
 			kFilter.predict(new Mat());
 		}
 		
-		meas.put(0, 0, r.getXPosition());
-		meas.put(2,0,r.getYPosition());
-		meas.put(1, 0, 10);
-		meas.put(3, 0, 0);
+		meas.put(0, 0, field.getBallX());
+		meas.put(1,0,field.getBallY());
+		//meas.put(1, 0, 10);
+		//meas.put(3, 0, 0);
 		
 		if (firstTime) {
 			
-			kFilter.statePost.put(0, 0, r.getXPosition());
-			kFilter.statePost.put(3, 0, r.getYPosition());
+			kFilter.statePost.put(0, 0, field.getBallX());
+			kFilter.statePost.put(3, 0,field.getBallY());
 			firstTime = false;
 		}
 		else {
-			if (x != r.getXPosition()) {
-				kFilter.correct(meas); 
-				x = r.getXPosition();
-				
-			}
+			kFilter.correct(meas); 
+			x = r.getXPosition();
 			
 		}
-		//Mat temp = kFilter.predictNextPosition(1.0);
+		Mat temp = kFilter.predictNextPosition(1.0);
 		//System.out.println(temp.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition());
-		//System.out.println(kFilter.statePost.dump());
+		System.out.println(kFilter.statePost.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition());
-		
+		System.out.println(field.getBallX() + " " + field.getBallY());
+		field.setPredPoint(temp.get(0, 0)[0],temp.get(3, 0)[0]);
+		*/
 			
-		/*
+		
 			kFilter.predict(new Mat());
 			
 			meas.put(0, 0, r.getXPosition());
@@ -175,10 +175,12 @@ public class Tick extends TimerTask implements SenderListener {
 				//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			}
 			
-		Mat temp = kFilter.predictNextPosition(1.0);
-		System.out.println(temp.dump());
-		System.out.println(r.getXPosition() +  " " + r.getYPosition()); */
-		
+		//Mat temp = kFilter.predictNextPosition(1.0);
+		//System.out.println(temp.dump());
+		//System.out.println(r.getXPosition() +  " " + r.getYPosition()); 
+			//System.out.println(field.getBallX() + " " + field.getBallY());
+		//	field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
+		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
 		
 		
 		/*
