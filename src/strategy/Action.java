@@ -13,7 +13,7 @@ public abstract class Action {
 	protected double ballY;
 	protected int index;
 	protected Path path;
-	protected static KalmanFilter kFilter = new KalmanFilter();
+//	protected static KalmanFilter kFilter = new KalmanFilter();
 
 	public abstract String getName();
 
