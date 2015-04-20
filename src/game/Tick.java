@@ -113,7 +113,7 @@ public class Tick extends TimerTask implements SenderListener {
 		field.repaint();
 		
 		long start = System.currentTimeMillis();
-		Robot r = bots.getRobot(0);
+		Robot r = bots.getRobot(1);
 		
 		/*
 		if (!firstTime) {
@@ -145,11 +145,11 @@ public class Tick extends TimerTask implements SenderListener {
 		field.setPredPoint(temp.get(0, 0)[0],temp.get(3, 0)[0]);
 		*/
 			
-		
+		/*
 			kFilter.predict(new Mat());
 			
-			meas.put(0, 0, r.getXPosition());
-			meas.put(1,0,r.getYPosition());
+			meas.put(0, 0, field.getBallX());
+			meas.put(1,0,field.getBallY());
 			meas.put(2, 0, 7);
 			meas.put(3, 0, 7);
 			
@@ -169,13 +169,13 @@ public class Tick extends TimerTask implements SenderListener {
 				//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			}
 			
-		//Mat temp = kFilter.predictNextPosition(1.0);
+		Mat temp = kFilter.predictNextPosition(1.0);
 		//System.out.println(temp.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition()); 
 			//System.out.println(field.getBallX() + " " + field.getBallY());
-		//	field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
+			field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
 		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
-
+		*/
 		if (comPanel.isSimulation()) {
 			if (sender != null) {
 				sender.sendStuff(createBotCoordinatesMessage());

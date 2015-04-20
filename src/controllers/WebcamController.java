@@ -2,12 +2,15 @@ package controllers;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
+
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -147,16 +150,19 @@ public class WebcamController {
 
 			System.out.println("Initializing camera");
             grabber.open(0);
+
             webcamImageMat = new Mat();
 
             while (!isCancelled() && grabber.isOpened()) {
+            	long start = System.currentTimeMillis();
                 grabber.read(webcamImageMat);
-                
+               // System.out.println(System.currentTimeMillis()-start);
                 if (webcamImageMat == null) {
                 	cancel(true);
                 }
 
                 webcamDisplayPanel.update(webcamImageMat);
+                
             }
 
             // All done; clean up

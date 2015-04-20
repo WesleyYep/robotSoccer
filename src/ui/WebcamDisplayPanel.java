@@ -103,7 +103,7 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void update(Mat mat) {
-		
+		long start = System.currentTimeMillis();
 		ViewState oldViewState = currentViewState;
 		
 		if (mat == null) {
@@ -125,7 +125,10 @@ public class WebcamDisplayPanel extends JPanel {
 
             final BufferedImage image = Image.toBufferedImage(mat);
             
+            
             notifyImageUpdate(image);
+            
+           
             if (isFiltering) {
                 //old stuff
                 for (int j = 0; j < image.getHeight(); j++) {
@@ -193,6 +196,7 @@ public class WebcamDisplayPanel extends JPanel {
 
 		// Thread safe call.
 		repaint();
+		//System.out.println("Vision Processing: " + (System.currentTimeMillis()-start));
 	}
 	
 	@Override

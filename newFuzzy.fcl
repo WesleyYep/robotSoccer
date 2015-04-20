@@ -1,0 +1,134 @@
+/*
+	Example: A tip calculation FIS (fuzzy inference system)
+	Calculates tip based on 'servie' and 'food'
+
+	If you want to about this example (and fuzzy logic), please 
+	read Matlab's tutorial on fuzzy logic toolbox 
+	http://www.mathworks.com/access/helpdesk/help/pdf_doc/fuzzy/fuzzy.pdf
+	http://www.wseas.us/e-library/conferences/2009/rodos/SYSTEMS/SYSTEMS73.pdf
+									Pablo Cingolani 
+									pcingola@users.sourceforge.net
+*/
+
+FUNCTION_BLOCK tipper	// Block definition (there may be more than one block per file)
+
+VAR_INPUT				// Define input variables
+	distanceError: REAL;
+	angleError: REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	leftWheelVelocity: REAL;
+	rightWheelVelocity: REAL;
+END_VAR
+
+FUZZIFY distanceError
+	TERM VS := (0,1) (4,0);
+	TERM S := trian 0 4 6;
+	TERM M := trian 4 6 8;
+	TERM B := (6,0) (8,1) (10,0) (15,0);
+	TERM VB := (0,0) (8,0) (10,1) (300,1);
+END_FUZZIFY
+
+FUZZIFY angleError
+	TERM NB := (-180,1) (-90,1) (45,0);
+	TERM NS := trian -90 -45 0;
+	TERM ZE := (-45,0) (0,1) (45,0) (90,0);
+	TERM PS := (0,0) (45,1) (90,0) (180,0);
+	TERM PB := (-180,0) (45,0) (90,1) (180,1);
+END_FUZZIFY 
+
+DEFUZZIFY leftWheelVelocity
+	TERM NB := (-15,1) (-6,0) (15,0);
+	TERM NS := (-15,0) (-3,1) (0,0) ( 15,0);
+	TERM ZE := (-15,0) (-6,0) (0,1) (6,0) (15,0);
+	TERM PS := (-15,0) (0,0) (3,1) (15,0);
+	TERM PB := (-15,0) (3,0) (15,1);
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+DEFUZZIFY rightWheelVelocity
+	TERM NB := (-15,1) (-6,0) (15,0);
+	TERM NS := (-15,0) (-3,1) (0,0) ( 15,0);
+	TERM ZE := (-15,0) (-6,0) (0,1) (6,0) (15,0);
+	TERM PS := (-15,0) (0,0) (3,1) (15,0);
+	TERM PB := (-15,0) (3,0) (15,1);
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	//RULE 1 : IF service IS poor OR food IS rancid THEN tip IS cheap;
+	//RULE 2 : IF service IS good THEN tip IS average; 
+	//RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;
+	
+	RULE 1: IF distanceError IS VS AND angleError is NB THEN leftWheelVelocity IS PB ; 
+	RULE 2: IF distanceError IS VS AND angleError is NS THEN leftWheelVelocity IS PS ; 
+	RULE 3: IF distanceError IS VS AND angleError is ZE THEN leftWheelVelocity IS ZE ; 
+	RULE 4: IF distanceError IS VS AND angleError is PS THEN leftWheelVelocity IS NS ; 
+	RULE 5: IF distanceError IS VS AND angleError is PB THEN leftWheelVelocity IS NB ; 
+	
+	RULE 26: IF distanceError IS VS AND angleError is NB THEN rightWheelVelocity IS NB; 
+	RULE 27: IF distanceError IS VS AND angleError is NS THEN  rightWheelVelocity IS NS; 
+	RULE 28: IF distanceError IS VS AND angleError is ZE THEN rightWheelVelocity IS ZE; 
+	RULE 29: IF distanceError IS VS AND angleError is PS THEN  rightWheelVelocity IS PS; 
+	RULE 30: IF distanceError IS VS AND angleError is PB THEN  rightWheelVelocity IS PB; 
+	
+	RULE 6: IF distanceError IS S AND angleError is NB THEN leftWheelVelocity IS PB; 
+	RULE 7: IF distanceError IS S AND angleError is NS THEN leftWheelVelocity IS PS ; 
+	RULE 8: IF distanceError IS S AND angleError is ZE THEN leftWheelVelocity IS PS ; 
+	RULE 9: IF distanceError IS S AND angleError is PS THEN leftWheelVelocity IS NS ; 
+	RULE 10: IF distanceError IS S AND angleError is PB THEN leftWheelVelocity IS NB ; 
+	
+	RULE 31: IF distanceError IS S AND angleError is NB THEN  rightWheelVelocity IS NB; 
+	RULE 32: IF distanceError IS S AND angleError is NS THEN rightWheelVelocity IS ZE; 
+	RULE 33: IF distanceError IS S AND angleError is ZE THEN rightWheelVelocity IS PS; 
+	RULE 34: IF distanceError IS S AND angleError is PS THEN rightWheelVelocity IS PS; 
+	RULE 35: IF distanceError IS S AND angleError is PB THEN  rightWheelVelocity IS PB; 
+	
+	RULE 11: IF distanceError IS M AND angleError is NB THEN leftWheelVelocity IS PB ; 
+	RULE 12: IF distanceError IS M AND angleError is NS THEN leftWheelVelocity IS PS ; 
+	RULE 13: IF distanceError IS M AND angleError is ZE THEN leftWheelVelocity IS PS ; 
+	RULE 14: IF distanceError IS M AND angleError is PS THEN leftWheelVelocity IS ZE ; 
+	RULE 15: IF distanceError IS M AND angleError is PB THEN leftWheelVelocity IS NB ; 
+	
+	RULE 36: IF distanceError IS M AND angleError is NB THEN  rightWheelVelocity IS NB; 
+	RULE 37: IF distanceError IS M AND angleError is NS THEN rightWheelVelocity IS ZE; 
+	RULE 38: IF distanceError IS M AND angleError is ZE THEN rightWheelVelocity IS PS; 
+	RULE 39: IF distanceError IS M AND angleError is PS THEN  rightWheelVelocity IS PB; 
+	RULE 40: IF distanceError IS M AND angleError is PB THEN rightWheelVelocity IS PB;
+	
+	RULE 16: IF distanceError IS B AND angleError is NB THEN leftWheelVelocity IS PB ; 
+	RULE 17: IF distanceError IS B AND angleError is NS THEN leftWheelVelocity IS PB ; 
+	RULE 18: IF distanceError IS B AND angleError is ZE THEN leftWheelVelocity IS PB ; 
+	RULE 19: IF distanceError IS B AND angleError is PS THEN leftWheelVelocity IS ZE ; 
+	RULE 20: IF distanceError IS B AND angleError is PB THEN leftWheelVelocity IS NB ; 
+	
+	RULE 41: IF distanceError IS B AND angleError is NB THEN rightWheelVelocity IS NB; 
+	RULE 42: IF distanceError IS B AND angleError is NS THEN  rightWheelVelocity IS PS; 
+	RULE 43: IF distanceError IS B AND angleError is ZE THEN  rightWheelVelocity IS PB; 
+	RULE 44: IF distanceError IS B AND angleError is PS THEN rightWheelVelocity IS PB; 
+	RULE 45: IF distanceError IS B AND angleError is PB THEN  rightWheelVelocity IS PB; 
+	
+	RULE 21: IF distanceError IS VB AND angleError is NB THEN leftWheelVelocity IS PB ; 
+	RULE 22: IF distanceError IS VB AND angleError is NS THEN leftWheelVelocity IS PB ; 
+	RULE 23: IF distanceError IS VB AND angleError is ZE THEN leftWheelVelocity IS PB ; 
+	RULE 24: IF distanceError IS VB AND angleError is PS THEN leftWheelVelocity IS PS; 
+	RULE 25: IF distanceError IS VB AND angleError is PB THEN leftWheelVelocity IS NB ; 
+	
+	RULE 46: IF distanceError IS VB AND angleError is NB THEN rightWheelVelocity IS NB; 
+	RULE 47: IF distanceError IS VB AND angleError is NS THEN rightWheelVelocity IS PS; 
+	RULE 48: IF distanceError IS VB AND angleError is ZE THEN rightWheelVelocity IS PB; 
+	RULE 49: IF distanceError IS VB AND angleError is PS THEN rightWheelVelocity IS PB; 
+	RULE 50: IF distanceError IS VB AND angleError is PB THEN  rightWheelVelocity IS PB; 
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
