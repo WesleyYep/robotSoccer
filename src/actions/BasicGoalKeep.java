@@ -46,15 +46,19 @@ public class BasicGoalKeep extends Action {
     		if (isBallTop != isFacingTop) {
     			reverseTheta = false;
     		}
-   // 		System.out.println(ballY);
+    		System.out.println(ballY);
+    		System.out.println("front: " + reverseTheta);
     		if (ballY >= 70 && ballY <= 110 ) {
     			setVelocityToTarget(goalLine,ballY, reverseTheta,true);
+    			System.out.println("here 1");
     		}
     		else if (ballY < 70) {
     			setVelocityToTarget(goalLine,70,reverseTheta,true);
+    			System.out.println("here 2");
     		}
     		else if (ballY > 110) {
     			setVelocityToTarget(goalLine,110,reverseTheta,true);
+    			System.out.println("here 3");
     		}
     		
     	}
@@ -208,7 +212,7 @@ public class BasicGoalKeep extends Action {
  //       }
 
         targetTheta = difference;
-        System.out.println("Difference: " + difference);
+        //System.out.println("Difference: " + difference);
         
         /*
         if (targetDist < 20 &&  targetTheta < 10) {
@@ -270,17 +274,10 @@ public class BasicGoalKeep extends Action {
 
              // Get default function block
              FunctionBlock fb = fis.getFunctionBlock(null);
-             
-             if (onGoalLine && Math.abs(targetTheta) >=90) {
-            	 int sign = (int) (targetTheta / Math.abs(targetTheta));
-            	 
-            	 if ( sign == 1) {
-            		 targetTheta = 180 - targetTheta;
-            	 }
-            	 else if (sign == -1) {
-            		 targetTheta = -180 - targetTheta;
-            	 }
-             }
+             System.out.println("orig theta: " + targetTheta);
+             if (onGoalLine) {
+            	targetTheta = 0;
+             } 
              
              fb.setVariable("angleError", targetTheta);
              fb.setVariable("distanceError", Math.abs(targetDist));
@@ -297,16 +294,20 @@ public class BasicGoalKeep extends Action {
              
              double linear =  (right+left)/2;
              double angular = (right-left)*(2/0.135);
-             /*
-             if (onGoalLine && Math.abs(targetTheta) >=90) {
-                 r.linearVelocity *= -1;
-             }*/
+
             r.linearVelocity = linear*3;
              r.angularVelocity = angular*1;
              if (onGoalLine) {
             	 r.angularVelocity = 0;
+            	 if (Math.abs(difference) >= 90) {
+            		 r.linearVelocity *= -1;
+            	 }
              }
-//             r.linearVelocity = 0;
+             
+             
+             
+             System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
+             //r.linearVelocity = 0;
 //            r.angularVelocity = 0;
 //        	
         	
