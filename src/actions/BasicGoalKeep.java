@@ -46,19 +46,17 @@ public class BasicGoalKeep extends Action {
     		if (isBallTop != isFacingTop) {
     			reverseTheta = false;
     		}
-    		System.out.println(ballY);
-    		System.out.println("front: " + reverseTheta);
+    //		System.out.println(ballY);
+    //		System.out.println("front: " + reverseTheta);
     		if (ballY >= 70 && ballY <= 110 ) {
     			setVelocityToTarget(goalLine,ballY, reverseTheta,true);
-    			System.out.println("here 1");
+
     		}
     		else if (ballY < 70) {
     			setVelocityToTarget(goalLine,70,reverseTheta,true);
-    			System.out.println("here 2");
     		}
     		else if (ballY > 110) {
     			setVelocityToTarget(goalLine,110,reverseTheta,true);
-    			System.out.println("here 3");
     		}
     		
     	}
@@ -274,7 +272,7 @@ public class BasicGoalKeep extends Action {
 
              // Get default function block
              FunctionBlock fb = fis.getFunctionBlock(null);
-             System.out.println("orig theta: " + targetTheta);
+            // System.out.println("orig theta: " + targetTheta);
              if (onGoalLine) {
             	targetTheta = 0;
              } 
@@ -306,7 +304,7 @@ public class BasicGoalKeep extends Action {
              
              
              
-             System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
+             //System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
              //r.linearVelocity = 0;
 //            r.angularVelocity = 0;
 //        	
