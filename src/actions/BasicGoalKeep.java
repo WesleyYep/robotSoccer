@@ -22,12 +22,14 @@ public class BasicGoalKeep extends Action {
     		setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
     	}
     	else if ( ( r.getTheta() > 90+error && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+error)) {
+    		System.out.println("turning negative: " + r.getTheta() );
     		r.angularVelocity = -Math.PI/9;
     		r.linearVelocity = 0;
     	}
     	else if ( (r.getTheta() < 90-error && r.getTheta() >= 0) || (r.getTheta() < -90-error && r.getTheta() >= -180)) {
     		r.angularVelocity = Math.PI/9;
     		r.linearVelocity = 0;
+    		System.out.println("turning positive: " + r.getTheta() );
     	}
     	else{
     		boolean isFacingTop = true;
@@ -117,7 +119,6 @@ public class BasicGoalKeep extends Action {
  		// Get default function block
  		FunctionBlock fb = fis.getFunctionBlock(null);
  		//JFuzzyChart.get().chart(fb);
- 		//JOptionPane.showMessageDialog(null, "NWA");
  		// Set inputs
  		//fb.setVariable("food", 8.5);
  		//fb.setVariable("service", 7.5);
@@ -167,6 +168,7 @@ public class BasicGoalKeep extends Action {
         double targetDist;
         
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
+        System.out.println("initial targetTheta: " + targetTheta);
         double difference = targetTheta - Math.toRadians(r.getTheta());
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {
@@ -176,6 +178,7 @@ public class BasicGoalKeep extends Action {
         }
         difference = Math.toDegrees(difference);
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
+        
 //        targetTheta = Math.atan2(y-r.getYPosition(),x-r
 //        		.getXPosition());
 //        System.out.println(targetTheta);
@@ -272,36 +275,50 @@ public class BasicGoalKeep extends Action {
 
              // Get default function block
              FunctionBlock fb = fis.getFunctionBlock(null);
-            // System.out.println("orig theta: " + targetTheta);
+      		
+             /*
              if (onGoalLine) {
             	targetTheta = 0;
              } 
+             */
+             if (targetDist <= 3.75) targetDist = 0;
+            // targetTheta = Math.round(targetTheta/5)*5;
              
              fb.setVariable("angleError", targetTheta);
              fb.setVariable("distanceError", Math.abs(targetDist));
-
+             System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " " 
+             		+ r.getYPosition() + " targetDist " + targetDist);
              // Evaluate
              fb.evaluate();
-
+             /*
+             JFuzzyChart.get().chart(fb);
+              JOptionPane.showMessageDialog(null, "nwa"); */
+       
              // Show output variable's chart
              fb.getVariable("rightWheelVelocity").defuzzify();
              fb.getVariable("leftWheelVelocity").defuzzify();
-
+           //  JFuzzyChart.get().chart(fb.getVariable("leftWheelVelocity"), fb.getVariable("leftWheelVelocity").getDefuzzifier(), true);
+          //   JFuzzyChart.get().chart(fb.getVariable("rightWheelVelocity"), fb.getVariable("rightWheelVelocity").getDefuzzifier(), true);
              double right  = Math.toRadians(fb.getVariable("rightWheelVelocity").getValue());
              double left = Math.toRadians(fb.getVariable("leftWheelVelocity").getValue());
-             
+             System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
              double linear =  (right+left)/2;
              double angular = (right-left)*(2/0.135);
+            System.out.println("right :" + right + "left " + left);
 
-            r.linearVelocity = linear*3;
+            r.linearVelocity = linear*1;
+          
              r.angularVelocity = angular*1;
+             /*
              if (onGoalLine) {
             	 r.angularVelocity = 0;
+            	 if (targetDist <= 2.5) r.linearVelocity = 0;
             	 if (Math.abs(difference) >= 90) {
             		 r.linearVelocity *= -1;
             	 }
-             }
-             
+             } */
+             System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
+            		 + " r.angle: " + r.getTheta());
              
              
              //System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);

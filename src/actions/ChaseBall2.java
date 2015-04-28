@@ -138,7 +138,7 @@ public class ChaseBall2 extends Action{
              FunctionBlock fb = fis.getFunctionBlock(null);
              fb.setVariable("angleError", targetTheta);
              fb.setVariable("distanceError", targetDist);
-
+             System.out.println(targetTheta);
              // Evaluate
              fb.evaluate();
 
@@ -155,8 +155,8 @@ public class ChaseBall2 extends Action{
             r.linearVelocity = linear*8;
              r.angularVelocity = angular*0.5;
              
-//             r.linearVelocity = 0;
-//            r.angularVelocity = 0;
+   //          r.linearVelocity = 0;
+  //          r.angularVelocity = 0;
 //        	
         	
        // }

@@ -145,7 +145,7 @@ public class Tick extends TimerTask implements SenderListener {
 		field.setPredPoint(temp.get(0, 0)[0],temp.get(3, 0)[0]);
 		*/
 			
-		/*
+		
 			kFilter.predict(new Mat());
 			
 			meas.put(0, 0, field.getBallX());
@@ -169,13 +169,13 @@ public class Tick extends TimerTask implements SenderListener {
 				//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			}
 			
-		Mat temp = kFilter.predictNextPosition(1.0);
+		Mat temp = kFilter.predictNextPosition(0.6);
 		//System.out.println(temp.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition()); 
 			//System.out.println(field.getBallX() + " " + field.getBallY());
 			field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
 		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
-		*/
+		
 		if (comPanel.isSimulation()) {
 			if (sender != null) {
 				sender.sendStuff(createBotCoordinatesMessage());

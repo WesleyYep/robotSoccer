@@ -31,9 +31,9 @@ FUZZIFY distanceError
 END_FUZZIFY
 
 FUZZIFY angleError
-	TERM NB := (-180,1) (-90,1) (45,0);
+	TERM NB := (-180,1) (-90,1) (-45,0) (180,0);
 	TERM NS := trian -90 -45 0;
-	TERM ZE := (-45,0) (0,1) (45,0) (90,0);
+	TERM ZE := trian -45 0 45;
 	TERM PS := (0,0) (45,1) (90,0) (180,0);
 	TERM PB := (-180,0) (45,0) (90,1) (180,1);
 END_FUZZIFY 
