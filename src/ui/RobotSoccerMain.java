@@ -194,10 +194,12 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
-		
-		
-		webcamDisplayPanel = new WebcamDisplayPanel();
-		webcamController = new WebcamController(webcamDisplayPanel);
+
+        //create the gameTick
+        gameTick = new Tick(field, bots, testComPanel);
+
+        webcamDisplayPanel = new WebcamDisplayPanel();
+		webcamController = new WebcamController(webcamDisplayPanel, gameTick);
 		colourPanel = new ColourPanel(webcamController);
 		
 		visionWorker = new VisionWorker(colourPanel);
@@ -267,14 +269,13 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		});
 
-		gameTick = new Tick(field, bots, testComPanel);
-		setUpGame();
+	//	setUpGame();
 
 		runStratButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				gameTick.runStrategy(true);
+                gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
 			}
 
@@ -283,7 +284,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stopStratButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gameTick.runStrategy(false);
+                gameTick.runStrategy(false);
 				stratStatusLbl.setText("Stopped");
 			}
         });
@@ -321,6 +322,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
     	    	serverSocket.addReceiverListener(fieldController);
     	    	serverSocket.addSenderListener(gameTick);
     	    	serverSocket.addSenderListener(testComPanel);
+                serverSocket.setGameTick(gameTick);
     		} else {
         		//tell the serverSocket to begin the closing procedure;
         		serverSocket.close();
@@ -359,10 +361,10 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
     	layout.show(cards, cardName);
     }
 
-	public void setUpGame() {
-		java.util.Timer timer = new java.util.Timer();
-		timer.schedule(gameTick, 0, TICK_TIME_MS);
-	}
+//	public void setUpGame() {
+//		java.util.Timer timer = new java.util.Timer();
+//		timer.schedule(gameTick, 0, TICK_TIME_MS);
+//	}
 
 	public WindowController getWindowController() {
 		return windowController;
