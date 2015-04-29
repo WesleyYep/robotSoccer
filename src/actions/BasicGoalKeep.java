@@ -51,14 +51,14 @@ public class BasicGoalKeep extends Action {
     //		System.out.println(ballY);
     //		System.out.println("front: " + reverseTheta);
     		if (ballY >= 70 && ballY <= 110 ) {
-    			setVelocityToTarget(goalLine,ballY, reverseTheta,true);
+    			setVelocityToTarget(r.getXPosition(),ballY, reverseTheta,true);
 
     		}
     		else if (ballY < 70) {
-    			setVelocityToTarget(goalLine,70,reverseTheta,true);
+    			setVelocityToTarget(r.getXPosition(),70,reverseTheta,true);
     		}
     		else if (ballY > 110) {
-    			setVelocityToTarget(goalLine,110,reverseTheta,true);
+    			setVelocityToTarget(r.getXPosition(),110,reverseTheta,true);
     		}
     		
     	}
@@ -66,110 +66,14 @@ public class BasicGoalKeep extends Action {
     	
     }
     
-    /*
-    public void setVelocityToTarget(double x, double y, boolean front, boolean onGoalLine) {
-    	 Robot r = bots.getRobot(index);
-    	 double targetDist = 0;
-         double targetTheta = 0;
-         
-         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-         
-         targetTheta = Math.atan2(y-r.getYPosition(), x - r.getXPosition());  
-      
-         
-        double difference;
-     	double diff1;
-     	double diff2;
-     	if ( Math.toDegrees(targetTheta*-1) > 0 && r.getTheta() <= 0) {
-     		diff1 = Math.toDegrees(targetTheta*-1) + Math.abs(r.getTheta());
-     		diff2 = -1*(180-Math.toDegrees(targetTheta*-1)) + Math.abs(-180-r.getTheta());
-     		
-     		if (diff1 <= diff2) {
-     			difference = diff1;
-     		}
-     		else {
-     			difference = diff2;
-     		}
-     	}
-     	else if ( Math.toDegrees(targetTheta*-1) <= 0 && r.getTheta() > 0) {
-     		diff1 = -1*Math.abs(Math.toDegrees(targetTheta*-1)) + r.getTheta();
-     		diff2 = Math.abs(-180-Math.toDegrees(targetTheta*-1)) + (180-r.getTheta());
-     		
-     		if (diff1 <= diff2) {
-     			difference = diff1;
-     		}
-     		else {
-     			difference = diff2;
-     		}
-     	}
-     	else {
-     		difference = Math.toDegrees(targetTheta*-1) - r.getTheta();
-     	}
-     	
-     	targetTheta = difference;
-     	
-         String filename = "tipper.fcl";
- 		FIS fis = FIS.load(filename, true);
-
- 		if (fis == null) {
- 			System.err.println("Can't load file: '" + filename + "'");
- 			System.exit(1);
- 		}
-
- 		// Get default function block
- 		FunctionBlock fb = fis.getFunctionBlock(null);
- 		//JFuzzyChart.get().chart(fb);
- 		// Set inputs
- 		//fb.setVariable("food", 8.5);
- 		//fb.setVariable("service", 7.5);
- 		fb.setVariable("obstacleTheta", Math.PI);
- 		fb.setVariable("obstacleDist", 10);
- 		fb.setVariable("targetTheta", Math.toRadians(targetTheta));
- 		fb.setVariable("targetDist", targetDist);
- 		
- 		// Evaluate
- 		fb.evaluate();
-
- 		// Show output variable's chart
- 		fb.getVariable("angSpeedError").defuzzify();
- 		
-
- 		// Print ruleSet
- 		//System.out.println(fb);
-// 		System.out.println("theta: " + targetTheta );
-// 		System.out.println("dist: " + targetTheta );
-// 		System.out.println("ang speed: " + Math.toDegrees(fb.getVariable("angSpeedError").getValue()));
-// 		System.out.println("position " + r.getXPosition() + " " + r.getYPosition());
- 		
- 		if (onGoalLine) {
- 			r.angularVelocity = 0;
- 			r.linearVelocity = 0.3;
- 		} else {
-	 		r.angularVelocity = fb.getVariable("angSpeedError").getValue()*0.5;
-	 //		System.out.println(r.angularVelocity);
-	 		r.linearVelocity= ((targetDist-2)/10)*0.05+0.15;
-	 		
-	 		if (isCloseToWall()) {
-	 			r.linearVelocity = 0.3;
-	 		}
- 		}
- 		
- 		if (front == false) {
- 			r.linearVelocity*= -1;
- 		}
-	
- 		checkRobotPosition(x,y);
-    }
-
-	*/
-    
     public void setVelocityToTarget(double x, double y, boolean front, boolean onGoalLine) {
         Robot r = bots.getRobot(index);
         double targetDist;
         
-        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
-        System.out.println("initial targetTheta: " + targetTheta);
+        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());  
         double difference = targetTheta - Math.toRadians(r.getTheta());
+       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 
+        		+ Math.toRadians(r.getTheta()));
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
@@ -177,93 +81,17 @@ public class BasicGoalKeep extends Action {
             difference += (2 * Math.PI);
         }
         difference = Math.toDegrees(difference);
+        targetTheta = difference;
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
         
-//        targetTheta = Math.atan2(y-r.getYPosition(),x-r
-//        		.getXPosition());
-//        System.out.println(targetTheta);
-//        
-//        double diff1;
-//        double diff2;
-//
-//        if ( Math.toDegrees(targetTheta*-1) > 0 && r.getTheta() <= 0) {
-//            diff1 = Math.toDegrees(targetTheta*-1) + Math.abs(r.getTheta());
-//            diff2 = -1*(180-Math.toDegrees(targetTheta*-1)) + Math.abs(-180-r.getTheta());
-//
-//            if (diff1 <= diff2) {
-//                difference = diff1;
-//            }
-//            else {
-//                difference = diff2;
-//            }
-//        }
-//        else if ( Math.toDegrees(targetTheta*-1) <= 0 && r.getTheta() > 0) {
-//            diff1 = -1*Math.abs(Math.toDegrees(targetTheta*-1)) + r.getTheta();
-//            diff2 = Math.abs(-180-Math.toDegrees(targetTheta*-1)) + (180-r.getTheta());
-//
-//            if (diff1 <= diff2) {
-//                difference = diff1;
-//            }
-//            else {
-//                difference = diff2;
-//            }
-//        }
-//        else {
-//            difference = Math.toDegrees(targetTheta*-1) - r.getTheta();
- //       }
-
-        targetTheta = difference;
-        //System.out.println("Difference: " + difference);
-        
-        /*
-        if (targetDist < 20 &&  targetTheta < 10) {
-            double goalTheta = Math.atan2(r.getYPosition() - goalY, goalX - r.getXPosition());
-            double goalDifference = goalTheta - Math.toRadians(r.getTheta());
-
-            r.angularVelocity = 2*goalDifference;// / (goalDist);
-            r.linearVelocity = 1;
-        } else {
-        	
-        	/*
-            String filename = "tipper.fcl";
-            FIS fis = FIS.load(filename, true);
-
-            if (fis == null) {
-                System.err.println("Can't load file: '" + filename + "'");
-                System.exit(1);
-            }
-
-            // Get default function block
-            FunctionBlock fb = fis.getFunctionBlock(null);
-            fb.setVariable("obstacleTheta", Math.PI);
-            fb.setVariable("obstacleDist", 10);
-            fb.setVariable("targetTheta", Math.toRadians(targetTheta));
-            fb.setVariable("targetDist", targetDist);
-
-            // Evaluate
-            fb.evaluate();
-
-            // Show output variable's chart
-            fb.getVariable("angSpeedError").defuzzify();
-
-            r.angularVelocity = fb.getVariable("angSpeedError").getValue() * 0.5;
-            if (r.angularVelocity > 3) {
-                r.angularVelocity = 3;
-            } else if (r.angularVelocity < -3) {
-                r.angularVelocity = -3;
-            }
-            r.linearVelocity = targetDist/100.0;
-
-            if (isCloseToWall()) {
-                if (Math.abs(targetTheta) < 10) {
-                    r.linearVelocity = 0.2;
-                } else {
-                    r.linearVelocity = 0;
-                }
-            }
-            */
-
-            
+        if (!front) {
+        	if (targetTheta < 0) {
+        		targetTheta = -180 - targetTheta;
+        	}
+        	else if (targetTheta > 0) {
+        		targetTheta = 180 - targetTheta;
+        	}
+        }   
             
         	 String filename = "newFuzzy.fcl";
              FIS fis = FIS.load(filename, true);
@@ -317,8 +145,13 @@ public class BasicGoalKeep extends Action {
             		 r.linearVelocity *= -1;
             	 }
              } */
-             System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
-            		 + " r.angle: " + r.getTheta());
+             
+             if (!front) {
+            	 r.linearVelocity *= -1;
+            	 r.angularVelocity *= -1;
+             }
+          //   System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
+          //  		 + " r.angle: " + r.getTheta());
              
              
              //System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
