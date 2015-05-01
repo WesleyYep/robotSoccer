@@ -1,7 +1,7 @@
-Role:striker
-Is Spinning Fast-do nothing
-Positive Situation-Chase Ball (Striker)
-permanent-Move to spot
+Role:gk
+permanent-Basic Goal Keeper
+null-null
+null-null
 null-null
 null-null
 -----
@@ -12,13 +12,20 @@ null-null
 null-null
 null-null
 -----
+Role:striker
+Is Spinning Fast-do nothing
+Positive Situation-Chase Ball (Striker)
+permanent-Move to spot
+null-null
+null-null
+-----
 Play:new play
+new role
 striker
 new role
 new role
 new role
-new role
 -----
-Situation:new situation 1:29:1:451:367
+Situation:new situation 1:24:1:456:369
 new play
 -----

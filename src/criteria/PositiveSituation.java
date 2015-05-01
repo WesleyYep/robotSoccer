@@ -26,7 +26,7 @@ public class PositiveSituation extends Criteria {
             difference += (2 * Math.PI);
         }
 
-        // return true if robot is to the left of ball or is pointing directly at ball
-        return ballX - r.getXPosition() > 25 || Math.abs(difference) <= TurnToFaceBall.ERROR_MARGIN;
+        // return true if robot is at least 25cm left of ball or is pointing directly at ball and less then 25cm behind
+        return ballX - r.getXPosition() > 25 || (ballX > r.getXPosition() && Math.abs(difference) <= TurnToFaceBall.ERROR_MARGIN);
     }
 }
