@@ -13,23 +13,38 @@ public class BasicGoalKeep extends Action {
    
 	private double error = 5;
 	private double goalLine = 6;
+	private boolean fixPosition = false;
 	
     @Override
     public void execute() {
     	Robot r = bots.getRobot(index);
     	
     	if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
-    		setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
+    		int targetPos = 0;
+    		if (ballY >= 70 && ballY <= 110 ) {
+    			targetPos = (int) ballY;
+    		}
+    		else if (ballY < 70) {
+    			targetPos = 70;
+    		}
+    		else if (ballY > 110) {
+    			targetPos = 110;
+    		}
+    		setVelocityToTarget(goalLine,targetPos, true,false);
+    		fixPosition = true;
     	}
-    	else if ( ( r.getTheta() > 90+error && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+error)) {
-    		System.out.println("turning negative: " + r.getTheta() );
-    		r.angularVelocity = -Math.PI/9;
-    		r.linearVelocity = 0;
-    	}
-    	else if ( (r.getTheta() < 90-error && r.getTheta() >= 0) || (r.getTheta() < -90-error && r.getTheta() >= -180)) {
-    		r.angularVelocity = Math.PI/9;
-    		r.linearVelocity = 0;
-    		System.out.println("turning positive: " + r.getTheta() );
+    	else if (fixPosition) {
+    		if ( ( r.getTheta() > 90+error && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+error)) {
+        		System.out.println("turning negative: " + r.getTheta() );
+        		r.angularVelocity = -Math.PI/2;
+        	}
+        	else if ( (r.getTheta() < 90-error && r.getTheta() >= 0) || (r.getTheta() < -90-error && r.getTheta() >= -180)) {
+        		r.angularVelocity = Math.PI/2;
+        		r.linearVelocity = 0;
+        	}
+        	else {
+        		fixPosition = false;
+        	}
     	}
     	else{
     		boolean isFacingTop = true;
@@ -51,14 +66,14 @@ public class BasicGoalKeep extends Action {
     //		System.out.println(ballY);
     //		System.out.println("front: " + reverseTheta);
     		if (ballY >= 70 && ballY <= 110 ) {
-    			setVelocityToTarget(r.getXPosition(),ballY, reverseTheta,true);
+    			setVelocityToTarget(goalLine,ballY, reverseTheta,true);
 
     		}
     		else if (ballY < 70) {
-    			setVelocityToTarget(r.getXPosition(),70,reverseTheta,true);
+    			setVelocityToTarget(goalLine,70,reverseTheta,true);
     		}
     		else if (ballY > 110) {
-    			setVelocityToTarget(r.getXPosition(),110,reverseTheta,true);
+    			setVelocityToTarget(goalLine,110,reverseTheta,true);
     		}
     		
     	}
@@ -93,7 +108,7 @@ public class BasicGoalKeep extends Action {
         	}
         }   
             
-        	 String filename = "newFuzzy.fcl";
+        	 String filename = "newFuzzy2.fcl";
              FIS fis = FIS.load(filename, true);
 
              if (fis == null) {
@@ -109,7 +124,11 @@ public class BasicGoalKeep extends Action {
             	targetTheta = 0;
              } 
              */
-             if (targetDist <= 3.75) targetDist = 0;
+             //if (targetDist <= 3.75) targetDist = 0;
+             if (targetDist <=2.5) {
+            	 targetDist = 0;
+            	 targetTheta = 0;
+             }
             // targetTheta = Math.round(targetTheta/5)*5;
              
              fb.setVariable("angleError", targetTheta);
@@ -136,25 +155,17 @@ public class BasicGoalKeep extends Action {
 
             r.linearVelocity = linear*1;
           
-             r.angularVelocity = angular*1;
-             /*
-             if (onGoalLine) {
-            	 r.angularVelocity = 0;
-            	 if (targetDist <= 2.5) r.linearVelocity = 0;
-            	 if (Math.abs(difference) >= 90) {
-            		 r.linearVelocity *= -1;
-            	 }
-             } */
+             r.angularVelocity = angular*0.75;
              
              if (!front) {
             	 r.linearVelocity *= -1;
             	 r.angularVelocity *= -1;
              }
-          //   System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
-          //  		 + " r.angle: " + r.getTheta());
+            System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
+          		 + " r.angle: " + r.getTheta());
              
              
-             //System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
+             System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
              //r.linearVelocity = 0;
 //            r.angularVelocity = 0;
 //        	
