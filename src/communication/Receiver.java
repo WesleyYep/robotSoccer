@@ -1,5 +1,7 @@
 package communication;
 
+import game.Tick;
+
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +21,7 @@ public class Receiver extends SwingWorker<Void, String> {
 	private List<ReceiverListener> listeners = new ArrayList<ReceiverListener>();
 	private NetworkSocket serverSocket;
 	private boolean isClientClosing = false;
+    private Tick gameTick;
 
 	public Receiver(Socket s, NetworkSocket nS) {
 		clientSocket = s;
@@ -61,6 +64,7 @@ public class Receiver extends SwingWorker<Void, String> {
     	for (ReceiverListener l : listeners) {
     		if (!this.isCancelled()) {
     			l.action(chunks);
+                gameTick.run();
     		}
 		}
     }
@@ -78,5 +82,13 @@ public class Receiver extends SwingWorker<Void, String> {
     public void registerListener(ReceiverListener listener) {
     	listeners.add(listener);
     }
-    
+
+
+    public void setGameTick(Tick tick) {
+        System.out.println("gametick set");
+        if (tick == null){
+            System.out.println("gametick is null!");
+        }
+        this.gameTick= tick;
+    }
 }
