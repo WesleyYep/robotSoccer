@@ -13,7 +13,7 @@ public class ChaseBall2 extends Action{
 
     private int goalX = 220;
     private int goalY = 90;
-
+    private boolean isShooting = false;
     @Override
     public String getName() {
         return "Chase Ball (Striker)";
@@ -40,48 +40,71 @@ public class ChaseBall2 extends Action{
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
 
         //System.out.println("Difference: " + difference);
-
-        	 String filename = "newFuzzy.fcl";
-             FIS fis = FIS.load(filename, true);
-
-             if (fis == null) {
-                 System.err.println("Can't load file: '" + filename + "'");
-                 System.exit(1);
-             }
-
-             // Get default function block
-             FunctionBlock fb = fis.getFunctionBlock(null);
-             fb.setVariable("angleError", targetTheta);
-             fb.setVariable("distanceError", targetDist);
-         //    System.out.println(targetTheta);
-             // Evaluate
-             fb.evaluate();
-
-             // Show output variable's chart
-             fb.getVariable("rightWheelVelocity").defuzzify();
-             fb.getVariable("leftWheelVelocity").defuzzify();
-
-             double right  = Math.toRadians(fb.getVariable("rightWheelVelocity").getValue());
-             double left = Math.toRadians(fb.getVariable("leftWheelVelocity").getValue());
-             
-             double linear =  (right+left)/2;
-             double angular = (right-left)*(2/0.135);
-             
-            r.linearVelocity = linear*4;
-             r.angularVelocity = angular*2;
-
-            if (targetDist < 20 && Math.abs(targetTheta) < 5) {
-                double angle = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
-                if (Math.abs(angle) < Math.PI / 8) {
-                    System.out.println("kick! ");
-                    r.linearVelocity *= 3;
-                } else if (Math.abs(angle) < Math.PI / 4) {
-                    System.out.println("dribble! ");
-                    r.angularVelocity += angle;
-                }
+        if (isShooting) {
+    		targetTheta = Math.atan2(r.getYPosition() - goalY, goalX - r.getXPosition());
+            difference = targetTheta - Math.toRadians(r.getTheta());
+            //some hack to make the difference -Pi < theta < Pi
+            if (difference > Math.PI) {
+                difference -= (2 * Math.PI);
+            } else if (difference < -Math.PI) {
+                difference += (2 * Math.PI);
             }
-    //        r.linearVelocity = 0;
-     //       r.angularVelocity = 0;
+            targetTheta = Math.toDegrees(difference);
+            targetDist = Math.sqrt(Math.pow((goalX-r.getXPosition()),2) + Math.pow((goalY-r.getYPosition()),2));
+    	}
+    
+    	 String filename = "newFuzzy.fcl";
+         FIS fis = FIS.load(filename, true);
+
+         if (fis == null) {
+             System.err.println("Can't load file: '" + filename + "'");
+             System.exit(1);
+         }
+
+         // Get default function block
+         FunctionBlock fb = fis.getFunctionBlock(null);
+         fb.setVariable("angleError", targetTheta);
+         fb.setVariable("distanceError", targetDist);
+     //    System.out.println(targetTheta);
+         // Evaluate
+         fb.evaluate();
+
+         // Show output variable's chart
+         fb.getVariable("rightWheelVelocity").defuzzify();
+         fb.getVariable("leftWheelVelocity").defuzzify();
+
+         double right  = Math.toRadians(fb.getVariable("rightWheelVelocity").getValue());
+         double left = Math.toRadians(fb.getVariable("leftWheelVelocity").getValue());
+         
+         double linear =  (right+left)/2;
+         double angular = (right-left)*(2/0.135);
+         
+         r.linearVelocity = linear*2;
+         r.angularVelocity = angular*1;
+
+         if (isShooting) {
+        	 r.linearVelocity *= 2;
+        	 r.angularVelocity *= 2;
+        	 
+        	 if (r.getXPosition() > 200) {
+        		 isShooting = false;
+        	 }
+        	 
+         }else if (targetDist < 20 && Math.abs(targetTheta) < 5) {
+            double angle = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
+            if (Math.abs(angle) < Math.PI / 8) {
+                System.out.println("kick! ");
+                isShooting = true;
+            } else if (Math.abs(angle) < Math.PI / 4) {
+                System.out.println("dribble! ");
+                r.angularVelocity += 2*angle;
+            }
+        }
+        
+        
+        
+//        r.linearVelocity = 0;
+ //       r.angularVelocity = 0;
 
         	
 

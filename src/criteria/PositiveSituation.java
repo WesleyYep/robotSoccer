@@ -18,6 +18,7 @@ public class PositiveSituation extends Criteria {
         Robot r = bots.getRobot(index);
 
         // return true if robot is at least 25cm left of ball or is pointing towards and less then 25cm behind
+        //System.out.println(r.getTheta());
         return ballX - r.getXPosition() > 25 || Math.abs(r.getTheta()) < 120;
     }
 }

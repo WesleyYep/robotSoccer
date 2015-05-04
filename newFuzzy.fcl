@@ -43,7 +43,7 @@ DEFUZZIFY leftWheelVelocity
 	TERM NS := (-15,0) (-3,1) (0,0) ( 15,0);
 	TERM ZE := (-15,0) (-6,0) (0,1) (6,0) (15,0);
 	TERM PS := (-15,0) (0,0) (3,1) (15,0);
-	TERM PB := (-15,0) (3,0) (15,1);
+	TERM PB := (-15,0) (6,0) (15,1);
 	METHOD : COG;
 	DEFAULT :=0;
 END_DEFUZZIFY
@@ -53,7 +53,7 @@ DEFUZZIFY rightWheelVelocity
 	TERM NS := (-15,0) (-3,1) (0,0) ( 15,0);
 	TERM ZE := (-15,0) (-6,0) (0,1) (6,0) (15,0);
 	TERM PS := (-15,0) (0,0) (3,1) (15,0);
-	TERM PB := (-15,0) (3,0) (15,1);
+	TERM PB := (-15,0) (6,0) (15,1);
 	METHOD : COG;
 	DEFAULT :=0;
 END_DEFUZZIFY
