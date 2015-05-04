@@ -12,7 +12,7 @@ import bot.Robot;
 public class BasicGoalKeep extends Action {
    
 	private double error = 5;
-	private double goalLine = 6;
+	private double goalLine = 214;
 	private boolean fixPosition = false;
 	
     @Override
