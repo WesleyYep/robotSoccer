@@ -1,11 +1,17 @@
 package controllers;
 
+import bot.Robots;
+import communication.Sender;
+import communication.SenderListener;
+import game.Tick;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 
+import ui.Field;
+import ui.TestComPanel;
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
 
@@ -25,20 +31,17 @@ import java.awt.image.BufferedImage;
 public class WebcamController {
 
 	private WebcamDisplayPanel webcamDisplayPanel;
-	private final static String IPWEBCAMDEVICENAME = "BLAZE";
-
-	//javaCV stuff
-	protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
-	protected int width, height;					// the size of the grabbed images (scaled if so specified)
 	protected BufferedImage image;					// image grabbed from webcam (if any)
 	private Grabby grabby;							// handles webcam grabbing
     private VideoCapture grabber;
     private int cameraNumber = 0;
     private Mat webcamImageMat;
+    private Tick gameTick;
 
-	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
+    public WebcamController(WebcamDisplayPanel webcamDisplayPanel, Tick tick) {
 		this.webcamDisplayPanel = webcamDisplayPanel;
         grabby = new Grabby();
+        gameTick = tick;
     }
 
 	/**
@@ -140,8 +143,9 @@ public class WebcamController {
 	public ViewState getWebcamStatus() {
 		return webcamDisplayPanel.getViewState();
 	}
-	
-	/**
+
+
+    /**
 	 * Handles grabbing an image from the webcam (following JavaCV examples)
 	 * storing it in image, and telling the canvas to repaint itself.
 	 */
@@ -160,7 +164,7 @@ public class WebcamController {
                 if (webcamImageMat == null) {
                 	cancel(true);
                 }
-
+                gameTick.run();
                 webcamDisplayPanel.update(webcamImageMat);
                 
             }

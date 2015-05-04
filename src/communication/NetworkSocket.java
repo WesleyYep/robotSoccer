@@ -1,5 +1,7 @@
 package communication;
 
+import game.Tick;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,8 +21,9 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 	private List<SenderListener> senderListeners = new ArrayList<SenderListener>();
 	private JButton toggleButton;
 	private boolean isClientConnected = false;
+    private Tick gameTick;
 
-	public NetworkSocket(int portNumber, JTextArea o, JButton button) {
+    public NetworkSocket(int portNumber, JTextArea o, JButton button) {
 		try {
 			toggleButton = button;
 			toggleButton.setText("Stop");
@@ -43,6 +46,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 		output.append("connected\n");
 		publish(new Sender(clientSocket));
 		receiver = new Receiver(clientSocket, this);
+        receiver.setGameTick(gameTick);
 		for (ReceiverListener l : receiverListeners) {
 			receiver.registerListener(l);
 		}
@@ -128,5 +132,9 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 			toggleButton.setText("Start");
 		}
 	}
+
+    public void setGameTick(Tick tick){
+        this.gameTick = tick;
+    }
 
 }
