@@ -108,7 +108,7 @@ public class BasicGoalKeep extends Action {
         	}
         }   
             
-        	 String filename = "newFuzzy2.fcl";
+        	 String filename = "newFuzzy.fcl";
              FIS fis = FIS.load(filename, true);
 
              if (fis == null) {
@@ -153,9 +153,9 @@ public class BasicGoalKeep extends Action {
              double angular = (right-left)*(2/0.135);
             System.out.println("right :" + right + "left " + left);
 
-            r.linearVelocity = linear*1;
+            r.linearVelocity = linear*2;
           
-             r.angularVelocity = angular*0.75;
+             r.angularVelocity = angular*1;
              
              if (!front) {
             	 r.linearVelocity *= -1;
