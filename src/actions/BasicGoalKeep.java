@@ -172,32 +172,6 @@ public class BasicGoalKeep extends Action {
         	
        // }
     }
-    private void checkRobotPosition(double x, double y) {
-    	 Robot r = bots.getRobot(index);
-    	 int xError = 10;
-    	if (r.getXPosition() >= x-xError && r.getXPosition() <= x+xError && r.getYPosition() >= y-error && r.getYPosition() <= y+error) {
-			r.angularVelocity = 0;
-			r.linearVelocity = 0;
-		}
-    }
-    
-    private boolean isCloseToWall() {
-    	 Robot r = bots.getRobot(index);
-    	if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
-    		return true;
-    	}
-    	else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-10 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT) {
-    		return true;
-    	}
-    	else if (r.getXPosition() >= 0 && r.getXPosition() <= 10 ) {
-    		return true;
-    	}
-    	else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-10 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH) {
-    		return true;
-    	}
-    	
-    	return false;
-    }
 
 
 	@Override
