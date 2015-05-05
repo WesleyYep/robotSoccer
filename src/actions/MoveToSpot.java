@@ -19,8 +19,8 @@ public class MoveToSpot extends Action{
     public void execute() {
         Robot r = bots.getRobot(index);
 
-        //change to left/right side depending on where robot is
-        if (r.getYPosition() > 90) {
+        //change to left/right side depending on where ball is
+        if (ballY > 90) {
   //          System.out.println(r.getYPosition());
             spot.y = 162;
         } else {
