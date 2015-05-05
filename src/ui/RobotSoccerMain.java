@@ -68,6 +68,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private JButton runStratButton;
 	private JButton stopStratButton;
 	private JLabel	stratStatusLbl;
+	private ActionParameterPanel actionPanel;
 
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -142,6 +143,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		situationPanel = new SituationPanel(fieldController, currentStrategy);
 		playsPanel = new PlaysPanel(currentStrategy);
 		rolesPanel = new RolesPanel(currentStrategy);
+		actionPanel = new ActionParameterPanel();
 
 		glassPanel = new DrawAreaGlassPanel(field, situationPanel);
 		glassPanel.setVisible(false);
@@ -156,6 +158,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		tabPane.addTab("Situation", situationPanel);
 		tabPane.addTab("Plays", playsPanel);
 		tabPane.addTab("Roles", rolesPanel);
+		tabPane.addTab("Actions" ,actionPanel);
 
 		// Create webcam component panel.
 		JPanel webcamComponentPanel = new JPanel(new MigLayout());
