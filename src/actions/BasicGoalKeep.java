@@ -11,9 +11,11 @@ import bot.Robot;
 
 public class BasicGoalKeep extends Action {
    
-	private double error = 5;
-	private double goalLine = 214;
+	private double error = 2.5;
+	private double goalLine = 6;
 	private boolean fixPosition = false;
+	private double lastBallX = 0;
+	private double lastBallY = 0;
 	
     @Override
     public void execute() {
@@ -33,13 +35,13 @@ public class BasicGoalKeep extends Action {
     		setVelocityToTarget(goalLine,targetPos, true,false);
     		fixPosition = true;
     	}
-    	else if (fixPosition) {
-    		if ( ( r.getTheta() > 90+error && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+error)) {
+    	else if (fixPosition) {;
+    		if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
         		System.out.println("turning negative: " + r.getTheta() );
-        		r.angularVelocity = -Math.PI/2;
+        		r.angularVelocity = -Math.PI/4;
         	}
-        	else if ( (r.getTheta() < 90-error && r.getTheta() >= 0) || (r.getTheta() < -90-error && r.getTheta() >= -180)) {
-        		r.angularVelocity = Math.PI/2;
+        	else if ( (r.getTheta() < 90-5 && r.getTheta() >= 0) || (r.getTheta() < -90-5 && r.getTheta() >= -180)) {
+        		r.angularVelocity = Math.PI/4;
         		r.linearVelocity = 0;
         	}
         	else {
@@ -56,7 +58,7 @@ public class BasicGoalKeep extends Action {
     			isFacingTop = false;
     		}
     		
-    		if (ballY > r.getYPosition()) {
+    		if (predY > r.getYPosition()) {
     			isBallTop = false;
     		}
     		 
@@ -65,19 +67,26 @@ public class BasicGoalKeep extends Action {
     		}
     //		System.out.println(ballY);
     //		System.out.println("front: " + reverseTheta);
-    		if (ballY >= 70 && ballY <= 110 ) {
-    			setVelocityToTarget(goalLine,ballY, reverseTheta,true);
+    		
+    		double yDiff = Math.round(ballY-lastBallY);
+    		double xDiff = Math.round(ballX-lastBallX);
+    		double constant;  		
+    		
+    	
+    		if (predY >= 70 && predY <= 110 ) {
+    			setVelocityToTarget(goalLine,predY, reverseTheta,true);
 
     		}
-    		else if (ballY < 70) {
+    		else if (predY < 70) {
     			setVelocityToTarget(goalLine,70,reverseTheta,true);
     		}
-    		else if (ballY > 110) {
+    		else if (predY > 110) {
     			setVelocityToTarget(goalLine,110,reverseTheta,true);
-    		}
+    		} 
     		
     	}
-    	
+    	lastBallX = ballX;
+    	lastBallY = ballY;
     	
     }
     
@@ -87,8 +96,8 @@ public class BasicGoalKeep extends Action {
         
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());  
         double difference = targetTheta - Math.toRadians(r.getTheta());
-       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 
-        		+ Math.toRadians(r.getTheta()));
+//       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 
+   //     		+ Math.toRadians(r.getTheta()));
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
@@ -133,8 +142,8 @@ public class BasicGoalKeep extends Action {
              
              fb.setVariable("angleError", targetTheta);
              fb.setVariable("distanceError", Math.abs(targetDist));
-             System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " " 
-             		+ r.getYPosition() + " targetDist " + targetDist);
+       //      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " " 
+       //      		+ r.getYPosition() + " targetDist " + targetDist);
              // Evaluate
              fb.evaluate();
              /*
@@ -148,13 +157,12 @@ public class BasicGoalKeep extends Action {
           //   JFuzzyChart.get().chart(fb.getVariable("rightWheelVelocity"), fb.getVariable("rightWheelVelocity").getDefuzzifier(), true);
              double right  = Math.toRadians(fb.getVariable("rightWheelVelocity").getValue());
              double left = Math.toRadians(fb.getVariable("leftWheelVelocity").getValue());
-             System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
+         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
              double linear =  (right+left)/2;
              double angular = (right-left)*(2/0.135);
-            System.out.println("right :" + right + "left " + left);
+        //    System.out.println("right :" + right + "left " + left);
 
-            r.linearVelocity = linear*2;
-          
+            r.linearVelocity = linear*2; 
              r.angularVelocity = angular*1;
              
              if (!front) {
@@ -162,10 +170,10 @@ public class BasicGoalKeep extends Action {
             	 r.angularVelocity *= -1;
              }
             System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
-          		 + " r.angle: " + r.getTheta());
+          		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
              
              
-             System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
+        //     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
              //r.linearVelocity = 0;
 //            r.angularVelocity = 0;
 //        	

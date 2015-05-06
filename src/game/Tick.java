@@ -141,7 +141,11 @@ public class Tick implements SenderListener {
 		System.out.println(field.getBallX() + " " + field.getBallY());
 		field.setPredPoint(temp.get(0, 0)[0],temp.get(3, 0)[0]);
 		*/
-
+			double dT = (System.currentTimeMillis()-time)/1000.0;
+			//System.out.println(dT + " " + System.currentTimeMillis() + " " + time);
+			time = System.currentTimeMillis();
+			kFilter.transitionMatrix.put(0, 2, dT);
+			kFilter.transitionMatrix.put(1, 3, dT);
 
 			kFilter.predict(new Mat());
 
@@ -166,7 +170,7 @@ public class Tick implements SenderListener {
 				//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			}
 
-		Mat temp = kFilter.predictNextPosition(0.6);
+		Mat temp = kFilter.predictNextPosition(0.1);
 		//System.out.println(temp.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			//System.out.println(field.getBallX() + " " + field.getBallY());

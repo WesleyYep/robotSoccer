@@ -393,6 +393,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 					role.addRobot(bots, j);
 					//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+					role.setPredictedPosition(predX, predY);
 					role.execute();
 				}
 

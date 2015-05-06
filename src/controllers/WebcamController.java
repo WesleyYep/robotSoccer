@@ -164,8 +164,8 @@ public class WebcamController {
                 if (webcamImageMat == null) {
                 	cancel(true);
                 }
-                gameTick.run();
                 webcamDisplayPanel.update(webcamImageMat);
+                gameTick.run();
                 
             }
 

@@ -11,6 +11,8 @@ public abstract class Action {
 	protected Robots bots;
 	protected double ballX;
 	protected double ballY;
+	protected double predX;
+	protected double predY;
 	protected int index;
 	protected Path path;
 //	protected static KalmanFilter kFilter = new KalmanFilter();
@@ -33,5 +35,10 @@ public abstract class Action {
 	}
 
 	public abstract void execute();
+
+	public void setPredBallPosition(double predictedBallX, double predictedBallY) {
+		this.predX = predictedBallX;
+		this.predY = predictedBallY;
+	}
 
 }

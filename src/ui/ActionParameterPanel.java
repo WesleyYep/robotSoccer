@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import strategy.Action;
 import net.miginfocom.swing.MigLayout;
 import actions.Actions;
 
@@ -14,7 +15,7 @@ public class ActionParameterPanel extends JPanel {
 	
 	public ActionParameterPanel () {
 	
-		actionList = new JList(Actions.getActions());
+		actionList = new JList<Action>(Actions.getActions());
 		this.setLayout(new MigLayout());
 		
 		this.add(new JLabel("Action List"), "wrap");
