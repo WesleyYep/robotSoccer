@@ -14,6 +14,7 @@ public class ChaseBall2 extends Action{
     private int goalX = 220;
     private int goalY = 90;
     private boolean isShooting = false;
+    private int spinKick = 0;
     @Override
     public String getName() {
         return "Chase Ball (Striker)";
@@ -26,8 +27,15 @@ public class ChaseBall2 extends Action{
 
     public void setVelocityToTarget(double x, double y, boolean front) {
         Robot r = bots.getRobot(index);
+
+        if (spinKick > 0) {
+            r.linearVelocity = 0;
+            r.angularVelocity = 20;
+            spinKick--;
+            return;
+        }
+
         double targetDist;
-        
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
         //some hack to make the difference -Pi < theta < Pi
@@ -86,7 +94,8 @@ public class ChaseBall2 extends Action{
         	 r.linearVelocity *= 2;
         	 r.angularVelocity *= 2;
         	 
-        	 if (r.getXPosition() > 200) {
+        	 if (r.getXPosition() > 180) {
+                 spinKick = 10;
         		 isShooting = false;
         	 }
         	 
