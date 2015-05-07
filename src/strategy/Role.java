@@ -12,8 +12,8 @@ public class Role {
     private int index;
     private double ballX;
     private double ballY;
-    private double predBallX;
-    private double predBallY;
+    private double predictedBallX;
+    private double predictedBallY;
 
     public void setRoleName(String value) {
         this.roleName = value;
@@ -63,7 +63,7 @@ public class Role {
                 Action a = cap.getAction();
                 a.addRobot(bots, index);
                 a.setBallPosition(ballX, ballY);
-                a.setPredictedBallPosition(predBallX, predBallY);
+                a.setPredBallPosition(predictedBallX, predictedBallY);
                 a.execute();
                 break; //only have one action at a time!
             }
@@ -79,10 +79,10 @@ public class Role {
         this.ballX = x;
         this.ballY = y;
     }
-
-    public void setPredictedBallPosition(double x, double y) {
-        this.predBallX = x;
-        this.predBallY = y;
+    
+    public void setPredictedPosition(double x, double y) {
+    	this.predictedBallX = x;
+    	this.predictedBallY = y;
     }
 
     @Override

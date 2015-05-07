@@ -18,7 +18,7 @@ public class ChaseBall2 extends Action{
 
     @Override
     public void execute() {
-		setVelocityToTarget(predBallX, predBallY, true);
+		setVelocityToTarget(predX, predY, true);
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {

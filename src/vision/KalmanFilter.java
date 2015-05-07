@@ -28,6 +28,8 @@ public class KalmanFilter {
 	public Mat temp4;
 	public Mat temp5;
 	
+	public Mat pred;
+	
 	
 	public KalmanFilter(int dp, int mp, int cp, int type) {
 		
@@ -103,6 +105,9 @@ public class KalmanFilter {
 	    Core.gemm(gain,temp2,1, new Mat(), 0 ,tempC);
 	    Core.subtract(errorCovPre, tempC, errorCovPost);
 		
+	    tempC.release();
+		tempB.release();
+		tempA.release();
 		
 		return statePost;
 	}
@@ -120,6 +125,7 @@ public class KalmanFilter {
 			Core.gemm(transitionMatrix,tempA,1,new Mat(), 0, tempA);
 		}
 		//System.out.println("after " + tempA.dump());
+		
 		
 		return tempA;
 	}

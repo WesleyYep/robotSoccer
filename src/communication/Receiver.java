@@ -64,9 +64,10 @@ public class Receiver extends SwingWorker<Void, String> {
     	for (ReceiverListener l : listeners) {
     		if (!this.isCancelled()) {
     			l.action(chunks);
-                gameTick.run();
+    			gameTick.run();
     		}
 		}
+    	
     }
 
     /*
