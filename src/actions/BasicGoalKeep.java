@@ -173,9 +173,4 @@ public class BasicGoalKeep extends Action {
        // }
     }
 
-
-	@Override
-	public String getName() {
-		return "Basic Goal Keeper";
-	}
 }

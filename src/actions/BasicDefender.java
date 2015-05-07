@@ -20,11 +20,6 @@ public class BasicDefender extends Defender {
 	}
 
 	@Override
-	public String getName() {
-		return "Basic Defender";
-	}
-
-	@Override
 	public void execute() {
 		Robot r = bots.getRobot(index);
 		

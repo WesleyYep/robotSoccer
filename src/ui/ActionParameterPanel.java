@@ -14,7 +14,7 @@ public class ActionParameterPanel extends JPanel {
 	
 	public ActionParameterPanel () {
 	
-		actionList = new JList(Actions.getActions());
+		actionList = new JList(Actions.getActions().toArray());
 		this.setLayout(new MigLayout());
 		
 		this.add(new JLabel("Action List"), "wrap");

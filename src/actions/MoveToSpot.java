@@ -10,10 +10,6 @@ import strategy.Action;
 public class MoveToSpot extends Action{
     private Coordinate spot = new Coordinate(10,18);  //<-------- EDIT THIS TO CHANGE SPOT
 
-    @Override
-    public String getName() {
-        return "Move to spot";
-    }
 
     @Override
     public void execute() {

@@ -15,14 +15,10 @@ public class ChaseBall2 extends Action{
     private int goalY = 90;
     private boolean isShooting = false;
     private int spinKick = 0;
-    @Override
-    public String getName() {
-        return "Chase Ball (Striker)";
-    }
 
     @Override
     public void execute() {
-		setVelocityToTarget(ballX, ballY, true);
+		setVelocityToTarget(predBallX, predBallY, true);
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {

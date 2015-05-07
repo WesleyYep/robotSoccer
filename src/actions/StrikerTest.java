@@ -10,11 +10,6 @@ import vision.KalmanFilter;
  * Created by Wesley on 27/02/2015.
  */
 public class StrikerTest extends Action {
-		
-    @Override
-    public String getName() {
-        return "Striker test1";
-    }
 
     @Override
     public void execute() {

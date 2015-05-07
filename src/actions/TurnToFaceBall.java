@@ -9,10 +9,6 @@ import strategy.Action;
 public class TurnToFaceBall extends Action{
     public static final double ERROR_MARGIN = 0.8;
 
-    @Override
-    public String getName() {
-        return "Turn to ball (trial)";
-    }
 
     @Override
     public void execute() {

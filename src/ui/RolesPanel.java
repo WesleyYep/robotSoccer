@@ -147,9 +147,9 @@ public class RolesPanel extends JPanel implements StrategyListener {
         for (int i = 0; i < criterias.getLength(); i++) {
             criteria1.addItem(criterias.getAction(i));
         }
-        Actions actions = new Actions();
-        for (int i = 0; i < actions.getLength(); i++) {
-            action1.addItem(actions.getAction(i));
+        List<Action> actions = Actions.getActions();
+        for (Action a: actions) {
+            action1.addItem(a);
         }
     }
 

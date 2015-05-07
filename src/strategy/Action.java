@@ -11,11 +11,15 @@ public abstract class Action {
 	protected Robots bots;
 	protected double ballX;
 	protected double ballY;
+    protected double predBallX;
+    protected double predBallY;
 	protected int index;
 	protected Path path;
 //	protected static KalmanFilter kFilter = new KalmanFilter();
 
-	public abstract String getName();
+	public String getName() {
+        return getClass().getSimpleName();
+    }
 
 	public void addRobot (Robots bots, int index) {
 		this.bots = bots;
@@ -26,6 +30,11 @@ public abstract class Action {
 		this.ballX = x;
 		this.ballY = y;
 	}
+
+    public void setPredictedBallPosition(double x, double y) {
+        this.predBallX = x;
+        this.predBallY = y;
+    }
 
 	@Override
 	public String toString() {
