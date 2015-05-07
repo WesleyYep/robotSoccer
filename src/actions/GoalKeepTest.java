@@ -222,8 +222,4 @@ public class GoalKeepTest extends Action {
     }
 
 
-    @Override
-    public String getName() {
-        return "GoalKeeperTest";
-    }
 }

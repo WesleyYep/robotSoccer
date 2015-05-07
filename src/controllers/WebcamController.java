@@ -166,7 +166,6 @@ public class WebcamController {
                 }
                 webcamDisplayPanel.update(webcamImageMat);
                 gameTick.run();
-                
             }
 
             // All done; clean up

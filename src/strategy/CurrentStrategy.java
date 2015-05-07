@@ -196,8 +196,8 @@ public class CurrentStrategy {
                     Role role = new Role();
                     role.setRoleName(line.split(":")[1]);
 
-                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-                        role.setPair(criterias.findCriteria(line.split("-")[0]), actions.findAction(line.split("-")[1]), i);
+                    while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
+                        role.setPair(criterias.findCriteria(line.split("-")[0]), (Action)Class.forName(line.split("-")[1]).newInstance(), i);
                         i++;
                     }
                     roles.add(role);
@@ -239,6 +239,12 @@ public class CurrentStrategy {
             bufferedReader.close();
         } catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found!");
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }

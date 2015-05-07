@@ -17,7 +17,9 @@ public abstract class Action {
 	protected Path path;
 //	protected static KalmanFilter kFilter = new KalmanFilter();
 
-	public abstract String getName();
+	public String getName() {
+        return getClass().getSimpleName();
+    }
 
 	public void addRobot (Robots bots, int index) {
 		this.bots = bots;
