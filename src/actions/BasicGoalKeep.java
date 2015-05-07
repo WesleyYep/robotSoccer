@@ -17,6 +17,8 @@ public class BasicGoalKeep extends Action {
 	private double lastBallX = 0;
 	private double lastBallY = 0;
 	
+	private double trajectorySum = 0;
+	private double trajectoryCount = 1;
     @Override
     public void execute() {
     	Robot r = bots.getRobot(index);
@@ -48,23 +50,7 @@ public class BasicGoalKeep extends Action {
         		fixPosition = false;
         	}
     	}
-    	else{
-    		boolean isFacingTop = true;
-    		boolean isBallTop = true;
-    		
-    		boolean reverseTheta = true;
-    		
-    		if (r.getTheta() < 0) {
-    			isFacingTop = false;
-    		}
-    		
-    		if (predY > r.getYPosition()) {
-    			isBallTop = false;
-    		}
-    		 
-    		if (isBallTop != isFacingTop) {
-    			reverseTheta = false;
-    		}
+    	else{ 		
     //		System.out.println(ballY);
     //		System.out.println("front: " + reverseTheta);
     		
@@ -72,25 +58,77 @@ public class BasicGoalKeep extends Action {
     		double xDiff = Math.round(ballX-lastBallX);
     		double constant;  		
     		
-    	
-    		if (predY >= 70 && predY <= 110 ) {
-    			setVelocityToTarget(goalLine,predY, reverseTheta,true);
-
-    		}
-    		else if (predY < 70) {
-    			setVelocityToTarget(goalLine,70,reverseTheta,true);
-    		}
-    		else if (predY > 110) {
-    			setVelocityToTarget(goalLine,110,reverseTheta,true);
-    		} 
+    		boolean goingHorizontal = false;
+    		boolean goingVertical = false;
     		
+    		if (yDiff == 0) {
+    			goingHorizontal = true;
+    		}
+    		
+    		if (xDiff == 0) {
+    			goingVertical = true; 
+    		}
+    		
+    		if (!(goingVertical || goingHorizontal)) {
+    			constant = ballY - ((yDiff/xDiff)*ballX);
+    			double tracjectoryY = ((yDiff/xDiff)*goalLine) + constant;
+    		}
+    		
+    		if (ballX > 40) {
+    			if (goingVertical) {
+    				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,true);
+    			}
+    			else if (goingHorizontal) {
+    				if (ballY >= 70 && ballY <= 110 ) {
+    	    			setVelocityToTarget(goalLine,ballY, true,true);
+    	    		}
+    	    		else if (ballY < 70) {
+    	    			setVelocityToTarget(goalLine,70,true,true);
+    	    		}
+    	    		else if (ballY > 110) {
+    	    			setVelocityToTarget(goalLine,110,true,true);
+    	    		}
+    			}
+    			else if (goingHorizontal && goingVertical) {
+    				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,true);
+    			}
+    			else {
+    				constant = ballY - ((yDiff/xDiff)*ballX);
+        			double tracjectoryY = ((yDiff/xDiff)*goalLine) + constant;
+        			if (tracjectoryY >= 70 && tracjectoryY <=110 && xDiff < 0) {
+        				setVelocityToTarget(goalLine,tracjectoryY, true,true);
+        			}
+        			else if (tracjectoryY < 70) {
+    	    			setVelocityToTarget(goalLine,70,true,true);
+    	    		}
+    	    		else if (tracjectoryY > 110) {
+    	    			setVelocityToTarget(goalLine,110,true,true);
+    	    		}
+    			}
+    		//	setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,true);
+    		}
+    	//	else if (ballX > 40) {
+    	//		setVelocityToTarget(goalLine,getHalfAnglePosition(),true,true);
+    	//	}
+    		else {
+    			
+	    		if (ballY >= 70 && ballY <= 110 ) {
+	    			setVelocityToTarget(goalLine,ballY, true,true);
+	    		}
+	    		else if (ballY < 70) {
+	    			setVelocityToTarget(goalLine,70,true,true);
+	    		}
+	    		else if (ballY > 110) {
+	    			setVelocityToTarget(goalLine,110,true,true);
+	    		} 
+    		}
     	}
     	lastBallX = ballX;
     	lastBallY = ballY;
     	
     }
     
-    public void setVelocityToTarget(double x, double y, boolean front, boolean onGoalLine) {
+    public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bots.getRobot(index);
         double targetDist;
         
@@ -108,7 +146,23 @@ public class BasicGoalKeep extends Action {
         targetTheta = difference;
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
         
-        if (!front) {
+        boolean isFacingTop = true;
+ 		boolean isTargetTop = true;
+ 		boolean front  = true;
+    	if (r.getTheta() < 0) {
+ 			isFacingTop = false;
+ 		}
+ 		
+ 		if (y > r.getYPosition()) {
+ 			isTargetTop = false;
+ 		}
+ 		 
+ 		if (isTargetTop != isFacingTop) {
+ 			 front = false;
+ 		}
+    	
+        
+        if (!front && reverse) {
         	if (targetTheta < 0) {
         		targetTheta = -180 - targetTheta;
         	}
@@ -162,16 +216,16 @@ public class BasicGoalKeep extends Action {
              double angular = (right-left)*(2/0.135);
         //    System.out.println("right :" + right + "left " + left);
 
-            r.linearVelocity = linear*2; 
+             r.linearVelocity = linear*2; 
              r.angularVelocity = angular*1;
              
-             if (!front) {
+             if (!front &&reverse) {
             	 r.linearVelocity *= -1;
             	 r.angularVelocity *= -1;
              }
-            System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
-          		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-             
+      //      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
+        //  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
+           
              
         //     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
              //r.linearVelocity = 0;
@@ -179,6 +233,35 @@ public class BasicGoalKeep extends Action {
 //        	
         	
        // }
+    }
+    
+    private double getHalfAnglePosition() {
+        int goalpostOneY = 70;
+        int goalpostTwoY = 110;
+
+        double firstGoalpostTheta = Math.atan2(goalpostOneY - ballY, 0 - ballX);
+        double secondGoalpostTheta = Math.atan2(goalpostTwoY - ballY, 0 - ballX);
+        double averageTheta = Math.PI;
+
+        if ((firstGoalpostTheta >= 0 && secondGoalpostTheta >= 0) || (firstGoalpostTheta <= 0 && secondGoalpostTheta <= 0)) {
+            averageTheta = (firstGoalpostTheta + secondGoalpostTheta)/2.0; //same signs, so just get average
+        } else if (firstGoalpostTheta < 0) { //should always be the case if first predicate is not true
+            firstGoalpostTheta += 2*Math.PI;
+            averageTheta = (firstGoalpostTheta + secondGoalpostTheta)/2.0; //same signs, so just get average
+            if (averageTheta > Math.PI) {
+                averageTheta -= 2*Math.PI;
+            }
+        } else {
+            System.out.println("There is an error in the half angle calculations.");
+        }
+
+//        if (ballY < 90) {
+//            return ballY + ballX * Math.tan(averageTheta);
+ //       } else {
+   //     System.out.println(averageTheta);
+   //     System.out.println(ballY - ballX * Math.tan(averageTheta));
+            return ballY - ballX * Math.tan(averageTheta);
+  //      }
     }
 
 
