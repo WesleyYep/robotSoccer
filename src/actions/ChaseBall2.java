@@ -83,7 +83,7 @@ public class ChaseBall2 extends Action{
          double linear =  (right+left)/2;
          double angular = (right-left)*(2/0.135);
          
-         r.linearVelocity = linear*2;
+         r.linearVelocity = linear*1;
          r.angularVelocity = angular*1;
 
          if (isShooting) {
