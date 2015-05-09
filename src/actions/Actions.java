@@ -27,12 +27,13 @@ public class Actions {
 
 
       private static List<Action> actions = new ArrayList<Action>() {{
-      		add(new ChaseBall());
-      		add(new ChaseBall2());
-      		add(new BasicGoalKeep());
-      		add(new Wait());
-      		add(new TurnToFaceBall());
-            add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
+        add(new ChaseBall());
+        add(new ChaseBall2());
+        add(new BasicGoalKeep());
+        add(new Wait());
+        add(new TurnTo());
+        add(new StrikerTest());
+        add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
       }};
 
 //      public Action getAction(Class className) {

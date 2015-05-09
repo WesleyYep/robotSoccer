@@ -123,7 +123,7 @@ public class CurrentStrategy {
                         bufferedWriter.write("null-null" + "\n");
                         continue;
                     }
-                    bufferedWriter.write(r.getCriterias()[i].toString() + "-" + r.getActions()[i].toString() + "\n");
+                    bufferedWriter.write(r.getCriterias()[i].toString() + "-actions." + r.getActions()[i].toString() + "\n");
                 }
                 bufferedWriter.write("-----\n");
             }

@@ -169,7 +169,7 @@ public class BasicGoalKeep extends Action {
             	 r.linearVelocity *= -1;
             	 r.angularVelocity *= -1;
              }
-            System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
+            System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
           		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
              
              

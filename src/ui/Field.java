@@ -396,7 +396,6 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 					role.setPredictedPosition(predX, predY);
 					role.execute();
 				}
-
 			}
 		}
 	}

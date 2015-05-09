@@ -1,6 +1,5 @@
 package criteria;
 
-import actions.TurnToFaceBall;
 import bot.Robot;
 import strategy.Criteria;
 
