@@ -71,8 +71,8 @@ public class MoveToSpot extends Action{
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
 
-        r.linearVelocity = linear*2;
-        r.angularVelocity = angular*1;
+        r.linearVelocity = linear*4;
+        r.angularVelocity = angular*2;
     }
 
 //    public static void move(Robot r, Coordinate spot) {
@@ -119,8 +119,4 @@ public class MoveToSpot extends Action{
 //            r.angularVelocity = difference / (distance/100);
 //        }
 //    }
-
-    protected static double squared (double x) {
-        return x * x;
-    }
 }

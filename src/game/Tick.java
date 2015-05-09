@@ -35,7 +35,7 @@ public class Tick implements SenderListener {
 	private Mat meas;
 
 	private boolean firstTime = true;
-
+    public static double PREDICT_TIME = 0.5;
 
 
 	public Tick(Field field, Robots bots, TestComPanel comPanel) {
@@ -170,7 +170,7 @@ public class Tick implements SenderListener {
 				//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			}
 
-		Mat temp = kFilter.predictNextPosition(0.1);
+		Mat temp = kFilter.predictNextPosition(PREDICT_TIME);
 		//System.out.println(temp.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			//System.out.println(field.getBallX() + " " + field.getBallY());
