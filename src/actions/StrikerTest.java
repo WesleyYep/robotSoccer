@@ -18,16 +18,18 @@ public class StrikerTest extends Action {
     public void execute() {
         Robot r = bots.getRobot(index);
 
-        if (isKicking > 0) {
+       /* if (isKicking > 0) {
             r.linearVelocity = isKicking;
             r.angularVelocity = 0;
             if (r.getXPosition() > 200 || Math.abs(r.getTheta()) > 5) {
                 isKicking = 0;
             }
         }
-        else if (ready) {
+        else */if (ready) {
             isKicking = ballComingIntoPath(r);
-            ready = false;
+            if (isKicking == 0) {
+                ready = false;
+            }
         }
         else if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
             TurnTo.turn(r, new Coordinate(220, 90));
@@ -48,7 +50,7 @@ public class StrikerTest extends Action {
 
     private double ballComingIntoPath(Robot r) {
         //return false if ball is moving away
-        if ((predY > ballY && predY > r.getYPosition()) || (predY < ballY && predY < r.getYPosition())) {
+        if ((predY > ballY && ballY > r.getYPosition()) || (predY < ballY && ballY < r.getYPosition())) {
             return 0;
         }
 
