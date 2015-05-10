@@ -12,7 +12,7 @@ import bot.Robot;
 public class BasicGoalKeep extends Action {
    
 	private double error = 2.5;
-	private double goalLine = 214;
+	private double goalLine = 6;
 	private boolean fixPosition = false;
 	private double lastBallX = 0;
 	private double lastBallY = 0;
@@ -60,6 +60,7 @@ public class BasicGoalKeep extends Action {
     		
     		boolean goingHorizontal = false;
     		boolean goingVertical = false;
+    		double trajectoryY = 0;
     		
     		if (yDiff == 0) {
     			goingHorizontal = true;
@@ -71,14 +72,13 @@ public class BasicGoalKeep extends Action {
     		
     		if (!(goingVertical || goingHorizontal)) {
     			constant = ballY - ((yDiff/xDiff)*ballX);
-    			double tracjectoryY = ((yDiff/xDiff)*goalLine) + constant;
+    			trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
     		}
-    		
-    		if (ballX > 40) {
-    			if (goingVertical) {
-    				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,true);
-    			}
-    			else if (goingHorizontal) {
+    		if (ballX >= 110) {	
+    			setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
+    		}
+    		else {
+    			if (goingVertical || goingHorizontal) {
     				if (ballY >= 70 && ballY <= 110 ) {
     	    			setVelocityToTarget(goalLine,ballY, true,true);
     	    		}
@@ -89,38 +89,52 @@ public class BasicGoalKeep extends Action {
     	    			setVelocityToTarget(goalLine,110,true,true);
     	    		}
     			}
-    			else if (goingHorizontal && goingVertical) {
-    				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,true);
-    			}
+    			else if (!(goingVertical || goingHorizontal)) {
+    				 if (xDiff < 0) {
+    					 //ball going toward the goal
+    					 if (trajectoryY >= 70 && trajectoryY <=110) {
+    						 if (r.getYPosition()>= (trajectoryY-2) && r.getYPosition() <=(trajectoryY+2)) {
+    							 setVelocityToTarget(goalLine,r.getYPosition(),true,true);
+    						 }
+    						 else {
+    							 setVelocityToTarget(goalLine,trajectoryY,true,true);
+    						 }
+    					 }
+    					 else {
+    						 //
+    						 if ( (trajectoryY> 110 && ballY > 110) || (trajectoryY<= 110 && ballY <= 110)) {
+    							// System.out.println("same side");
+    							 if (ballY >= 70 && ballY <= 110 ) {
+    	    	    	    			setVelocityToTarget(goalLine,ballY, true,true);
+    	    	    	    		}
+    	    	    	    		else if (ballY < 70) {
+    	    	    	    			setVelocityToTarget(goalLine,70,true,true);
+    	    	    	    		}
+    	    	    	    		else if (ballY > 110) {
+    	    	    	    			setVelocityToTarget(goalLine,110,true,true);
+    	    	    	    		}
+    						 }
+    						 else {
+    							// System.out.println("oppo side");
+    							 setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2,true,true);
+    						 }
+    					 }
+    				 }
+    				 else {
+    					 if (ballY >= 70 && ballY <= 110 ) {
+    	    	    			setVelocityToTarget(goalLine,ballY, true,true);
+    	    	    		}
+    	    	    		else if (ballY < 70) {
+    	    	    			setVelocityToTarget(goalLine,70,true,true);
+    	    	    		}
+    	    	    		else if (ballY > 110) {
+    	    	    			setVelocityToTarget(goalLine,110,true,true);
+    	    	    		}
+    				 }
+    		    }
     			else {
-    				constant = ballY - ((yDiff/xDiff)*ballX);
-        			double tracjectoryY = ((yDiff/xDiff)*goalLine) + constant;
-        			if (tracjectoryY >= 70 && tracjectoryY <=110 && xDiff < 0) {
-        				setVelocityToTarget(goalLine,tracjectoryY, true,true);
-        			}
-        			else if (tracjectoryY < 70) {
-    	    			setVelocityToTarget(goalLine,70,true,true);
-    	    		}
-    	    		else if (tracjectoryY > 110) {
-    	    			setVelocityToTarget(goalLine,110,true,true);
-    	    		}
+    				setVelocityToTarget(r.getXPosition(),r.getYPosition(),true,true);
     			}
-    		//	setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,true);
-    		}
-    	//	else if (ballX > 40) {
-    	//		setVelocityToTarget(goalLine,getHalfAnglePosition(),true,true);
-    	//	}
-    		else {
-    			
-	    		if (ballY >= 70 && ballY <= 110 ) {
-	    			setVelocityToTarget(goalLine,ballY, true,true);
-	    		}
-	    		else if (ballY < 70) {
-	    			setVelocityToTarget(goalLine,70,true,true);
-	    		}
-	    		else if (ballY > 110) {
-	    			setVelocityToTarget(goalLine,110,true,true);
-	    		} 
     		}
     	}
     	lastBallX = ballX;
