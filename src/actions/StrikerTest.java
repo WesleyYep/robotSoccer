@@ -18,34 +18,34 @@ public class StrikerTest extends Action {
     public void execute() {
         Robot r = bots.getRobot(index);
 
-       /* if (isKicking > 0) {
-            r.linearVelocity = isKicking;
-            r.angularVelocity = 0;
-            if (r.getXPosition() > 200 || Math.abs(r.getTheta()) > 5) {
-                isKicking = 0;
-            }
+        /* if (isKicking > 0) {
+        r.linearVelocity = isKicking;
+        r.angularVelocity = 0;
+        if (r.getXPosition() > 200 || Math.abs(r.getTheta()) > 5) {
+            isKicking = 0;
         }
-        else */if (ready) {
-            isKicking = ballComingIntoPath(r);
-            if (isKicking == 0) {
-                ready = false;
-            }
-        }
-        else if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
-            TurnTo.turn(r, new Coordinate(220, 90));
-            r.linearVelocity = 0;
-            if (Math.abs(r.angularVelocity) < 0.1 && Math.abs(r.getTheta()) < 5) {
-                r.angularVelocity = 0;
-                ready = true;
-            }
-        }
-        else {
-            ready = false;
-            MoveToSpot.move(r, new Coordinate(110, 90));
-            if (r.linearVelocity == 0 && r.angularVelocity == 0) {
-                atCentre = true;
-            }
-        }
+	    }
+	    else */if (ready) {
+	        isKicking = ballComingIntoPath(r);
+	        if (isKicking == 0) {
+	            ready = false;
+	        }
+	    }
+	    else if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
+	        TurnTo.turn(r, new Coordinate(220, 90));
+	        r.linearVelocity = 0;
+	        if (Math.abs(r.getTheta())%360 < 5) {
+	            r.angularVelocity = 0;
+	            ready = true;
+	        }
+	    }
+	    else {
+	        ready = false;
+	        MoveToSpot.move(r, new Coordinate(110, 90));
+	        if (r.linearVelocity == 0 && r.angularVelocity == 0) {
+	            atCentre = true;
+	        }
+	    }
     }
 
     private double ballComingIntoPath(Robot r) {
@@ -69,7 +69,7 @@ public class StrikerTest extends Action {
             //only go if the time is under 3 seconds
             if (time < 3) {
                 //get distance of robot to spot
-                double robotDistance = Math.sqrt(squared(r.getXPosition()-x) + squared(ballY-r.getYPosition()));
+                double robotDistance = Math.sqrt(squared(r.getXPosition()-x));
                 r.linearVelocity = (robotDistance/time)/100;
                 r.angularVelocity = 0;
                 return r.linearVelocity;

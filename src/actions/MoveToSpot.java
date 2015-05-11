@@ -30,6 +30,7 @@ public class MoveToSpot extends Action{
         if (Math.abs(r.getXPosition() - spot.x) < ERROR_MARGIN && Math.abs(r.getYPosition() - spot.y) < ERROR_MARGIN ) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
+            System.out.println("stopped");
             return;
         }
 
@@ -71,8 +72,8 @@ public class MoveToSpot extends Action{
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
 
-        r.linearVelocity = linear*4;
-        r.angularVelocity = angular*2;
+        r.linearVelocity = linear;
+        r.angularVelocity = angular;
     }
 
 //    public static void move(Robot r, Coordinate spot) {
