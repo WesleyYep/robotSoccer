@@ -30,7 +30,6 @@ public class MoveToSpot extends Action{
         if (Math.abs(r.getXPosition() - spot.x) < ERROR_MARGIN && Math.abs(r.getYPosition() - spot.y) < ERROR_MARGIN ) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
-            System.out.println("stopped");
             return;
         }
 
@@ -44,6 +43,13 @@ public class MoveToSpot extends Action{
         }
         targetTheta = Math.toDegrees(difference);
         double targetDist = Math.sqrt(Math.pow((spot.x-r.getXPosition()),2) + Math.pow((spot.y-r.getYPosition()),2));
+
+        //if directly behind, just hard code
+        if (Math.abs(targetTheta) > 175) {
+            r.angularVelocity = 0;
+            r.linearVelocity = -1;
+            return;
+        }
 
 
         String filename = "newFuzzy.fcl";
@@ -72,7 +78,7 @@ public class MoveToSpot extends Action{
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
 
-        r.linearVelocity = linear;
+        r.linearVelocity = linear * 2;
         r.angularVelocity = angular;
     }
 

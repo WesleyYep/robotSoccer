@@ -59,8 +59,8 @@ public class TurnTo extends Action{
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
 
-        r.linearVelocity = linear*2;
-        r.angularVelocity = angular*1;
+        r.linearVelocity = 0;
+        r.angularVelocity = angular*0.5;
     }
 
     protected double squared (double x) {

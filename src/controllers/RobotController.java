@@ -25,12 +25,12 @@ public class RobotController {
 			double tempLin = linearVelocity[i];
 			double tempAng = angularVelocity[i];
 			
-//			if (tempLin < -4.0) {
-//				tempLin = -4.0;
-//			} else if (tempLin > 4.0) {
-//				tempLin =  4.0;
-//			}
-//			
+			if (tempLin < -4.0) {
+				tempLin = -4.0;
+			} else if (tempLin > 4.0) {
+				tempLin =  4.0;
+			}
+
 			// Clip the angle. Max 128, min -128.
 			if (tempAng < -128.0) {
 				tempAng = -128.0;

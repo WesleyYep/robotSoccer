@@ -95,11 +95,12 @@ public class ChaseBall2 extends Action{
             } else if (r.angularVelocity < -3) {
                 r.angularVelocity = -3;
             }
-            r.linearVelocity = targetDist/100.0;
+            //r.linearVelocity = targetDist/100.0;
+            r.linearVelocity = 1;
 
             if (isCloseToWall()) {
                 if (Math.abs(targetTheta) < 10) {
-                    r.linearVelocity = 0.2;
+                    r.linearVelocity = 0.5;
                 } else {
                     r.linearVelocity = 0;
                 }

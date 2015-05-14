@@ -10,48 +10,37 @@ import strategy.Action;
  * Created by Wesley on 27/02/2015.
  */
 public class StrikerTest extends Action {
-    private boolean atCentre = false;
     private boolean ready = false;
-    private double isKicking = 0;
+    private boolean isKicking = false;
+    private boolean atCentre = false;
 
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
 
-        /* if (isKicking > 0) {
-        r.linearVelocity = isKicking;
-        r.angularVelocity = 0;
-        if (r.getXPosition() > 200 || Math.abs(r.getTheta()) > 5) {
-            isKicking = 0;
+        isKicking = ballComingIntoPath(r);
+        if (isKicking) {
+            return;
         }
-	    }
-	    else */if (ready) {
-	        isKicking = ballComingIntoPath(r);
-	        if (isKicking == 0) {
-	            ready = false;
-	        }
-	    }
-	    else if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
+        if (atCentre && Math.abs(r.getXPosition() - Math.max(110,ballX-50)) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
 	        TurnTo.turn(r, new Coordinate(220, 90));
 	        r.linearVelocity = 0;
 	        if (Math.abs(r.getTheta())%360 < 5) {
 	            r.angularVelocity = 0;
-	            ready = true;
 	        }
 	    }
 	    else {
-	        ready = false;
-	        MoveToSpot.move(r, new Coordinate(110, 90));
+	        MoveToSpot.move(r, new Coordinate((int)Math.max(110,ballX-50), 90));
 	        if (r.linearVelocity == 0 && r.angularVelocity == 0) {
 	            atCentre = true;
 	        }
 	    }
     }
 
-    private double ballComingIntoPath(Robot r) {
+    private boolean ballComingIntoPath(Robot r) {
         //return false if ball is moving away
         if ((predY > ballY && ballY > r.getYPosition()) || (predY < ballY && ballY < r.getYPosition())) {
-            return 0;
+            return false;
         }
 
         //get an equation in the form y = mx + c
@@ -72,10 +61,10 @@ public class StrikerTest extends Action {
                 double robotDistance = Math.sqrt(squared(r.getXPosition()-x));
                 r.linearVelocity = (robotDistance/time)/100;
                 r.angularVelocity = 0;
-                return r.linearVelocity;
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     protected static double squared (double x) {
