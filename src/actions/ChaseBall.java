@@ -17,7 +17,7 @@ public class ChaseBall extends Action{
 
     @Override
     public void execute() {
-        setVelocityToTarget(ballX, ballY, true);
+        setVelocityToTarget(predX, predY, true);
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {
@@ -63,13 +63,17 @@ public class ChaseBall extends Action{
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
 
-        r.linearVelocity = linear*4;
+        r.linearVelocity = linear;
         r.angularVelocity = angular;
+        
+        if (Math.abs(r.angularVelocity) < Math.PI/4) {
+        	r.linearVelocity *= 8;
+        }
 
         if (targetDist < 20 && Math.abs(targetTheta) < 5) {
             double angle = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
             if (Math.abs(angle) < Math.PI / 4) {
-                System.out.println("dribble! ");
+               // System.out.println("dribble! ");
                 r.angularVelocity += 5*angle;
             }
         }

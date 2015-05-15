@@ -23,10 +23,10 @@ public class MoveToSpot extends Action{
         } else {
             spot.y = 18;
         }
-        move(r, spot);
+        move(r, spot, 4);
     }
 
-    public static void move(Robot r, Coordinate spot) {
+    public static void move(Robot r, Coordinate spot, int speed) {
         if (Math.abs(r.getXPosition() - spot.x) < ERROR_MARGIN && Math.abs(r.getYPosition() - spot.y) < ERROR_MARGIN ) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
@@ -78,7 +78,7 @@ public class MoveToSpot extends Action{
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
 
-        r.linearVelocity = linear * 2;
+        r.linearVelocity = linear * speed;
         r.angularVelocity = angular;
     }
 

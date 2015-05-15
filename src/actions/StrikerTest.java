@@ -22,7 +22,7 @@ public class StrikerTest extends Action {
         if (isKicking) {
             return;
         }
-        if (atCentre && Math.abs(r.getXPosition() - Math.max(110,ballX-50)) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
+        if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
 	        TurnTo.turn(r, new Coordinate(220, 90));
 	        r.linearVelocity = 0;
 	        if (Math.abs(r.getTheta())%360 < 5) {
@@ -30,7 +30,7 @@ public class StrikerTest extends Action {
 	        }
 	    }
 	    else {
-	        MoveToSpot.move(r, new Coordinate((int)Math.max(110,ballX-50), 90));
+	        MoveToSpot.move(r, new Coordinate(110, 90), 1);
 	        if (r.linearVelocity == 0 && r.angularVelocity == 0) {
 	            atCentre = true;
 	        }
@@ -38,6 +38,15 @@ public class StrikerTest extends Action {
     }
 
     private boolean ballComingIntoPath(Robot r) {
+    	//return true if ball is directly in front (or behind) of robot
+    	if (Math.abs(r.getYPosition() - ballY) < 3) {
+    		if (Math.abs(r.getTheta())%360 < 5) {
+        		r.linearVelocity = 3;
+    		} else if (Math.abs(r.getTheta())%360 > 175) {
+    			r.linearVelocity = -3;
+    		}
+    		return true;
+    	}
         //return false if ball is moving away
         if ((predY > ballY && ballY > r.getYPosition()) || (predY < ballY && ballY < r.getYPosition())) {
             return false;
@@ -56,7 +65,7 @@ public class StrikerTest extends Action {
             //find time taken for ball to reach intersection point
             double time = ballDistance / ballSpeed;
             //only go if the time is under 3 seconds
-            if (time < 3) {
+            if (time < 1) {
                 //get distance of robot to spot
                 double robotDistance = Math.sqrt(squared(r.getXPosition()-x));
                 r.linearVelocity = (robotDistance/time)/100;
