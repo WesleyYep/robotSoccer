@@ -12,7 +12,7 @@ import bot.Robot;
 public class BasicGoalKeep extends Action {
    
 	private double error = 2.5;
-	private double goalLine = 6;
+	private double goalLine = 214;
 	private boolean fixPosition = false;
 	private double lastBallX = 0;
 	private double lastBallY = 0;
@@ -89,10 +89,27 @@ public class BasicGoalKeep extends Action {
     			
     			double yInt = yMean - slope* xMean;
     			
-    			trajectoryY = (slope*(goalLine+3.75)) + yInt;
+    			
+    			if (goalLine < 110 ) {
+    				trajectoryY = (slope*(goalLine+3.75)) + yInt;
+    			}
+    			else {
+    				trajectoryY = (slope*(goalLine-3.75)) + yInt;
+    			}
+    			
+    			
     		}
     		System.out.println(trajectoryY);
-    		if (ballX >= 110) {	
+    		
+    		boolean goal = false;
+    		if (goalLine > 110) {
+    			goal = ballX <= 110;
+    		}
+    		else {
+    			goal =ballX >=110;
+    		}
+    		
+    		if (goal) {	
     			setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
     		}
     		else {
@@ -108,7 +125,14 @@ public class BasicGoalKeep extends Action {
     	    		}
     			}
     			else if (!(goingVertical || goingHorizontal)) {
-    				 if (xDiff < 0) {
+    				boolean direction;
+    				if (goalLine < 110) {
+    					direction = xDiff < 0;
+    				}
+    				else {
+    					direction = xDiff > 0;
+    				}
+    				 if (direction) {
     					 //ball going toward the goal
     					 if (trajectoryY >= 70 && trajectoryY <=110) {
     						 if (r.getYPosition()>= (trajectoryY-2) && r.getYPosition() <=(trajectoryY+2)) {
