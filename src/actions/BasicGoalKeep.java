@@ -12,13 +12,13 @@ import bot.Robot;
 public class BasicGoalKeep extends Action {
    
 	private double error = 2.5;
-	private double goalLine = 214;
+	private double goalLine = 6;
 	private boolean fixPosition = false;
 	private double lastBallX = 0;
 	private double lastBallY = 0;
+	private double lastBallX2 = 0;
+	private double lastBallY2 = 0;
 	
-	private double trajectorySum = 0;
-	private double trajectoryCount = 1;
     @Override
     public void execute() {
     	Robot r = bots.getRobot(index);
@@ -72,8 +72,26 @@ public class BasicGoalKeep extends Action {
     		
     		if (!(goingVertical || goingHorizontal)) {
     			constant = ballY - ((yDiff/xDiff)*ballX);
-    			trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
+    			//trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
+    			
+    			double sumY = ballY + lastBallY + lastBallY2;
+    			double sumX = ballX + lastBallX + lastBallX2;
+    			
+    			double sumY2 = (ballY*ballY) + (lastBallY*lastBallY) + (lastBallY2*lastBallY2);
+    			double sumX2 = (ballX*ballX) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
+    			
+    			double sumXY = (ballX*ballY) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
+    			
+    			double xMean = sumX/3;
+    			double yMean = sumY/3;
+    			
+    			double slope = (sumXY - sumX * yMean) / (sumX2 - sumX * xMean);
+    			
+    			double yInt = yMean - slope* xMean;
+    			
+    			trajectoryY = (slope*(goalLine+3.75)) + yInt;
     		}
+    		System.out.println(trajectoryY);
     		if (ballX >= 110) {	
     			setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
     		}
@@ -139,7 +157,8 @@ public class BasicGoalKeep extends Action {
     	}
     	lastBallX = ballX;
     	lastBallY = ballY;
-    	
+    	lastBallX2 = lastBallX;
+    	lastBallY2 = lastBallY;
     }
     
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
