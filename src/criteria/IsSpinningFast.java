@@ -30,7 +30,7 @@ public class IsSpinningFast extends Criteria {
         } else if (r.angularVelocity < 3) {
             i = 0;
             return false; //can't be spinning out of control unless angular velocity is at least 3 (I think)
-        } else if (i < 1000){
+        } else if (i < 100){
             i++;
             return false; //need to wait for 1000 ticks (5 sec) before it should be considered out of control
         } else {

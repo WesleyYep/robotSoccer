@@ -13,33 +13,63 @@ public class StrikerTest extends Action {
     private boolean ready = false;
     private boolean isKicking = false;
     private boolean atCentre = false;
+    private int targetX = 0;
+    private int targetY = 0;
+    private double oldDistanceToTarget = 0;
+    private int countTimesThatSeemStuck = 0;
 
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
 
+        //this is number 1 priority
         isKicking = ballComingIntoPath(r);
         if (isKicking) {
             return;
         }
+
+        //check if robot is stuck
+        double newTargetDistance = getDistanceToTarget(r);
+        if (oldDistanceToTarget - newTargetDistance < 0.8) {
+            System.out.println(oldDistanceToTarget - newTargetDistance);
+            countTimesThatSeemStuck++;
+        } else {
+     //       System.out.println(oldDistanceToTarget - newTargetDistance);
+            countTimesThatSeemStuck = 0;
+        }
+        if (countTimesThatSeemStuck > 150) {
+            r.linearVelocity = 5;
+            countTimesThatSeemStuck = 0;
+            return;
+        } else if (countTimesThatSeemStuck > 100) {
+            System.out.println("stuck!");
+            r.angularVelocity = 15;
+            return;
+        }
+
+        //move and turn
         if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
 	        TurnTo.turn(r, new Coordinate(220, 90));
 	        r.linearVelocity = 0;
 	        if (Math.abs(r.getTheta())%360 < 5) {
 	            r.angularVelocity = 0;
 	        }
+            countTimesThatSeemStuck = 0;
 	    }
 	    else {
-	        MoveToSpot.move(r, new Coordinate(110, 90), 1);
+            targetX = 110;
+            targetY = 90;
+	        MoveToSpot.move(r, new Coordinate(targetX, targetY), 1);
 	        if (r.linearVelocity == 0 && r.angularVelocity == 0) {
 	            atCentre = true;
 	        }
+            oldDistanceToTarget = getDistanceToTarget(r);
 	    }
     }
 
     private boolean ballComingIntoPath(Robot r) {
     	//return true if ball is directly in front (or behind) of robot
-    	if (Math.abs(r.getYPosition() - ballY) < 3) {
+    	if (Math.abs(r.getYPosition() - ballY) < 3 && ballX > r.getXPosition()) {
     		if (Math.abs(r.getTheta())%360 < 5) {
         		r.linearVelocity = 3;
     		} else if (Math.abs(r.getTheta())%360 > 175) {
@@ -74,6 +104,10 @@ public class StrikerTest extends Action {
             }
         }
         return false;
+    }
+
+    private double getDistanceToTarget(Robot r) {
+        return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
     }
 
     protected static double squared (double x) {
