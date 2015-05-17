@@ -7,6 +7,7 @@ import com.alee.laf.WebLookAndFeel;
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
 import config.ConfigFile;
+import config.ConfigPreviousFile;
 import controllers.*;
 import game.Tick;
 import net.miginfocom.swing.MigLayout;
@@ -76,6 +77,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private JButton stopStratButton;
 	private JLabel	stratStatusLbl;
 	private ActionParameterPanel actionPanel;
+
+    private JButton openPreviousFiles = new JButton("Open Previous");
 
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -304,10 +307,20 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();
         configFile.createConfigFile();
+        ConfigPreviousFile configPreviousFile = ConfigPreviousFile.getInstance();
+        configPreviousFile.createConfigFile();
 
 		// Create the menu
 		createMenu();
 		add(contentPane);
+
+        openPreviousFiles.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentStrategy.read(ConfigPreviousFile.getInstance().getPreviousStratFile());
+                visionSetting.open(ConfigPreviousFile.getInstance().getPreviousVisionFile());
+            }
+        });
     }
     
     /**
@@ -467,6 +480,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		menuBar.add(visionMenu);
 		menuBar.add(stratMenu);
+        menuBar.add(openPreviousFiles);
 
 		setJMenuBar(menuBar);
 	}

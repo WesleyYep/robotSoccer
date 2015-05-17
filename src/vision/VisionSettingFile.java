@@ -1,6 +1,7 @@
 package vision;
 
 import config.ConfigFile;
+import config.ConfigPreviousFile;
 import controllers.VisionController;
 import controllers.WebcamController;
 import org.apache.commons.configuration.ConfigurationException;
@@ -146,6 +147,8 @@ public class VisionSettingFile {
 
 			saveSetting.save();
 
+            //save last read file
+            ConfigPreviousFile.getInstance().setPreviousVisionFile(fileName);
 
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -185,81 +188,86 @@ public class VisionSettingFile {
 		//creating the folder name and write into configuration
 		String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
 		ConfigFile.getInstance().setLastOpenDirectory(folderPath);
+        open(fileName);
+        //save last read file
+        ConfigPreviousFile.getInstance().setPreviousVisionFile(fileName);
+	}
 
-		try {
-			XMLConfiguration openSetting = new XMLConfiguration(fileName);
+    public void open(String fileName) {
+        try {
+            XMLConfiguration openSetting = new XMLConfiguration(fileName);
 
-			visionController.setTopLeft(new Point2D.Double(
-					openSetting.getDouble("topLeftX"), openSetting.getDouble("topLeftY")));
-			visionController.setTopRight(new Point2D.Double(
-					openSetting.getDouble("topRightX"), openSetting.getDouble("topRightY")));
-			visionController.setBottomLeft(new Point2D.Double(
-					openSetting.getDouble("bottomLeftX"), openSetting.getDouble("bottomLeftY")));
-			visionController.setBottomRight(new Point2D.Double(
-					openSetting.getDouble("bottomRightX"), openSetting.getDouble("bottomRightY")));
+            visionController.setTopLeft(new Point2D.Double(
+                    openSetting.getDouble("topLeftX"), openSetting.getDouble("topLeftY")));
+            visionController.setTopRight(new Point2D.Double(
+                    openSetting.getDouble("topRightX"), openSetting.getDouble("topRightY")));
+            visionController.setBottomLeft(new Point2D.Double(
+                    openSetting.getDouble("bottomLeftX"), openSetting.getDouble("bottomLeftY")));
+            visionController.setBottomRight(new Point2D.Double(
+                    openSetting.getDouble("bottomRightX"), openSetting.getDouble("bottomRightY")));
 
-			SamplingPanel ballSP = colourPanel.ballSamplingPanel;
+            SamplingPanel ballSP = colourPanel.ballSamplingPanel;
 
-			ballSP.setLowerBoundForH(openSetting.getInt("ballHLower"));
-			ballSP.setLowerBoundForS(openSetting.getInt("ballSLower"));
-			ballSP.setLowerBoundForV(openSetting.getInt("ballVLower"));
-			
-			ballSP.setUpperBoundForH(openSetting.getInt("ballHUpper"));
-			ballSP.setUpperBoundForS(openSetting.getInt("ballSUpper"));
-			ballSP.setUpperBoundForV(openSetting.getInt("ballVUpper"));
+            ballSP.setLowerBoundForH(openSetting.getInt("ballHLower"));
+            ballSP.setLowerBoundForS(openSetting.getInt("ballSLower"));
+            ballSP.setLowerBoundForV(openSetting.getInt("ballVLower"));
 
-			SamplingPanel teamSp = colourPanel.teamSamplingPanel;
+            ballSP.setUpperBoundForH(openSetting.getInt("ballHUpper"));
+            ballSP.setUpperBoundForS(openSetting.getInt("ballSUpper"));
+            ballSP.setUpperBoundForV(openSetting.getInt("ballVUpper"));
 
-			teamSp.setLowerBoundForH(openSetting.getInt("teamHLower"));
-			teamSp.setLowerBoundForS(openSetting.getInt("teamSLower"));
-			teamSp.setLowerBoundForV(openSetting.getInt("teamVLower"));
-			
-			teamSp.setUpperBoundForH(openSetting.getInt("teamHUpper"));
-			teamSp.setUpperBoundForS(openSetting.getInt("teamSUpper"));
-			teamSp.setUpperBoundForV(openSetting.getInt("teamVUpper"));
+            SamplingPanel teamSp = colourPanel.teamSamplingPanel;
 
-			SamplingPanel greenSp = colourPanel.greenSamplingPanel;
+            teamSp.setLowerBoundForH(openSetting.getInt("teamHLower"));
+            teamSp.setLowerBoundForS(openSetting.getInt("teamSLower"));
+            teamSp.setLowerBoundForV(openSetting.getInt("teamVLower"));
 
-			greenSp.setLowerBoundForH(openSetting.getInt("greenHLower"));
-			greenSp.setLowerBoundForS(openSetting.getInt("greenSLower"));
-			greenSp.setLowerBoundForV(openSetting.getInt("greenVLower"));
-			
-			greenSp.setUpperBoundForH(openSetting.getInt("greenHUpper"));
-			greenSp.setUpperBoundForS(openSetting.getInt("greenSUpper"));
-			greenSp.setUpperBoundForV(openSetting.getInt("greenVUpper"));
+            teamSp.setUpperBoundForH(openSetting.getInt("teamHUpper"));
+            teamSp.setUpperBoundForS(openSetting.getInt("teamSUpper"));
+            teamSp.setUpperBoundForV(openSetting.getInt("teamVUpper"));
 
-			SamplingPanel groundSp = colourPanel.groundSamplingPanel;
+            SamplingPanel greenSp = colourPanel.greenSamplingPanel;
 
-			groundSp.setLowerBoundForH(openSetting.getInt("groundHLower"));
-			groundSp.setLowerBoundForS(openSetting.getInt("groundSLower"));
-			groundSp.setLowerBoundForV(openSetting.getInt("groundVLower"));
-			
-			groundSp.setUpperBoundForH(openSetting.getInt("groundHUpper"));
-			groundSp.setUpperBoundForS(openSetting.getInt("groundSUpper"));
-			groundSp.setUpperBoundForV(openSetting.getInt("groundVUpper"));
+            greenSp.setLowerBoundForH(openSetting.getInt("greenHLower"));
+            greenSp.setLowerBoundForS(openSetting.getInt("greenSLower"));
+            greenSp.setLowerBoundForV(openSetting.getInt("greenVLower"));
 
-			SamplingPanel opponentSp = colourPanel.opponentSamplingPanel;
+            greenSp.setUpperBoundForH(openSetting.getInt("greenHUpper"));
+            greenSp.setUpperBoundForS(openSetting.getInt("greenSUpper"));
+            greenSp.setUpperBoundForV(openSetting.getInt("greenVUpper"));
 
-			opponentSp.setLowerBoundForH(openSetting.getInt("opponentHLower"));
-			opponentSp.setLowerBoundForS(openSetting.getInt("opponentSLower"));
-			opponentSp.setLowerBoundForV(openSetting.getInt("opponentVLower"));
-			
-			opponentSp.setUpperBoundForH(openSetting.getInt("opponentHUpper"));
-			opponentSp.setUpperBoundForS(openSetting.getInt("opponentSUpper"));
-			opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
+            SamplingPanel groundSp = colourPanel.groundSamplingPanel;
+
+            groundSp.setLowerBoundForH(openSetting.getInt("groundHLower"));
+            groundSp.setLowerBoundForS(openSetting.getInt("groundSLower"));
+            groundSp.setLowerBoundForV(openSetting.getInt("groundVLower"));
+
+            groundSp.setUpperBoundForH(openSetting.getInt("groundHUpper"));
+            groundSp.setUpperBoundForS(openSetting.getInt("groundSUpper"));
+            groundSp.setUpperBoundForV(openSetting.getInt("groundVUpper"));
+
+            SamplingPanel opponentSp = colourPanel.opponentSamplingPanel;
+
+            opponentSp.setLowerBoundForH(openSetting.getInt("opponentHLower"));
+            opponentSp.setLowerBoundForS(openSetting.getInt("opponentSLower"));
+            opponentSp.setLowerBoundForV(openSetting.getInt("opponentVLower"));
+
+            opponentSp.setUpperBoundForH(openSetting.getInt("opponentHUpper"));
+            opponentSp.setUpperBoundForS(openSetting.getInt("opponentSUpper"));
+            opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
 
             colourPanel.setRobotSizeMinimum(openSetting.getInt("robotMinSize",0));
             colourPanel.setGreenSizeMinimum(openSetting.getInt("greenMinSize",0));
             colourPanel.setBallSizeMinimum(openSetting.getInt("ballMinSize",0));
-            
+
             colourPanel.setRobotSizeMaximum(openSetting.getInt("robotMaxSize",0));
             colourPanel.setGreenSizeMaximum(openSetting.getInt("greenMaxSize",0));
             colourPanel.setBallSizeMaximum(openSetting.getInt("ballMaxSize",0));
 
-		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        } catch (ConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }

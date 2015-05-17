@@ -2,6 +2,7 @@ bin/*
 .settings/*
 .project
 RobotSoccerConfiguration.config
+PreviousFile.config
 out/*
 .idea/*
 /bin/

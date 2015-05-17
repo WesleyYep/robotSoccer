@@ -2,6 +2,7 @@ package strategy;
 
 import actions.Actions;
 import config.ConfigFile;
+import config.ConfigPreviousFile;
 import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
@@ -150,6 +151,8 @@ public class CurrentStrategy {
             }
 
             bufferedWriter.close();
+            //save last read file
+            ConfigPreviousFile.getInstance().setPreviousStratFile(fileName);
         }
         catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
@@ -179,7 +182,14 @@ public class CurrentStrategy {
         //creating the folder name and write into configuration
         String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
         ConfigFile.getInstance().setLastOpenDirectory(folderPath);
+        read(fileName);
+        //save last read file
+        ConfigPreviousFile.getInstance().setPreviousStratFile(fileName);
+    }
+
+    public void read(String fileName) {
         String line = null;
+
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -217,11 +227,11 @@ public class CurrentStrategy {
                     area.addAreaListener(fieldController);
                     area.setBounds(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]),
                             Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
-                    fieldController.addArea(area); 
+                    fieldController.addArea(area);
                     fieldController.setSelectedArea(area);
-                    
+
                     for (Situation s : situations) {
-                    	s.setAreaActive(false);
+                        s.setAreaActive(false);
                     }
                     Situation situation = new Situation(area, splitLine[1]);
                     //why does area not show up when row selected?
@@ -247,4 +257,5 @@ public class CurrentStrategy {
             e.printStackTrace();
         }
     }
+
 }
