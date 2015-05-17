@@ -27,6 +27,7 @@ public class Actions {
 
 
       private static List<Action> actions = new ArrayList<Action>() {{
+    	add(new testSelfMade());
         add(new ChaseBall());
         add(new ChaseBall2());
         add(new BasicGoalKeep());

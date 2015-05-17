@@ -1,10 +1,7 @@
 package actions;
 
-import javax.swing.JOptionPane;
-
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
 import ui.Field;
 import bot.Robot;
@@ -99,7 +96,6 @@ public class BasicGoalKeep extends Action {
     			
     			
     		}
-    		System.out.println(trajectoryY);
     		
     		boolean goal = false;
     		if (goalLine > 110) {

@@ -2,11 +2,13 @@ package controllers;
 
 import ui.WebcamDisplayPanel.ViewState;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 
-public class WindowController implements WindowListener {
+public class WindowController implements WindowListener, KeyListener {
 	
 	private WebcamController webcamController;
 	
@@ -39,5 +41,18 @@ public class WindowController implements WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent e) {}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		System.out.println(arg0.getKeyCode());
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+	}
 
 }

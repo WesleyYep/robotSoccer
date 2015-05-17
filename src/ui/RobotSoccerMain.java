@@ -1,14 +1,18 @@
 package ui;
 
 import bot.Robots;
+
 import com.alee.laf.WebLookAndFeel;
+
 import communication.NetworkSocket;
 import communication.SerialPortCommunicator;
 import config.ConfigFile;
 import controllers.*;
 import game.Tick;
 import net.miginfocom.swing.MigLayout;
+
 import org.opencv.core.Core;
+
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
@@ -17,9 +21,12 @@ import vision.VisionWorker;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
@@ -230,6 +237,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//window listener
 		windowController = new WindowController(webcamController);
+		this.addWindowListener(windowController);
+		
 		contentPane.add(cards, "span 6, width 640:640:640, height 480:480:480");
 		contentPane.add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
 		contentPane.add(infoPanel, "span 6, width 600:600:600, wrap");
@@ -369,9 +378,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 //		timer.schedule(gameTick, 0, TICK_TIME_MS);
 //	}
 
-	public WindowController getWindowController() {
-		return windowController;
-	}
 
 	@Override
 	public void viewStateChanged(ViewState currentViewState) {
