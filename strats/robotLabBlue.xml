@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-<topRightX>598.0</topRightX>
-<topRightY>17.0</topRightY>
-<topLeftX>74.0</topLeftX>
-<topLeftY>19.0</topLeftY>
-<bottomRightX>638.0</bottomRightX>
-<bottomRightY>466.0</bottomRightY>
-<bottomLeftX>50.0</bottomLeftX>
-<bottomLeftY>464.0</bottomLeftY>
+<topRightX>604.0</topRightX>
+<topRightY>8.0</topRightY>
+<topLeftX>63.0</topLeftX>
+<topLeftY>11.0</topLeftY>
+<bottomRightX>625.0</bottomRightX>
+<bottomRightY>472.0</bottomRightY>
+<bottomLeftX>33.0</bottomLeftX>
+<bottomLeftY>457.0</bottomLeftY>
 <ballHUpper>18</ballHUpper>
 <ballHLower>1</ballHLower>
 <ballSUpper>181</ballSUpper>

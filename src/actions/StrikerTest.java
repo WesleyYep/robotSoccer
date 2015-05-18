@@ -43,7 +43,7 @@ public class StrikerTest extends Action {
             return;
         } else if (countTimesThatSeemStuck > 100) {
             System.out.println("stuck!");
-            r.angularVelocity = 15;
+            r.linearVelocity = 5;
             return;
         }
 

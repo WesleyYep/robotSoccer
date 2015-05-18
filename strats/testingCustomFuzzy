@@ -33,10 +33,17 @@ null-null
 null-null
 null-null
 -----
+Role:fuzzy
+permanent-actions.testSelfMade
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
+fuzzy
 new role
 new role
-waitingStriker
 new role
 new role
 -----

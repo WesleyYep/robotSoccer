@@ -15,7 +15,8 @@ public class testSelfMade extends Action {
 	
     @Override
     public void execute() {
-    	setVelocityToTarget(110,90,false,false);
+        Robot r = bots.getRobot(index);
+    	setVelocityToTarget(ballX,ballY,false,false);
     }
     
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -87,9 +88,9 @@ public class testSelfMade extends Action {
        //      		+ r.getYPosition() + " targetDist " + targetDist);
              // Evaluate
              fb.evaluate();
-             /*
+             
              JFuzzyChart.get().chart(fb);
-              JOptionPane.showMessageDialog(null, "nwa"); */
+              JOptionPane.showMessageDialog(null, "nwa"); 
        
              // Show output variable's chart
              fb.getVariable("linearVelocity").defuzzify();
@@ -102,9 +103,9 @@ public class testSelfMade extends Action {
   
         //    System.out.println("right :" + right + "left " + left);
 
-             r.linearVelocity = linear*1; 
+             r.linearVelocity = linear; 
              r.angularVelocity = angular*-1;
-             System.out.println(linear + " " + angular);
+          //   System.out.println(linear + " " + angular);
              
              if (!front &&reverse) {
             	 r.linearVelocity *= -1;
@@ -114,10 +115,10 @@ public class testSelfMade extends Action {
             	 r.linearVelocity = 0;
             	 r.angularVelocity = 0;
              }
-      //      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
-        //  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
+        //  System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
+        //		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
              
-        //     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
+        //    System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
              //r.linearVelocity = 0;
 //            r.angularVelocity = 0;
 //        	

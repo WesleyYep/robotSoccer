@@ -104,6 +104,9 @@ public class Robots {
 			if (i < 5) {
 				linearVelocity[i] = bots[i].linearVelocity;
 				angularVelocity[i] = bots[i].angularVelocity;
+				if (i == 2) {
+					System.out.println(bots[i].angularVelocity);
+				}
 			} else {
 				linearVelocity[i] = 0;
 				angularVelocity[i] = 0;
