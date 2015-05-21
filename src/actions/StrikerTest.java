@@ -4,6 +4,7 @@ import bot.Robot;
 import data.Coordinate;
 import game.Tick;
 import strategy.Action;
+import strategy.GameState;
 
 
 /**
@@ -11,7 +12,6 @@ import strategy.Action;
  */
 public class StrikerTest extends Action {
     private boolean ready = false;
-    private boolean isKicking = false;
     private boolean atCentre = false;
     private int targetX = 0;
     private int targetY = 0;
@@ -23,9 +23,11 @@ public class StrikerTest extends Action {
         Robot r = bots.getRobot(index);
 
         //this is number 1 priority
-        isKicking = ballComingIntoPath(r);
-        if (isKicking) {
+        if (ballComingIntoPath(r)) {
+            GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
             return;
+        }else {
+            GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
         }
 
         //check if robot is stuck

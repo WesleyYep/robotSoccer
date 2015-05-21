@@ -4,6 +4,7 @@ import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
+import strategy.GameState;
 import ui.Field;
 import utils.Geometry;
 
@@ -17,11 +18,17 @@ public class ChaseBall extends Action{
 
     @Override
     public void execute() {
-        setVelocityToTarget(predX, predY, true);
+        setVelocityToTarget(predX, predY);
     }
 
-    public void setVelocityToTarget(double x, double y, boolean front) {
+    public void setVelocityToTarget(double x, double y) {
         Robot r = bots.getRobot(index);
+        if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
+            r.linearVelocity = 0;
+            r.angularVelocity = 0;
+            return;
+        }
+
         double targetDist;
 
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
