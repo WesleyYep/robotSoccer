@@ -84,13 +84,16 @@ public class testSelfMade extends Action {
              
              fb.setVariable("targetTheta", targetTheta);
              fb.setVariable("targetDist", Math.abs(targetDist));
+             fb.setVariable("direction", r.getTheta());
+             fb.setVariable("xPos", r.getXPosition());
+             fb.setVariable("yPos", r.getYPosition());
        //      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " " 
        //      		+ r.getYPosition() + " targetDist " + targetDist);
              // Evaluate
              fb.evaluate();
              
-             JFuzzyChart.get().chart(fb);
-              JOptionPane.showMessageDialog(null, "nwa"); 
+         //    JFuzzyChart.get().chart(fb);
+         //     JOptionPane.showMessageDialog(null, "nwa"); 
        
              // Show output variable's chart
              fb.getVariable("linearVelocity").defuzzify();

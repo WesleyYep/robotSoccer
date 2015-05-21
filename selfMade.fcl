@@ -5,6 +5,9 @@ FUNCTION_BLOCK selfMade	// Block definition (there may be more than one block pe
 VAR_INPUT				// Define input variables
 	targetDist : REAL;
 	targetTheta: REAL;
+	xPos : REAL;
+	yPos :REAL;
+	direction :REAL;
 END_VAR
 
 VAR_OUTPUT				// Define output variable
@@ -27,6 +30,26 @@ FUZZIFY targetTheta
 	TERM sideRight := trian 25 80 135;
 	TERM behindRight := trian 100 180 540;
 END_FUZZIFY 
+
+FUZZIFY xPos
+	TERM closeToLeftWall := trian -30 6 40;
+	TERM xCenter := trape 20 40 180 200;
+	TERM closeToRightWall := trian 180 214 250;
+END_FUZZIFY
+
+FUZZIFY yPos
+	TERM closeToTopWall := trian -10 6 40;
+	TERM yCenter := trape 20 40 140 160;
+	TERM closeToBottomWall := trian 140 174 190;
+END_FUZZIFY
+
+FUZZIFY direction
+	TERM  bottom := trian -180 -90 0;
+	TERM right := trian -90 0 90;
+	TERM top := trian 0 90 180;
+	TERM left1:= trian 90 180 270;
+	TERM left2:= trian -270 -180 -90;
+END_FUZZIFY
 
 DEFUZZIFY linearVelocity
 	TERM slow := trian -0.65 0 1.35;
@@ -58,7 +81,7 @@ RULEBLOCK No1
 	//RULE 2 : IF service IS good THEN tip IS average; 
 	//RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;
 	
-	
+	/*
 	RULE 1: IF targetDist IS far THEN linearVelocity is fast;
 	RULE 2: If targetDist IS middle THEN linearVelocity is medium;
 	RULE 3: IF targetDist is close THEN linearVelocity is slow;
@@ -69,7 +92,50 @@ RULEBLOCK No1
 	RULE 7: IF targetTheta is behindLeft THEN angularVelocity is LL;
 	RULE 8: IF targetTheta is behindRight THEN angularVelocity is LR;
 	RULE 9: IF targetTheta is frontLeft THEN angularVelocity is SL;
-	RULE 10: IF targetTheta is frontRight THEN angularVelocity is SR; 
+	RULE 10: IF targetTheta is frontRight THEN angularVelocity is SR;  */
+	
+	RULE 1: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter THEN linearVelocity is fast;
+	RULE 2: IF targetDist IS middle AND xPos IS xCenter AND yPos IS yCenter THEN linearVelocity is medium;
+	RULE 3: IF targetDist IS close THEN linearVelocity is slow;
+	
+	RULE 4: IF targetDist IS far AND xPos is closeToRightWall AND direction IS NOT right THEN linearVelocity is fast;
+	RULE 5: IF targetDist IS far AND xPos is closeToRightWall AND direction IS right THEN linearVelocity is slow;
+	
+	RULE 6: IF targetDist IS far AND yPos is closeToTopWall AND direction IS NOT top THEN linearVelocity is fast;
+	RULE 7: IF targetDist IS far AND yPos is closeToTopWall AND direction IS top THEN linearVelocity is slow;
+	
+	RULE 8: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS NOT bottom THEN linearVelocity is fast;
+	RULE 9: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS bottom THEN linearVelocity is slow;
+	
+	RULE 10: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS NOT left1 THEN linearVelocity is fast;
+	RULE 11: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS left1 THEN linearVelocity is slow;
+	
+	RULE 12: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS NOT left2 THEN linearVelocity is fast;
+	RULE 13: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS left2 THEN linearVelocity is slow;
+	
+	
+	RULE 14: IF targetDist IS middle AND xPos is closeToRightWall AND direction IS NOT right THEN linearVelocity is medium;
+	RULE 15: IF targetDist IS middle AND xPos is closeToRightWall AND direction IS right THEN linearVelocity is slow;
+	
+	RULE 16: IF targetDist IS middle AND yPos is closeToTopWall AND direction IS NOT top THEN linearVelocity is medium;
+	RULE 17: IF targetDist IS middle AND yPos is closeToTopWall AND direction IS top THEN linearVelocity is slow;
+	
+	RULE 18: IF targetDist IS middle AND yPos is closeToBottomWall AND direction IS NOT bottom THEN linearVelocity is medium;
+	RULE 19: IF targetDist IS middle AND yPos is closeToBottomWall AND direction IS bottom THEN linearVelocity is slow;
+	
+	RULE 20: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS NOT left1 THEN linearVelocity is medium;
+	RULE 21: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS left1 THEN linearVelocity is slow;
+	
+	RULE 22: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS NOT left2 THEN linearVelocity is medium;
+	RULE 23: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS left2 THEN linearVelocity is slow;
+	
+	RULE 24: IF targetTheta is sideLeft THEN angularVelocity is ML;
+	RULE 25: IF targetTheta is straight THEN angularVelocity is zero;
+	RULE 26: IF targetTheta is sideRight THEN angularVelocity is MR;
+	RULE 27: IF targetTheta is behindLeft THEN angularVelocity is LL;
+	RULE 28: IF targetTheta is behindRight THEN angularVelocity is LR;
+	RULE 29: IF targetTheta is frontLeft THEN angularVelocity is SL;
+	RULE 30: IF targetTheta is frontRight THEN angularVelocity is SR; 
 	
 	
 	
