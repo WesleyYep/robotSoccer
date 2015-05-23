@@ -16,7 +16,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -36,12 +38,24 @@ public class RolesPanel extends JPanel implements StrategyListener {
 
     private JComboBox<Criteria> criteria1;
     private JComboBox<Action> action1;
+    private JLabel paramLabel1 = new JLabel("Parameter 1:");
+    private JLabel paramLabel2 = new JLabel("Parameter 2:");
+    private JLabel paramLabel3 = new JLabel("Parameter 3:");
+    private JLabel paramLabel4 = new JLabel("Parameter 4:");
+    private JLabel[] parameterLabels = new JLabel[] { paramLabel1, paramLabel2, paramLabel3, paramLabel4 };
+    private JTextField input1 = new JTextField(100);
+    private JTextField input2 = new JTextField(100);
+    private JTextField input3 = new JTextField(100);
+    private JTextField input4 = new JTextField(100);
+    private JTextField[] inputs = new JTextField[]{ input1, input2, input3, input4 };
+
 
     private JButton saveButton = new JButton("Save");
     private List<Role> rolesList = new ArrayList<Role>();
     private CurrentStrategy currentStrategy;
 
     private Role lastSelectedRole;
+    private Action lastSelectedAction;
 
     public RolesPanel(final CurrentStrategy currentStrategy) {
 
@@ -53,7 +67,7 @@ public class RolesPanel extends JPanel implements StrategyListener {
         rolesTableModel = new RolesTableModel(rolesList);
         rolesTable = new JTable(rolesTableModel);
         scrollRoles = new JScrollPane(rolesTable);
-        scrollRoles.setPreferredSize(new Dimension(300, 100));
+        scrollRoles.setPreferredSize(new Dimension(300, 300));
 
         criteriaActionTableModel = new CriteriaActionTableModel();
         criteriaActionTable = new JTable(criteriaActionTableModel);
@@ -77,6 +91,16 @@ public class RolesPanel extends JPanel implements StrategyListener {
         col1.setCellEditor( new DefaultCellEditor(action1));
 
         add(scrollCriteriaActions, "wrap");
+
+        add(paramLabel1, "split 2");
+        add(input1, "wrap");
+        add(paramLabel2, "split 2");
+        add(input2, "wrap");
+        add(paramLabel3, "split 2");
+        add(input3, "wrap");
+        add(paramLabel4, "split 2");
+        add(input4, "wrap");
+
         add(saveButton);
 
         rolesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -105,6 +129,15 @@ public class RolesPanel extends JPanel implements StrategyListener {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 4; i++) {
+                    if (!inputs[i].getText().equals("")) {
+                        try {
+                            lastSelectedAction.updateParameters(parameterLabels[i].getText(), Integer.parseInt(inputs[i].getText()));
+                        }catch (NumberFormatException ex) {
+                            System.out.println("Invalid input for parameter " + parameterLabels[i].getText());
+                        }
+                    }
+                }
                 Role role = lastSelectedRole;
                 criteriaActionTableModel.getValueAt(0, 0);
                 role.setPair((Criteria) criteriaActionTableModel.getValueAt(0, 0), (Action) criteriaActionTableModel.getValueAt(0, 1), 0);
@@ -138,6 +171,35 @@ public class RolesPanel extends JPanel implements StrategyListener {
                     }
                 }
 
+            }
+        });
+
+        ListSelectionModel actionsRows = criteriaActionTable.getSelectionModel();
+        actionsRows.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //ignore extra messages
+                if (e.getValueIsAdjusting()) return;
+
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+                if (lsm.isSelectionEmpty()) {
+
+                } else {
+                    int selectedRow = lsm.getMinSelectionIndex();
+                    Action action = (Action) criteriaActionTable.getValueAt(selectedRow, 1);
+                    lastSelectedAction = action;
+                    List<String> keys = new ArrayList<String>(action.getParameters());
+                    List<Integer> values = new ArrayList<Integer>(action.getValues());
+                    for (int i = 0; i < keys.size(); i++) {
+                        parameterLabels[i].setText(keys.get(i) + "");
+                        inputs[i].setText(values.get(i) + "");
+                    }
+                    //now fill the rest with defaults
+                    for (int i = keys.size(); i < 4; i++) {
+                        parameterLabels[i].setText("Parameter " + (i + 1) + ":");
+                        inputs[i].setText("");
+                    }
+                }
             }
         });
     }

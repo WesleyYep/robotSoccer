@@ -18,6 +18,12 @@ public class StrikerTest extends Action {
     private double oldDistanceToTarget = 0;
     private int countTimesThatSeemStuck = 0;
 
+    //non-static initialiser block
+    {
+        parameters.put("startingX", 110);
+        parameters.put("startingY", 90);
+    }
+
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
@@ -33,7 +39,7 @@ public class StrikerTest extends Action {
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
         if (oldDistanceToTarget - newTargetDistance < 0.8) {
-            System.out.println(oldDistanceToTarget - newTargetDistance);
+        //    System.out.println(oldDistanceToTarget - newTargetDistance);
             countTimesThatSeemStuck++;
         } else {
      //       System.out.println(oldDistanceToTarget - newTargetDistance);
@@ -50,23 +56,36 @@ public class StrikerTest extends Action {
         }
 
         //move and turn
-        if (atCentre && Math.abs(r.getXPosition() - 110) < 10 && Math.abs(r.getYPosition() - 90) < 10 ) { //already at centre, now turn to goal
+        if (atCentre && Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
 	        TurnTo.turn(r, new Coordinate(220, 90));
+            double targetTheta = getTargetTheta(r, 220, 90);
 	        r.linearVelocity = 0;
-	        if (Math.abs(r.getTheta())%360 < 5) {
+	        if (Math.abs(targetTheta) < 5) {
 	            r.angularVelocity = 0;
 	        }
             countTimesThatSeemStuck = 0;
 	    }
 	    else {
-            targetX = 110;
-            targetY = 90;
+            targetX = parameters.get("startingX");
+            targetY = parameters.get("startingY");
 	        MoveToSpot.move(r, new Coordinate(targetX, targetY), 1);
 	        if (r.linearVelocity == 0 && r.angularVelocity == 0) {
 	            atCentre = true;
 	        }
             oldDistanceToTarget = getDistanceToTarget(r);
 	    }
+    }
+
+    private double getTargetTheta(Robot r, int x, int y) {
+        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
+        double difference = targetTheta - Math.toRadians(r.getTheta());
+        //some hack to make the difference -Pi < theta < Pi
+        if (difference > Math.PI) {
+            difference -= (2 * Math.PI);
+        } else if (difference < -Math.PI) {
+            difference += (2 * Math.PI);
+        }
+        return Math.toDegrees(difference);
     }
 
     private boolean ballComingIntoPath(Robot r) {

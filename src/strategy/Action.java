@@ -4,6 +4,11 @@ import vision.KalmanFilter;
 import Paths.Path;
 import bot.Robots;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by Wesley on 21/01/2015.
  */
@@ -15,6 +20,7 @@ public abstract class Action {
 	protected double predY;
 	protected int index;
 	protected Path path;
+    protected HashMap<String, Integer> parameters = new HashMap<String, Integer>();
 //	protected static KalmanFilter kFilter = new KalmanFilter();
 
 	public String getName() {
@@ -30,6 +36,18 @@ public abstract class Action {
 		this.ballX = x;
 		this.ballY = y;
 	}
+
+    public Set<String> getParameters() {
+        return parameters.keySet();
+    }
+
+    public Collection<Integer> getValues() {
+        return parameters.values();
+    }
+
+    public void updateParameters(String key, int value) {
+        parameters.put(key, value);
+    }
 
 	@Override
 	public String toString() {
