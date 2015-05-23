@@ -31,6 +31,5 @@ public class GameState {
 		return whatsGoingOn.contains(action);
 	}
 	
-	
 
 }
