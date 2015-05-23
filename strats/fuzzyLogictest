@@ -1,31 +1,52 @@
-Role:turner
-permanent-Chase Ball (smooth)
+Role:gk
+permanent-actions.BasicGoalKeep
 null-null
 null-null
 null-null
 null-null
 -----
 Role:new role
-permanent-do nothing
+permanent-actions.Wait
 null-null
 null-null
 null-null
 null-null
 -----
-Role:gk
-permanent-Basic Goal Keeper
+Role:striker
+Is Spinning Fast-actions.Wait
+Positive Situation-actions.ChaseBall2
+permanent-actions.MoveToSpot
+null-null
+null-null
+-----
+Role:striker1
+Is Spinning Fast-actions.Wait
+Positive Situation-actions.ChaseBall
+permanent-actions.MoveToSpot
+null-null
+null-null
+-----
+Role:waitingStriker
+permanent-actions.StrikerTest
+null-null
+null-null
+null-null
+null-null
+-----
+Role:fuzzy
+permanent-actions.testSelfMade
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
+fuzzy
 new role
-gk
 new role
 new role
 new role
 -----
-Situation:new situation 1:29:1:451:367
+Situation:new situation 1:24:1:456:369
 new play
 -----

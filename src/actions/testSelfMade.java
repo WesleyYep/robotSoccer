@@ -11,7 +11,8 @@ import bot.Robot;
 public class testSelfMade extends Action {
    
 	private double error = 2.5;
-	
+    private double oldDistanceToTarget = 0;
+    private int countTimesThatSeemStuck = 0;
 	
     @Override
     public void execute() {
@@ -21,6 +22,28 @@ public class testSelfMade extends Action {
     
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bots.getRobot(index);
+        
+      //check if robot is stuck
+        double newTargetDistance = getDistanceToTarget(r);
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
+            System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
+            countTimesThatSeemStuck++;
+        } else if (r.linearVelocity >= 0){
+            System.out.println(oldDistanceToTarget - newTargetDistance);
+            countTimesThatSeemStuck = 0;
+        }
+        if (countTimesThatSeemStuck > 70) {
+            r.linearVelocity = -5;
+            countTimesThatSeemStuck = 0;
+            return;
+        } else if (countTimesThatSeemStuck > 50) {
+            System.out.println("stuck!");
+            r.linearVelocity = -0.5;
+            r.angularVelocity = 5;
+            countTimesThatSeemStuck++;
+            return;
+        }
+        
         double targetDist;
         
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());  
@@ -84,19 +107,23 @@ public class testSelfMade extends Action {
              
              fb.setVariable("targetTheta", targetTheta);
              fb.setVariable("targetDist", Math.abs(targetDist));
+             fb.setVariable("direction", r.getTheta());
+             fb.setVariable("xPos", r.getXPosition());
+             fb.setVariable("yPos", r.getYPosition());
        //      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " " 
        //      		+ r.getYPosition() + " targetDist " + targetDist);
              // Evaluate
              fb.evaluate();
              
-             JFuzzyChart.get().chart(fb);
-              JOptionPane.showMessageDialog(null, "nwa"); 
+      //     JFuzzyChart.get().chart(fb);
+            
        
              // Show output variable's chart
              fb.getVariable("linearVelocity").defuzzify();
              fb.getVariable("angularVelocity").defuzzify();
-           //  JFuzzyChart.get().chart(fb.getVariable("leftWheelVelocity"), fb.getVariable("leftWheelVelocity").getDefuzzifier(), true);
-          //   JFuzzyChart.get().chart(fb.getVariable("rightWheelVelocity"), fb.getVariable("rightWheelVelocity").getDefuzzifier(), true);
+       //    JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
+       //     JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
+        //    JOptionPane.showMessageDialog(null, "nwa"); 
              double linear  = fb.getVariable("linearVelocity").getValue();
              double angular = fb.getVariable("angularVelocity").getValue();
          //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
@@ -105,8 +132,11 @@ public class testSelfMade extends Action {
 
              r.linearVelocity = linear; 
              r.angularVelocity = angular*-1;
-          //   System.out.println(linear + " " + angular);
-             
+//            System.out.println("linear: " + linear + " angular:" + angular
+//            					+ " x: " + r.getXPosition() + " y: " + r.getYPosition()
+//            					+ " r theta: " + r.getTheta() + " t theta: " + targetTheta
+//            					+ " t dist" + targetDist + " time: " + System.currentTimeMillis());
+//             
              if (!front &&reverse) {
             	 r.linearVelocity *= -1;
             	 r.angularVelocity *= -1;
@@ -115,6 +145,9 @@ public class testSelfMade extends Action {
             	 r.linearVelocity = 0;
             	 r.angularVelocity = 0;
              }
+             
+             oldDistanceToTarget = getDistanceToTarget(r);
+
         //  System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
         //		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
              
@@ -125,4 +158,13 @@ public class testSelfMade extends Action {
         	
        // }
     }
+    
+    private double getDistanceToTarget(Robot r) {
+        return Math.sqrt(squared(110 - r.getXPosition()) + squared(90 - r.getYPosition()));
+    }
+
+    protected static double squared (double x) {
+        return x * x;
+    }
+
 }

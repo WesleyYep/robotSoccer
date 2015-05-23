@@ -142,6 +142,7 @@ public class Tick implements SenderListener {
 		field.setPredPoint(temp.get(0, 0)[0],temp.get(3, 0)[0]);
 		*/
 			double dT = (System.currentTimeMillis()-time)/1000.0;
+			//30-35ms
 			//System.out.println(dT + " " + System.currentTimeMillis() + " " + time);
 			time = System.currentTimeMillis();
 			kFilter.transitionMatrix.put(0, 2, dT);
