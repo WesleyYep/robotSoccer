@@ -9,16 +9,22 @@ import bot.Robot;
 public class BasicGoalKeep extends Action {
    
 	private double error = 2.5;
-	private double goalLine = 214;
+//	private double goalLine = 214;
 	private boolean fixPosition = false;
 	private double lastBallX = 0;
 	private double lastBallY = 0;
 	private double lastBallX2 = 0;
 	private double lastBallY2 = 0;
-	
+
+    //non-static initialiser block
+    {
+        parameters.put("goalLine", 6);
+    }
+
     @Override
     public void execute() {
     	Robot r = bots.getRobot(index);
+        double goalLine = parameters.get("goalLine");
     	
     	if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
     		int targetPos = 0;

@@ -20,8 +20,11 @@ public class StrikerTest extends Action {
 
     //non-static initialiser block
     {
-        parameters.put("startingX", 110);
-        parameters.put("startingY", 90);
+        if(!(parameters.containsKey("startingX") && parameters.containsKey("startingY"))) {
+            //don't bother if these already exist
+            parameters.put("startingX", 110);
+            parameters.put("startingY", 90);
+        }
     }
 
     @Override

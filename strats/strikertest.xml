@@ -1,40 +1,40 @@
 Role:gk
-permanent-actions.BasicGoalKeep
+permanent-actions.BasicGoalKeep-[goalLine]-[12]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:new role
-permanent-actions.Wait
+permanent-actions.Wait-[]-[]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:striker
-Is Spinning Fast-actions.Wait
-Positive Situation-actions.ChaseBall2
-permanent-actions.MoveToSpot
+Is Spinning Fast-actions.Wait-[]-[]
+Positive Situation-actions.ChaseBall2-[]-[]
+permanent-actions.MoveToSpot-[]-[]
 null-null
 null-null
 -----
 Role:striker1
-Is Spinning Fast-actions.Wait
-Positive Situation-actions.ChaseBall
-permanent-actions.MoveToSpot
+Is Spinning Fast-actions.Wait-[]-[]
+Positive Situation-actions.ChaseBall-[]-[]
+permanent-actions.MoveToSpot-[]-[]
 null-null
 null-null
 -----
 Role:waitingStriker
-permanent-actions.StrikerTest
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 150]
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
-new role
+gk
 new role
 waitingStriker
 new role

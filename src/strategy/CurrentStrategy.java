@@ -124,7 +124,8 @@ public class CurrentStrategy {
                         bufferedWriter.write("null-null" + "\n");
                         continue;
                     }
-                    bufferedWriter.write(r.getCriterias()[i].toString() + "-actions." + r.getActions()[i].toString() + "\n");
+                    Action action = r.getActions()[i];
+                    bufferedWriter.write(r.getCriterias()[i].toString() + "-actions." + action.toString() + "-" + action.getParameters() + "-" + action.getValues() + "\n");
                 }
                 bufferedWriter.write("-----\n");
             }
@@ -207,7 +208,19 @@ public class CurrentStrategy {
                     role.setRoleName(line.split(":")[1]);
 
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
-                        role.setPair(criterias.findCriteria(line.split("-")[0]), (Action)Class.forName(line.split("-")[1]).newInstance(), i);
+                        String[] lineArray = line.split("-");
+                        Action action = (Action)Class.forName(lineArray[1]).newInstance();
+                        if (lineArray.length < 3) {
+                            //do nothing
+                        } else {
+                            for (int j = 0; j < fromString(lineArray[2]).length; j++) {
+                                if (lineArray[2].equals("[]") || lineArray[3].equals("[]")) {
+                                    continue;
+                                }
+                                action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
+                            }
+                        }
+                        role.setPair(criterias.findCriteria(line.split("-")[0]), action, i);
                         i++;
                     }
                     roles.add(role);
@@ -256,6 +269,24 @@ public class CurrentStrategy {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    private int[] fromStringInt(String string) {
+        String[] strings = string.replace("[", "").replace("]", "").split(", ");
+        int result[] = new int[strings.length];
+        for (int i = 0; i < result.length; i++) {
+            try {
+                result[i] = Integer.parseInt(strings[i]);
+            }catch (NumberFormatException ex) {
+                System.out.println("Action parameter is not a number");
+            }
+        }
+        return result;
+    }
+
+    private String[] fromString(String string) {
+        String[] strings = string.replace("[", "").replace("]", "").split(", ");
+        return strings;
     }
 
 }

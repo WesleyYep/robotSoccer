@@ -15,6 +15,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -159,6 +161,8 @@ public class RolesPanel extends JPanel implements StrategyListener {
                 if (lsm.isSelectionEmpty()) {
 
                 } else {
+                    criteria1.setSelectedIndex(-1);
+                    action1.setSelectedIndex(-1);
                     int selectedRow = lsm.getMinSelectionIndex();
                     Role role = (Role) rolesTableModel.getValueAt(selectedRow, 0);
                     lastSelectedRole = role;
@@ -170,7 +174,7 @@ public class RolesPanel extends JPanel implements StrategyListener {
 
                     }
                 }
-
+                criteriaActionTable.clearSelection();
             }
         });
 
@@ -185,19 +189,23 @@ public class RolesPanel extends JPanel implements StrategyListener {
                 if (lsm.isSelectionEmpty()) {
 
                 } else {
-                    int selectedRow = lsm.getMinSelectionIndex();
-                    Action action = (Action) criteriaActionTable.getValueAt(selectedRow, 1);
-                    lastSelectedAction = action;
-                    List<String> keys = new ArrayList<String>(action.getParameters());
-                    List<Integer> values = new ArrayList<Integer>(action.getValues());
-                    for (int i = 0; i < keys.size(); i++) {
-                        parameterLabels[i].setText(keys.get(i) + "");
-                        inputs[i].setText(values.get(i) + "");
-                    }
-                    //now fill the rest with defaults
-                    for (int i = keys.size(); i < 4; i++) {
-                        parameterLabels[i].setText("Parameter " + (i + 1) + ":");
-                        inputs[i].setText("");
+                    try {
+                        int selectedRow = lsm.getMinSelectionIndex();
+                        Action action = (Action) criteriaActionTable.getValueAt(selectedRow, 1);
+                        lastSelectedAction = action;
+                        List<String> keys = new ArrayList<String>(action.getParameters());
+                        List<Integer> values = new ArrayList<Integer>(action.getValues());
+                        for (int i = 0; i < keys.size(); i++) {
+                            parameterLabels[i].setText(keys.get(i) + "");
+                            inputs[i].setText(values.get(i) + "");
+                        }
+                        //now fill the rest with defaults
+                        for (int i = keys.size(); i < 4; i++) {
+                            parameterLabels[i].setText("Parameter " + (i + 1) + ":");
+                            inputs[i].setText("");
+                        }
+                    }catch (NullPointerException ex) {
+                        //do nothing - there is no minimum number of criteria action pairs
                     }
                 }
             }
@@ -220,6 +228,10 @@ public class RolesPanel extends JPanel implements StrategyListener {
         rolesList = currentStrategy.getRoles();
         rolesTableModel.setListOfRoles(rolesList);
         rolesTableModel.fireTableDataChanged();
+        for (int i = 0; i < 4; i++) {
+            parameterLabels[i].setText("Parameter " + (i + 1) + ":");
+            inputs[i].setText("");
+        }
     }
 
 }
