@@ -2,10 +2,6 @@ package ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -36,7 +32,6 @@ public class TestComPanel extends JPanel implements SenderListener{
 	private boolean manualControl = false;
 	private boolean testingForward = false;
 	private boolean testingRotate = false;
-	private boolean isManualComList = true;
 	private SerialPortCommunicator serialCom;
 
 	public TestComPanel (SerialPortCommunicator s, Robots bots) {
@@ -62,83 +57,30 @@ public class TestComPanel extends JPanel implements SenderListener{
 		this.add(comboBox, "pushx, growx, wrap");
 		this.add(buttonPanel, "pushx, growx");
 
-		//open the port;
+		//open the port and selecting COM3 port if available;
 		for (int i =0; i<portNames.length; i++) {
 			if (portNames[i].equals("COM3")) {
 				comboBox.setSelectedIndex(i);
 			}
 		}
 		serialCom.openPort((String) comboBox.getSelectedItem());
+		
+		
 
 		comboBox.addActionListener(new ActionListener() {
-
-			
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				
-			//	if (isManualComList) {
 					serialCom.closePort();
 					serialCom.openPort((String) comboBox.getSelectedItem());	
-				//}
-			//	else {
-				//	isManualComList = true;
-				//}
 			}
 
 		});
-		/*
-		comboBox.addMouseListener( new MouseListener() {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {}
-
-			@Override
-			public void mousePressed(MouseEvent e) {}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				String[] names = SerialPortList.getPortNames();
-				if (Arrays.equals(comboBox.getSelectedObjects(), names)|| comboBox.getSelectedObjects().length != names.length) {
-					isManualComList = false;
-					comboBox.removeAllItems();
-					
-					for(int i=0; i<names.length; i++) {
-						isManualComList = false;
-						comboBox.addItem(names[i]);
-					}
-					comboBox.repaint();
-				}	 
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {}
-			
-		});*/
 		
-		
-		comboBox.addMouseMotionListener(new MouseMotionListener() {
-
-			@Override
-			public void mouseDragged(MouseEvent arg0) {}
-
-			@Override
-			public void mouseMoved(MouseEvent arg0) {
-				
-				
-			}
-			
-		});
-
 		testRotateBtn.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//		if (simulationCheckBox.isSelected()) {
 				if (!manualControl || testingForward) {
 					robots.testRotate();
 					manualControl = true;
@@ -155,7 +97,6 @@ public class TestComPanel extends JPanel implements SenderListener{
 		testForwardBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				if (simulationCheckBox.isSelected()) {
 				if (!manualControl || testingRotate) {
 					robots.testForward();
 					manualControl = true;
