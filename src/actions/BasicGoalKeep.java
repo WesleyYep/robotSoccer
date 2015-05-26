@@ -24,8 +24,9 @@ public class BasicGoalKeep extends Action {
     @Override
     public void execute() {
     	Robot r = bots.getRobot(index);
-        double goalLine = parameters.get("goalLine");
-    	
+        //double goalLine = parameters.get("goalLine");
+    	double goalLine = 213;
+    	//System.out.println(goalLine);
     	if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
     		int targetPos = 0;
     		if (ballY >= 70 && ballY <= 110 ) {
@@ -43,10 +44,10 @@ public class BasicGoalKeep extends Action {
     	else if (fixPosition) {;
     		if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
         		System.out.println("turning negative: " + r.getTheta() );
-        		r.angularVelocity = -Math.PI/4;
+        		r.angularVelocity = -Math.PI/3;
         	}
         	else if ( (r.getTheta() < 90-5 && r.getTheta() >= 0) || (r.getTheta() < -90-5 && r.getTheta() >= -180)) {
-        		r.angularVelocity = Math.PI/4;
+        		r.angularVelocity = Math.PI/3;
         		r.linearVelocity = 0;
         	}
         	else {
@@ -104,15 +105,23 @@ public class BasicGoalKeep extends Action {
     		}
     		
     		boolean goal = false;
+    		boolean midSection = false;
     		if (goalLine > 110) {
-    			goal = ballX <= 110;
+    			goal = ballX < 110;
+    			midSection = ballX < 160;
     		}
     		else {
+    			midSection = ballX > 60;
     			goal =ballX >=110;
     		}
     		
+    		
+    		
     		if (goal) {	
     			setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
+    		}
+    		else if (midSection) {
+    			setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
     		}
     		else {
     			if (goingVertical || goingHorizontal) {
@@ -318,7 +327,21 @@ public class BasicGoalKeep extends Action {
  //       } else {
    //     System.out.println(averageTheta);
    //     System.out.println(ballY - ballX * Math.tan(averageTheta));
-            return ballY - ballX * Math.tan(averageTheta);
+        
+        	//extra;
+        	double bonus;
+        	
+        	if (ballY < 35) {
+        		bonus = -5;
+        	}
+        	else if (ballY > 145) {
+        		bonus = 5;
+        	}
+        	else {
+        		bonus = 0;
+        	}
+        	
+            return ballY - ballX * Math.tan(averageTheta) + bonus;
   //      }
     }
 

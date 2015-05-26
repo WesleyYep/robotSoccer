@@ -25,7 +25,7 @@ public class testSelfMade extends Action {
         
       //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
-        /*
+        
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
            // System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
@@ -43,7 +43,7 @@ public class testSelfMade extends Action {
             r.angularVelocity = 5;
             countTimesThatSeemStuck++;
             return;
-        } */
+        } 
         
         double targetDist;
         

@@ -177,7 +177,7 @@ public class Tick implements SenderListener {
 			//System.out.println(field.getBallX() + " " + field.getBallY());
 			field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
 		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
-
+		temp.release();	
 		if (comPanel.isSimulation()) {
 			if (sender != null) {
 				sender.sendStuff(createBotCoordinatesMessage());
