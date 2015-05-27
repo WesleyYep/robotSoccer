@@ -7,3 +7,4 @@ out/*
 .idea/*
 /bin/
 /lib/opencv-2411.jar
+.classpath
