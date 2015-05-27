@@ -59,12 +59,13 @@ public class StrikerTest extends Action {
         }
 
         //move and turn
-        if (atCentre && Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
+        if (Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
 	        TurnTo.turn(r, new Coordinate(220, 90));
             double targetTheta = getTargetTheta(r, 220, 90);
 	        r.linearVelocity = 0;
 	        if (Math.abs(targetTheta) < 5) {
 	            r.angularVelocity = 0;
+                atCentre = true;
 	        }
             countTimesThatSeemStuck = 0;
 	    }
@@ -72,14 +73,11 @@ public class StrikerTest extends Action {
             targetX = parameters.get("startingX");
             targetY = parameters.get("startingY");
 	        MoveToSpot.move(r, new Coordinate(targetX, targetY), 1);
-	        if (r.linearVelocity == 0 && r.angularVelocity == 0) {
-	            atCentre = true;
-	        }
             oldDistanceToTarget = getDistanceToTarget(r);
 	    }
     }
 
-    private double getTargetTheta(Robot r, int x, int y) {
+    private double getTargetTheta(Robot r, double x, double y) {
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
         //some hack to make the difference -Pi < theta < Pi
@@ -93,37 +91,61 @@ public class StrikerTest extends Action {
 
     private boolean ballComingIntoPath(Robot r) {
     	//return true if ball is directly in front (or behind) of robot
-    	if (Math.abs(r.getYPosition() - ballY) < 3 && ballX > r.getXPosition()) {
-    		if (Math.abs(r.getTheta())%360 < 5) {
-        		r.linearVelocity = 3;
-    		} else if (Math.abs(r.getTheta())%360 > 175) {
-    			r.linearVelocity = -3;
-    		}
-    		return true;
-    	}
-        //return false if ball is moving away
-        if ((predY > ballY && ballY > r.getYPosition()) || (predY < ballY && ballY < r.getYPosition())) {
-            return false;
+        double angleToBall = Math.abs(getTargetTheta(r, ballX, ballY));
+        boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 3 || Math.abs(getTargetTheta(r, 220, 90)) > 177;
+        if (isFacingGoal && angleToBall < 10) {
+            r.linearVelocity = 3;
+            r.angularVelocity = 0;
+            return true;
+        } else if (isFacingGoal && r.getXPosition() < ballX && angleToBall > 170) {
+            r.linearVelocity = -3;
+            r.angularVelocity = 0;
+            return true;
         }
+//    	if (Math.abs(r.getYPosition() - ballY) < 3 && ballX > r.getXPosition()) {
+//    		if (Math.abs(r.getTheta())%360 < 5) {
+//        		r.linearVelocity = 3;
+//    		} else if (Math.abs(r.getTheta())%360 > 175) {
+//    			r.linearVelocity = -3;
+//    		}
+//    		return true;
+//    	}
+        //return false if ball is moving away
+//        if ((predY > ballY && ballY > r.getYPosition()) || (predY < ballY && ballY < r.getYPosition())) {
+//            return false;
+//        }
+        if (!atCentre) {return false;}
 
-        //get an equation in the form y = mx + c
+        //get an equation in the form y = mx + c of the path of ball
         double m = (predY-ballY) / (predX - ballX);
         double c = ballY - (m * ballX);
-        //check if line crosses the line y = robotY and 0 < x < r.X
-        double x = (r.getYPosition() - c) / m;
-        if (x < 220 && x > r.getXPosition()) {
+        //get an equation of the line for robot angle
+        double mR = 0 - Math.tan(Math.toRadians(r.getTheta()));
+        double cR = r.getYPosition() - (mR * r.getXPosition());
+
+        //check if line crosses the line y = mRx + cR (old was y = robotY) and 0 < x < r.X]
+        // mx + c = mRx + cR
+        // mx - mRx = cR - c
+        //x(m - mR) = cR - c
+        //x = (cR - c) / (m - mR)
+        //use this to get coordinates of intersection point
+        double xInt = (cR - c) / (m - mR);
+        double yInt = m * xInt + c;
+        //double x = (r.getYPosition() - c) / m;
+        if (xInt < 220 && xInt > r.getXPosition()) {
             //find distance of intersection point from current ball position
-            double ballDistance = Math.sqrt(squared(ballX-x) + squared(ballY-r.getYPosition()));
+            double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-yInt));
             //find speed of ball
             double ballSpeed = (Math.sqrt(squared(predX-ballX) + squared(predY-ballY))) / Tick.PREDICT_TIME;
             //find time taken for ball to reach intersection point
             double time = ballDistance / ballSpeed;
-            //only go if the time is under 3 seconds
+            //only go if the time is under 1 second
             if (time < 1) {
                 //get distance of robot to spot
-                double robotDistance = Math.sqrt(squared(r.getXPosition()-x));
+                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
                 r.linearVelocity = (robotDistance/time)/100;
                 r.angularVelocity = 0;
+                atCentre = false;
                 return true;
             }
         }

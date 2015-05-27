@@ -14,8 +14,8 @@ null-null
 -----
 Role:striker
 Is Spinning Fast-actions.Wait-[]-[]
-Positive Situation-actions.ChaseBall2-[]-[]
-permanent-actions.MoveToSpot-[]-[]
+permanent-actions.testSelfMade-[]-[]
+null-null
 null-null
 null-null
 -----
@@ -27,19 +27,26 @@ null-null
 null-null
 -----
 Role:waitingStriker
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 150]
+permanent-actions.StrikerTest-[startingY, startingX]-[50, 150]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitStriker2
+permanent-actions.StrikerTest-[startingY, startingX]-[130, 150]
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
-gk
-new role
+striker
+waitStriker2
 waitingStriker
 new role
 new role
 -----
-Situation:new situation 1:24:1:456:369
+Situation:new situation 1:22:2:456:369
 new play
 -----
