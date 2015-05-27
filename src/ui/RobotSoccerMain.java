@@ -488,7 +488,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
-		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+		String path = System.getProperty("user.dir");
+		System.load( path + "\\native\\opencv_java2411.dll" );
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
