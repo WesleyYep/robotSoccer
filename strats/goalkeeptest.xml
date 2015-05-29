@@ -1,0 +1,24 @@
+Role:gkrole
+permanent-GoalKeeperTest
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new role
+permanent-do nothing
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+gkrole
+new role
+new role
+new role
+new role
+-----
+Situation:new situation 1:27:5:458:367
+new play
+-----

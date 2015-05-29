@@ -1,0 +1,145 @@
+package ui;
+
+import controllers.VisionController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseMotionListener {
+
+	
+	final public static int NONE = 0;
+	final public static int TOP_LEFT = 1;
+	final public static int TOP_RIGHT = 2;
+	final public static int BOT_LEFT = 3;
+	final public static int BOT_RIGHT = 4;
+	
+	private int pointMoving = NONE;
+	private int errorMargin = 10;
+	private VisionController vc;
+	
+	public BoardAreaGlassPanel(VisionController vc) {
+		this.vc = vc;
+		addMouseListener(this);
+		addMouseMotionListener(this);
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponents(g);
+		
+		g.setColor(Color.red);
+
+		g.drawLine((int)Math.round(vc.getTopLeft().getX())
+				, (int)Math.round(vc.getTopLeft().getY())
+				, (int)Math.round(vc.getTopRight().getX())
+				, (int)Math.round(vc.getTopRight().getY()));
+		g.drawLine((int)Math.round(vc.getTopLeft().getX())
+				,(int)Math.round(vc.getTopLeft().getY())
+				,(int)Math.round(vc.getBottomLeft().getX())
+				,(int)Math.round(vc.getBottomLeft().getY()));
+		g.drawLine((int)Math.round(vc.getTopRight().getX())
+				,(int)Math.round(vc.getTopRight().getY())
+				,(int)Math.round(vc.getBottomRight().getX())
+				,(int)Math.round(vc.getBottomRight().getY()));
+		g.drawLine((int)Math.round(vc.getBottomLeft().getX())
+				,(int)Math.round(vc.getBottomLeft().getY())
+				,(int)Math.round(vc.getBottomRight().getX())
+				,(int)Math.round(vc.getBottomRight().getY()));
+		
+		g.drawString("Top Left", (int)Math.round(vc.getTopLeft().getX())-1, (int)Math.round(vc.getTopLeft().getY())-1);
+		g.drawString("Top Right", (int)Math.round(vc.getTopRight().getX())-1, (int)Math.round(vc.getTopRight().getY())-1);
+		g.drawString("BottomRight", (int)Math.round(vc.getBottomRight().getX())-1,(int)Math.round(vc.getBottomRight().getY())-1);
+		g.drawString("BottomLeft", (int)Math.round(vc.getBottomLeft().getX())-1,(int)Math.round(vc.getBottomLeft().getY())-1);
+		
+	}
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (isTopLeft(e)) {
+			pointMoving = TOP_LEFT;
+		} else if (isTopRight(e)) {
+			pointMoving = TOP_RIGHT;
+		} else if (isBotRight(e)) {
+			pointMoving = BOT_RIGHT;
+			
+		} else if (isBotLeft(e)) {
+			pointMoving = BOT_LEFT;
+		} else {
+			pointMoving = NONE;
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				vc.rotatePointAntiClockwise();
+			} else if (e.getButton() == MouseEvent.BUTTON3) {
+				vc.rotatePointClockwise();
+			}
+			vc.createTransformMatrix();
+			this.repaint();
+		}
+	}
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		pointMoving = NONE;
+	}
+
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		if (pointMoving == TOP_LEFT) {
+			vc.setTopLeft(e.getPoint());
+		} else if (pointMoving == TOP_RIGHT) {
+			vc.setTopRight(e.getPoint());
+		} else if (pointMoving == BOT_LEFT) {
+			vc.setBottomLeft(e.getPoint());
+		} else if (pointMoving == BOT_RIGHT) {
+			vc.setBottomRight(e.getPoint());
+		}
+		this.repaint();
+	}
+
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		if (isTopLeft(e) || isTopRight(e) || isBotLeft(e) || isBotRight(e)) {
+			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		} else {
+			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+		}
+	}
+	
+	private boolean isTopLeft(MouseEvent e) {
+		return (e.getX() < (vc.getTopLeft().getX()+errorMargin) && e.getX() > (vc.getTopLeft().getX()-errorMargin) && e.getY() < (vc.getTopLeft().getY()+errorMargin) && e.getY() > (vc.getTopLeft().getY()-errorMargin));
+	}
+	
+	private boolean isTopRight(MouseEvent e) {
+		return (e.getX() < (vc.getTopRight().getX()+errorMargin) && e.getX() > (vc.getTopRight().getX()-errorMargin) && e.getY() < (vc.getTopRight().getY()+errorMargin) && e.getY() > (vc.getTopRight().getY()-errorMargin));
+	}
+	
+	private boolean isBotLeft(MouseEvent e) {
+		return (e.getX() < (vc.getBottomLeft().getX()+errorMargin) && e.getX() > (vc.getBottomLeft().getX()-errorMargin) && e.getY() < (vc.getBottomLeft().getY()+errorMargin) && e.getY() > (vc.getBottomLeft().getY()-errorMargin));
+	}
+	
+	private boolean isBotRight(MouseEvent e) {
+		return (e.getX() < (vc.getBottomRight().getX()+errorMargin) && e.getX() > (vc.getBottomRight().getX()-errorMargin) && e.getY() < (vc.getBottomRight().getY()+errorMargin) && e.getY() > (vc.getBottomRight().getY()-errorMargin));
+	}
+	
+	
+	
+}

@@ -1,0 +1,116 @@
+package bot;
+
+import communication.SerialPortCommunicator;
+import controllers.RobotController;
+import ui.Field;
+
+import java.awt.*;
+
+public class Robots {
+	
+	public final static int BOTTOTALCOUNT = 10;
+	public final static int BOTTEAMMEMBERCOUNT = 5;
+	
+    private Robot[] bots;
+    private SerialPortCommunicator serialCom;
+
+    public Robots(SerialPortCommunicator s) {
+		bots = new Robot[BOTTEAMMEMBERCOUNT];
+		serialCom = s;
+    }
+
+    public void makeRealRobots() {
+    	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+    		if (bots[i] == null) {
+        		bots[i] = new RealRobot(50 + 10*i, 50 + 10*i, 0, i);
+    		} else {
+        		bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), bots[i].getId());
+    		}
+    	} 
+    }
+    
+    public void makeSimRobots() {
+    	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+    		bots[i] = new SimRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), i);
+    	}
+    }
+    
+    public void testForward() {
+    	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+    		bots[i].linearVelocity = 1;
+    		bots[i].angularVelocity = 0;
+    	} 
+    }
+    
+	public void testRotate() {
+		for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+    		bots[i].angularVelocity = Math.PI/2;
+    		bots[i].linearVelocity = 0;
+    	} 
+	}
+	
+	public void stopAllMovement() {
+		for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+			bots[i].linearVelocity = 0;
+			bots[i].angularVelocity = 0;
+		}
+	}
+    
+    public Robot getRobot(int id) {
+    	return bots[id];
+    }
+    
+    public Robot[] getRobots() {
+    	return bots;
+    }
+    
+    public void draw(Graphics g) {
+    	for (Robot r : bots) {
+    		r.draw((Graphics2D) g);
+    	}
+    }
+
+    /**
+     * <p>Set the individual position of the robot on the field</p>
+     * @param id
+     * @param x
+     * @param y
+     * @param theta
+     */
+    
+	public void setIndividualBotPosition(int id, double x, double y, double theta) {
+		bots[id].setX(x*100);
+		bots[id].setY(Field.OUTER_BOUNDARY_HEIGHT-Math.round(y*100));
+		bots[id].setTheta(theta);
+	}
+
+	/**
+	 * Instruct each robot to move.
+	 */
+	
+	public void moveBots() {
+		for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+			bots[i].moveLinear();
+			bots[i].moveAngular();
+		}
+	}
+
+	//will try using this after we check if the other way works first
+	public void send() {
+		double[] linearVelocity = new double[11];
+		double[] angularVelocity = new double[11];
+
+		for (int i = 0; i < 11; i++) {
+			if (i < 5) {
+				linearVelocity[i] = bots[i].linearVelocity;
+				angularVelocity[i] = bots[i].angularVelocity;
+			} else {
+				linearVelocity[i] = 0;
+				angularVelocity[i] = 0;
+			}
+		}
+		RobotController controller = new RobotController(serialCom);
+		controller.sendVelocity(linearVelocity, angularVelocity);
+	}
+
+}

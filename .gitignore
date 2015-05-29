@@ -1,0 +1,23 @@
+# java class files
+*.class
+
+# generated files
+bin/*
+out/*
+
+# project files
+.project
+.classpath
+.idea/*
+.settings/*
+*.iml
+*.ipr
+*.iws
+
+# config files
+RobotSoccerConfiguration.config
+PreviousFile.config
+
+# gradle
+.gradle
+build/*

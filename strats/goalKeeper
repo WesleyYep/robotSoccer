@@ -1,0 +1,24 @@
+Role:gk
+permanent-actions.BasicGoalKeep
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+gk
+wait
+wait
+wait
+wait
+-----
+Situation:new situation 1:26:2:468:376
+new play
+-----

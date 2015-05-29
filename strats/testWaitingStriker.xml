@@ -1,0 +1,45 @@
+Role:gk
+permanent-actions.BasicGoalKeep
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new role
+permanent-actions.Wait
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker
+Is Spinning Fast-actions.Wait
+Positive Situation-actions.ChaseBall2
+permanent-actions.MoveToSpot
+null-null
+null-null
+-----
+Role:striker1
+Is Spinning Fast-actions.Wait
+Positive Situation-actions.ChaseBall2
+permanent-actions.MoveToSpot
+null-null
+null-null
+-----
+Role:waitingStriker
+permanent-actions.StrikerTest
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+waitingStriker
+new role
+new role
+new role
+new role
+-----
+Situation:new situation 1:24:1:456:369
+new play
+-----
