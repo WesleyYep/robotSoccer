@@ -23,7 +23,8 @@ public class TestComPanel extends JPanel implements SenderListener{
 	private JComboBox<String> comboBox;
 
 	private JButton testRotateBtn;
-	private JButton testForwardBtn;
+    private JButton testForwardBtn;
+    private JButton testBackwardBtn;
 	private JCheckBox simulationCheckBox;
 
 	private Robots robots;
@@ -43,14 +44,15 @@ public class TestComPanel extends JPanel implements SenderListener{
 		simulationCheckBox = new JCheckBox("Simulation");
 
 		testRotateBtn = new JButton("Rotate");
-
 		testForwardBtn = new JButton("Forward");
+        testBackwardBtn = new JButton("Backward");
 
 		JPanel buttonPanel = new JPanel();
 
 		buttonPanel.setLayout(new MigLayout("ins 0"));
-		buttonPanel.add(testRotateBtn, "w 50%");
-		buttonPanel.add(testForwardBtn, "w 50%, wrap");
+        buttonPanel.add(testRotateBtn, "w 30%");
+        buttonPanel.add(testBackwardBtn, "w 30%");
+		buttonPanel.add(testForwardBtn, "w 30%, wrap");
 		buttonPanel.add(simulationCheckBox);
 
 		this.setLayout(new MigLayout());
@@ -109,6 +111,22 @@ public class TestComPanel extends JPanel implements SenderListener{
 			}
 
 		});
+
+        testBackwardBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!manualControl || testingRotate) {
+                    robots.testBackwards();
+                    manualControl = true;
+                    testingRotate = false;
+                    testingForward = true;
+                } else {
+                    manualControl = false;
+                    robots.stopAllMovement();
+                }
+            }
+
+        });
 
 		simulationCheckBox.addActionListener(new ActionListener() {
 			@Override
