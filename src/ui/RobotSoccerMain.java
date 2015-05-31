@@ -75,6 +75,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 	private JButton runStratButton;
 	private JButton stopStratButton;
+    private JButton runSetPlayButton;
 	private JLabel	stratStatusLbl;
 	private ActionParameterPanel actionPanel;
 
@@ -106,13 +107,15 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		startButton.addActionListener(this);
 		portField = new JTextField();
 		runStratButton = new JButton("Run Strat");
-		stopStratButton = new JButton("Stop Strat");
+		stopStratButton = new JButton("Stop");
+        runSetPlayButton = new JButton("Set play");
 		stratStatusLbl = new JLabel("Stopped");
 
 		JPanel stratControlPanel = new JPanel(new MigLayout());
 		stratControlPanel.add(runStratButton);
 		stratControlPanel.add(stopStratButton);
-		stratControlPanel.add(stratStatusLbl);
+		stratControlPanel.add(stratStatusLbl, "wrap");
+        stratControlPanel.add(runSetPlayButton);
 
 		JPanel portPanel = new JPanel(new MigLayout());
 		portPanel.add(startButton);
@@ -290,6 +293,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+                gameTick.runSetPlay(false);
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
 			}
@@ -299,10 +303,19 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stopStratButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                gameTick.runSetPlay(false);
                 gameTick.runStrategy(false);
 				stratStatusLbl.setText("Stopped");
 			}
+             });
+
+        runSetPlayButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameTick.runSetPlay(true);
+            }
         });
+
 
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();

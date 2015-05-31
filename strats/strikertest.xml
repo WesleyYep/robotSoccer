@@ -1,9 +1,5 @@
 Role:gk
-<<<<<<< HEAD
-permanent-actions.BasicGoalKeep-[goalLine]-[12]
-=======
 permanent-actions.BasicGoalKeep-[goalLine]-[6]
->>>>>>> e1727ca611203b1a05533a39e43ab76d76603cf7
 null-null
 null-null
 null-null
@@ -18,13 +14,8 @@ null-null
 -----
 Role:striker
 Is Spinning Fast-actions.Wait-[]-[]
-<<<<<<< HEAD
-permanent-actions.testSelfMade-[]-[]
-null-null
-=======
 Positive Situation-actions.ChaseBall2-[]-[]
 permanent-actions.MoveToSpot-[]-[]
->>>>>>> e1727ca611203b1a05533a39e43ab76d76603cf7
 null-null
 null-null
 -----
@@ -36,45 +27,41 @@ null-null
 null-null
 -----
 Role:waitingStriker
-<<<<<<< HEAD
-permanent-actions.StrikerTest-[startingY, startingX]-[50, 150]
-=======
-permanent-actions.StrikerTest-[startingY, startingX]-[30, 160]
->>>>>>> e1727ca611203b1a05533a39e43ab76d76603cf7
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
 null-null
 null-null
 null-null
 null-null
 -----
-<<<<<<< HEAD
-Role:waitStriker2
-permanent-actions.StrikerTest-[startingY, startingX]-[130, 150]
-=======
 Role:fuzzy
-permanent-actions.testSelfMade-[]-[]
->>>>>>> e1727ca611203b1a05533a39e43ab76d76603cf7
+Positive Situation-actions.testSelfMade-[]-[]
+permanent-actions.MoveToSpot-[]-[]
+null-null
+null-null
+null-null
+-----
+Role:kickoff1
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
-<<<<<<< HEAD
-striker
-waitStriker2
-waitingStriker
-new role
-new role
------
-Situation:new situation 1:22:2:456:369
-=======
-new role
-waitingStriker
-new role
-new role
 fuzzy
+new role
+new role
+new role
+new role
 -----
-Situation:new situation 1:24:1:456:369
->>>>>>> e1727ca611203b1a05533a39e43ab76d76603cf7
+Play:kickOff
+kickoff1
+new role
+new role
+new role
+new role
+-----
+Situation:new situation 1:26:2:456:369
 new play
+kickOff
 -----

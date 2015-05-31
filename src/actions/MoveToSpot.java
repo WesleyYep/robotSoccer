@@ -12,21 +12,25 @@ import strategy.Action;
 public class MoveToSpot extends Action{
     public static final double ERROR_MARGIN = 5;
 
+
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
-        Coordinate spot = new Coordinate(10,18);  //<-------- EDIT THIS TO CHANGE SPOT
+        Coordinate spot = new Coordinate(4, 18);  //This method is used only for going back for the chaseBall methods. Use MoveAndTurn action for other uses.
         //change to left/right side depending on where ball is
-        if (ballY > 90) {
-            //          System.out.println(r.getYPosition());
-            spot.y = 162;
-        } else {
-            spot.y = 18;
-        }
-        move(r, spot, 4);
+        move(r, spot, 4, ballY);
     }
 
-    public static void move(Robot r, Coordinate spot, int speed) {
+    public static void move(Robot r, Coordinate spot, int speed, double ballY) {
+        if (ballY != -100) {
+            if (ballY > 90) {
+                //          System.out.println(r.getYPosition());
+                spot.y = 162;
+            } else {
+                spot.y = 18;
+            }
+        }
+
         if (Math.abs(r.getXPosition() - spot.x) < ERROR_MARGIN && Math.abs(r.getYPosition() - spot.y) < ERROR_MARGIN ) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;

@@ -34,6 +34,8 @@ public class Actions {
         add(new Wait());
         add(new TurnTo());
         add(new StrikerTest());
+        add(new MoveToSpot());
+        add(new MoveAndTurn());
         add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
       }};
 

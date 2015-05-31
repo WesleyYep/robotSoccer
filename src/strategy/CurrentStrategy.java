@@ -23,6 +23,7 @@ public class CurrentStrategy {
     private List<StrategyListener> listeners = new ArrayList<StrategyListener>();
     private FieldController fieldController;
     private int[] robotMapping = new int[] {0, 1, 2, 3, 4};
+    private Play setPlay = null;
 
     public CurrentStrategy (FieldController fieldController) {
         roles = new ArrayList<Role>();
@@ -289,4 +290,11 @@ public class CurrentStrategy {
         return strings;
     }
 
+    public void setSetPlay(Play play) {
+        setPlay = play;
+    }
+
+    public Play getSetPlay() {
+        return setPlay;
+    }
 }

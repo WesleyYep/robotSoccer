@@ -12,12 +12,21 @@ import strategy.Action;
 public class TurnTo extends Action{
     public static final double ERROR_MARGIN = 0.8;
 
+    //non-static initialiser block
+    {
+        if(!(parameters.containsKey("turnSpotX") && parameters.containsKey("turnSpotY"))) {
+            //don't bother if these already exist
+            parameters.put("turnSpotX", 110);
+            parameters.put("turnSpotY", 90);
+        }
+    }
 
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
+        Coordinate spot =  new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY"));
 
-        turn(r, new Coordinate((int)ballX, (int)ballY));
+        turn(r,spot);
     }
 
     public static void turn(Robot r, Coordinate spot) {

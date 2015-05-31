@@ -22,7 +22,8 @@ public class Tick implements SenderListener {
 
 	private int count = 0;
 	private boolean runStrat = false;
-	private Sender sender;
+    private boolean runSetPlay = false;
+    private Sender sender;
 	private double x = 0;
 	private long time = 0;
 	//private Physics physics;
@@ -37,8 +38,7 @@ public class Tick implements SenderListener {
 	private boolean firstTime = true;
     public static double PREDICT_TIME = 0.5;
 
-
-	public Tick(Field field, Robots bots, TestComPanel comPanel) {
+    public Tick(Field field, Robots bots, TestComPanel comPanel) {
 		this.bots = bots;
 		this.field = field;
 		this.comPanel = comPanel;
@@ -106,7 +106,9 @@ public class Tick implements SenderListener {
 		if (!comPanel.isManualControl()) {
 			if (runStrat) {
 				field.executeStrategy();
-			} else {
+			} else if (runSetPlay) {
+                field.executeSetPlay();
+            } else {
 				bots.stopAllMovement();
 			}
 		}
@@ -210,9 +212,9 @@ public class Tick implements SenderListener {
 		this.sender = sender;
 	}
 
-	public void startGame(boolean start) {
-		runStrat = start;
-	}
+    public void runSetPlay (boolean run) {
+        runSetPlay = run;
+    }
 
 	public void runStrategy(boolean run) {
 		runStrat = run;

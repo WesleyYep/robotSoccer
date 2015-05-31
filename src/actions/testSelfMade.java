@@ -138,7 +138,8 @@ public class testSelfMade extends Action {
 
         if (Math.abs(targetTheta) < 10) {
             //System.out.println("dribble! ");
-            if (Math.abs(angleToGoal) < Math.PI / 10) { //radians
+            if (Math.abs(angleToGoal) < Math.PI / 8) { //radians
+                r.angularVelocity += angleToGoal;
                 r.linearVelocity*=3;
                 return;
             }

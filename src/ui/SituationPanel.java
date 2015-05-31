@@ -148,6 +148,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 					int selectedRow = lsm.getMinSelectionIndex();
 					Play p = ((Play) playsModel.getValueAt(selectedRow, 0));
 					lastSelectedAddedPlay = p;
+                    currentStrategy.setSetPlay(lastSelectedPlay);
 				}
 			}
 		});
@@ -237,8 +238,8 @@ public class SituationPanel extends JPanel implements StrategyListener{
 				playsModel.fireTableDataChanged();
 			}
 		});
-	}
 
+	}
 
 	public void addSituations(Rectangle r) {
 
