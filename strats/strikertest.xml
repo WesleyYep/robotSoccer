@@ -68,12 +68,19 @@ null-null
 null-null
 null-null
 -----
+Role:waitingStriker1
+permanent-actions.StrikerTest-[startingY, startingX]-[50, 150]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
+waitingStriker
+waitingStriker1
+new role
 fuzzy
-new role
-new role
-new role
-new role
+gk
 -----
 Play:kickOff
 kickoff1

@@ -1,15 +1,12 @@
 package actions;
 
-import javax.swing.JOptionPane;
-
+import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
-import bot.Robot;
 import strategy.GameState;
 
-public class testSelfMade extends Action {
+public class testSelfMade2 extends Action {
 
     private double error = 2.5;
     private double oldDistanceToTarget = 0;
@@ -35,16 +32,16 @@ public class testSelfMade extends Action {
         double newTargetDistance = getDistanceToTarget(r);
 
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
-   //          System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
+            // System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
             countTimesThatSeemStuck = 0;
         }
-        if (countTimesThatSeemStuck > 20) {
+        if (countTimesThatSeemStuck > 70) {
             r.linearVelocity = -5;
             countTimesThatSeemStuck = 0;
             return;
-        } else if (countTimesThatSeemStuck > 10) {
+        } else if (countTimesThatSeemStuck > 50) {
 //            System.out.println("stuck!");
             r.linearVelocity = -0.5;
             r.angularVelocity = 5;
@@ -155,22 +152,7 @@ public class testSelfMade extends Action {
 //            }
 //        } else if (targetDist <= 7) {
         if (targetDist <= 7) {
-            if (!fastForward && angleToGoal > Math.PI / 18) {
-     //           System.out.println("fast_right");
-                r.angularVelocity = 12;
-                r.linearVelocity = 0.7;
-            } else if (!fastForward && angleToGoal < -(Math.PI / 18)) {
-       //         System.out.println("fast_left");
-                r.linearVelocity = 0.7;
-                r.angularVelocity = -12;
-            } else {
-        //        System.out.println("fast " + angleToGoal);
-        //        fastForward = true;
-                r.linearVelocity = 2;
-            }
-//        }
-        } else {
-            fastForward = false;
+            r.linearVelocity = 2;
         }
 
 
