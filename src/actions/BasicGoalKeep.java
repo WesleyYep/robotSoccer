@@ -230,7 +230,7 @@ public class BasicGoalKeep extends Action {
 					else {
 						setVelocityToTarget(goalLine,dist,true,true);
 					}
-					System.out.println( "proportion: " + proportion + " dist: " + dist + " trajectoryY: " + trajectoryY + " direction: " + direction);
+				//	System.out.println( "proportion: " + proportion + " dist: " + dist + " trajectoryY: " + trajectoryY + " direction: " + direction);
 				}
 				else {
 					setVelocityToTarget(r.getXPosition(),r.getYPosition(),true,true);

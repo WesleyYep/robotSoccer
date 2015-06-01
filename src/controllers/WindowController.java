@@ -2,16 +2,18 @@ package controllers;
 
 import ui.WebcamDisplayPanel.ViewState;
 
+import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.HashMap;
 
 
-public class WindowController implements WindowListener, KeyListener {
+public class WindowController implements WindowListener, KeyListener, KeyEventDispatcher {
 	
 	private WebcamController webcamController;
-	
+	private HashMap<Integer,Boolean> keyMapping = new HashMap<Integer,Boolean>();
 	public WindowController(WebcamController wc) {
 		webcamController = wc;
 	}
@@ -53,6 +55,21 @@ public class WindowController implements WindowListener, KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		
+		 if (e.getID() == KeyEvent.KEY_PRESSED) {
+             //System.out.println(e.getKeyCode());
+             keyMapping.put(e.getKeyCode(), true);
+             if (keyMapping.get(17) && keyMapping.get(83)) {
+            	 
+             }
+         } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+        	 keyMapping.put(e.getKeyCode(), false);
+         }
+		return false;
 	}
 
 }

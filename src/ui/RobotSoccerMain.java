@@ -26,8 +26,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
@@ -244,6 +242,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		//window listener
 		windowController = new WindowController(webcamController);
 		this.addWindowListener(windowController);
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(windowController);
 		
 		contentPane.add(cards, "span 6, width 640:640:640, height 480:480:480");
 		contentPane.add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
