@@ -47,6 +47,27 @@ null-null
 null-null
 null-null
 -----
+Role:kickoff2
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 110]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:kickoff3
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 80, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:kickoffKick
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 120, 80]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
 fuzzy
 new role
@@ -56,10 +77,10 @@ new role
 -----
 Play:kickOff
 kickoff1
-new role
-new role
-new role
-new role
+kickoff2
+kickoff3
+kickoffKick
+gk
 -----
 Situation:new situation 1:26:2:456:369
 new play
