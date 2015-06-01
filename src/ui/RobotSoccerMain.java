@@ -240,7 +240,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		tabPane.addTab("Vision", visionPanel);
 
 		//window listener
-		windowController = new WindowController(webcamController);
+		windowController = new WindowController(webcamController,currentStrategy,visionSetting);
 		this.addWindowListener(windowController);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(windowController);

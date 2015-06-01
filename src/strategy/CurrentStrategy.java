@@ -25,6 +25,8 @@ public class CurrentStrategy {
     private int[] robotMapping = new int[] {0, 1, 2, 3, 4};
     private Play setPlay = null;
 
+    public boolean openedStratFile = false;
+
     public CurrentStrategy (FieldController fieldController) {
         roles = new ArrayList<Role>();
         plays = new ArrayList<Play>();
@@ -112,6 +114,12 @@ public class CurrentStrategy {
         }
         
         String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+        save(fileName);
+        return fileName;
+    }
+
+    public void save(String name) {
+        String fileName = name;
         String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
         ConfigFile.getInstance().setLastSaveDirectory(folderPath);
         try {
@@ -145,7 +153,7 @@ public class CurrentStrategy {
 
             for (Situation s : situations) {
                 bufferedWriter.write("Situation:" + s.toString() + ":" + s.getArea().getX() + ":" + s.getArea().getY()
-                                        + ":" + s.getArea().getWidth() + ":" + s.getArea().getHeight() +  "\n");
+                        + ":" + s.getArea().getWidth() + ":" + s.getArea().getHeight() +  "\n");
                 for (Play p : s.getPlays()) {
                     bufferedWriter.write(p.toString() + "\n");
                 }
@@ -159,7 +167,6 @@ public class CurrentStrategy {
         catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
         }
-        return fileName;
     }
 
     public void readFromFile() {  	
@@ -191,7 +198,7 @@ public class CurrentStrategy {
 
     public void read(String fileName) {
         String line = null;
-
+        openedStratFile = true;
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
