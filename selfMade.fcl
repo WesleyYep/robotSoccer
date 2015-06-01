@@ -53,7 +53,7 @@ END_FUZZIFY
 
 DEFUZZIFY linearVelocity
 	TERM verySlow :=  trian -0.15 -0.05 0.05;
- 	TERM slow := trian 0 0.15 0.7;
+ 	TERM slow := trian 0 0.35 0.7;
 	TERM medium := trian 0.5 0.7 1;
 	TERM fast := trian 0.7 1 1.25;
 	METHOD : COG;
