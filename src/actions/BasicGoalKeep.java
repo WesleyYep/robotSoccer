@@ -18,7 +18,7 @@ public class BasicGoalKeep extends Action {
 
 	//non-static initialiser block
 	{
-		parameters.put("goalLine", 6);
+		parameters.put("goalLine", 7);
 	}
 
 	@Override
@@ -38,16 +38,24 @@ public class BasicGoalKeep extends Action {
 			else if (ballY > 110) {
 				targetPos = 110;
 			}
-			setVelocityToTarget(goalLine,targetPos, true,false);
+			setVelocityToTarget(goalLine,targetPos, false,false);
 			fixPosition = true;
 		}
 		else if (fixPosition) {;
 			if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
-				System.out.println("turning negative: " + r.getTheta() );
-				r.angularVelocity = -Math.PI/3;
+			//	System.out.println("turning negative: " + r.getTheta() );
+				r.angularVelocity = -Math.PI/5;
+				if (r.getTheta() > 120 || r.getTheta() > -60) {
+					r.angularVelocity = -Math.PI/3;
+				}
+				r.linearVelocity = 0;
 			}
 			else if ( (r.getTheta() < 90-5 && r.getTheta() >= 0) || (r.getTheta() < -90-5 && r.getTheta() >= -180)) {
-				r.angularVelocity = Math.PI/3;
+			//	System.out.println("turning positive: " + r.getTheta() );
+				r.angularVelocity = Math.PI/5;
+				if (r.getTheta() < 60  || r.getTheta() < -120) {
+					r.angularVelocity = Math.PI/3;
+				}
 				r.linearVelocity = 0;
 			}
 			else {
@@ -120,9 +128,10 @@ public class BasicGoalKeep extends Action {
 			if (goal) {
 				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
 			}
+			/*
 			else if (midSection) {
 				setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
-			}
+			}*/
 			else {
 				if (goingVertical || goingHorizontal) {
 					if (ballY >= 70 && ballY <= 110 ) {
@@ -136,6 +145,7 @@ public class BasicGoalKeep extends Action {
 					}
 				}
 				else if (!(goingVertical || goingHorizontal)) {
+					/*
 					boolean direction;
 					if (goalLine < 110) {
 						direction = xDiff < 0;
@@ -184,11 +194,51 @@ public class BasicGoalKeep extends Action {
 							setVelocityToTarget(goalLine,110,true,true);
 						}
 					}
+					*/
+					boolean direction;
+					if (goalLine < 110) {
+						direction = xDiff < 0;
+					}
+					else {
+						direction = xDiff > 0;
+					}
+					double tempBallX = ballX;
+					if (ballX < 30) tempBallX = 30;
+					double proportion = 1-((tempBallX-30)/(110-30));
+					double dist = 0;
+					//if (!direction) proportion *= -1;
+					if (trajectoryY >= 70 && trajectoryY <= 110 ) {
+						dist = 90-((90-trajectoryY)*proportion);
+					}
+					else if (trajectoryY < 70) {
+						dist = 90-((90-70)*proportion);
+					}
+					else if (trajectoryY > 110) {
+						dist = 90-((90-110)*proportion);
+					}
+					if (!direction) {
+						if (ballY >= 70 && ballY <= 110 ) {
+							setVelocityToTarget(goalLine,ballY, true,true);
+						}
+						else if (ballY < 70) {
+							setVelocityToTarget(goalLine,70,true,true);
+						}
+						else if (ballY > 110) {
+							setVelocityToTarget(goalLine,110,true,true);
+						}
+					}
+					else {
+						setVelocityToTarget(goalLine,dist,true,true);
+					}
+					System.out.println( "proportion: " + proportion + " dist: " + dist + " trajectoryY: " + trajectoryY + " direction: " + direction);
 				}
 				else {
 					setVelocityToTarget(r.getXPosition(),r.getYPosition(),true,true);
 				}
 			}
+			
+			
+		
 		}
 		lastBallX = ballX;
 		lastBallY = ballY;
@@ -256,9 +306,10 @@ public class BasicGoalKeep extends Action {
              } 
              */
 		//if (targetDist <= 3.75) targetDist = 0;
-		if (targetDist <=2.5) {
+		if (targetDist <=1.7) {
 			targetDist = 0;
 			targetTheta = 0;
+			fixPosition = true;
 		}
 		// targetTheta = Math.round(targetTheta/5)*5;
 
@@ -284,7 +335,7 @@ public class BasicGoalKeep extends Action {
 		double angular = (right-left)*(2/0.135);
 		//    System.out.println("right :" + right + "left " + left);
 
-		r.linearVelocity = linear*2;
+		r.linearVelocity = linear*2.5;
 		r.angularVelocity = angular*1;
 
 		if (!front &&reverse) {
@@ -293,7 +344,7 @@ public class BasicGoalKeep extends Action {
 		}
 		//      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
 		//  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-
+		//	System.out.println("x:" + x + " y: " + y + " r.x: " + r.getXPosition() + " r.y" + r.getYPosition());
 		//     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
 		//r.linearVelocity = 0;
 //            r.angularVelocity = 0;
