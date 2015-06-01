@@ -73,9 +73,9 @@ public class BasicDefender extends Defender {
 
 			double yInt = yMean - slope* xMean;
 
-			trajectoryY = (slope*(goalLine+3.75)) + yInt;
+			//trajectoryY = (slope*(goalLine+3.75)) + yInt;
 
-				trajectoryY = (slope*(goalLine-3.75)) + yInt;
+			//	trajectoryY = (slope*(goalLine-3.75)) + yInt;
 
 
 
