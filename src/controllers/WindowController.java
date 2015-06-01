@@ -73,9 +73,9 @@ public class WindowController implements WindowListener, KeyListener, KeyEventDi
              keyMapping.put(e.getKeyCode(), true);
 				 if (keyMapping.get(17) != null && keyMapping.get(83) != null) {
 					 if (currentStrategy.openedStratFile) {
-						 visionSetting.saveVisionSetting();
+						 visionSetting.save(ConfigPreviousFile.getInstance().getPreviousVisionFile());
 						 currentStrategy.save(ConfigPreviousFile.getInstance().getPreviousStratFile());
-						 JOptionPane.showMessageDialog(null,"Strat File Saved");
+						 JOptionPane.showMessageDialog(null,"Strat and Vision File Saved");
 					 }
 				 }
          } else if (e.getID() == KeyEvent.KEY_RELEASED) {
