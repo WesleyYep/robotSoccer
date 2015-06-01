@@ -63,7 +63,16 @@ public class VisionSettingFile {
 		if (extensionType.contains("text/xml") && !fileName.contains("xml")) {
 			fileName = fileName + "." + "xml";
 		}
-		
+
+		save(fileName);
+
+	}
+
+	public void save(String fileName) {
+		/*
+		 * Check the output filename and adds the correct extension type. If the output filename already has the extension added, it
+		 * doesn't append extension again.
+		 */
 		String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
 		ConfigFile.getInstance().setLastSaveDirectory(folderPath);
 
@@ -137,24 +146,23 @@ public class VisionSettingFile {
 			saveSetting.addProperty("opponentVUpper", opponentSp.getUpperBoundForV());
 			saveSetting.addProperty("opponentVLower", opponentSp.getLowerBoundForV());
 
-            saveSetting.addProperty("robotMinSize", colourPanel.getRobotSizeMinimum());
-            saveSetting.addProperty("greenMinSize", colourPanel.getGreenSizeMinimum());
-            saveSetting.addProperty("ballMinSize", colourPanel.getBallSizeMinimum());
-            
-            saveSetting.addProperty("robotMaxSize", colourPanel.getRobotSizeMaximum());
-            saveSetting.addProperty("greenMaxSize", colourPanel.getGreenSizeMaximum());
-            saveSetting.addProperty("ballMaxSize", colourPanel.getBallSizeMaximum());
+			saveSetting.addProperty("robotMinSize", colourPanel.getRobotSizeMinimum());
+			saveSetting.addProperty("greenMinSize", colourPanel.getGreenSizeMinimum());
+			saveSetting.addProperty("ballMinSize", colourPanel.getBallSizeMinimum());
+
+			saveSetting.addProperty("robotMaxSize", colourPanel.getRobotSizeMaximum());
+			saveSetting.addProperty("greenMaxSize", colourPanel.getGreenSizeMaximum());
+			saveSetting.addProperty("ballMaxSize", colourPanel.getBallSizeMaximum());
 
 			saveSetting.save();
 
-            //save last read file
-            ConfigPreviousFile.getInstance().setPreviousVisionFile(fileName);
+			//save last read file
+			ConfigPreviousFile.getInstance().setPreviousVisionFile(fileName);
 
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
