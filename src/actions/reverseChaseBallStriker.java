@@ -6,7 +6,7 @@ import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import strategy.GameState;
 
-public class testSelfMade2 extends Action {
+public class ReverseChaseBallStriker extends Action {
 
     private double error = 2.5;
     private double oldDistanceToTarget = 0;
@@ -32,16 +32,16 @@ public class testSelfMade2 extends Action {
         double newTargetDistance = getDistanceToTarget(r);
 
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
-            // System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
+   //          System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
             countTimesThatSeemStuck = 0;
         }
-        if (countTimesThatSeemStuck > 70) {
+        if (countTimesThatSeemStuck > 20) {
             r.linearVelocity = -5;
             countTimesThatSeemStuck = 0;
             return;
-        } else if (countTimesThatSeemStuck > 50) {
+        } else if (countTimesThatSeemStuck > 10) {
 //            System.out.println("stuck!");
             r.linearVelocity = -0.5;
             r.angularVelocity = 5;
@@ -152,7 +152,22 @@ public class testSelfMade2 extends Action {
 //            }
 //        } else if (targetDist <= 7) {
         if (targetDist <= 7) {
-            r.linearVelocity = 2;
+            if (!fastForward && angleToGoal > Math.PI / 18) {
+     //           System.out.println("fast_right");
+                r.angularVelocity = 12;
+                r.linearVelocity = 0.7;
+            } else if (!fastForward && angleToGoal < -(Math.PI / 18)) {
+       //         System.out.println("fast_left");
+                r.linearVelocity = 0.7;
+                r.angularVelocity = -12;
+            } else {
+        //        System.out.println("fast " + angleToGoal);
+        //        fastForward = true;
+                r.linearVelocity = 2;
+            }
+//        }
+        } else {
+            fastForward = false;
         }
 
 
@@ -185,7 +200,7 @@ public class testSelfMade2 extends Action {
     }
 
     private double angleDifferenceFromGoal(double x, double y, double theta) {
-        double targetTheta = Math.atan2(y - 90, 220 - x);
+        double targetTheta = Math.atan2(y - 90, 0 - x);
         double difference = targetTheta - Math.toRadians(theta);
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {
