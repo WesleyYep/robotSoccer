@@ -128,10 +128,10 @@ public class BasicGoalKeep extends Action {
 			if (goal) {
 				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
 			}
-			/*
+
 			else if (midSection) {
 				setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
-			}*/
+			}
 			else {
 				if (goingVertical || goingHorizontal) {
 					if (ballY >= 70 && ballY <= 110 ) {
@@ -145,7 +145,7 @@ public class BasicGoalKeep extends Action {
 					}
 				}
 				else if (!(goingVertical || goingHorizontal)) {
-					/*
+
 					boolean direction;
 					if (goalLine < 110) {
 						direction = xDiff < 0;
@@ -194,7 +194,9 @@ public class BasicGoalKeep extends Action {
 							setVelocityToTarget(goalLine,110,true,true);
 						}
 					}
-					*/
+
+
+					/*
 					boolean direction;
 					if (goalLine < 110) {
 						direction = xDiff < 0;
@@ -229,7 +231,7 @@ public class BasicGoalKeep extends Action {
 					}
 					else {
 						setVelocityToTarget(goalLine,dist,true,true);
-					}
+					} */
 				//	System.out.println( "proportion: " + proportion + " dist: " + dist + " trajectoryY: " + trajectoryY + " direction: " + direction);
 				}
 				else {

@@ -64,6 +64,10 @@ public class TestComPanel extends JPanel implements SenderListener{
 			if (portNames[i].equals("COM3")) {
 				comboBox.setSelectedIndex(i);
 			}
+
+			if (portNames[i].equals("COM4")) {
+				comboBox.setSelectedIndex(i);
+			}
 		}
 		serialCom.openPort((String) comboBox.getSelectedItem());
 		
