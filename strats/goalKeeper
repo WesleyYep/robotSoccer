@@ -1,20 +1,20 @@
 Role:gk
-permanent-actions.BasicGoalKeep
+permanent-actions.BasicGoalKeep-[goalLine]-[7]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:wait
-permanent-actions.Wait
+permanent-actions.Wait-[]-[]
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
-gk
 wait
+gk
 wait
 wait
 wait

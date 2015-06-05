@@ -1,15 +1,12 @@
 package actions;
 
-import javax.swing.JOptionPane;
-
+import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
-import bot.Robot;
 import strategy.GameState;
 
-public class testSelfMade extends Action {
+public class ReverseChaseBallStriker extends Action {
 
     private double error = 2.5;
     private double oldDistanceToTarget = 0;
@@ -203,7 +200,7 @@ public class testSelfMade extends Action {
     }
 
     private double angleDifferenceFromGoal(double x, double y, double theta) {
-        double targetTheta = Math.atan2(y - 90, 220 - x);
+        double targetTheta = Math.atan2(y - 90, 0 - x);
         double difference = targetTheta - Math.toRadians(theta);
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {

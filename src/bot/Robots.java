@@ -37,9 +37,16 @@ public class Robots {
     
     public void testForward() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
-    		bots[i].linearVelocity = 1;
+    		bots[i].linearVelocity = 0.5;
     		bots[i].angularVelocity = 0;
     	} 
+    }
+
+    public void testBackwards() {
+        for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+            bots[i].linearVelocity = -0.5;
+            bots[i].angularVelocity = 0;
+        }
     }
     
 	public void testRotate() {

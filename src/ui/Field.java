@@ -57,7 +57,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private double predX = 0;
 	private double predY = 0;
 
-	public Field(Robots bots, Ball ball) {
+    public Field(Robots bots, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
 		isMouseDrag = false;
@@ -385,8 +385,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		for (int i = 0; i < situations.size(); i++) {
 			if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
 				if (situations.get(i).getPlays().size() == 0) { break; }
-				Play p = situations.get(i).getPlays().get(0); //get the first play
-				if (p == null) { break; }
+                Play p = situations.get(i).getPlays().get(0); //get the first play
+                if (p == null) { break; }
 				for (int j = 0; j < 5; j++) {
 					Role role = currentStrategy.mapRoles(p.getRoles())[j];
 					if (role == null) { continue; }
@@ -400,8 +400,31 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		}
 	}
 
+    public void executeSetPlay() {
+        List<Situation> situations = currentStrategy.getSituations();
+        for (int i = 0; i < situations.size(); i++) {
+            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
+                if (situations.get(i).getPlays().size() == 0) { break; }
+                Play p = currentStrategy.getSetPlay();
+
+                if (p == null) { break; }
+                for (int j = 0; j < 5; j++) {
+                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
+                    if (role == null) { continue; }
+                    role.addRobot(bots, j);
+                    //role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+                    role.setPredictedPosition(predX, predY);
+                    role.execute();
+                }
+            }
+        }
+    }
+
+
 	public void setPredPoint(double predX2, double predY2) {
 		predX = predX2;
 		predY = predY2;
 	}
+
 }

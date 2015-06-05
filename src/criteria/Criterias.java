@@ -12,6 +12,7 @@ public class Criterias {
             new Permanent(),
             new PointingAtBall(),
             new PositiveSituation(),
+            new NegativeSituation(),
             new IsSpinningFast()
 
     };
