@@ -173,38 +173,17 @@ public class BasicDefender extends Defender {
 			}
 		}
 
-		String filename = "newFuzzy.fcl";
-		FIS fis = FIS.load(filename, true);
-
-		if (fis == null) {
-			System.err.println("Can't load file: '" + filename + "'");
-			System.exit(1);
-		}
-
-		// Get default function block
-		FunctionBlock fb = fis.getFunctionBlock(null);
-
-             /*
-             if (onGoalLine) {
-            	targetTheta = 0;
-             }
-             */
-		//if (targetDist <= 3.75) targetDist = 0;
 		if (targetDist <=3.75) {
 			targetDist = 0;
 			targetTheta = 0;
 		}
-		// targetTheta = Math.round(targetTheta/5)*5;
+
+		FunctionBlock fb = loadFuzzy("newFuzzy.fcl");
 
 		fb.setVariable("angleError", targetTheta);
 		fb.setVariable("distanceError", Math.abs(targetDist));
-		//      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
-		//      		+ r.getYPosition() + " targetDist " + targetDist);
-		// Evaluate
+
 		fb.evaluate();
-             /*
-             JFuzzyChart.get().chart(fb);
-              JOptionPane.showMessageDialog(null, "nwa"); */
 
 		// Show output variable's chart
 		fb.getVariable("rightWheelVelocity").defuzzify();

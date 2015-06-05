@@ -44,16 +44,7 @@ public class ChaseBall extends Action{
 
         targetTheta = difference;
 
-        String filename = "newFuzzy.fcl";
-        FIS fis = FIS.load(filename, true);
-
-        if (fis == null) {
-            System.err.println("Can't load file: '" + filename + "'");
-            System.exit(1);
-        }
-
-        // Get default function block
-        FunctionBlock fb = fis.getFunctionBlock(null);
+        FunctionBlock fb = loadFuzzy("newFuzzy.fcl");
         fb.setVariable("angleError", targetTheta);
         fb.setVariable("distanceError", targetDist);
 

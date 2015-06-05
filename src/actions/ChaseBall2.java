@@ -68,16 +68,8 @@ public class ChaseBall2 extends Action{
             r.linearVelocity = 1;
         } else {
 
-            String filename = "tipper.fcl";
-            FIS fis = FIS.load(filename, true);
+            FunctionBlock fb = loadFuzzy("tipper.fcl");
 
-            if (fis == null) {
-                System.err.println("Can't load file: '" + filename + "'");
-                System.exit(1);
-            }
-
-            // Get default function block
-            FunctionBlock fb = fis.getFunctionBlock(null);
             fb.setVariable("obstacleTheta", Math.PI);
             fb.setVariable("obstacleDist", 10);
             fb.setVariable("targetTheta", Math.toRadians(targetTheta));

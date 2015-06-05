@@ -90,25 +90,7 @@ public class testSelfMadeCarry extends Action {
             }
         }
 
-        String filename = "selfMade.fcl";
-        FIS fis = FIS.load(filename, true);
-
-        if (fis == null) {
-            System.err.println("Can't load file: '" + filename + "'");
-            System.exit(1);
-        }
-
-        // Get default function block
-        FunctionBlock fb = fis.getFunctionBlock(null);
-      		
-             /*
-             if (onGoalLine) {
-            	targetTheta = 0;
-             } 
-             */
-        //if (targetDist <= 3.75) targetDist = 0;
-
-        // targetTheta = Math.round(targetTheta/5)*5;
+        FunctionBlock fb = loadFuzzy("selfMade.fcl");
 
         fb.setVariable("targetTheta", targetTheta);
         fb.setVariable("targetDist", Math.abs(targetDist));
