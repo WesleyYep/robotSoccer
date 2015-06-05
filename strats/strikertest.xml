@@ -1,5 +1,5 @@
 Role:gk
-permanent-actions.BasicGoalKeep-[goalLine]-[6]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
 null-null
 null-null
 null-null
@@ -82,12 +82,19 @@ null-null
 null-null
 null-null
 -----
+Role:fuzzy2
+Positive Situation-actions.testSelfMade-[]-[]
+permanent-actions.MoveToSpot-[startingX]-[20]
+null-null
+null-null
+null-null
+-----
 Play:new play
-new role
-new role
-new role
 fuzzy
+fuzzy2
 new role
+waitingStriker1
+gk
 -----
 Play:kickOff
 kickoff1

@@ -35,7 +35,7 @@ public class testSelfMade extends Action {
 
         double newTargetDistance = getDistanceToTarget(r);
 
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.2) {
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.3) {
    //          System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
