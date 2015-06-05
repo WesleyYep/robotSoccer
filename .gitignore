@@ -21,3 +21,5 @@ PreviousFile.config
 # gradle
 .gradle
 build/*
+/build/
+/bin/
