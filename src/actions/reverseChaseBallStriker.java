@@ -31,7 +31,7 @@ public class ReverseChaseBallStriker extends Action {
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
 
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.2) {
    //          System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){

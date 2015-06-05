@@ -27,9 +27,9 @@ public class BasicDefender extends Defender {
 
 	{
 		parameters.put("point 1 x", 50);
-		parameters.put("point 1 y", 50);
-		parameters.put("point 2 x", 150);
-		parameters.put("point 2 y", 150);
+		parameters.put("point 1 y", 70);
+		parameters.put("point 2 x", 50);
+		parameters.put("point 2 y", 110);
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class BasicDefender extends Defender {
 		double angular = (right-left)*(2/0.135);
 		//    System.out.println("right :" + right + "left " + left);
 
-		r.linearVelocity = linear*2.5;
+		r.linearVelocity = linear*3;
 		r.angularVelocity = angular*1;
 
 		if (!front &&reverse) {

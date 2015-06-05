@@ -32,9 +32,10 @@ public class testSelfMade extends Action {
         }
 
         //check if robot is stuck
+
         double newTargetDistance = getDistanceToTarget(r);
 
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.2) {
    //          System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
@@ -154,6 +155,8 @@ public class testSelfMade extends Action {
 //                r.angularVelocity += angleToGoal;
 //            }
 //        } else if (targetDist <= 7) {
+
+
         if (targetDist <= 7) {
             if (!fastForward && angleToGoal > Math.PI / 18) {
      //           System.out.println("fast_right");
@@ -191,8 +194,8 @@ public class testSelfMade extends Action {
 
         oldDistanceToTarget = getDistanceToTarget(r);
 
-        //  System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta 
-        //		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
+          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
+        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
 
         //    System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
 //             r.linearVelocity = 0;

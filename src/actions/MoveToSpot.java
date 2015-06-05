@@ -25,10 +25,10 @@ public class MoveToSpot extends Action{
         Robot r = bots.getRobot(index);
         Coordinate spot = new Coordinate(parameters.get("startingX"), 18);  //This method is used only for going back for the chaseBall methods. Use MoveAndTurn action for other uses.
         //change to left/right side depending on where ball is
-        move(r, spot, 4, ballY);
+        move(r, spot, 1, ballY);
     }
 
-    public static void move(Robot r, Coordinate spot, int speed, double ballY) {
+    public static void move(Robot r, Coordinate spot, double speed, double ballY) {
         if (ballY != -100) {
             if (ballY > 90) {
                 //          System.out.println(r.getYPosition());
@@ -101,7 +101,7 @@ public class MoveToSpot extends Action{
 
         //    System.out.println("right :" + right + "left " + left);
 
-        r.linearVelocity = linear;
+        r.linearVelocity = linear * speed;
         r.angularVelocity = angular*-1;
 
 //        if (Math.abs(r.getXPosition() - spot.x) < ERROR_MARGIN && Math.abs(r.getYPosition() - spot.y) < ERROR_MARGIN ) {

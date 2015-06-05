@@ -33,5 +33,5 @@ public abstract class Defender extends Action {
 	}
 	
 	protected abstract Point getPosition();
-	
+
 }
