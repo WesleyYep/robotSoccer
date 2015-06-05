@@ -97,17 +97,6 @@ public class BasicGoalKeep extends Action {
 		//ball tracking
 		else{
 
-			//clear the ball
-//			if (ballX <= goalLine + 5 && ballY > r.getYPosition()) {
-//				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 4, -100);
-//				clearingBall = true;
-//				return;
-//			} else {
-//				clearingBall = false;
-//			}
-
-			//		System.out.println(ballY);
-			//		System.out.println("front: " + reverseTheta);
 			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
 			double xDiff = Math.round(ballX-lastBallX);
