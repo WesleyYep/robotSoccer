@@ -1,16 +1,17 @@
 package ui;
 
+import data.Coordinate;
+import data.RobotSoccerObject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Ball extends JPanel{
+public class Ball extends RobotSoccerObject{
 
 	//actual ball diameter is 42.7mm;
 	final public static int BALL_DIAMETER = 4;
 
-	private double x = 70;
-	private double y = 70;
 	private double theta;
 	private double linearVelocity;
 	private ArrayList<Integer> pastX = new ArrayList<Integer>();
@@ -19,16 +20,16 @@ public class Ball extends JPanel{
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private boolean focused;
 
+	public Ball() {
+		super(new Coordinate(70, 70));
+	}
+
 	public double getXPosition() {
-		return x;
+		return c.x;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public void setY(int y) {
-		this.y = y;
+	public double getYPosition() {
+		return c.y;
 	}
 
 	public void setLinearVelocity( double linearVelocity) {
@@ -40,16 +41,12 @@ public class Ball extends JPanel{
 	}
 
 	public void move() {
-		x = (x + 10 * linearVelocity * Math.cos(Math.toRadians(theta)));
-		y = (y - 10 * linearVelocity * Math.sin(Math.toRadians(theta)));
+		c.x = (int)(c.x + 10 * linearVelocity * Math.cos(Math.toRadians(theta)));
+		c.y = (int)(c.y - 10 * linearVelocity * Math.sin(Math.toRadians(theta)));
 	}
 
 	public void bounce() {
 		theta = 90 - theta;
-	}
-
-	public double getYPosition() {
-		return y;
 	}
 
 	public void setFocus(boolean focused) {
@@ -88,8 +85,8 @@ public class Ball extends JPanel{
 		}
 
 		g.fillOval(
-				(int)x*Field.SCALE_FACTOR+Field.ORIGIN_X-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
-				(int)y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
+				(int)c.x*Field.SCALE_FACTOR+Field.ORIGIN_X-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
+				(int)c.y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(BALL_DIAMETER*Field.SCALE_FACTOR/2),
 				BALL_DIAMETER*Field.SCALE_FACTOR,
 				BALL_DIAMETER*Field.SCALE_FACTOR
 				);  

@@ -404,7 +404,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		}
 		LookupTable.setVTable(max, min, temp);
 	}
-    protected int squared (int x) {
+    protected double squared (double x) {
         return x * x;
     }
 

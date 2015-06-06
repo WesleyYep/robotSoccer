@@ -24,11 +24,11 @@ public abstract class RobotSoccerObject extends JPanel {
 		coordinateQueue = new ArrayBlockingQueue<Coordinate>(QUEUE_SIZE);
 	}
 
-	public void setX (int x) {
+	public void setX (double x) {
 		c.x = x;
 	}
 
-	public void setY (int y) {
+	public void setY (double y) {
 		c.y = y;
 	}
 
@@ -47,7 +47,7 @@ public abstract class RobotSoccerObject extends JPanel {
 		coordinateQueue.add(currentCoordinate);
 
 		if (coordinateQueue.size() == QUEUE_SIZE) {
-			int x = 0, y = 0;
+			double x = 0, y = 0;
 
 			// Gets the first coordinate which will be used for deviation checks.
 			Coordinate first = coordinateQueue.peek();
@@ -83,8 +83,8 @@ public abstract class RobotSoccerObject extends JPanel {
 	 * @return near boundary
 	 */
 	public boolean isNearBoundary() {
-		int x = c.x;
-		int y = c.y;
+		double x = c.x;
+		double y = c.y;
 
 		int errorMargin = 10;
 
