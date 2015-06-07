@@ -169,7 +169,7 @@ public class BasicDefender extends Defender {
 
         //clear the ball
         if ((Math.abs(ballTargetTheta) < 5 && Math.abs(r.getTheta()) < 90) || (Math.abs(ballTargetTheta) > 175 && Math.abs(r.getTheta()) > 90)) {
-            MoveToSpot.move(r, new Coordinate((int)ballX, (int)ballY), 1.5, -100);
+            MoveToSpot.move(r, new Coordinate((int)ballX, (int)ballY), 1.5);
             return;
         }
 
@@ -179,10 +179,10 @@ public class BasicDefender extends Defender {
             double line = pp.getFirst().x;
             if (Math.abs(ballX - line) <  5) {
                 if (ballY > r.getYPosition() && Math.abs(r.getXPosition() - line) < 5 && (Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175)) {
-                    MoveToSpot.move(r, new Coordinate((int) line, 175), 1.5, -100);
+                    MoveToSpot.move(r, new Coordinate((int) line, 175), 1.5);
                     return;
                 } else if (ballY < r.getYPosition()) {
-                    MoveToSpot.move(r, new Coordinate((int) line, 5), 1.5, -100);
+                    MoveToSpot.move(r, new Coordinate((int) line, 5), 1.5);
                     return;
                 }
             }

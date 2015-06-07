@@ -17,6 +17,7 @@ public abstract class Robot extends JPanel {
 	private boolean focused;
 	public double linearVelocity;
 	public double angularVelocity;
+    public String criteriaName = "";
 	
 	/*
 	 * 

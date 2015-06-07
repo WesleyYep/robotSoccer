@@ -1,5 +1,6 @@
 package strategy;
 
+import bot.Robot;
 import bot.Robots;
 
 /**
@@ -68,6 +69,10 @@ public class Role {
                 break; //only have one action at a time!
             }
         }
+    }
+
+    protected double squared (double x) {
+        return x * x;
     }
 
     public void addRobot (Robots bots, int index) {

@@ -12,41 +12,6 @@ null-null
 null-null
 null-null
 -----
-Role:striker
-Is Spinning Fast-actions.Wait-[]-[]
-Positive Situation-actions.ChaseBall2-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[20]
-null-null
-null-null
------
-Role:striker1
-Is Spinning Fast-actions.Wait-[]-[]
-Positive Situation-actions.ChaseBall-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[20]
-null-null
-null-null
------
-Role:waitingStriker
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
-null-null
-null-null
-null-null
-null-null
------
-Role:fuzzy
-Positive Situation-actions.testSelfMade-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[20]
-null-null
-null-null
-null-null
------
-Role:antiFuzzy
-Negative Situation-actions.ReverseChaseBallStriker-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[200]
-null-null
-null-null
-null-null
------
 Role:kickoff1
 permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
 null-null
@@ -75,25 +40,32 @@ null-null
 null-null
 null-null
 -----
-Role:waitingStriker1
-permanent-actions.StrikerTest-[startingY, startingX]-[50, 150]
-null-null
+Role:striker
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
 null-null
 null-null
 null-null
 -----
-Role:fuzzy2
-Positive Situation-actions.testSelfMade-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[20]
+Role:striker1
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 180]
+null-null
+null-null
+null-null
+-----
+Role:striker2
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
 null-null
 null-null
 null-null
 -----
 Play:new play
-fuzzy
-fuzzy2
+striker
+striker1
+striker2
 new role
-waitingStriker1
 gk
 -----
 Play:kickOff

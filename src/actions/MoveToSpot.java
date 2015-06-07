@@ -5,6 +5,7 @@ import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
+import ui.Field;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -23,21 +24,12 @@ public class MoveToSpot extends Action{
     @Override
     public void execute() {
         Robot r = bots.getRobot(index);
-        Coordinate spot = new Coordinate(parameters.get("startingX"), 18);  //This method is used only for going back for the chaseBall methods. Use MoveAndTurn action for other uses.
+        Coordinate spot = new Coordinate(parameters.get("startingX"), (int)Math.random()* Field.OUTER_BOUNDARY_HEIGHT );  //This method is used only for going back for the chaseBall methods. Use MoveAndTurn action for other uses.
         //change to left/right side depending on where ball is
-        move(r, spot, 1, ballY);
+        move(r, spot, 1);
     }
 
-    public static void move(Robot r, Coordinate spot, double speed, double ballY) {
-        if (ballY != -100) {
-            if (ballY > 90) {
-                //          System.out.println(r.getYPosition());
-                spot.y = 162;
-            } else {
-                spot.y = 18;
-            }
-        }
-
+    public static void move(Robot r, Coordinate spot, double speed) {
         double targetTheta = Math.atan2(r.getYPosition() - spot.y, spot.x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
         //some hack to make the difference -Pi < theta < Pi

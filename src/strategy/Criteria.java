@@ -16,6 +16,7 @@ public abstract class Criteria {
 	public void addRobot (Robots bots, int index) {
 		this.bots = bots;
 		this.index = index;
+        bots.getRobot(index).criteriaName = getName();
 	}
 
 	public void setBallPosition(double x, double y) {
@@ -33,4 +34,6 @@ public abstract class Criteria {
 	protected double squared (double x) {
 		return x * x;
 	}
+
+
 }

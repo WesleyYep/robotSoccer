@@ -2,12 +2,14 @@ package actions;
 
 import javax.swing.JOptionPane;
 
+import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
 import bot.Robot;
 import strategy.GameState;
+import ui.Field;
 
 public class testSelfMade extends Action {
 
@@ -18,7 +20,6 @@ public class testSelfMade extends Action {
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
         setVelocityToTarget(ballX,ballY,false,false);
     }
 
@@ -32,7 +33,6 @@ public class testSelfMade extends Action {
         }
 
         //check if robot is stuck
-
         double newTargetDistance = getDistanceToTarget(r);
 
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.3) {
@@ -53,8 +53,19 @@ public class testSelfMade extends Action {
             return;
         }
 
-        double targetDist;
+        //see if robot is not in positive situation
+        if (ballX < r.getXPosition()) {
+            int yPos;
+            if (ballY > 90) {
+                yPos = (int)(60*Math.random()) + 120;
+            } else {
+                yPos = (int)(60*Math.random());
+            }
+            MoveToSpot.move(r, new Coordinate(20, yPos), 1);
+            return;
+        }
 
+        double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
 //       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 

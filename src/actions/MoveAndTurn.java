@@ -63,7 +63,7 @@ public class MoveAndTurn extends Action {
         else {
             targetX = parameters.get("spotX");
             targetY = parameters.get("spotY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, -100);
+            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1);
             oldDistanceToTarget = getDistanceToTarget(r);
         }
     }
