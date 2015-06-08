@@ -4,6 +4,8 @@ import javax.swing.JOptionPane;
 
 import Paths.Path;
 import bot.Robot;
+import data.Coordinate;
+import javafx.util.Pair;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
@@ -12,6 +14,7 @@ import org.opencv.core.Point;
 
 import ui.Field;
 import utils.Geometry;
+import utils.PairPoint;
 
 public class BasicDefender extends Defender {
 
@@ -20,16 +23,19 @@ public class BasicDefender extends Defender {
 	private double lastBallX2 = 0;
 	private double lastBallY2 = 0;
 
+   public BasicDefender () {
+       super(new Point(50,70), new Point(50,110), null);
+   }
+
 	public BasicDefender(Point p1, Point p2, Path path) {
 		super(p1, p2, path);
-
 	}
 
 	{
 		parameters.put("point 1 x", 50);
-		parameters.put("point 1 y", 50);
-		parameters.put("point 2 x", 150);
-		parameters.put("point 2 y", 150);
+		parameters.put("point 1 y", 70);
+		parameters.put("point 2 x", 50);
+		parameters.put("point 2 y", 110);
 	}
 
 	@Override
@@ -148,6 +154,40 @@ public class BasicDefender extends Defender {
 		targetTheta = difference;
 		targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
 
+        double ballTargetTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+        double ballDifference = ballTargetTheta - Math.toRadians(r.getTheta());
+//       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta "
+        //     		+ Math.toRadians(r.getTheta()));
+        //some hack to make the difference -Pi < theta < Pi
+        if (ballDifference > Math.PI) {
+            ballDifference -= (2 * Math.PI);
+        } else if (ballDifference < -Math.PI) {
+            ballDifference += (2 * Math.PI);
+        }
+        ballDifference = Math.toDegrees(ballDifference);
+        ballTargetTheta = ballDifference;
+
+        //clear the ball
+        if ((Math.abs(ballTargetTheta) < 5 && Math.abs(r.getTheta()) < 90) || (Math.abs(ballTargetTheta) > 175 && Math.abs(r.getTheta()) > 90)) {
+            MoveToSpot.move(r, new Coordinate((int)ballX, (int)ballY), 1.5);
+            return;
+        }
+
+        PairPoint pp = getDefendZone();
+
+        if (pp.getFirst().x == pp.getSecond().x) {
+            double line = pp.getFirst().x;
+            if (Math.abs(ballX - line) <  5) {
+                if (ballY > r.getYPosition() && Math.abs(r.getXPosition() - line) < 5 && (Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175)) {
+                    MoveToSpot.move(r, new Coordinate((int) line, 175), 1.5);
+                    return;
+                } else if (ballY < r.getYPosition()) {
+                    MoveToSpot.move(r, new Coordinate((int) line, 5), 1.5);
+                    return;
+                }
+            }
+        }
+
 		boolean isFacingTop = true;
 		boolean isTargetTop = true;
 		boolean front  = true;
@@ -197,7 +237,7 @@ public class BasicDefender extends Defender {
 		double angular = (right-left)*(2/0.135);
 		//    System.out.println("right :" + right + "left " + left);
 
-		r.linearVelocity = linear*2.5;
+		r.linearVelocity = linear*3;
 		r.angularVelocity = angular*1;
 
 		if (!front &&reverse) {
@@ -214,32 +254,5 @@ public class BasicDefender extends Defender {
 
 		// }
 	}
-
-    private void checkRobotPosition(double x, double y) {
-    	 Robot r = bots.getRobot(index);
-    	 int xError = 10;
-    	if (r.getXPosition() >= x-xError && r.getXPosition() <= x+xError && r.getYPosition() >= y-10 && r.getYPosition() <= y+10) {
-			r.angularVelocity = 0;
-			r.linearVelocity = 0;
-		}
-    }
-    
-    private boolean isCloseToWall() {
-    	 Robot r = bots.getRobot(index);
-    	if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
-    		return true;
-    	}
-    	else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-10 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT) {
-    		return true;
-    	}
-    	else if (r.getXPosition() >= 0 && r.getXPosition() <= 10 ) {
-    		return true;
-    	}
-    	else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-10 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH) {
-    		return true;
-    	}
-    	
-    	return false;
-    }
 
 }

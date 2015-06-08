@@ -1,5 +1,6 @@
 package actions;
 
+import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
@@ -19,21 +20,51 @@ public class BasicGoalKeep extends Action {
 	//non-static initialiser block
 	{
 		parameters.put("goalLine", 7);
+		parameters.put("topPoint", 70);
+		parameters.put("bottomPoint", 110);
+		//parameters.put("error", 2.5);
 	}
 
 	@Override
 	public void execute() {
 		Robot r = bots.getRobot(index);
 		double goalLine = parameters.get("goalLine");
+		//double error = parameters.get("error");
+		int topPoint = parameters.get("topPoint");
+		int bottomPoint = parameters.get("bottomPoint");
 		//double goalLine = 213;
 		//System.out.println(goalLine);
+
+		double targetTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+		double difference = targetTheta - Math.toRadians(r.getTheta());
+		//some hack to make the difference -Pi < theta < Pi
+		if (difference > Math.PI) {
+			difference -= (2 * Math.PI);
+		} else if (difference < -Math.PI) {
+			difference += (2 * Math.PI);
+		}
+		difference = Math.toDegrees(difference);
+		targetTheta = difference;
+
+		//clear the ball
+		if (ballX <= goalLine + 5) {
+			if (ballY > r.getYPosition() && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
+				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 1.5);
+				return;
+			} else if (ballY < r.getYPosition()) {
+				MoveToSpot.move(r, new Coordinate((int) goalLine, 5), 1.5);
+				return;
+			}
+		}
+
+		//first phase getting the robot to the goal line
 		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
 			int targetPos = 0;
-			if (ballY >= 70 && ballY <= 110 ) {
+			if (ballY >= topPoint && ballY <= 110 ) {
 				targetPos = (int) ballY;
 			}
-			else if (ballY < 70) {
-				targetPos = 70;
+			else if (ballY < topPoint) {
+				targetPos = topPoint;
 			}
 			else if (ballY > 110) {
 				targetPos = 110;
@@ -41,6 +72,7 @@ public class BasicGoalKeep extends Action {
 			setVelocityToTarget(goalLine,targetPos, false,false);
 			fixPosition = true;
 		}
+		//correct it's position
 		else if (fixPosition) {;
 			if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
 			//	System.out.println("turning negative: " + r.getTheta() );
@@ -62,10 +94,10 @@ public class BasicGoalKeep extends Action {
 				fixPosition = false;
 			}
 		}
+		//ball tracking
 		else{
-			//		System.out.println(ballY);
-			//		System.out.println("front: " + reverseTheta);
 
+			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
 			double xDiff = Math.round(ballX-lastBallX);
 			double constant;
@@ -127,70 +159,56 @@ public class BasicGoalKeep extends Action {
 
 			if (goal) {
 				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
-			}
-
-			else if (midSection) {
+			} else if (midSection) {
 				setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
-			}
-			else {
+			} else {
 				if (goingVertical || goingHorizontal) {
-					if (ballY >= 70 && ballY <= 110 ) {
+					if (ballY >= topPoint && ballY <= 110 ) {
 						setVelocityToTarget(goalLine,ballY, true,true);
-					}
-					else if (ballY < 70) {
-						setVelocityToTarget(goalLine,70,true,true);
-					}
-					else if (ballY > 110) {
+					} else if (ballY < topPoint) {
+						setVelocityToTarget(goalLine,topPoint,true,true);
+					} else if (ballY > 110) {
 						setVelocityToTarget(goalLine,110,true,true);
 					}
-				}
-				else if (!(goingVertical || goingHorizontal)) {
+				} else if (!(goingVertical || goingHorizontal)) {
 
 					boolean direction;
 					if (goalLine < 110) {
 						direction = xDiff < 0;
-					}
-					else {
+					} else {
 						direction = xDiff > 0;
 					}
+
 					if (direction) {
 						//ball going toward the goal
-						if (trajectoryY >= 70 && trajectoryY <=110) {
+						if (trajectoryY >= topPoint && trajectoryY <=110) {
 							if (r.getYPosition()>= (trajectoryY-2) && r.getYPosition() <=(trajectoryY+2)) {
 								setVelocityToTarget(goalLine,r.getYPosition(),true,true);
-							}
-							else {
+							} else {
 								setVelocityToTarget(goalLine,trajectoryY,true,true);
 							}
-						}
-						else {
-							//
+						} else {
+							//ball travelling in the same side of board
 							if ( (trajectoryY> 110 && ballY > 110) || (trajectoryY<= 110 && ballY <= 110)) {
 								// System.out.println("same side");
-								if (ballY >= 70 && ballY <= 110 ) {
+								if (ballY >= topPoint && ballY <= 110 ) {
 									setVelocityToTarget(goalLine,ballY, true,true);
-								}
-								else if (ballY < 70) {
-									setVelocityToTarget(goalLine,70,true,true);
-								}
-								else if (ballY > 110) {
+								} else if (ballY < topPoint) {
+									setVelocityToTarget(goalLine,topPoint,true,true);
+								} else if (ballY > 110) {
 									setVelocityToTarget(goalLine,110,true,true);
 								}
-							}
-							else {
+							} else {
 								// System.out.println("oppo side");
 								setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2,true,true);
 							}
 						}
-					}
-					else {
-						if (ballY >= 70 && ballY <= 110 ) {
+					} else {
+						if (ballY >= topPoint && ballY <= 110 ) {
 							setVelocityToTarget(goalLine,ballY, true,true);
-						}
-						else if (ballY < 70) {
-							setVelocityToTarget(goalLine,70,true,true);
-						}
-						else if (ballY > 110) {
+						} else if (ballY < topPoint) {
+							setVelocityToTarget(goalLine,topPoint,true,true);
+						} else if (ballY > 110) {
 							setVelocityToTarget(goalLine,110,true,true);
 						}
 					}
@@ -209,21 +227,21 @@ public class BasicGoalKeep extends Action {
 					double proportion = 1-((tempBallX-30)/(110-30));
 					double dist = 0;
 					//if (!direction) proportion *= -1;
-					if (trajectoryY >= 70 && trajectoryY <= 110 ) {
+					if (trajectoryY >= topPoint && trajectoryY <= 110 ) {
 						dist = 90-((90-trajectoryY)*proportion);
 					}
-					else if (trajectoryY < 70) {
-						dist = 90-((90-70)*proportion);
+					else if (trajectoryY < topPoint) {
+						dist = 90-((90-topPoint)*proportion);
 					}
 					else if (trajectoryY > 110) {
 						dist = 90-((90-110)*proportion);
 					}
 					if (!direction) {
-						if (ballY >= 70 && ballY <= 110 ) {
+						if (ballY >= topPoint && ballY <= 110 ) {
 							setVelocityToTarget(goalLine,ballY, true,true);
 						}
-						else if (ballY < 70) {
-							setVelocityToTarget(goalLine,70,true,true);
+						else if (ballY < topPoint) {
+							setVelocityToTarget(goalLine,topPoint,true,true);
 						}
 						else if (ballY > 110) {
 							setVelocityToTarget(goalLine,110,true,true);
@@ -233,8 +251,7 @@ public class BasicGoalKeep extends Action {
 						setVelocityToTarget(goalLine,dist,true,true);
 					} */
 				//	System.out.println( "proportion: " + proportion + " dist: " + dist + " trajectoryY: " + trajectoryY + " direction: " + direction);
-				}
-				else {
+				} else {
 					setVelocityToTarget(r.getXPosition(),r.getYPosition(),true,true);
 				}
 			}
@@ -252,18 +269,6 @@ public class BasicGoalKeep extends Action {
 		Robot r = bots.getRobot(index);
 		double targetDist;
 
-		double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
-		double difference = targetTheta - Math.toRadians(r.getTheta());
-//       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 
-		//     		+ Math.toRadians(r.getTheta()));
-		//some hack to make the difference -Pi < theta < Pi
-		if (difference > Math.PI) {
-			difference -= (2 * Math.PI);
-		} else if (difference < -Math.PI) {
-			difference += (2 * Math.PI);
-		}
-		difference = Math.toDegrees(difference);
-		targetTheta = difference;
 		targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
 
 		boolean isFacingTop = true;
@@ -281,12 +286,23 @@ public class BasicGoalKeep extends Action {
 			front = false;
 		}
 
+		double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
+		double difference = targetTheta - Math.toRadians(r.getTheta());
+//       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta "
+		//     		+ Math.toRadians(r.getTheta()));
+		//some hack to make the difference -Pi < theta < Pi
+		if (difference > Math.PI) {
+			difference -= (2 * Math.PI);
+		} else if (difference < -Math.PI) {
+			difference += (2 * Math.PI);
+		}
+		difference = Math.toDegrees(difference);
+		targetTheta = difference;
 
 		if (!front && reverse) {
 			if (targetTheta < 0) {
 				targetTheta = -180 - targetTheta;
-			}
-			else if (targetTheta > 0) {
+			} else if (targetTheta > 0) {
 				targetTheta = 180 - targetTheta;
 			}
 		}

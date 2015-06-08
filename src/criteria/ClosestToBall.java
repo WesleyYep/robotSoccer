@@ -25,10 +25,11 @@ public class ClosestToBall extends Criteria {
         double distance = Math.sqrt(squared(x-ballX) + squared(y-ballY));
 
         for (int i = 0; i < Robots.BOTTEAMMEMBERCOUNT; i++) {
-            if (i == index) {
+            Robot r2 = bots.getRobot(i);
+
+            if (i == index || !r2.criteriaName.equals(getName())) {
                 continue;
             } else {
-                Robot r2 = bots.getRobot(i);
                 double x2 = r2.getXPosition();
                 double y2 = r2.getYPosition();
 

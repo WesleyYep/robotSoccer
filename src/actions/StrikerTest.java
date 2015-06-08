@@ -74,7 +74,7 @@ public class StrikerTest extends Action {
         else {
             targetX = parameters.get("startingX");
             targetY = parameters.get("startingY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, -100);
+            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1);
             oldDistanceToTarget = getDistanceToTarget(r);
         }
     }

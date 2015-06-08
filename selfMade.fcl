@@ -32,15 +32,15 @@ FUZZIFY targetTheta
 END_FUZZIFY 
 
 FUZZIFY xPos
-	TERM closeToLeftWall := trape -30 0 6 40;
-	TERM xCenter := trape 20 40 180 200;
-	TERM closeToRightWall := trape 180 214 220 250;
+	TERM closeToLeftWall := trape -30 0 6 10;
+	TERM xCenter := trape 6 40 180 210;
+	TERM closeToRightWall := trape 210 214 220 250;
 END_FUZZIFY
 
 FUZZIFY yPos
-	TERM closeToTopWall := trape -10 0 6 40;
-	TERM yCenter := trape 20 40 140 160;
-	TERM closeToBottomWall := trape 140 174 180 190;
+	TERM closeToTopWall := trape -10 0 6 10;
+	TERM yCenter := trape 6 40 140 174;
+	TERM closeToBottomWall := trape 170 174 180 190;
 END_FUZZIFY
 
 FUZZIFY direction
@@ -52,7 +52,7 @@ FUZZIFY direction
 END_FUZZIFY
 
 DEFUZZIFY linearVelocity
-	TERM verySlow :=  trian -0.15 -0.05 0.05;
+	TERM verySlow :=  trian -0.6 0 0.45;
  	TERM slow := trian 0 0.35 0.7;
 	TERM medium := trian 0.5 0.7 1;
 	TERM fast := trian 0.7 1 1.25;
@@ -174,4 +174,3 @@ RULEBLOCK No1
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
-

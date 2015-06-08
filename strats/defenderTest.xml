@@ -1,0 +1,52 @@
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:def
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 50, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:lowerdef
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 25, 25, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingLower
+permanent-actions.StrikerTest-[startingY, startingX]-[30, 30]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingUpper
+permanent-actions.StrikerTest-[startingY, startingX]-[150, 30]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+gk
+def
+lowerdef
+waitingLower
+waitingUpper
+-----
+Situation:new situation 1:26:2:468:376
+new play
+-----

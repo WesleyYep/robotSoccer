@@ -17,6 +17,7 @@ public abstract class Robot extends RobotSoccerObject {
 	private boolean focused;
 	public double linearVelocity;
 	public double angularVelocity;
+    public String criteriaName = "";
 	
 	/*
 	 * 
