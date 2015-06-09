@@ -27,15 +27,15 @@ null-null
 null-null
 -----
 Role:waitingLower
-permanent-actions.StrikerTest-[startingY, startingX]-[30, 30]
-null-null
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[30, 15]
 null-null
 null-null
 null-null
 -----
 Role:waitingUpper
-permanent-actions.StrikerTest-[startingY, startingX]-[150, 30]
-null-null
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[150, 15]
 null-null
 null-null
 null-null
@@ -47,6 +47,16 @@ lowerdef
 waitingLower
 waitingUpper
 -----
-Situation:new situation 1:26:2:468:376
+Play:do nothing play
+gk
+def
+lowerdef
+wait
+wait
+-----
+Situation:new situation 1:26:2:229:376
 new play
+-----
+Situation:new situation 2:253:-9:254:400
+do nothing play
 -----

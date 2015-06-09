@@ -1,0 +1,111 @@
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:def
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 50, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:lowerdef
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 25, 25, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingLower
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[30, 15]
+null-null
+null-null
+null-null
+-----
+Role:waitingUpper
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[150, 15]
+null-null
+null-null
+null-null
+-----
+Role:kickoff1
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:kickoff2
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 110]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:kickoff3
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 80, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:kickoffKick
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 120, 80]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
+null-null
+null-null
+null-null
+-----
+Role:striker1
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 180]
+null-null
+null-null
+null-null
+-----
+Role:striker2
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
+null-null
+null-null
+null-null
+-----
+Play:new play
+gk
+def
+lowerdef
+waitingLower
+waitingUpper
+-----
+Play:attack play
+gk
+def
+striker
+striker1
+striker2
+-----
+Situation:new situation 1:26:2:229:376
+new play
+-----
+Situation:new situation 2:253:-9:254:400
+attack play
+-----

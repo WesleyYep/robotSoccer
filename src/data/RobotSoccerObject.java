@@ -33,11 +33,11 @@ public abstract class RobotSoccerObject extends JPanel {
 		yTotal = 0;
 	}
 
-	protected void setX (double x) {
+	public void setX (double x) {
 		c.x = x;
 	}
 
-	protected void setY (double y) {
+	public void setY (double y) {
 		c.y = y;
 	}
 
