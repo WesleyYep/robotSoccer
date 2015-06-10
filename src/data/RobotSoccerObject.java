@@ -15,8 +15,8 @@ import java.util.concurrent.ArrayBlockingQueue;
  * <p>Look at {@link bot.Robot} and {@link ui.Ball}</p>
  */
 public abstract class RobotSoccerObject extends JPanel {
-	protected Coordinate c;
-	protected ArrayList<RobotSoccerObject> observers;
+	public Coordinate c;
+	public ArrayList<RobotSoccerObject> observers;
 
 	private static final int QUEUE_SIZE = 100;
 	private static final int ERROR_MARGIN = 3;
@@ -33,11 +33,11 @@ public abstract class RobotSoccerObject extends JPanel {
 		yTotal = 0;
 	}
 
-	protected void setX (double x) {
+	public void setX (double x) {
 		c.x = x;
 	}
 
-	protected void setY (double y) {
+	public void setY (double y) {
 		c.y = y;
 	}
 
@@ -70,7 +70,7 @@ public abstract class RobotSoccerObject extends JPanel {
 	 * @param r
 	 */
 
-	protected void addObserver(RobotSoccerObject r) {
+	public void addObserver(RobotSoccerObject r) {
 		observers.add(r);
 	}
 
@@ -79,7 +79,7 @@ public abstract class RobotSoccerObject extends JPanel {
 	 * @param r
 	 */
 
-	protected void removeObserver(RobotSoccerObject r) {
+	public void removeObserver(RobotSoccerObject r) {
 		observers.remove(r);
 	}
 
@@ -87,7 +87,7 @@ public abstract class RobotSoccerObject extends JPanel {
 	 * <p>Method to be called when RobotSoccerObject gets stuck</p>
 	 * <p>Observer must implement this method.</p>
 	 */
-	protected void react(boolean isStuck) {}
+	public void react(boolean isStuck) {}
 
 	/**
 	 * <p>Determines if the current object is stuck in the field.</p>
@@ -97,7 +97,7 @@ public abstract class RobotSoccerObject extends JPanel {
 	 * @return is stuck
 	 */
 
-	protected final boolean isStuck(Coordinate currentCoordinate) {
+	public final boolean isStuck(Coordinate currentCoordinate) {
 
 		boolean doCheck = false;
 		boolean isStuck = false;
@@ -161,7 +161,7 @@ public abstract class RobotSoccerObject extends JPanel {
 	 * <p>Checks to see if the object is near the boundary of the field.</p>
 	 * @return near boundary
 	 */
-	protected final boolean isNearBoundary() {
+	public final boolean isNearBoundary() {
 		double x = c.x;
 		double y = c.y;
 
