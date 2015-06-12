@@ -1,0 +1,31 @@
+Role:new role
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
+null-null
+null-null
+null-null
+-----
+Role:new role2
+Closest to Ball-actions.testSelfMade-[]-[]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
+null-null
+null-null
+null-null
+-----
+Role:hhh
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+new role
+new role2
+hhh
+hhh
+hhh
+-----
+Situation:new situation 1:24:-1:462:373
+new play
+-----
