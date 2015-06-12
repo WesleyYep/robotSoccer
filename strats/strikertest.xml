@@ -41,32 +41,38 @@ null-null
 null-null
 -----
 Role:striker
-Closest to Ball-actions.testSelfMade-[]-[]
-permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
+permanent-actions.testSelfMade-[]-[]
+null-null
 null-null
 null-null
 null-null
 -----
 Role:striker1
-Closest to Ball-actions.testSelfMade-[]-[]
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 180]
+permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
+null-null
 null-null
 null-null
 null-null
 -----
 Role:striker2
-Closest to Ball-actions.testSelfMade-[]-[]
 permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
+null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
+gk
+striker
 striker
 striker1
 striker2
-new role
-gk
+-----
+-1.0:-1.0
+-1.0:-1.0
+-2.0:-2.0
+-3.0:-3.0
+-3.0:-3.0
 -----
 Play:kickOff
 kickoff1
@@ -74,6 +80,12 @@ kickoff2
 kickoff3
 kickoffKick
 gk
+-----
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
 -----
 Situation:new situation 1:26:2:456:369
 new play

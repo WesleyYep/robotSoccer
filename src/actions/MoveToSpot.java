@@ -23,7 +23,7 @@ public class MoveToSpot extends Action{
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         Coordinate spot = new Coordinate(parameters.get("startingX"), (int)Math.random()* Field.OUTER_BOUNDARY_HEIGHT );  //This method is used only for going back for the chaseBall methods. Use MoveAndTurn action for other uses.
         //change to left/right side depending on where ball is
         move(r, spot, 1);

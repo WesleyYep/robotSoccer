@@ -29,7 +29,7 @@ public class StrikerTest extends Action {
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
 
         //this is number 1 priority
         if (ballComingIntoPath(r)) {

@@ -9,8 +9,7 @@ import bot.Robots;
 public class Role {
     private String roleName;
     private CriteriaActionPair[] pairs = {null, null, null, null, null};
-    private Robots bots;
-    private int index;
+    private Robot bot;
     private double ballX;
     private double ballY;
     private double predictedBallX;
@@ -58,11 +57,11 @@ public class Role {
             if (cap == null) { continue; }
             Criteria c = cap.getCriteria();
             if (c == null) { continue; }
-            c.addRobot(bots, index);
+            c.addRobot(bot);
             c.setBallPosition(ballX, ballY);
             if (cap.getCriteria().isMet()) {
                 Action a = cap.getAction();
-                a.addRobot(bots, index);
+                a.addRobot(bot);
                 a.setBallPosition(ballX, ballY);
                 a.setPredBallPosition(predictedBallX, predictedBallY);
                 a.execute();
@@ -75,9 +74,8 @@ public class Role {
         return x * x;
     }
 
-    public void addRobot (Robots bots, int index) {
-        this.bots = bots;
-        this.index = index;
+    public void addRobot (Robot bot) {
+        this.bot = bot;
     }
 
     public void setBallPosition(double x, double y) {

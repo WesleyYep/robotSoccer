@@ -15,12 +15,12 @@ public class ReverseChaseBallStriker extends Action {
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         setVelocityToTarget(ballX,ballY,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
 
         if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
             r.linearVelocity = 0;

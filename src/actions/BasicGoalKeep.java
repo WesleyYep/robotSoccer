@@ -27,7 +27,7 @@ public class BasicGoalKeep extends Action {
 
 	@Override
 	public void execute() {
-		Robot r = bots.getRobot(index);
+        Robot r = bot;
 		double goalLine = parameters.get("goalLine");
 		//double error = parameters.get("error");
 		int topPoint = parameters.get("topPoint");
@@ -266,7 +266,7 @@ public class BasicGoalKeep extends Action {
 	}
 
 	public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
-		Robot r = bots.getRobot(index);
+        Robot r = bot;
 		double targetDist;
 
 		targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));

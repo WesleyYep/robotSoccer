@@ -1,5 +1,6 @@
 package strategy;
 
+import bot.Robot;
 import vision.KalmanFilter;
 import Paths.Path;
 import bot.Robots;
@@ -13,12 +14,11 @@ import java.util.Set;
  * Created by Wesley on 21/01/2015.
  */
 public abstract class Action {
-	protected Robots bots;
+	protected Robot bot;
 	protected double ballX;
 	protected double ballY;
 	protected double predX;
 	protected double predY;
-	protected int index;
 	protected Path path;
     protected HashMap<String, Integer> parameters = new HashMap<String, Integer>();
 //	protected static KalmanFilter kFilter = new KalmanFilter();
@@ -27,9 +27,8 @@ public abstract class Action {
         return getClass().getSimpleName();
     }
 
-	public void addRobot (Robots bots, int index) {
-		this.bots = bots;
-		this.index = index;
+	public void addRobot (Robot bot) {
+		this.bot = bot;
 	}
 
 	public void setBallPosition(double x, double y) {

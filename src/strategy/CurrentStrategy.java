@@ -6,6 +6,7 @@ import config.ConfigPreviousFile;
 import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
+import org.opencv.core.Point;
 import ui.SituationArea;
 
 import javax.swing.*;
@@ -149,6 +150,10 @@ public class CurrentStrategy {
                     bufferedWriter.write(r.toString() + "\n");
                 }
                 bufferedWriter.write("-----\n");
+                for (Point point : p.getPlayCriterias()) {
+                    bufferedWriter.write(point.x + ":" + point.y + "\n");
+                }
+                bufferedWriter.write("-----\n");
             }
 
             for (Situation s : situations) {
@@ -235,11 +240,16 @@ public class CurrentStrategy {
                 } else if (line.startsWith("Play:")) {
                     Play play = new Play();
                     play.setPlayName(line.split(":")[1]);
-                    int i = 0;
+                    int i = 0, j = 0;
 
                     while (!(line = bufferedReader.readLine()).equals("-----")) {
                         play.addRole(i, getRoleByName(line));
                         i++;
+                    }
+                    while (!(line = bufferedReader.readLine()).equals("-----")) {
+                        String[] coords = line.split(":");
+                        play.setPlayCriteria(j, new Point(Double.parseDouble(coords[0]), Double.parseDouble(coords[1])));
+                        j++;
                     }
                     plays.add(play);
                 } else if (line.startsWith("Situation:")) {

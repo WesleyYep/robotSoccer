@@ -40,7 +40,7 @@ public class BasicDefender extends Defender {
 
 	@Override
 	public void execute() {
-		Robot r = bots.getRobot(index);
+        Robot r = bot;
 		setDefendZone(new Point( parameters.get("point 1 x"), parameters.get("point 1 y")),new Point( parameters.get("point 2 x"), parameters.get("point 2 y")));
 		Point positionToBe = getPosition();
 
@@ -137,7 +137,7 @@ public class BasicDefender extends Defender {
 
 
 	public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
-		Robot r = bots.getRobot(index);
+		Robot r = bot;
 		double targetDist;
 
 		double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());

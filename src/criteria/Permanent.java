@@ -15,7 +15,7 @@ public class Permanent extends Criteria {
 
     @Override
     public boolean isMet() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         return true;
     }
 }

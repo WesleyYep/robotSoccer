@@ -21,7 +21,7 @@ public class ChaseBall2 extends Action{
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         double targetDist;
         double targetTheta;
 
@@ -134,7 +134,7 @@ public class ChaseBall2 extends Action{
     }
 
     private boolean isCloseToWall() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         if (r.getYPosition() >= -20 && r.getYPosition() <= 20 ) {
             return true;
         }

@@ -22,7 +22,7 @@ public class ChaseBall extends Action{
     }
 
     public void setVelocityToTarget(double x, double y) {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;

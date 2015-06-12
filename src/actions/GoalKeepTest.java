@@ -17,7 +17,7 @@ public class GoalKeepTest extends Action {
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
 
         if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
             setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true, false);
@@ -108,7 +108,7 @@ public class GoalKeepTest extends Action {
     }
 
     public void setVelocityToTarget(double x, double y, boolean front, boolean onGoalLine) {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
 
         if (onGoalLine) {
             r.angularVelocity = 0;
@@ -195,7 +195,7 @@ public class GoalKeepTest extends Action {
      * This method is used to check if robot is outside of the goal box.
      */
     private void checkRobotPosition(double x, double y) {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         int xError = 10;
         int yError = 2;
         if (r.getXPosition() >= x-xError && r.getXPosition() <= x+xError && (r.getYPosition() >= y-yError) && r.getYPosition() <= y+yError) {
@@ -204,7 +204,7 @@ public class GoalKeepTest extends Action {
     }
 
     private boolean isCloseToWall() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
             return true;
         }

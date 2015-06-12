@@ -2,17 +2,22 @@ package ui;
 
 import bot.Robot;
 import bot.Robots;
+import data.Coordinate;
 import data.Situation;
 import strategy.CurrentStrategy;
 import strategy.Play;
 import strategy.Role;
+import utils.Geometry;
 
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Field extends JPanel implements MouseListener, MouseMotionListener {
@@ -387,10 +392,13 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 				if (situations.get(i).getPlays().size() == 0) { break; }
                 Play p = situations.get(i).getPlays().get(0); //get the first play
                 if (p == null) { break; }
+
+                List<Robot> order = getOrder(p.getPlayCriterias());
+
 				for (int j = 0; j < 5; j++) {
 					Role role = currentStrategy.mapRoles(p.getRoles())[j];
 					if (role == null) { continue; }
-					role.addRobot(bots, j);
+					role.addRobot(order.get(j));
 					//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setPredictedPosition(predX, predY);
@@ -400,25 +408,59 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		}
 	}
 
-    public void executeSetPlay() {
-        List<Situation> situations = currentStrategy.getSituations();
-        for (int i = 0; i < situations.size(); i++) {
-            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
-                if (situations.get(i).getPlays().size() == 0) { break; }
-                Play p = currentStrategy.getSetPlay();
+    //MAKE SURE PERMANENT ROBOTS ARE AT THE TOP OF PLAYS and ALL REST ROBOTS ARE AT THE BOTTOM OF PLAYS! @@IMPORTANT
+    private List<Robot> getOrder(org.opencv.core.Point[] playCriterias) {
+        List<Robot> botList = new ArrayList<>(Arrays.asList(bots.getRobots()));
+        List<Robot> order = new ArrayList<Robot>();
 
-                if (p == null) { break; }
-                for (int j = 0; j < 5; j++) {
-                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
-                    if (role == null) { continue; }
-                    role.addRobot(bots, j);
-                    //role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-                    role.setPredictedPosition(predX, predY);
-                    role.execute();
+        for (org.opencv.core.Point p : playCriterias) {
+            double minDist = 1000;
+            int rIndex = 0;
+            org.opencv.core.Point point = new org.opencv.core.Point(p.x, p.y);
+
+            if (p.x == -2 && p.y == -2) {
+                point.x = getBallX();
+                point.y = getBallY();
+            }
+
+            for (int i = 0; i < botList.size(); i++) {
+                Robot r = botList.get(i);
+                if (point.x == -1 && point.y == -1 || point.x == -3 && point.y == -3) {
+                    rIndex = i;
+                    break;
+                }
+                double d = Geometry.euclideanDistance(point, new org.opencv.core.Point(r.getXPosition(), r.getYPosition()));
+
+                if (d < minDist) {
+                    minDist = d;
+                    rIndex = i;
                 }
             }
+            order.add(botList.get(rIndex));
+            botList.remove(rIndex);
         }
+        return order;
+    }
+
+    public void executeSetPlay() {
+//        List<Situation> situations = currentStrategy.getSituations();
+//        for (int i = 0; i < situations.size(); i++) {
+//            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
+//                if (situations.get(i).getPlays().size() == 0) { break; }
+//                Play p = currentStrategy.getSetPlay();
+//
+//                if (p == null) { break; }
+//                for (int j = 0; j < 5; j++) {
+//                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
+//                    if (role == null) { continue; }
+//                    role.addRobot(bots, j);
+//                    //role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+//                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+//                    role.setPredictedPosition(predX, predY);
+//                    role.execute();
+//                }
+//            }
+//        }
     }
 
 

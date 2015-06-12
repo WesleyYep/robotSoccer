@@ -23,7 +23,7 @@ public class TurnTo extends Action{
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
         Coordinate spot =  new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY"));
 
         turn(r,spot);

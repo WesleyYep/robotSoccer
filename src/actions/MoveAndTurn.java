@@ -29,7 +29,7 @@ public class MoveAndTurn extends Action {
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
 
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);

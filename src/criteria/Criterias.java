@@ -8,7 +8,7 @@ import strategy.Criteria;
 public class Criterias {
 	private static Criteria[] criterias = new Criteria[] {
             null,
-            new ClosestToBall(),
+          //  new ClosestToBall(),
             new Permanent(),
             new PointingAtBall(),
             new PositiveSituation(),
