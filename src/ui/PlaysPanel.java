@@ -180,7 +180,10 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                             lastSelectedPlay.setPlayCriteria(0, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
                             break;
                         default:
-                            //ask user to select a spot
+                            Point point = getSelectedSpot();
+                            if (point != null) {
+                                lastSelectedPlay.setPlayCriteria(0, point);
+                            }
                             break;
                     }
                 }
@@ -200,10 +203,13 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                             lastSelectedPlay.setPlayCriteria(1, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
                             break;
                         case "Rest":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
+                            lastSelectedPlay.setPlayCriteria(1, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
                             break;
                         default:
-                            //ask user to select a spot
+                            Point point = getSelectedSpot();
+                            if (point != null) {
+                                lastSelectedPlay.setPlayCriteria(1, point);
+                            }
                             break;
                     }
                 }
@@ -223,10 +229,13 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                             lastSelectedPlay.setPlayCriteria(2, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
                             break;
                         case "Rest":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
+                            lastSelectedPlay.setPlayCriteria(2, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
                             break;
                         default:
-                            //ask user to select a spot
+                            Point point = getSelectedSpot();
+                            if (point != null) {
+                                lastSelectedPlay.setPlayCriteria(2, point);
+                            }
                             break;
                     }
                 }
@@ -246,10 +255,13 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                             lastSelectedPlay.setPlayCriteria(3, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
                             break;
                         case "Rest":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
+                            lastSelectedPlay.setPlayCriteria(3, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
                             break;
                         default:
-                            //ask user to select a spot
+                            Point point = getSelectedSpot();
+                            if (point != null) {
+                                lastSelectedPlay.setPlayCriteria(3, point);
+                            }
                             break;
                     }
                 }
@@ -269,10 +281,13 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                             lastSelectedPlay.setPlayCriteria(4, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
                             break;
                         case "Rest":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
+                            lastSelectedPlay.setPlayCriteria(4, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
                             break;
                         default:
-                            //ask user to select a spot
+                            Point point = getSelectedSpot();
+                            if (point != null) {
+                                lastSelectedPlay.setPlayCriteria(4, point);
+                            }
                             break;
                     }
                 }
@@ -319,11 +334,21 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                     combo.setSelectedIndex(3); //rest
                 } else {
                     combo.setSelectedIndex(2); //spot
-                    //update spot
                 }
                 updating = false;
             }
         });
+    }
+
+    private Point getSelectedSpot() {
+        String coords = JOptionPane.showInputDialog(null, "Enter coordinates of spot", "0,0");
+        try {
+            String[] coordArray = coords.split(",");
+            return new Point(Integer.parseInt(coordArray[0]), Integer.parseInt(coordArray[1]));
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+            JOptionPane.showMessageDialog(null, "Incorrect format for coordinates");
+            return null;
+        }
     }
 
 

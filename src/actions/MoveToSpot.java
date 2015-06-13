@@ -96,6 +96,8 @@ public class MoveToSpot extends Action{
         r.linearVelocity = linear * speed;
         r.angularVelocity = angular*-1;
 
+
+
 //        if (Math.abs(r.getXPosition() - spot.x) < ERROR_MARGIN && Math.abs(r.getYPosition() - spot.y) < ERROR_MARGIN ) {
 //            r.linearVelocity = 0;
 //            r.angularVelocity = 0;

@@ -1,5 +1,7 @@
 package bot;
 
+import data.Coordinate;
+import data.RobotSoccerObject;
 import ui.Field;
 import ui.FocusListener;
 
@@ -7,9 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Robot extends JPanel {
-	private double x;
-	private double y;
+public abstract class Robot extends RobotSoccerObject {
 	private ArrayList<RobotListener> rListeners = new ArrayList<RobotListener>();
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private double theta;
@@ -34,20 +34,19 @@ public abstract class Robot extends JPanel {
 	final public static int ROBOT_WIDTH = 8;
 	final public static int ROBOT_HEIGHT = 8;
 	
-	public Robot (double x, double y, double theta, int id) {
-		setX(x);
-		setY(y);
+	public Robot (Coordinate c, double theta, int id) {
+		super(c);
 		setTheta(theta);
 		setId(id);
 	}
 	
 	public void setX (double x) {
-		this.x = x;
+		super.setX(x);
 		notifyRobotListeners();
 	}
 	
 	public void setY (double y) {
-		this.y = y;
+		super.setY(y);
 		notifyRobotListeners();
 	}
 	
@@ -61,11 +60,11 @@ public abstract class Robot extends JPanel {
 	}
 	
 	public double getXPosition() {
-		return x;
+		return c.x;
 	}
 	
 	public double getYPosition() {
-		return y;
+		return c.y;
 	}
 	
 	public void setId(int id) {
@@ -91,8 +90,8 @@ public abstract class Robot extends JPanel {
 	 */
 
 	public void draw(Graphics2D g) {
-		int xPos = (int) (x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
-		int yPos = (int) (y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
+		int xPos = (int) (c.x*Field.SCALE_FACTOR+Field.ORIGIN_X-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
+		int yPos = (int) (c.y*Field.SCALE_FACTOR+Field.ORIGIN_Y-(ROBOT_WIDTH*Field.SCALE_FACTOR/2));
 		int width = ROBOT_WIDTH*Field.SCALE_FACTOR;
 		int height = ROBOT_HEIGHT*Field.SCALE_FACTOR;
 

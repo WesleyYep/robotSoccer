@@ -59,6 +59,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private boolean isMouseDrag;
 
 	private CurrentStrategy currentStrategy;
+    private Situation currentSituation;
+    private List<Robot> currentOrder;
 	private double predX = 0;
 	private double predY = 0;
 
@@ -392,8 +394,14 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 				if (situations.get(i).getPlays().size() == 0) { break; }
                 Play p = situations.get(i).getPlays().get(0); //get the first play
                 if (p == null) { break; }
+                List<Robot> order;
 
-                List<Robot> order = getOrder(p.getPlayCriterias());
+                if (currentOrder != null && situations.get(i) == currentSituation) {
+                    order = currentOrder;
+                } else {
+                    order = getOrder(p.getPlayCriterias());
+                    currentSituation = situations.get(i);
+                }
 
 				for (int j = 0; j < 5; j++) {
 					Role role = currentStrategy.mapRoles(p.getRoles())[j];

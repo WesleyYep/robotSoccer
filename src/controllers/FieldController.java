@@ -76,7 +76,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
 				double y = Double.parseDouble(s.substring(yIndex + 2, s.length()));
 				
-				ball.setX((int) Math.round(x * 100));
+				ball.setX(Math.round(x * 100));
 				ball.setY(Field.OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
 			}
 		}
@@ -189,9 +189,8 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		if (data.getType().equals("ball")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(ballCoord.x, ballCoord.y);
-			ball.setX((int) p.x); //hardcoded for now
-			ball.setY((int)p.y);
-			
+			ball.setX(p.x); //hardcoded for now
+			ball.setY(p.y);
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);

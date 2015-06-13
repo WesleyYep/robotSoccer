@@ -1,10 +1,11 @@
 package strategy;
 
 import bot.Robot;
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import vision.KalmanFilter;
 import Paths.Path;
 import bot.Robots;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -60,4 +61,23 @@ public abstract class Action {
 		this.predY = predictedBallY;
 	}
 
+	/**
+	 * <p>Loads fuzzy file and returns FunctionBlock object.</p>
+	 * <p>When FunctionBlock is returned</p>
+	 * @param filename
+	 * @return FunctionBlock object
+	 */
+	protected FunctionBlock loadFuzzy(String filename) {
+		FIS fis = FIS.load(filename);
+
+		if (fis == null) {
+			System.err.println("Can't load file: '" + filename + "'");
+			System.exit(1);
+		}
+
+		// Get default function block
+		FunctionBlock fb = fis.getFunctionBlock(null);
+
+		return fb;
+	}
 }

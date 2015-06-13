@@ -1,9 +1,11 @@
 package bot;
 
+import data.Coordinate;
+
 public class SimRobot extends Robot {
 
 	public SimRobot(double x, double y, double theta, int id) {
-		super(x, y, theta, id);
+		super(new Coordinate(x, y), theta, id);
 	}
 	
 	@Override

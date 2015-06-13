@@ -216,7 +216,6 @@ public class CurrentStrategy {
                 if (line.startsWith("Role:")) {
                     int i = 0;
                     Criterias criterias = new Criterias();
-                    Actions actions = new Actions();
                     Role role = new Role();
                     role.setRoleName(line.split(":")[1]);
 

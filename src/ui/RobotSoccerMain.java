@@ -169,7 +169,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		tabPane.addTab("Situation", situationPanel);
 		tabPane.addTab("Plays", playsPanel);
 		tabPane.addTab("Roles", rolesPanel);
-		tabPane.addTab("Actions" ,actionPanel);
+	//	tabPane.addTab("Actions" ,actionPanel);
 
 		// Create webcam component panel.
 		JPanel webcamComponentPanel = new JPanel(new MigLayout());

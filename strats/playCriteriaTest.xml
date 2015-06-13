@@ -48,14 +48,14 @@ null-null
 null-null
 -----
 Role:striker1
-null-null
+permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:striker2
-null-null
+permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
 null-null
 null-null
 null-null
@@ -63,14 +63,14 @@ null-null
 -----
 Play:new play
 striker
-new role
-new role
-new role
-new role
+gk
+striker
+striker1
+striker2
 -----
+-1.0:-1.0
+0.0:90.0
 -2.0:-2.0
--3.0:-3.0
--3.0:-3.0
 -3.0:-3.0
 -3.0:-3.0
 -----
