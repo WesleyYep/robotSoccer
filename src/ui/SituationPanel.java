@@ -131,28 +131,11 @@ public class SituationPanel extends JPanel implements StrategyListener{
 					int selectedRow = lsm.getMinSelectionIndex();
 					Play p = ((Play) allPlaysModel.getValueAt(selectedRow, 0));
 					lastSelectedPlay = p;
-				}
-			}
-		});
-
-		tableOfPlays.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		ListSelectionModel rowSM3 = tableOfPlays.getSelectionModel();
-		rowSM3.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				//Ignore extra messages.
-				if (e.getValueIsAdjusting()) return;
-
-				ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-				if (lsm.isSelectionEmpty()) {}
-				else {
-					int selectedRow = lsm.getMinSelectionIndex();
-					Play p = ((Play) playsModel.getValueAt(selectedRow, 0));
-					lastSelectedAddedPlay = p;
                     currentStrategy.setSetPlay(lastSelectedPlay);
+                    System.out.println("Set play: " + lastSelectedPlay.toString());
 				}
 			}
 		});
-
 
 		this.add(buttonPanel, BorderLayout.NORTH);
 		this.add(scrollTable, BorderLayout.CENTER);

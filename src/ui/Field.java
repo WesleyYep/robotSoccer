@@ -400,6 +400,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
                     order = currentOrder;
                 } else {
                     order = getOrder(p.getPlayCriterias());
+                    currentOrder = order;
                     currentSituation = situations.get(i);
                 }
 
@@ -451,24 +452,23 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     public void executeSetPlay() {
-//        List<Situation> situations = currentStrategy.getSituations();
-//        for (int i = 0; i < situations.size(); i++) {
-//            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
-//                if (situations.get(i).getPlays().size() == 0) { break; }
-//                Play p = currentStrategy.getSetPlay();
-//
-//                if (p == null) { break; }
-//                for (int j = 0; j < 5; j++) {
-//                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
-//                    if (role == null) { continue; }
-//                    role.addRobot(bots, j);
-//                    //role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-//                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-//                    role.setPredictedPosition(predX, predY);
-//                    role.execute();
-//                }
-//            }
-//        }
+        List<Situation> situations = currentStrategy.getSituations();
+        for (int i = 0; i < situations.size(); i++) {
+            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
+                if (situations.get(i).getPlays().size() == 0) { break; }
+                Play p = currentStrategy.getSetPlay();
+
+                if (p == null) { break; }
+                for (int j = 0; j < 5; j++) {
+                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
+                    if (role == null) { continue; }
+                    role.addRobot(bots.getRobot(j));
+                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+                    role.setPredictedPosition(predX, predY);
+                    role.execute();
+                }
+            }
+        }
     }
 
 
