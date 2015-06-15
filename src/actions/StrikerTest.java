@@ -43,19 +43,16 @@ public class StrikerTest extends Action {
         double newTargetDistance = getDistanceToTarget(r);
 
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
-            //          System.out.println(oldDistanceToTarget - newTargetDistance + " count - " + countTimesThatSeemStuck);
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
             countTimesThatSeemStuck = 0;
         }
         if (countTimesThatSeemStuck > 20) {
-            r.linearVelocity = -5;
             countTimesThatSeemStuck = 0;
             return;
         } else if (countTimesThatSeemStuck > 10) {
-//            System.out.println("stuck!");
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 5;
+            r.linearVelocity = -1.5;
+            r.angularVelocity = 10;
             countTimesThatSeemStuck++;
             return;
         }
