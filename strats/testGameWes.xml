@@ -6,36 +6,36 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[120, 50, 50, 60]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 130, 50]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingDefenderTop
-permanent-actions.StrikerTest-[startingY, startingX]-[20, 10]
+permanent-actions.StrikerTest-[startingY, startingX]-[20, 30]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingDefenderBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[160, 10]
+permanent-actions.StrikerTest-[startingY, startingX]-[160, 30]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:chaseBall
-Positive Situation-actions.testSelfMade-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[20]
+permanent-actions.testSelfMade-[]-[]
+null-null
 null-null
 null-null
 null-null
 -----
 Role:chaseBall2
-Positive Situation-actions.testSelfMade-[]-[]
-permanent-actions.MoveToSpot-[startingX]-[20]
+permanent-actions.testSelfMade-[]-[]
+null-null
 null-null
 null-null
 null-null
@@ -48,14 +48,14 @@ null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 170]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 170]
 null-null
 null-null
 null-null
@@ -96,55 +96,62 @@ null-null
 null-null
 null-null
 -----
+Role:new role
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:defendTop
 gk
-waitingDefenderTop
-chaseBall
 defender
-defender2
+new role
+chaseBall
+waitingDefenderTop
 -----
-0.0:90.0
-10.0:40.0
--2.0:-2.0
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
 -3.0:-3.0
 -3.0:-3.0
 -----
 Play:defendBot
 gk
-waitingDefenderBottom
-chaseBall
 defender
-defender2
+new role
+chaseBall
+waitingDefenderBottom
 -----
-0.0:90.0
-10.0:40.0
--2.0:-2.0
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
 -3.0:-3.0
 -3.0:-3.0
 -----
 Play:attackTop
 gk
 defender
+new role
 chaseBall
-waitingStrikerBottom
-fullLengthDefender
+waitingStrikerTop
 -----
 -1.0:-1.0
-50.0:90.0
--2.0:-2.0
+-1.0:-1.0
+-1.0:-1.0
 -3.0:-3.0
 -3.0:-3.0
 -----
 Play:attackBottom
 gk
 defender
+new role
 chaseBall
-waitingStrikerTop
-fullLengthDefender
+waitingStrikerBottom
 -----
 -1.0:-1.0
-50.0:90.0
--2.0:-2.0
+-1.0:-1.0
+-1.0:-1.0
 -3.0:-3.0
 -3.0:-3.0
 -----
@@ -170,6 +177,6 @@ defendBot
 Situation:attackTop:257:4:223:180
 attackTop
 -----
-Situation:attackBot:255:183:227:186
+Situation:attackBot:256:183:226:186
 attackBottom
 -----

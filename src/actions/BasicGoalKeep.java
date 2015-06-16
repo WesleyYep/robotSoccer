@@ -47,7 +47,7 @@ public class BasicGoalKeep extends Action {
 		targetTheta = difference;
 
 		//clear the ball
-		if (ballX <= goalLine + 5) {
+		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
 			if (ballY > r.getYPosition() && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
 				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 1.5);
 				return;
@@ -147,12 +147,12 @@ public class BasicGoalKeep extends Action {
 			boolean goal = false;
 			boolean midSection = false;
 			if (goalLine > 110) {
-				goal = ballX < 110;
-				midSection = ballX < 160;
+				goal = ballX < goalLine + 100;
+				midSection = ballX < goalLine + 150;
 			}
 			else {
-				midSection = ballX > 60;
-				goal =ballX >=110;
+				midSection = ballX > goalLine + 50;
+				goal =ballX >=100+goalLine;
 			}
 
 
@@ -163,7 +163,7 @@ public class BasicGoalKeep extends Action {
 				setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
 			} else {
 				if (goingVertical || goingHorizontal) {
-					if (ballY >= topPoint && ballY <= 110 ) {
+					if (ballY >= topPoint && ballY <= 110 && r.getXPosition() < ballX) {
 						setVelocityToTarget(goalLine,ballY, true,true);
 					} else if (ballY < topPoint) {
 						setVelocityToTarget(goalLine,topPoint,true,true);
@@ -191,7 +191,7 @@ public class BasicGoalKeep extends Action {
 							//ball travelling in the same side of board
 							if ( (trajectoryY> 110 && ballY > 110) || (trajectoryY<= 110 && ballY <= 110)) {
 								// System.out.println("same side");
-								if (ballY >= topPoint && ballY <= 110 ) {
+								if (ballY >= topPoint && ballY <= 110 && r.getXPosition() < ballX) {
 									setVelocityToTarget(goalLine,ballY, true,true);
 								} else if (ballY < topPoint) {
 									setVelocityToTarget(goalLine,topPoint,true,true);
@@ -204,7 +204,7 @@ public class BasicGoalKeep extends Action {
 							}
 						}
 					} else {
-						if (ballY >= topPoint && ballY <= 110 ) {
+						if (ballY >= topPoint && ballY <= 110 && r.getXPosition() < ballX) {
 							setVelocityToTarget(goalLine,ballY, true,true);
 						} else if (ballY < topPoint) {
 							setVelocityToTarget(goalLine,topPoint,true,true);
@@ -358,11 +358,12 @@ public class BasicGoalKeep extends Action {
 	}
 
 	private double getHalfAnglePosition() {
-		int goalpostOneY = 70;
-		int goalpostTwoY = 110;
+		int goalpostOneY = parameters.get("topPoint");
+		int goalpostTwoY = parameters.get("bottomPoint");
+		int goalLine = parameters.get("goalLine");
 
-		double firstGoalpostTheta = Math.atan2(goalpostOneY - ballY, 0 - ballX);
-		double secondGoalpostTheta = Math.atan2(goalpostTwoY - ballY, 0 - ballX);
+		double firstGoalpostTheta = Math.atan2(goalpostOneY - ballY,  (goalLine - ballX));
+		double secondGoalpostTheta = Math.atan2(goalpostTwoY - ballY, (goalLine - ballX));
 		double averageTheta = Math.PI;
 
 		if ((firstGoalpostTheta >= 0 && secondGoalpostTheta >= 0) || (firstGoalpostTheta <= 0 && secondGoalpostTheta <= 0)) {

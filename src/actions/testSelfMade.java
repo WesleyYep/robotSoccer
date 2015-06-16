@@ -20,7 +20,7 @@ public class testSelfMade extends Action {
 
     @Override
     public void execute() {
-        setVelocityToTarget(ballX,ballY,false,false);
+        setVelocityToTarget(predX,predY,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -34,8 +34,8 @@ public class testSelfMade extends Action {
 
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
-
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
+      //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
             countTimesThatSeemStuck = 0;
@@ -44,7 +44,7 @@ public class testSelfMade extends Action {
             countTimesThatSeemStuck = 0;
             return;
         } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -1.5;
+            r.linearVelocity = -0.5;
             r.angularVelocity = 10;
             countTimesThatSeemStuck++;
             return;
@@ -59,6 +59,7 @@ public class testSelfMade extends Action {
             } else {
                 yPos = (int)(60*Math.random());
             }
+            oldDistanceToTarget = newTargetDistance;
             MoveToSpot.move(r, new Coordinate(20, yPos), 1);
             return;
         }
@@ -77,6 +78,7 @@ public class testSelfMade extends Action {
         difference = Math.toDegrees(difference);
         targetTheta = difference;
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
+        double ballDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
 
         boolean isFacingTop = true;
         boolean isTargetTop = true;
@@ -135,20 +137,7 @@ public class testSelfMade extends Action {
 
         double angleToGoal = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
 
-//        if (Math.abs(targetTheta) < 5) {
-//            //System.out.println("dribble! ");
-//            if (Math.abs(angleToGoal) < Math.PI / 8  && targetDist < 80) { //radians
-//                r.angularVelocity += angleToGoal;
-//                r.linearVelocity*=3;
-//                return;
-//            }
-//            else if (targetDist < 10) {
-//                r.angularVelocity += angleToGoal;
-//            }
-//        } else if (targetDist <= 7) {
-
-
-        if (targetDist <= 7) {
+        if (ballDist <= 7) {
             if (!fastForward && angleToGoal > Math.PI / 18) {
      //           System.out.println("fast_right");
                 r.angularVelocity = 12;
@@ -183,10 +172,10 @@ public class testSelfMade extends Action {
             r.angularVelocity = 0;
         }
 
-        oldDistanceToTarget = getDistanceToTarget(r);
+        oldDistanceToTarget = newTargetDistance;
 
-          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
+//          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
+//        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
 
         //    System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
 //             r.linearVelocity = 0;
@@ -194,6 +183,7 @@ public class testSelfMade extends Action {
 //        	
 
         // }
+        return;
     }
 
     private double angleDifferenceFromGoal(double x, double y, double theta) {

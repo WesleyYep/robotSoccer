@@ -1,62 +1,30 @@
-Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+Role:new role
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 150, 20]
 null-null
 null-null
 null-null
 null-null
 -----
-Role:wait
+Role:new sad
 permanent-actions.Wait-[]-[]
 null-null
 null-null
 null-null
 null-null
 -----
-Role:def
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 50, 70]
-null-null
-null-null
-null-null
-null-null
------
-Role:lowerdef
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 25, 25, 70]
-null-null
-null-null
-null-null
-null-null
------
-Role:waitingLower
-Closest to Ball-actions.testSelfMade-[]-[]
-permanent-actions.StrikerTest-[startingY, startingX]-[30, 15]
-null-null
-null-null
-null-null
------
-Role:waitingUpper
-Closest to Ball-actions.testSelfMade-[]-[]
-permanent-actions.StrikerTest-[startingY, startingX]-[150, 15]
-null-null
-null-null
-null-null
------
 Play:new play
-gk
-def
-lowerdef
-waitingLower
-waitingUpper
+new sad
+new sad
+new sad
+new role
+new sad
 -----
-Play:do nothing play
-gk
-def
-lowerdef
-wait
-wait
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
+-1.0:-1.0
 -----
-Situation:new situation 1:26:2:229:376
+Situation:new situation 1:23:2:486:371
 new play
------
-Situation:new situation 2:253:-9:254:400
-do nothing play
 -----
