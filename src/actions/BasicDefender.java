@@ -241,7 +241,7 @@ public class BasicDefender extends Defender {
         double angular = (right-left)*(2/0.135);
         //    System.out.println("right :" + right + "left " + left);
 
-        r.linearVelocity = linear*2.5;
+        r.linearVelocity = linear*5;
         r.angularVelocity = angular*1;
 
         if (!front &&reverse) {

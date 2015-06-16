@@ -41,8 +41,8 @@ public class StrikerTest extends Action {
 
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
-
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.5) {
+        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
             countTimesThatSeemStuck = 0;
@@ -51,7 +51,7 @@ public class StrikerTest extends Action {
             countTimesThatSeemStuck = 0;
             return;
         } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -1.5;
+            r.linearVelocity = -0.5;
             r.angularVelocity = 10;
             countTimesThatSeemStuck++;
             return;
