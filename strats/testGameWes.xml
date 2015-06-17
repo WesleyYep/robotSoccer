@@ -40,22 +40,29 @@ null-null
 null-null
 null-null
 -----
-Role:defender2
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[120, 80, 80, 60]
+Role:defenderBottom
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 20, 40, 130]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:defenderTop
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[50, 20, 40, 50]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 170]
+permanent-actions.WaitingStrikerStraight-[startingY, startingX]-[90, 110]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 170]
+permanent-actions.WaitingStrikerStraight-[startingY, startingX]-[90, 110]
 null-null
 null-null
 null-null
@@ -108,7 +115,7 @@ gk
 defender
 new role
 chaseBall
-waitingDefenderTop
+defenderTop
 -----
 -1.0:-1.0
 -1.0:-1.0
@@ -121,7 +128,7 @@ gk
 defender
 new role
 chaseBall
-waitingDefenderBottom
+defenderBottom
 -----
 -1.0:-1.0
 -1.0:-1.0
@@ -156,11 +163,11 @@ waitingStrikerBottom
 -3.0:-3.0
 -----
 Play:kickOff
-kickoff1
+gk
 kickoff2
 kickoff3
 kickoffKick
-gk
+kickoff1
 -----
 -1.0:-1.0
 -1.0:-1.0
@@ -179,4 +186,5 @@ attackTop
 -----
 Situation:attackBot:256:183:226:186
 attackBottom
+kickOff
 -----

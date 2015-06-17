@@ -333,7 +333,7 @@ public class BasicDefender extends Defender {
         //    System.out.println("right :" + right + "left " + left);
 
 
-        r.linearVelocity = linear*5;
+        r.linearVelocity = linear*2.5;
         r.angularVelocity = angular*1;
 
         if (!front &&reverse) {
