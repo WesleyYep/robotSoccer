@@ -31,10 +31,10 @@ public class BasicDefender extends Defender {
     }
 
     {
-        parameters.put("point 1 x", 50);
-        parameters.put("point 1 y", 50);
-        parameters.put("point 2 x", 150);
-        parameters.put("point 2 y", 150);
+        parameters.put("point 1 x", 35);
+        parameters.put("point 1 y", 70);
+        parameters.put("point 2 x", 35);
+        parameters.put("point 2 y", 110);
     }
 
     @Override
@@ -49,17 +49,72 @@ public class BasicDefender extends Defender {
 
         boolean goingHorizontal = false;
         boolean goingVertical = false;
-        double trajectoryY = 0;
-
+        double interceptY = 0;
+        double interceptX = 0;
+        Point p1 = defendZone.getFirst();
+        Point p2 = defendZone.getSecond();
+        //when horizontal ball line
         if (yDiff == 0) {
             goingHorizontal = true;
         }
 
         if (xDiff == 0) {
-            goingVertical = true;
+            goingVertical = true;  
+        }
+        if (goingVertical && goingHorizontal) {
+        	//System.out.println("staying still");
+        }
+        
+        if (!goingVertical && goingHorizontal) {
+        	//System.out.println("horizontal line");
+        	//for the defender line
+        	//vertical defender line
+            if (Math.abs(p1.x-p2.x) == 0)  {
+            	interceptY = ballY;
+            	interceptX = p1.x;
+            }
+            //horizontal defender line
+            else if (Math.abs(p1.y-p2.y) == 0) {
+            	interceptY = p1.y;
+            	interceptX  = ballX;
+            }
+            //other defender line
+            else {
+            	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
+            	double yConst = p1.y - (gradient*p1.x);
+            	
+            	interceptY = ballY;
+            	interceptX = (ballY-yConst) / gradient;
+            }
+        }
+        
+        if (goingVertical && !goingHorizontal) {
+
+           // System.out.println("vertical line");
+
+          	//for the defender line
+        	//vertical defender line
+            if (Math.abs(p1.x-p2.x) == 0)  {
+            	interceptY = p1.y;
+            	interceptX = ballX;
+            }
+            //horizontal defender line
+            else if (Math.abs(p1.y-p2.y) == 0) {
+            	interceptY = p1.x;
+            	interceptX  = ballY;
+            }
+            //other defender line
+            else {
+            	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
+            	double yConst = p1.y - (gradient*p1.x);
+            	
+            	interceptY = (gradient*ballX) + yConst;
+            	interceptX = ballX;
+            }
         }
 
         if (!(goingVertical || goingHorizontal)) {
+        	//System.out.println("diagonal line");
             constant = ballY - ((yDiff/xDiff)*ballX);
             //trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
 
@@ -78,22 +133,53 @@ public class BasicDefender extends Defender {
 
             double yInt = yMean - slope* xMean;
 
+            
             //trajectoryY = (slope*(goalLine+3.75)) + yInt;
 
             //	trajectoryY = (slope*(goalLine-3.75)) + yInt;
-
-
+          	//for the defender line
+        	
+            if (Math.abs(p1.x-p2.x) == 0)  {
+            	interceptY = (slope*(p1.x-3.75)) + yInt;
+            	interceptX = p1.x;
+            }
+            else if (Math.abs(p1.y-p2.y) == 0) {
+            	interceptY = p1.y;
+            	interceptX = (p1.y-yInt)/slope;
+            }
+            else {
+            	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
+            	double yConst = p1.y - (gradient*p1.x);
+            	
+            	if (gradient != slope) {
+            		interceptX = (yInt - yConst) / (gradient- slope);
+            		interceptY = (gradient*interceptX) + yConst;
+            	}
+            }
+            
 
         }
-
+        //System.out.println(interceptY + " " + interceptX);
 
         //if (!(r.getXPosition() >= positionToBe.x-5 && r.getXPosition() <= positionToBe.x+5 && r.getYPosition() >= positionToBe.y-5
         //		&& r.getYPosition() <= positionToBe.y+5)) {
-        setVelocityToTarget(positionToBe.x, positionToBe.y, true,false);
-
+        //setVelocityToTarget(positionToBe.x, positionToBe.y, true,false);
+        if ( ((interceptX <= p1.x & interceptX >= p2.x) || (interceptX >= p1.x & interceptX <= p2.x)) &&
+        		((interceptY <= p1.y & interceptY >= p2.y) || (interceptY >= p1.y & interceptY <= p2.y))) {
+        	setVelocityToTarget(interceptX, interceptY, true,true);
+        	//System.out.println("here");
+        }
+        else {
+        	setVelocityToTarget(positionToBe.x, positionToBe.y, true,false);
+        }
         //} else {
         ///	System.out.println("reached");
         //}
+        
+        lastBallX = ballX;
+		lastBallY = ballY;
+		lastBallX2 = lastBallX;
+		lastBallY2 = lastBallY;
 
     }
 
@@ -166,14 +252,16 @@ public class BasicDefender extends Defender {
         }
         ballDifference = Math.toDegrees(ballDifference);
         ballTargetTheta = ballDifference;
+        /*
         if ((Math.abs(ballTargetTheta) < 5 && Math.abs(r.getTheta()) < 90) || (Math.abs(ballTargetTheta) > 175 && Math.abs(r.getTheta()) > 90)) {
             MoveToSpot.move(r, new Coordinate((int)ballX, (int)ballY), 1.5);
             return;
-        }
+        } */
 
         boolean isFacingTop = true;
         boolean isTargetTop = true;
         boolean front  = true;
+        /*
         if (r.getTheta() < 0) {
             isFacingTop = false;
         }
@@ -184,8 +272,11 @@ public class BasicDefender extends Defender {
 
         if (isTargetTop != isFacingTop) {
             front = false;
+        } */
+        
+        if (targetTheta > 90 || targetTheta < -90) {
+        	front = false;
         }
-
 
         if (!front && reverse) {
             if (targetTheta < 0) {
@@ -241,7 +332,8 @@ public class BasicDefender extends Defender {
         double angular = (right-left)*(2/0.135);
         //    System.out.println("right :" + right + "left " + left);
 
-        r.linearVelocity = linear*5;
+
+        r.linearVelocity = linear*2.5;
         r.angularVelocity = angular*1;
 
         if (!front &&reverse) {
@@ -250,7 +342,7 @@ public class BasicDefender extends Defender {
         }
         //      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
         //  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-        //	System.out.println("x:" + x + " y: " + y + " r.x: " + r.getXPosition() + " r.y" + r.getYPosition());
+       // 	System.out.println("x:" + x + " y: " + y + " r.x: " + r.getXPosition() + " r.y" + r.getYPosition());
         //     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
         //r.linearVelocity = 0;
 //            r.angularVelocity = 0;
