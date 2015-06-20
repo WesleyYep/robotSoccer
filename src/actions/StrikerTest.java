@@ -144,7 +144,7 @@ public class StrikerTest extends Action {
             if (time < 1) {
                 //get distance of robot to spot
                 double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
-                r.linearVelocity = (robotDistance/time)/100;
+                r.linearVelocity = squared(robotDistance/time)/100;
                 r.angularVelocity = 0;
                 atCentre = false;
                 return true;
