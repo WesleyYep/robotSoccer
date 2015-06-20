@@ -96,24 +96,12 @@ lowerdef
 waitingLower
 waitingUpper
 -----
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
------
 Play:attack play
 gk
 def
 striker
 striker1
 striker2
------
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
 -----
 Situation:new situation 1:26:2:229:376
 new play

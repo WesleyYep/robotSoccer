@@ -150,10 +150,10 @@ public class CurrentStrategy {
                     bufferedWriter.write(r.toString() + "\n");
                 }
                 bufferedWriter.write("-----\n");
-                for (Point point : p.getPlayCriterias()) {
-                    bufferedWriter.write(point.x + ":" + point.y + "\n");
-                }
-                bufferedWriter.write("-----\n");
+//                for (Point point : p.getPlayCriterias()) {
+//                    bufferedWriter.write(point.x + ":" + point.y + "\n");
+//                }
+//                bufferedWriter.write("-----\n");
             }
 
             for (Situation s : situations) {
@@ -245,11 +245,11 @@ public class CurrentStrategy {
                         play.addRole(i, getRoleByName(line));
                         i++;
                     }
-                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-                        String[] coords = line.split(":");
-                        play.setPlayCriteria(j, new Point(Double.parseDouble(coords[0]), Double.parseDouble(coords[1])));
-                        j++;
-                    }
+//                    while (!(line = bufferedReader.readLine()).equals("-----")) {
+//                        String[] coords = line.split(":");
+//                        play.setPlayCriteria(j, new Point(Double.parseDouble(coords[0]), Double.parseDouble(coords[1])));
+//                        j++;
+//                    }
                     plays.add(play);
                 } else if (line.startsWith("Situation:")) {
                     String[] splitLine = line.split(":");

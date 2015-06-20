@@ -37,11 +37,11 @@ public class PlaysPanel extends JPanel implements StrategyListener{
     private JComboBox roleC = new JComboBox();
     private JComboBox roleD = new JComboBox();
     private JComboBox roleE = new JComboBox();
-    private JComboBox playComboA = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
-    private JComboBox playComboB = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
-    private JComboBox playComboC = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
-    private JComboBox playComboD = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
-    private JComboBox playComboE = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboA = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboB = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboC = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboD = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboE = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
     JTextField robotAField = new JTextField("1");
     JTextField robotBField = new JTextField("2");
     JTextField robotCField = new JTextField("3");
@@ -67,30 +67,30 @@ public class PlaysPanel extends JPanel implements StrategyListener{
         roleC.setPreferredSize(new Dimension(200, 10));
         roleD.setPreferredSize(new Dimension(200, 10));
         roleE.setPreferredSize(new Dimension(200, 10));
-        playComboA.setPreferredSize(new Dimension(200, 10));
-        playComboB.setPreferredSize(new Dimension(200, 10));
-        playComboC.setPreferredSize(new Dimension(200, 10));
-        playComboD.setPreferredSize(new Dimension(200, 10));
-        playComboE.setPreferredSize(new Dimension(200, 10));
+//        playComboA.setPreferredSize(new Dimension(200, 10));
+//        playComboB.setPreferredSize(new Dimension(200, 10));
+//        playComboC.setPreferredSize(new Dimension(200, 10));
+//        playComboD.setPreferredSize(new Dimension(200, 10));
+//        playComboE.setPreferredSize(new Dimension(200, 10));
 
         add(new JLabel("Plays"), "wrap");
         add(playsScrollPane, "wrap");
         add(addButton, "split 2");
         add(removeButton, "wrap");
-        //add(new JLabel("Robot A:"), "split 2");
-        add(playComboA, "split 2");
+        add(new JLabel("Robot A:"), "split 2");
+       // add(playComboA, "split 2");
         add(roleA, "wrap, span");
-// add(new JLabel("Robot B:"), "split 2");
-        add(playComboB, "split 2");
+        add(new JLabel("Robot B:"), "split 2");
+        //add(playComboB, "split 2");
         add(roleB, "wrap, span");
-       // add(new JLabel("Robot C:"), "split 2");
-        add(playComboC, "split 2");
+        add(new JLabel("Robot C:"), "split 2");
+        //add(playComboC, "split 2");
         add(roleC, "wrap, span");
-       // add(new JLabel("Robot D:"), "split 2");
-        add(playComboD, "split 2");
+        add(new JLabel("Robot D:"), "split 2");
+        //add(playComboD, "split 2");
         add(roleD, "wrap, span");
-       // add(new JLabel("Robot E:"), "split 2");
-        add(playComboE, "split 2");
+        add(new JLabel("Robot E:"), "split 2");
+        //add(playComboE, "split 2");
         add(roleE, "wrap, span");
         add(saveButton, "wrap");
         add(new JLabel("Robot Mapping"), "wrap");
@@ -164,136 +164,6 @@ public class PlaysPanel extends JPanel implements StrategyListener{
             }
         });
 
-        playComboA.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (!updating && e.getStateChange() == ItemEvent.SELECTED) {
-                    String item = (String) e.getItem();
-                    switch (item) {
-                        case "Permanent":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-1, -1)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Closest to Ball":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Rest":
-                            lastSelectedPlay.setPlayCriteria(0, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
-                            break;
-                        default:
-                            Point point = getSelectedSpot();
-                            if (point != null) {
-                                lastSelectedPlay.setPlayCriteria(0, point);
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-
-        playComboB.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (!updating && e.getStateChange() == ItemEvent.SELECTED) {
-                    String item = (String) e.getItem();
-                    switch (item) {
-                        case "Permanent":
-                            lastSelectedPlay.setPlayCriteria(1, new Point(-1, -1)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Closest to Ball":
-                            lastSelectedPlay.setPlayCriteria(1, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Rest":
-                            lastSelectedPlay.setPlayCriteria(1, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
-                            break;
-                        default:
-                            Point point = getSelectedSpot();
-                            if (point != null) {
-                                lastSelectedPlay.setPlayCriteria(1, point);
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-
-        playComboC.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (!updating && e.getStateChange() == ItemEvent.SELECTED) {
-                    String item = (String) e.getItem();
-                    switch (item) {
-                        case "Permanent":
-                            lastSelectedPlay.setPlayCriteria(2, new Point(-1, -1)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Closest to Ball":
-                            lastSelectedPlay.setPlayCriteria(2, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Rest":
-                            lastSelectedPlay.setPlayCriteria(2, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
-                            break;
-                        default:
-                            Point point = getSelectedSpot();
-                            if (point != null) {
-                                lastSelectedPlay.setPlayCriteria(2, point);
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-
-        playComboD.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (!updating && e.getStateChange() == ItemEvent.SELECTED) {
-                    String item = (String) e.getItem();
-                    switch (item) {
-                        case "Permanent":
-                            lastSelectedPlay.setPlayCriteria(3, new Point(-1, -1)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Closest to Ball":
-                            lastSelectedPlay.setPlayCriteria(3, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Rest":
-                            lastSelectedPlay.setPlayCriteria(3, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
-                            break;
-                        default:
-                            Point point = getSelectedSpot();
-                            if (point != null) {
-                                lastSelectedPlay.setPlayCriteria(3, point);
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-
-        playComboE.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (!updating && e.getStateChange() == ItemEvent.SELECTED) {
-                    String item = (String) e.getItem();
-                    switch (item) {
-                        case "Permanent":
-                            lastSelectedPlay.setPlayCriteria(4, new Point(-1, -1)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Closest to Ball":
-                            lastSelectedPlay.setPlayCriteria(4, new Point(-2, -2)); //-1 is permanent, -2 is closest to ball
-                            break;
-                        case "Rest":
-                            lastSelectedPlay.setPlayCriteria(4, new Point(-3, -3)); //-1 is permanent, -2 is closest to ball, -3 is rest
-                            break;
-                        default:
-                            Point point = getSelectedSpot();
-                            if (point != null) {
-                                lastSelectedPlay.setPlayCriteria(4, point);
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-
         ListSelectionModel playsRows = allPlaysTable.getSelectionModel();
         playsRows.addListSelectionListener(new ListSelectionListener() {
                 @Override
@@ -314,43 +184,18 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                     roleC.setSelectedItem(roles[2]);
                     roleD.setSelectedItem(roles[3]);
                     roleE.setSelectedItem(roles[4]);
-                    Point[] criteriaPoints = play.getPlayCriterias();
-                    setComboBox(playComboA, criteriaPoints, 0);
-                    setComboBox(playComboB, criteriaPoints, 1);
-                    setComboBox(playComboC, criteriaPoints, 2);
-                    setComboBox(playComboD, criteriaPoints, 3);
-                    setComboBox(playComboE, criteriaPoints, 4);
+//                    Point[] criteriaPoints = play.getPlayCriterias();
+//                    setComboBox(playComboA, criteriaPoints, 0);
+//                    setComboBox(playComboB, criteriaPoints, 1);
+//                    setComboBox(playComboC, criteriaPoints, 2);
+//                    setComboBox(playComboD, criteriaPoints, 3);
+//                    setComboBox(playComboE, criteriaPoints, 4);
                 }
 
-            }
-
-            private void setComboBox(JComboBox combo, Point[] criteriaPoints, int index) {
-                updating = true;
-                if (criteriaPoints[index].x == -1 && criteriaPoints[index].y == -1) {
-                    combo.setSelectedIndex(0); //closest to ball
-                } else if (criteriaPoints[index].x == -2 && criteriaPoints[index].y == -2) {
-                    combo.setSelectedIndex(1); //permanent
-                } else if (criteriaPoints[index].x == -3 && criteriaPoints[index].y == -3) {
-                    combo.setSelectedIndex(3); //rest
-                } else {
-                    combo.setSelectedIndex(2); //spot
-                }
-                updating = false;
             }
         });
-    }
 
-    private Point getSelectedSpot() {
-        String coords = JOptionPane.showInputDialog(null, "Enter coordinates of spot", "0,0");
-        try {
-            String[] coordArray = coords.split(",");
-            return new Point(Integer.parseInt(coordArray[0]), Integer.parseInt(coordArray[1]));
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
-            JOptionPane.showMessageDialog(null, "Incorrect format for coordinates");
-            return null;
-        }
     }
-
 
     @Override
     public void repaint() {

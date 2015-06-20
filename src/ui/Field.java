@@ -396,13 +396,13 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
                 if (p == null) { break; }
                 List<Robot> order;
 
-                if (currentOrder != null && situations.get(i) == currentSituation) {
-                    order = currentOrder;
-                } else {
-                    order = getOrder(p.getPlayCriterias());
-                    currentOrder = order;
-                    currentSituation = situations.get(i);
-                }
+//                if (currentOrder != null && situations.get(i) == currentSituation) {
+//                    order = currentOrder;
+//                } else {
+                    order = Arrays.asList(bots.getRobots());
+//                    currentOrder = order;
+//                    currentSituation = situations.get(i);
+//                }
 
 				for (int j = 0; j < 5; j++) {
 					Role role = currentStrategy.mapRoles(p.getRoles())[j];
@@ -418,38 +418,38 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	}
 
     //MAKE SURE PERMANENT ROBOTS ARE AT THE TOP OF PLAYS and ALL REST ROBOTS ARE AT THE BOTTOM OF PLAYS! @@IMPORTANT
-    private List<Robot> getOrder(org.opencv.core.Point[] playCriterias) {
-        List<Robot> botList = new ArrayList<>(Arrays.asList(bots.getRobots()));
-        List<Robot> order = new ArrayList<Robot>();
-
-        for (org.opencv.core.Point p : playCriterias) {
-            double minDist = 1000;
-            int rIndex = 0;
-            org.opencv.core.Point point = new org.opencv.core.Point(p.x, p.y);
-
-            if (p.x == -2 && p.y == -2) {
-                point.x = getBallX();
-                point.y = getBallY();
-            }
-
-            for (int i = 0; i < botList.size(); i++) {
-                Robot r = botList.get(i);
-                if (point.x == -1 && point.y == -1 || point.x == -3 && point.y == -3) {
-                    rIndex = i;
-                    break;
-                }
-                double d = Geometry.euclideanDistance(point, new org.opencv.core.Point(r.getXPosition(), r.getYPosition()));
-
-                if (d < minDist) {
-                    minDist = d;
-                    rIndex = i;
-                }
-            }
-            order.add(botList.get(rIndex));
-            botList.remove(rIndex);
-        }
-        return order;
-    }
+//    private List<Robot> getOrder(org.opencv.core.Point[] playCriterias) {
+//        List<Robot> botList = new ArrayList<>(Arrays.asList(bots.getRobots()));
+//        List<Robot> order = new ArrayList<Robot>();
+//
+//        for (org.opencv.core.Point p : playCriterias) {
+//            double minDist = 1000;
+//            int rIndex = 0;
+//            org.opencv.core.Point point = new org.opencv.core.Point(p.x, p.y);
+//
+//            if (p.x == -2 && p.y == -2) {
+//                point.x = getBallX();
+//                point.y = getBallY();
+//            }
+//
+//            for (int i = 0; i < botList.size(); i++) {
+//                Robot r = botList.get(i);
+//                if (point.x == -1 && point.y == -1 || point.x == -3 && point.y == -3) {
+//                    rIndex = i;
+//                    break;
+//                }
+//                double d = Geometry.euclideanDistance(point, new org.opencv.core.Point(r.getXPosition(), r.getYPosition()));
+//
+//                if (d < minDist) {
+//                    minDist = d;
+//                    rIndex = i;
+//                }
+//            }
+//            order.add(botList.get(rIndex));
+//            botList.remove(rIndex);
+//        }
+//        return order;
+//    }
 
     public void executeSetPlay() {
         List<Situation> situations = currentStrategy.getSituations();
