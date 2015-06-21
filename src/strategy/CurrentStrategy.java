@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wesley on 23/01/2015.
@@ -277,13 +278,72 @@ public class CurrentStrategy {
             }
 
             bufferedReader.close();
+            readSetPlay(new File(fileName).getParentFile().getAbsolutePath());
         } catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Class not found!");
-        } catch (InstantiationException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        }
+    }
+
+    public void readSetPlay(String directory) {
+        String line = null;
+        openedStratFile = true;
+        try {
+            FileReader fileReader = new FileReader(directory + "\\setPlay.xml");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) {
+                if (line.startsWith("Role:")) {
+                    int i = 0;
+                    Criterias criterias = new Criterias();
+                    Role role = new Role();
+                    role.setRoleName(line.split(":")[1]);
+
+                    while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
+                        String[] lineArray = line.split("-");
+                        Action action = (Action)Class.forName(lineArray[1]).newInstance();
+                        if (lineArray.length < 3) {
+                            //do nothing
+                        } else {
+                            for (int j = 0; j < fromString(lineArray[2]).length; j++) {
+                                if (lineArray[2].equals("[]") || lineArray[3].equals("[]")) {
+                                    continue;
+                                }
+                                action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
+                            }
+                        }
+                        role.setPair(criterias.findCriteria(line.split("-")[0]), action, i);
+                        i++;
+                    }
+                    roles.add(role);
+                } else if (line.startsWith("Play:")) {
+                    Play play = new Play();
+                    play.setPlayName(line.split(":")[1]);
+                    int i = 0;
+
+                    while (!(line = bufferedReader.readLine()).equals("-----")) {
+                        String[] lineArray = line.split(":");
+                        Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
+
+                        if (lineArray.length == 5) {
+                            Action firstAction = roleToAdd.getActions()[0];
+                            Object[] params = firstAction.getParameters().toArray();
+                            for (int j = 0; j < params.length; j++) {
+                                firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
+                            }
+                        }
+                        play.addRole(i, roleToAdd);
+
+                        i++;
+                    }
+                    plays.add(play);
+                }
+            }
+
+        } catch (IOException ex) {
+            System.out.println("Unable to open file: " + directory + "/setPlay.xml");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -312,5 +372,24 @@ public class CurrentStrategy {
 
     public Play getSetPlay() {
         return setPlay;
+    }
+
+    private static Role cloneRole(Role role){
+        try{
+            Role clone = role.getClass().newInstance();
+            clone.setRoleName(role.toString());
+            Action[] actions = role.getActions();
+            Criteria[] crits = role.getCriterias();
+
+            for (int i = 0; i < actions.length; i++) {
+                if (actions[i] == null || crits[i] == null) {
+                    break;
+                }
+                clone.setPair(crits[i], (Action)Class.forName("actions." + actions[i].toString()).newInstance(), i);
+            }
+            return clone;
+        }catch(Exception e){
+            return null;
+        }
     }
 }

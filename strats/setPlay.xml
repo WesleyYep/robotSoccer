@@ -1,0 +1,21 @@
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:moveAndTurn
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:kickOff
+gk
+moveAndTurn:90:110:90:70
+moveAndTurn:90:110:90:110
+moveAndTurn:90:110:80:90
+moveAndTurn:90:110:120:80
+-----

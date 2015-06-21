@@ -40,34 +40,6 @@ null-null
 null-null
 null-null
 -----
-Role:kickoff1
-permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
-null-null
-null-null
-null-null
-null-null
------
-Role:kickoff2
-permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 110]
-null-null
-null-null
-null-null
-null-null
------
-Role:kickoff3
-permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 80, 90]
-null-null
-null-null
-null-null
-null-null
------
-Role:kickoffKick
-permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 120, 80]
-null-null
-null-null
-null-null
-null-null
------
 Role:striker
 Closest to Ball-actions.testSelfMade-[]-[]
 permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
