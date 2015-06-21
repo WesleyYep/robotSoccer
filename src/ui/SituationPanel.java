@@ -272,11 +272,13 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		situationModel.setListOfSituations(listOfSituations);
 
 		situationModel.fireTableDataChanged();
-		System.out.println(listOfSituations.get(0).getPlays().size());
-		playsModel.setListOfPlays(listOfSituations.get(0).getPlays());
-		//add anything else here?
+        if (listOfSituations.size() > 0) {
+            System.out.println(listOfSituations.get(0).getPlays().size());
+            playsModel.setListOfPlays(listOfSituations.get(0).getPlays());
+            //add anything else here?
 
-		tableOfSituations.setRowSelectionInterval(listOfSituations.size()-1, listOfSituations.size()-1);
-		((JTabbedPane)this.getParent()).setSelectedComponent(this);
+            tableOfSituations.setRowSelectionInterval(listOfSituations.size() - 1, listOfSituations.size() - 1);
+            ((JTabbedPane) this.getParent()).setSelectedComponent(this);
+        }
 	}
 }

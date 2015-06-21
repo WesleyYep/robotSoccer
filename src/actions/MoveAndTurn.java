@@ -51,7 +51,7 @@ public class MoveAndTurn extends Action {
 
 
         //move and turn
-        if (Math.abs(r.getXPosition() - parameters.get("spotX")) < 10 && Math.abs(r.getYPosition() - parameters.get("spotY")) < 10 ) { //already at centre, now turn to goal
+        if (Math.abs(r.getXPosition() - parameters.get("spotX")) < 5 && Math.abs(r.getYPosition() - parameters.get("spotY")) < 5 ) { //already at spot, now turn to target
             TurnTo.turn(r, new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY")));
             double targetTheta = getTargetTheta(r, parameters.get("turnSpotX"), parameters.get("turnSpotY"));
             r.linearVelocity = 0;
@@ -63,7 +63,7 @@ public class MoveAndTurn extends Action {
         else {
             targetX = parameters.get("spotX");
             targetY = parameters.get("spotY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1);
+            MoveToSpot.move(r, new Coordinate(targetX, targetY), 0.5);
             oldDistanceToTarget = getDistanceToTarget(r);
         }
     }

@@ -179,11 +179,11 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                     Play play = (Play)playsTableModel.getValueAt(selectedRow, 0);
                     lastSelectedPlay = play;
                     Role[] roles = play.getRoles();
-                    roleA.setSelectedItem(roles[0]);
-                    roleB.setSelectedItem(roles[1]);
-                    roleC.setSelectedItem(roles[2]);
-                    roleD.setSelectedItem(roles[3]);
-                    roleE.setSelectedItem(roles[4]);
+                    setSelectedValue(roleA, roles[0]);
+                    setSelectedValue(roleB, roles[1]);
+                    setSelectedValue(roleC, roles[2]);
+                    setSelectedValue(roleD, roles[3]);
+                    setSelectedValue(roleE, roles[4]);
 //                    Point[] criteriaPoints = play.getPlayCriterias();
 //                    setComboBox(playComboA, criteriaPoints, 0);
 //                    setComboBox(playComboB, criteriaPoints, 1);
@@ -195,6 +195,23 @@ public class PlaysPanel extends JPanel implements StrategyListener{
             }
         });
 
+    }
+
+    public static void setSelectedValue(JComboBox comboBox, Role theRole)
+    {
+        Role role;
+        if (theRole == null) {
+            return;
+        }
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            if (comboBox.getItemAt(i) != null) {
+                role = (Role) comboBox.getItemAt(i);
+                if (role.toString().equals(theRole.toString())) {
+                    comboBox.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
     }
 
     @Override

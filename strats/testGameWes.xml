@@ -33,13 +33,6 @@ null-null
 null-null
 null-null
 -----
-Role:chaseBall2
-permanent-actions.testSelfMade-[]-[]
-null-null
-null-null
-null-null
-null-null
------
 Role:defenderBottom
 permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 20, 40, 130]
 null-null
@@ -82,18 +75,32 @@ null-null
 null-null
 null-null
 -----
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:moveAndTurn
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:defendTop
 gk
-defender
-new role
 chaseBall
+new role
+defender
 defenderTop
 -----
 Play:defendBot
 gk
-defender
-new role
 chaseBall
+new role
+defender
 defenderBottom
 -----
 Play:attackTop

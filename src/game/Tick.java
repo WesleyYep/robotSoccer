@@ -214,6 +214,17 @@ public class Tick implements SenderListener {
 
     public void runSetPlay (boolean run) {
         runSetPlay = run;
+        if (run) {
+            new java.util.Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (runSetPlay) { //if set play is already stopped, don't transition into normal play
+                        runSetPlay = false;
+                        runStrat = true;
+                    }
+                }
+            }, 10000);
+        }
     }
 
 	public void runStrategy(boolean run) {

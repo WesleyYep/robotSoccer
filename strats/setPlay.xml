@@ -12,10 +12,32 @@ null-null
 null-null
 null-null
 -----
-Play:kickOff
+Role:defender
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 130, 50]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:chaseBall
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+//for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
+Play:kickOffSetUp
 gk
 moveAndTurn:90:110:90:70
 moveAndTurn:90:110:90:110
 moveAndTurn:90:110:80:90
 moveAndTurn:90:110:120:80
+-----
+Play:KickOffStart
+gk
+chaseBall
+chaseBall
+defender
+chaseBall
 -----

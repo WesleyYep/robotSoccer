@@ -240,17 +240,25 @@ public class CurrentStrategy {
                 } else if (line.startsWith("Play:")) {
                     Play play = new Play();
                     play.setPlayName(line.split(":")[1]);
-                    int i = 0, j = 0;
+                    int i = 0;
 
                     while (!(line = bufferedReader.readLine()).equals("-----")) {
-                        play.addRole(i, getRoleByName(line));
+                        String[] lineArray = line.split(":");
+                        Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
+                        Action firstAction = roleToAdd.getActions()[0];
+                        Object[] params = firstAction.getParameters().toArray();
+
+                        for (int j = 0; j < params.length; j++) {
+                            if (lineArray.length == 5) {
+                                firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
+                            } else {
+                                firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
+                            }
+                        }
+                        play.addRole(i, roleToAdd);
+
                         i++;
                     }
-//                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-//                        String[] coords = line.split(":");
-//                        play.setPlayCriteria(j, new Point(Double.parseDouble(coords[0]), Double.parseDouble(coords[1])));
-//                        j++;
-//                    }
                     plays.add(play);
                 } else if (line.startsWith("Situation:")) {
                     String[] splitLine = line.split(":");
@@ -273,12 +281,14 @@ public class CurrentStrategy {
                     situation.setAreaActive(true);
                 }
             }
+
+            bufferedReader.close();
+            if (!fileName.contains("setPlay.xml")) { //don't open set play file if we deliberately are opening it!
+                readSetPlay(new File(fileName).getParentFile().getAbsolutePath());
+            }
             for (StrategyListener listener : listeners) {
                 listener.strategyChanged(); //this informs situationpanel, playspanel, and rolepanel that they need to update
             }
-
-            bufferedReader.close();
-            readSetPlay(new File(fileName).getParentFile().getAbsolutePath());
         } catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
@@ -299,6 +309,9 @@ public class CurrentStrategy {
                     Criterias criterias = new Criterias();
                     Role role = new Role();
                     role.setRoleName(line.split(":")[1]);
+                    if (containsRole(role)) {
+                        continue;
+                    }
 
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
@@ -326,13 +339,15 @@ public class CurrentStrategy {
                         String[] lineArray = line.split(":");
                         Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
 
-                        if (lineArray.length == 5) {
                             Action firstAction = roleToAdd.getActions()[0];
                             Object[] params = firstAction.getParameters().toArray();
                             for (int j = 0; j < params.length; j++) {
-                                firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
+                                if (lineArray.length == 5) {
+                                    firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
+                                } else {
+                                    firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
+                                }
                             }
-                        }
                         play.addRole(i, roleToAdd);
 
                         i++;
@@ -364,6 +379,15 @@ public class CurrentStrategy {
     private String[] fromString(String string) {
         String[] strings = string.replace("[", "").replace("]", "").split(", ");
         return strings;
+    }
+
+    public boolean containsRole(Role role) {
+        for (Role r : roles) {
+            if ( r.toString().equals(role.toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setSetPlay(Play play) {
