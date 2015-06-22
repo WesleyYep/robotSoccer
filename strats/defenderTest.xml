@@ -1,12 +1,40 @@
-Role:new role
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 150, 20]
+Role:new sad
+permanent-actions.Wait-[]-[]
 null-null
 null-null
 null-null
 null-null
 -----
-Role:new sad
-permanent-actions.Wait-[]-[]
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:moveAndTurn
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:defender
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 130, 50]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:chaseBall
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new role
+permanent-actions.WaitingStrikerDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[170, 150, 150, 10]
 null-null
 null-null
 null-null
@@ -18,6 +46,20 @@ new sad
 new sad
 new role
 new sad
+-----
+Play:kickOffSetUp
+gk
+moveAndTurn
+moveAndTurn
+moveAndTurn
+moveAndTurn
+-----
+Play:KickOffStart
+gk
+chaseBall
+chaseBall
+defender
+chaseBall
 -----
 Situation:new situation 1:23:2:486:371
 new play

@@ -59,7 +59,7 @@ public class StrikerTest extends Action {
 
         //move and turn
         if (Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
-            TurnTo.turn(r, new Coordinate(220, 90));
+            TurnTo.turn(r, new Coordinate(220, 90), 1);
             double targetTheta = getTargetTheta(r, 220, 90);
             r.linearVelocity = 0;
             if (Math.abs(targetTheta) < 5) {
@@ -144,7 +144,7 @@ public class StrikerTest extends Action {
             if (time < 1) {
                 //get distance of robot to spot
                 double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
-                r.linearVelocity = squared(robotDistance/time)/100;
+                r.linearVelocity = squared((robotDistance/time)/100);
                 r.angularVelocity = 0;
                 atCentre = false;
                 return true;

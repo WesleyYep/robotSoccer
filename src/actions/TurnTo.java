@@ -26,10 +26,10 @@ public class TurnTo extends Action{
         Robot r = bot;
         Coordinate spot =  new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY"));
 
-        turn(r,spot);
+        turn(r,spot, 1);
     }
 
-    public static void turn(Robot r, Coordinate spot) {
+    public static void turn(Robot r, Coordinate spot, int speed) {
         double targetTheta = Math.atan2(r.getYPosition() - spot.y, spot.x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
         //some hack to make the difference -Pi < theta < Pi
@@ -69,7 +69,7 @@ public class TurnTo extends Action{
         double angular = (right-left)*(2/0.135);
 
         r.linearVelocity = 0;
-        r.angularVelocity = angular*0.5;
+        r.angularVelocity = angular*0.5*speed;
     }
 
     protected double squared (double x) {

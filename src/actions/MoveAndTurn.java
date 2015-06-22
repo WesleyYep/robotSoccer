@@ -52,7 +52,7 @@ public class MoveAndTurn extends Action {
 
         //move and turn
         if (Math.abs(r.getXPosition() - parameters.get("spotX")) < 5 && Math.abs(r.getYPosition() - parameters.get("spotY")) < 5 ) { //already at spot, now turn to target
-            TurnTo.turn(r, new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY")));
+            TurnTo.turn(r, new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY")), 1);
             double targetTheta = getTargetTheta(r, parameters.get("turnSpotX"), parameters.get("turnSpotY"));
             r.linearVelocity = 0;
             if (Math.abs(targetTheta) < 5) {

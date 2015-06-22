@@ -48,14 +48,14 @@ null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.WaitingStrikerStraight-[startingY, startingX]-[90, 110]
+permanent-actions.WaitingStrikerStraight-[startingY, startingX]-[105, 150]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.WaitingStrikerStraight-[startingY, startingX]-[90, 110]
+permanent-actions.WaitingStrikerStraight-[startingY, startingX]-[75, 150]
 null-null
 null-null
 null-null
