@@ -30,5 +30,5 @@ public class PairPoint {
 
 	public double getTheta() {
 		return theta;
-	}
+	} //degrees
 }

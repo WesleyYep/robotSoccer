@@ -51,7 +51,7 @@ public class RobotData {
 		double longPair = Math.max(Math.min(d1,d2), Math.min(Math.max(d1,d2), d3));
 		
 		if (longPair == d1) {
-			this.longPair = new PairPoint(referencePoint, teamRectPoint[1], d1, a1);
+			this.longPair = new PairPoint(referencePoint, teamRectPoint[1], d1, a1); //theta in degrees
 		} else if (longPair == d2) {
 			this.longPair = new PairPoint(referencePoint, teamRectPoint[2], d2, a2);
 		} else {
@@ -226,5 +226,8 @@ public class RobotData {
 	public double getTheta() {
         return Math.toRadians(-theta);
     }
-	
+
+    public void setTheta(double theta) {
+        this.theta = clip(theta);
+    }
 }

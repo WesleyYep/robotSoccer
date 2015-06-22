@@ -39,7 +39,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private int robotMaxSize;
     private int ballMaxSize;
     private int greenMaxSize;
-    
+
+    private Scalar ballMin, ballMax, teamMin, teamMax, greenMin, greenMax;
+
     private List<MatOfPoint> correctBallContour;
 
 	private Point[] oldRobotPositions = {new Point(),new Point(),new Point(),new Point(),new Point()};
@@ -72,7 +74,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			// Full range HSV. Range 0-255.
 	    	Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
 	    	
-			Scalar ballMin, ballMax, teamMin, teamMax, greenMin, greenMax;
 			Mat ballBinary, teamBinary, greenBinary, opponentBinary;
 			
 			dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
@@ -250,7 +251,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			// Update robot positions.
 			for (RobotData rd : data) {
 				if (rd != null) {
-					int robotNum = rd.robotIdentification();
+					//int robotNum = rd.robotIdentification();
+                    int robotNum = identify(rd, webcamImageMat);
 					robotNumber[robotCount] = robotNum-1;
 					if (robotNum > 0) {
                         Point pos = new Point((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y);
@@ -284,8 +286,46 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			
 		}
 	}
-	
-	@Override
+
+    private int identify(RobotData rd, Mat image) {
+        boolean[] areasAreBlack = new boolean[4];
+        double startTheta = rd.getLongPair().getTheta(); //in degrees
+
+        for (int i = 0; i < 4; i++) { //loop through each quadrant and check if black pixel
+            double dist = Math.sqrt(2 * Math.pow(rd.getShortPair().getEuclideanDistance(),2));
+            double theta = Math.toRadians(startTheta + i*90 +45); //eg. the theta of the middle of each quadrant
+            Point centre = rd.getTeamCenterPoint();
+            //get coordinates of the point to check
+            int x = (int) (centre.x + dist * Math.cos(theta));
+            int y = (int) (centre.y + dist * Math.sin(theta));
+            areasAreBlack[i] = isBlack(image.get(x, y));
+        }
+        int robotNum = 1;
+        if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 4;}
+        else if (areasAreBlack[1] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 4;}
+        else if (areasAreBlack[0] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 5;}
+        else if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta+180); robotNum = 5;}
+        else if (areasAreBlack[0] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 3;}
+        else if (areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta+180); robotNum = 3;}
+        else if (areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 2;}
+        else if (areasAreBlack[1]) {rd.setTheta(startTheta+180); robotNum = 2;}
+        else if (areasAreBlack[0]) {rd.setTheta(startTheta); robotNum = 1;}
+        else if (areasAreBlack[2]) {rd.setTheta(startTheta+180); robotNum = 1;}
+
+        return robotNum;
+    }
+
+    private boolean isBlack(double[] scalar) {
+        double[] min = greenMin.val;
+        double[] max = greenMax.val;
+
+        return (min[0] < scalar[0] && scalar[0] < max[0] &&
+            min[1] < scalar[1] && scalar[1] < max[1] &&
+            min[2] < scalar[2] && scalar[2] < max[2]);
+
+    }
+
+    @Override
 	public void viewStateChanged(ViewState currentViewState) {
 		webcamDisplayPanelState = currentViewState;
 	}
