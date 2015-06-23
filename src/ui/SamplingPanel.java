@@ -172,7 +172,6 @@ public class SamplingPanel extends JPanel implements ActionListener {
 
     public void takeSample(BufferedImage image, double xPos, double yPos) {
         Color color = new Color(image.getRGB((int)xPos, (int)yPos));
-        
         float[] hsv = ColorSpace.RGBToHSV(color.getRed(), color.getGreen(), color.getBlue());
        // System.out.println("H: " + hsv[0] + "S: " + hsv[1] + "V: " + hsv[2]);
         HSlider.addToData((int)hsv[0]);

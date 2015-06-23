@@ -253,13 +253,13 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 				if (rd != null) {
 					//int robotNum = rd.robotIdentification();
                     int robotNum = identify(rd, webcamImageMat);
-					robotNumber[robotCount] = robotNum-1;
 					if (robotNum > 0) {
                         Point pos = new Point((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y);
                         double distance =  Geometry.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
 
                         if (distance < 15) { //change this if needed //todo
-                            notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+//						System.out.println(pos.x + ", " + pos.y);
+						notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
                         }
                         oldRobotPositions[robotNum-1] = pos;
                     }
@@ -288,40 +288,47 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
     private int identify(RobotData rd, Mat image) {
-        boolean[] areasAreBlack = new boolean[4];
+		boolean[] areasAreBlack = new boolean[4];
         double startTheta = rd.getLongPair().getTheta(); //in degrees
 
         for (int i = 0; i < 4; i++) { //loop through each quadrant and check if black pixel
-            double dist = Math.sqrt(2 * Math.pow(rd.getShortPair().getEuclideanDistance(),2));
-            double theta = Math.toRadians(startTheta + i*90 +45); //eg. the theta of the middle of each quadrant
+			double dist = Math.sqrt(2 * Math.pow(rd.getShortPair().getEuclideanDistance(),2));
+		//	System.out.println("short pair dist: " + rd.getShortPair().getEuclideanDistance());
+		//	System.out.println("dist - " + dist);
+			double theta = Math.toRadians(startTheta + i*90 +45); //eg. the theta of the middle of each quadrant
             Point centre = rd.getTeamCenterPoint();
-            //get coordinates of the point to check
+			//get coordinates of the point to check
             int x = (int) (centre.x + dist * Math.cos(theta));
             int y = (int) (centre.y + dist * Math.sin(theta));
-            areasAreBlack[i] = isBlack(image.get(x, y));
-        }
+		//	System.out.println("x: " + x + " - y: " + y);
+		//	System.out.println("width: " + image.size().width + "height: " + image.size().height);  
+		//	System.out.println("quadrant: " + i);
+			areasAreBlack[i] = isBlack(image.get(y, x));
+		}
         int robotNum = 1;
-        if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 4;}
-        else if (areasAreBlack[1] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 4;}
-        else if (areasAreBlack[0] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 5;}
-        else if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta+180); robotNum = 5;}
-        else if (areasAreBlack[0] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 3;}
-        else if (areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta+180); robotNum = 3;}
-        else if (areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 2;}
-        else if (areasAreBlack[1]) {rd.setTheta(startTheta+180); robotNum = 2;}
-        else if (areasAreBlack[0]) {rd.setTheta(startTheta); robotNum = 1;}
-        else if (areasAreBlack[2]) {rd.setTheta(startTheta+180); robotNum = 1;}
-
-        return robotNum;
+		if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 2;}
+        else if (areasAreBlack[1] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 2;}
+        else if (areasAreBlack[0] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 1;}
+        else if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 1;}
+        else if (areasAreBlack[0] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 3;}
+        else if (areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 3;}
+        else if (areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 4;}
+        else if (areasAreBlack[1]) {rd.setTheta(startTheta); robotNum = 4;}
+        else if (areasAreBlack[0]) {rd.setTheta(startTheta+180); robotNum = 5;}
+        else if (areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 5;}
+		System.out.println(robotNum + " detected");
+		return robotNum;
     }
 
     private boolean isBlack(double[] scalar) {
-        double[] min = greenMin.val;
-        double[] max = greenMax.val;
-
-        return (min[0] < scalar[0] && scalar[0] < max[0] &&
-            min[1] < scalar[1] && scalar[1] < max[1] &&
-            min[2] < scalar[2] && scalar[2] < max[2]);
+		try {
+			System.out.println("h: " + scalar[0] + "s: " + scalar[1] + "v: " + scalar[2]);
+			return (scalar[2] < 70);
+		}
+		catch (ArrayIndexOutOfBoundsException | NullPointerException e){
+			System.out.println(scalar);
+			return false;
+		}
 
     }
 
