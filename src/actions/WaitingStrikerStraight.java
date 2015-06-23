@@ -119,7 +119,7 @@ public class WaitingStrikerStraight extends Action {
             if (time < 1) {
                 //get distance of robot to spot
                 double robotDistance = Math.sqrt(squared(r.getXPosition()-x));
-                r.linearVelocity = squared((robotDistance/time)/100);
+                r.linearVelocity = robotDistance/time/100;
                 r.angularVelocity = 0;
                 return true;
             }

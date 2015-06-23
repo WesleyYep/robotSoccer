@@ -40,12 +40,33 @@ null-null
 null-null
 null-null
 -----
+Role:new role2
+permanent-actions.WaitingStrikerDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 150, 150, 50]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
 new sad
 new sad
 new sad
-new role
 new sad
+new role2
+-----
+Play:kickOffSetUp
+gk
+moveAndTurn
+moveAndTurn
+moveAndTurn
+moveAndTurn
+-----
+Play:KickOffStart
+gk
+chaseBall
+chaseBall
+defender
+chaseBall
 -----
 Play:kickOffSetUp
 gk

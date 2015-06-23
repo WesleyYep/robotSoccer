@@ -23,6 +23,7 @@ public class Tick implements SenderListener {
 	private int count = 0;
 	private boolean runStrat = false;
     private boolean runSetPlay = false;
+	private boolean lastSend = false;
     private Sender sender;
 	private double x = 0;
 	private long time = 0;
@@ -31,6 +32,7 @@ public class Tick implements SenderListener {
 	private int stateSize = 6;
 	private int measSize = 4;
 	private int contrSize = 0;
+	private int number = 0;
 	private KalmanFilter kFilter = new KalmanFilter(stateSize,measSize,contrSize,CvType.CV_32F);
 	private Mat state;
 	private Mat meas;
@@ -111,6 +113,9 @@ public class Tick implements SenderListener {
             } else {
 				bots.stopAllMovement();
 			}
+		} else {
+		//	Robot r = bots.getRobot(0);
+		//	System.out.println("r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " lin ang " + r.linearVelocity + " " + r.angularVelocity + " " + System.currentTimeMillis() );
 		}
 		field.repaint();
 
@@ -185,7 +190,26 @@ public class Tick implements SenderListener {
 				sender.sendStuff(createBotCoordinatesMessage());
 			}
 		} else {
-			bots.send();
+			//if (runStrat || comPanel.isManualControl()) {
+				bots.send();
+						/*
+				//System.out.println("sending");
+				lastSend = true;
+			} else if (lastSend)  {
+				Robot r = bots.getRobot(0);
+				System.out.println("r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " lin ang " + r.linearVelocity + " " + r.angularVelocity + " " + System.currentTimeMillis() );
+				bots.send();
+				//System.out.println("sending");
+				lastSend = false;
+				number = 1;
+			}
+
+			if (number >= 1 && number < 11) {
+				number++;
+				Robot r = bots.getRobot(0);
+				System.out.println("r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " lin ang " + r.linearVelocity + " " + r.angularVelocity + " " + System.currentTimeMillis() );
+			} */
+
 		}
 
 		count++;

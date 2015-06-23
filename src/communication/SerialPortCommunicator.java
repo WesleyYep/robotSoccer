@@ -31,8 +31,10 @@ public class SerialPortCommunicator {
 
 	public boolean writeData(int[] data) {
 		if (currentSerialPort != null && currentSerialPort.isOpened() == true) {
+			//System.out.println(System.currentTimeMillis());
 			try {
 				currentSerialPort.writeIntArray(data);
+				System.out.println(System.currentTimeMillis());
 				return true;
 			} catch (SerialPortException e) {
 				e.printStackTrace();

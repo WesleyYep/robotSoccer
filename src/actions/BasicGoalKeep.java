@@ -353,7 +353,8 @@ public class BasicGoalKeep extends Action {
 		//r.linearVelocity = 0;
 //            r.angularVelocity = 0;
 //        	
-
+	//	System.out.println("ball X Y: " + ballX + " " + ballY + " x y: " + x + " " + y + " r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " r.lin r.ang: "
+	//			+ r.linearVelocity + " " + r.angularVelocity + " timestamp: " + System.currentTimeMillis());
 		// }
 	}
 

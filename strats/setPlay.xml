@@ -29,8 +29,8 @@ null-null
 //for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
 Play:kickOffSetUp
 gk
-moveAndTurn:90:110:90:70
 moveAndTurn:90:110:90:110
+moveAndTurn:90:110:90:70
 moveAndTurn:90:110:80:90
 moveAndTurn:90:110:120:80
 -----

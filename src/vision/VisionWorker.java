@@ -257,7 +257,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                         double distance =  Geometry.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
 
                         if (distance < 15) { //change this if needed //todo
-                            notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+						//	System.out.println(pos.x + ", " + pos.y);
+							notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
                         }
                         oldRobotPositions[robotNum-1] = pos;
                     }
