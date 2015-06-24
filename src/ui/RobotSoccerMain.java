@@ -77,8 +77,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private JLabel	stratStatusLbl;
 	private ActionParameterPanel actionPanel;
 
-    private JButton openPreviousFiles = new JButton("Open Previous");
-
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
 	private final static String CAMSTRING = "Card with Cam";
@@ -95,7 +93,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		// Layout constraint, column constraint
 		super("BLAZE Robot Soccer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 
 		JPanel contentPane = new JPanel(new MigLayout("wrap 12"));
 		//Create the demo's UI.
@@ -162,7 +159,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		field.addComponentListener(glassPanel);
 		situationPanel.setGlassPanel(glassPanel);
 
-
 		//create tab pane
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Output", new JScrollPane(taskOutput));
@@ -226,8 +222,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		
 		
 		visionController = new VisionController();
-
-
 		
 		cards.add(field, FIELDSTRING);
 		cards.add(webcamDisplayPanel, CAMSTRING);
@@ -326,14 +320,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		// Create the menu
 		createMenu();
 		add(contentPane);
-
-        openPreviousFiles.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentStrategy.read(ConfigPreviousFile.getInstance().getPreviousStratFile());
-                visionSetting.open(ConfigPreviousFile.getInstance().getPreviousVisionFile());
-            }
-        });
     }
     
     /**
@@ -449,6 +435,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		JMenu visionMenu = new JMenu("Vision");
 		JMenu stratMenu = new JMenu("Strategy");
+		JMenu openPreviousFilesMenu = new JMenu("Open Previous Files");
 
 		JMenuItem openVisionMenuItem = new JMenuItem("Open Vision/Colour");
 		JMenuItem saveVisionMenuItem = new JMenuItem("Save Vision/Colour");
@@ -485,6 +472,14 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			}
 		});
 
+		openPreviousFilesMenu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				currentStrategy.read(ConfigPreviousFile.getInstance().getPreviousStratFile());
+				visionSetting.open(ConfigPreviousFile.getInstance().getPreviousVisionFile());
+			}
+		});
+
 		visionMenu.add(openVisionMenuItem);
 		visionMenu.add(saveVisionMenuItem);
 
@@ -493,7 +488,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		menuBar.add(visionMenu);
 		menuBar.add(stratMenu);
-        menuBar.add(openPreviousFiles);
+        menuBar.add(openPreviousFilesMenu);
 
 		setJMenuBar(menuBar);
 	}
