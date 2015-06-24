@@ -41,8 +41,10 @@ public class WebcamDisplayPanel extends JPanel {
     private List<MatOfPoint> ballContour;
 	private List<MatOfPoint> greenContour;
 	private List<MatOfPoint> teamContour;
-
+	private List<MatOfPoint> opponentContour;
+	
 	private ColourPanel colourPanel = null;
+	
     
 	public WebcamDisplayPanel() {
 		super();
@@ -167,6 +169,13 @@ public class WebcamDisplayPanel extends JPanel {
             			Imgproc.drawContours(tempMat, teamContour, i, new Scalar(0, 255, 128));
             		}
             	} 
+            	
+            	if (opponentContour != null) {
+            		for (int i = 0; i<opponentContour.size(); i++) {
+            			Imgproc.drawContours(tempMat, opponentContour, i, new Scalar(0, 255, 128));
+            		}
+            	}
+            	
             } 
             
             
@@ -290,6 +299,7 @@ public class WebcamDisplayPanel extends JPanel {
 				ballContour = ((VisionWorker) l).getBallContours();
 				greenContour = ((VisionWorker) l).getGreenContours();
 				teamContour = ((VisionWorker) l).getTeamContours();
+				opponentContour = ((VisionWorker)l).getOpponentContours();
 			}
 		}
 	}

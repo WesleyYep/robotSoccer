@@ -23,7 +23,7 @@ import java.util.List;
 public class VisionWorker implements WebcamDisplayPanelListener {
 
 	private Mat dilateKernel, erodeKernel;
-	private SamplingPanel ballSP, teamSP, greenSP;
+	private SamplingPanel ballSP, teamSP, greenSP, opponentSP;
 
 	private boolean isTestingColour = false;
 
@@ -35,10 +35,12 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private int robotMinSize;
 	private int ballMinSize;
 	private int greenMinSize;
+	private int opponentRobotMinSize;
 	
 	private int robotMaxSize;
     private int ballMaxSize;
     private int greenMaxSize;
+    private int opponentRobotMaxSize;
     
     private List<MatOfPoint> correctBallContour;
 
@@ -49,6 +51,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private List<MatOfPoint> correctTeamContour;
 	private KalmanFilter kFilter;
 	
+	
 	private static final int KERNELSIZE = 3;
 
 	public VisionWorker(ColourPanel cp) {
@@ -57,6 +60,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		ballSP = colourPanel.ballSamplingPanel;
 		teamSP = colourPanel.teamSamplingPanel;
 		greenSP = colourPanel.greenSamplingPanel;
+		opponentSP = colourPanel.opponentSamplingPanel;
 		
 		correctBallContour = new ArrayList<MatOfPoint>();
 		correctTeamContour = new ArrayList<MatOfPoint>();
@@ -72,7 +76,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			// Full range HSV. Range 0-255.
 	    	Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
 	    	
-			Scalar ballMin, ballMax, teamMin, teamMax, greenMin, greenMax;
+			Scalar ballMin, ballMax, teamMin, teamMax, greenMin, greenMax, opponentMin, opponentMax;
 			Mat ballBinary, teamBinary, greenBinary, opponentBinary;
 			
 			dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
@@ -114,6 +118,20 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					greenSP.getUpperBoundForS(),
 					greenSP.getUpperBoundForV()
 			};
+			
+			
+			double[] hsvOpponentMin = {
+					opponentSP.getLowerBoundForH(),
+					opponentSP.getLowerBoundForS(),
+					opponentSP.getLowerBoundForV()
+			};
+			
+			double[] hsvOpponentMax = {
+					opponentSP.getUpperBoundForH(),
+					opponentSP.getUpperBoundForS(),
+					opponentSP.getUpperBoundForV()
+			};
+
 
 			// Create the scalar values.
 			ballMin = new Scalar(hsvBallMin[0], hsvBallMin[1], hsvBallMin[2]);
@@ -122,27 +140,36 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			teamMax = new Scalar(hsvTeamMax[0], hsvTeamMax[1], hsvTeamMax[2]);
 			greenMin = new Scalar(hsvGreenMin[0], hsvGreenMin[1], hsvGreenMin[2]);
 			greenMax = new Scalar(hsvGreenMax[0], hsvGreenMax[1], hsvGreenMax[2]);
-
+			opponentMin = new Scalar(hsvOpponentMin[0], hsvOpponentMin[1], hsvOpponentMin[2]);
+			opponentMax = new Scalar(hsvOpponentMax[0], hsvOpponentMax[1], hsvOpponentMax[2]);
+			
 			// Contour points.
 			ballContours = new ArrayList<MatOfPoint>();
 			teamContours = new ArrayList<MatOfPoint>();
 			greenContours = new ArrayList<MatOfPoint>();
+			
+			opponentContours = new ArrayList<MatOfPoint>();
 
 			// Get the minimum lengths
 			ballMinSize = colourPanel.getBallSizeMinimum();
 			robotMinSize = colourPanel.getRobotSizeMinimum();
 			greenMinSize = colourPanel.getGreenSizeMinimum();
 			
+			opponentRobotMinSize = colourPanel.getRobotSizeMinimum();
+			
 			//Get the maximum length
 			ballMaxSize = colourPanel.getBallSizeMaximum();
 			robotMaxSize = colourPanel.getRobotSizeMaximum();
 			greenMaxSize = colourPanel.getGreenSizeMaximum();
+			
+			opponentRobotMaxSize = colourPanel.getRobotSizeMaximum();
 
 			// Create the binary matrix.
 			ballBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
 			teamBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
 			greenBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
-
+			opponentBinary = new Mat(webcamImageMat.size(),CvType.CV_8UC1);
+			
 			// Ball
 			Core.inRange(webcamImageMat, ballMin, ballMax, ballBinary);
 			Imgproc.erode(ballBinary, ballBinary, erodeKernel);
@@ -269,6 +296,26 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 				}
 			}
 			
+			
+			//opponent
+			int opponentX = 0, opponentY = 0;
+			Core.inRange(webcamImageMat, opponentMin, opponentMax, opponentBinary);
+			Imgproc.erode(opponentBinary, opponentBinary, erodeKernel);
+			Imgproc.dilate(teamBinary, opponentBinary, dilateKernel);
+			Imgproc.findContours(opponentBinary, opponentContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+			int count = 0;
+			for (int i = 0; i < opponentContours.size(); i++) {
+				double area = Imgproc.contourArea(opponentContours.get(i));
+				if (opponentRobotMinSize <= area && area <= opponentRobotMaxSize ) {
+					Moments m = Imgproc.moments(opponentContours.get(i));
+					opponentX = (int) (m.get_m10() / m.get_m00());
+					opponentY = (int) (m.get_m01() / m.get_m00());
+					
+					notifyListeners(new VisionData(new Point(opponentX, opponentY), 0, "opponent:" + count));
+					count++;
+					if (count > 4) count = 4;
+				}
+			}
 		
 			/*
 			int[] robotDuplicate = new int[5];
