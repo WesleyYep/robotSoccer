@@ -408,6 +408,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 					Role role = currentStrategy.mapRoles(p.getRoles())[j];
 					if (role == null) { continue; }
 					role.addRobot(order.get(j));
+					role.addTeamRobots(bots);
 					//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setPredictedPosition(predX, predY);
@@ -463,6 +464,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
                     Role role = currentStrategy.mapRoles(p.getRoles())[j];
                     if (role == null) { continue; }
                     role.addRobot(bots.getRobot(j));
+                    role.addTeamRobots(bots);
                     role.setBallPosition(ball.getXPosition(), ball.getYPosition());
                     role.setPredictedPosition(predX, predY);
                     role.execute();

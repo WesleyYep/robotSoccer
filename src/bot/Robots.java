@@ -18,6 +18,7 @@ public class Robots {
 		bots = new Robot[BOTTEAMMEMBERCOUNT];
 		serialCom = s;
     }
+    
 
     public void makeRealRobots() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {

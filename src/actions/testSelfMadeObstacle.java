@@ -22,10 +22,35 @@ public class testSelfMadeObstacle extends Action {
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bot;
+        double obstacleTheta = 180, obstacleDist = 220;
+        for (int i=0; i<5; i++) {
+        	if (!teamRobots.getRobot(i).equals(r)) {
+        		Robot obs = teamRobots.getRobot(i);
+        		double tempTheta = Math.atan2(r.getYPosition() - obs.getYPosition(), obs.getXPosition() - r.getXPosition());
+                double tempDifference = tempTheta - Math.toRadians(r.getTheta());
+                if (tempDifference > Math.PI) {
+                	tempDifference -= (2 * Math.PI);
+                } else if (tempDifference < -Math.PI) {
+                	tempDifference += (2 * Math.PI);
+                }
+                tempDifference = Math.toDegrees(tempDifference);
+                tempTheta = tempDifference;
+                
+                if (Math.abs(tempTheta) < 50) {
+                	double tempDist = Math.sqrt(Math.pow((obs.getXPosition()-r.getXPosition()),2) + Math.pow((obs.getYPosition()-r.getYPosition()),2));
+                	if (tempDist < obstacleDist) {
+                		obstacleDist = tempDist;
+                		obstacleTheta = tempTheta;
+                	}
+                }
+        	}
+        }
+      //  System.out.println(obstacleTheta + " " + obstacleDist);
+        
         double obstacleX = 110;
         double obstacleY = 90;
 
-        double targetDist,obstacleDist;
+        double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
 //       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 
@@ -38,8 +63,8 @@ public class testSelfMadeObstacle extends Action {
         }
         difference = Math.toDegrees(difference);
         targetTheta = difference;
-        
-        double obstacleTheta = Math.atan2(r.getYPosition() - obstacleY, obstacleX - r.getXPosition());
+        /*
+        obstacleTheta = Math.atan2(r.getYPosition() - obstacleY, obstacleX - r.getXPosition());
         double obsDifference = obstacleTheta - Math.toRadians(r.getTheta());
         if (obsDifference > Math.PI) {
         	obsDifference -= (2 * Math.PI);
@@ -47,36 +72,11 @@ public class testSelfMadeObstacle extends Action {
         	obsDifference += (2 * Math.PI);
         }
         obsDifference = Math.toDegrees(obsDifference);
-        obstacleTheta = obsDifference;
+        obstacleTheta = obsDifference;*/
         
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-        obstacleDist = Math.sqrt(Math.pow((obstacleX-r.getXPosition()),2) + Math.pow((obstacleY-r.getYPosition()),2));
-
-        boolean isFacingTop = true;
-        boolean isTargetTop = true;
-        boolean front  = true;
-        if (r.getTheta() < 0) {
-            isFacingTop = false;
-        }
-
-        if (y > r.getYPosition()) {
-            isTargetTop = false;
-        }
-
-        if (isTargetTop != isFacingTop) {
-            front = false;
-        }
-
-
-        if (!front && reverse) {
-            if (targetTheta < 0) {
-                targetTheta = -180 - targetTheta;
-            }
-            else if (targetTheta > 0) {
-                targetTheta = 180 - targetTheta;
-            }
-        }
-
+       // obstacleDist = Math.sqrt(Math.pow((obstacleX-r.getXPosition()),2) + Math.pow((obstacleY-r.getYPosition()),2));
+        
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);
@@ -112,15 +112,10 @@ public class testSelfMadeObstacle extends Action {
 //            					+ " r theta: " + r.getTheta() + " t theta: " + targetTheta
 //            					+ " t dist" + targetDist + " time: " + System.currentTimeMillis());
 
-        if (!front &&reverse) {
-            r.linearVelocity *= -1;
-            r.angularVelocity *= -1;
-        }
         if (targetDist <=3.75) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
         }
-        System.out.println(targetDist);
 //          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
 //        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
 
