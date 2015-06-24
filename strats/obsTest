@@ -1,0 +1,87 @@
+Role:obs
+permanent-actions.testSelfMadeObstacle-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new role
+null-null
+null-null
+null-null
+null-null
+null-null
+-----
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:moveAndTurn
+permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:defender
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 130, 50]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:chaseBall
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+obs
+wait
+wait
+wait
+wait
+-----
+Play:kickOffSetUp
+gk
+moveAndTurn
+moveAndTurn
+moveAndTurn
+moveAndTurn
+-----
+Play:KickOffStart
+gk
+chaseBall
+chaseBall
+defender
+chaseBall
+-----
+Play:kickOffSetUp
+gk
+moveAndTurn
+moveAndTurn
+moveAndTurn
+moveAndTurn
+-----
+Play:KickOffStart
+gk
+chaseBall
+chaseBall
+defender
+chaseBall
+-----
+Situation:new situation 1:30:1:452:367
+new play
+-----

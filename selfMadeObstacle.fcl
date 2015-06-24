@@ -1,0 +1,201 @@
+
+
+FUNCTION_BLOCK selfMade	// Block definition (there may be more than one block per file)
+
+VAR_INPUT				// Define input variables
+	targetDist : REAL;
+	targetTheta: REAL;
+	xPos : REAL;
+	yPos :REAL;
+	direction :REAL;
+	obstacleTheta: REAL;
+	obstacleDist: REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	linearVelocity: REAL;
+	angularVelocity: REAL;
+END_VAR
+
+FUZZIFY targetDist
+	TERM close := trian -73.2 0 50;
+	TERM middle := trian 25 50 75;
+	TERM far := trape 75 125 412 412;
+END_FUZZIFY
+
+FUZZIFY targetTheta
+	TERM behindLeft := trian -540 -180 -120;
+	TERM sideLeft := trian -135 -80 -25;
+	TERM frontLeft := trian -45 -30 0;
+	TERM straight := trian -10 0 10;
+	TERM frontRight := trian 0 30 45;
+	TERM sideRight := trian 25 80 135;
+	TERM behindRight := trian 120 180 540;
+END_FUZZIFY 
+
+FUZZIFY xPos
+	TERM closeToLeftWall := trape -30 0 6 10;
+	TERM xCenter := trape 6 40 180 210;
+	TERM closeToRightWall := trape 210 214 220 250;
+END_FUZZIFY
+
+FUZZIFY yPos
+	TERM closeToTopWall := trape -10 0 6 10;
+	TERM yCenter := trape 6 40 140 174;
+	TERM closeToBottomWall := trape 170 174 180 190;
+END_FUZZIFY
+
+FUZZIFY direction
+	TERM  bottom := trian -180 -90 0;
+	TERM right := trian -90 0 90;
+	TERM top := trian 0 90 180;
+	TERM left1:= trian 90 180 270;
+	TERM left2:= trian -270 -180 -90;
+END_FUZZIFY
+
+FUZZIFY obstacleDist			
+	TERM near := trian 0 30 60;
+	TERM far := trian 30 220 250;
+END_FUZZIFY
+
+FUZZIFY obstacleTheta			
+	TERM straightLeft := trian -20 -10 0;
+	TERM frontLeft := trian -50 -30 -10;
+	TERM restLeft := trian -180 -105 -30;
+	TERM straightRight := trian 0 10 20;
+	TERM frontRight := trian 10 30 50;
+	TERM restRight := trian 30 105 180;
+END_FUZZIFY
+
+
+DEFUZZIFY linearVelocity
+	TERM verySlow :=  trian -0.6 0 0.45;
+ 	TERM slow := trian 0 0.25 0.7;
+	TERM medium := trian 0.5 0.7 1;
+	TERM fast := trian 0.7 1 1.25;
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+DEFUZZIFY angularVelocity
+	TERM LR := trian -9 -7 -5;
+	TERM MR := trian -7 -5 -1;
+	TERM SR := trian -2 -0.5 0;
+	TERM zero := trian -0.5 0 0.5;
+	TERM SL := trian 0 0.5 2;
+	TERM ML := trian 1 5 7;
+	TERM LL := trian 5 7 9;
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	//RULE 1 : IF service IS poor OR food IS rancid THEN tip IS cheap;
+	//RULE 2 : IF service IS good THEN tip IS average; 
+	//RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;	
+	
+	RULE 1: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is sideRight THEN linearVelocity is medium;
+	RULE 62: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is sideLeft THEN linearVelocity is medium;
+	RULE 63: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is straight THEN linearVelocity is fast;
+	RULE 64: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is frontRight THEN linearVelocity is fast;
+	RULE 65: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is frontLeft THEN linearVelocity is fast;
+	RULE 66: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is behindLeft THEN linearVelocity is medium;
+	RULE 67: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is behindRight THEN linearVelocity is medium;
+	RULE 2: IF targetDist IS middle AND xPos IS xCenter AND yPos IS yCenter THEN linearVelocity is medium;
+	RULE 3: IF targetDist IS close AND xPos IS xCenter AND yPos IS yCenter THEN linearVelocity is slow;
+	
+	
+	RULE 4: IF targetDist IS far AND xPos is closeToRightWall AND direction IS left1 THEN linearVelocity is medium;
+	RULE 5: IF targetDist IS far AND xPos is closeToRightWall AND direction IS left2 THEN linearVelocity is medium;
+	RULE 6: IF targetDist IS far AND xPos is closeToRightWall AND direction IS top THEN linearVelocity is medium;
+	RULE 7: IF targetDist IS far AND xPos is closeToRightWall AND direction IS bottom THEN linearVelocity is medium;
+	RULE 8: IF targetDist IS far AND xPos is closeToRightWall AND direction IS right THEN linearVelocity is verySlow;
+	
+	RULE 9: IF targetDist IS far AND yPos is closeToTopWall AND direction IS left1 THEN linearVelocity is medium;
+	RULE 10: IF targetDist IS far AND yPos is closeToTopWall AND direction IS left2 THEN linearVelocity is medium;
+	RULE 11: IF targetDist IS far AND yPos is closeToTopWall AND direction IS right THEN linearVelocity is medium;
+	RULE 12: IF targetDist IS far AND yPos is closeToTopWall AND direction IS bottom THEN linearVelocity is medium;
+	RULE 13: IF targetDist IS far AND yPos is closeToTopWall AND direction IS top THEN linearVelocity is verySlow;
+	
+	RULE 14: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS left1 THEN linearVelocity is medium;
+	RULE 15: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS left2 THEN linearVelocity is medium;
+	RULE 16: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS top THEN linearVelocity is medium;
+	RULE 17: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS right THEN linearVelocity is medium;
+	RULE 18: IF targetDist IS far AND yPos is closeToBottomWall AND direction IS bottom THEN linearVelocity is verySlow;
+	
+	RULE 19: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS right THEN linearVelocity is medium;
+	RULE 20: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS left2 THEN linearVelocity is verySlow;
+	RULE 21: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS top THEN linearVelocity is medium;
+	RULE 22: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS bottom THEN linearVelocity is medium;
+	RULE 23: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS left1 THEN linearVelocity is verySlow;
+	
+	RULE 24: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS right THEN linearVelocity is medium;
+	RULE 25: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS left1 THEN linearVelocity is verySlow;
+	RULE 26: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS top THEN linearVelocity is medium;
+	RULE 27: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS bottom THEN linearVelocity is medium;
+	RULE 28: IF targetDist IS far AND xPos is closeToLeftWall AND direction IS left2 THEN linearVelocity is verySlow;
+	
+	
+	RULE 29: IF targetDist IS middle AND xPos is closeToRightWall AND direction IS NOT right THEN linearVelocity is medium;
+	RULE 30: IF targetDist IS middle AND xPos is closeToRightWall AND direction IS right THEN linearVelocity is verySlow;
+	
+	RULE 31: IF targetDist IS middle AND yPos is closeToTopWall AND direction IS NOT top THEN linearVelocity is medium;
+	RULE 32: IF targetDist IS middle AND yPos is closeToTopWall AND direction IS top THEN linearVelocity is verySlow;
+	
+	RULE 33: IF targetDist IS middle AND yPos is closeToBottomWall AND direction IS NOT bottom THEN linearVelocity is medium;
+	RULE 34: IF targetDist IS middle AND yPos is closeToBottomWall AND direction IS bottom THEN linearVelocity is verySlow;
+	
+	RULE 35: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS NOT left1 THEN linearVelocity is medium;
+	RULE 36: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS left1 THEN linearVelocity is verySlow;
+	
+	RULE 37: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS NOT left2 THEN linearVelocity is medium;
+	RULE 38: IF targetDist IS middle AND xPos is closeToLeftWall AND direction IS left2 THEN linearVelocity is verySlow;
+	
+	RULE 39: IF targetTheta is sideLeft AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight) THEN angularVelocity is ML;
+	RULE 40: IF targetTheta is straight AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight) THEN angularVelocity is zero;
+	RULE 41: IF targetTheta is sideRight AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight) THEN angularVelocity is MR;
+	RULE 42: IF targetTheta is behindLeft AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight)THEN angularVelocity is LL;
+	RULE 43: IF targetTheta is behindRight AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight) THEN angularVelocity is LR;
+	RULE 44: IF targetTheta is frontLeft AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight) THEN angularVelocity is SL;
+	RULE 45: IF targetTheta is frontRight AND (obstacleDist IS far OR obstacleTheta is restLeft or obstacleTheta is restRight) THEN angularVelocity is SR; 
+	
+	
+	RULE 46: IF targetDist IS close AND xPos is closeToRightWall AND direction IS NOT right THEN linearVelocity is slow;
+	RULE 47: IF targetDist IS close AND xPos is closeToRightWall AND direction IS right THEN linearVelocity is verySlow;
+	
+	RULE 48: IF targetDist IS close AND yPos is closeToTopWall AND direction IS NOT top THEN linearVelocity is slow;
+	RULE 49: IF targetDist IS close AND yPos is closeToTopWall AND direction IS top THEN linearVelocity is verySlow;
+	
+	RULE 50: IF targetDist IS close AND yPos is closeToBottomWall AND direction IS NOT bottom THEN linearVelocity is slow;
+	RULE 51: IF targetDist IS close AND yPos is closeToBottomWall AND direction IS bottom THEN linearVelocity is verySlow;
+	
+	RULE 52: IF targetDist IS close AND xPos is closeToLeftWall AND direction IS NOT left1 THEN linearVelocity is slow;
+	RULE 53: IF targetDist IS close AND xPos is closeToLeftWall AND direction IS left1 THEN linearVelocity is verySlow;
+	
+	RULE 54: IF targetDist IS close AND xPos is closeToLeftWall AND direction IS NOT left2 THEN linearVelocity is slow;
+	RULE 55: IF targetDist IS close AND xPos is closeToLeftWall AND direction IS left2 THEN linearVelocity is verySlow;
+	
+	RULE 56 : IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is behindRight THEN linearVelocity is slow;
+	RULE 57 : IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is behindLeft THEN linearVelocity is slow;
+	RULE 58: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is sideRight THEN linearVelocity is fast;
+	RULE 59: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is straight THEN linearVelocity is fast;
+	RULE 60: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is frontLeft THEN linearVelocity is fast;
+	RULE 61: IF targetDist IS far AND xPos IS xCenter AND yPos IS yCenter AND targetTheta is frontRight THEN linearVelocity is fast;
+	
+	RULE 68: IF obstacleDist IS near AND (targetDist IS far OR targetDist is middle) AND obstacleTheta IS straightLeft THEN angularVelocity is MR;
+	RULE 69 : IF obstacleDist IS near AND (targetDist IS far OR targetDist IS middle) AND obstacleTheta IS straightRight THEN angularVelocity is ML;	
+	
+	RULE 70: IF obstacleDist IS near AND (targetDist IS far OR targetDist is middle) AND obstacleTheta IS frontLeft THEN angularVelocity is SR;
+	RULE 71: IF obstacleDist IS near AND (targetDist IS far OR targetDist IS middle) AND obstacleTheta IS frontRight THEN angularVelocity is SL;
+	
+	RULE 70: IF obstacleDist IS near AND targetDist IS close AND obstacleTheta IS frontLeft THEN angularVelocity is LR;
+	RULE 71: IF obstacleDist IS near AND targetDist IS close AND obstacleTheta IS frontRight THEN angularVelocity is LL;
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

@@ -11,64 +11,21 @@ import bot.Robot;
 import strategy.GameState;
 import ui.Field;
 
-public class testSelfMade extends Action {
+public class testSelfMadeObstacle extends Action {
 
     private double error = 2.5;
-    private double oldDistanceToTarget = 0;
-    private int countTimesThatSeemStuck = 0;
-    private boolean fastForward = false;
-
     @Override
     public void execute() {
-    	System.out.println("norm");
-        setVelocityToTarget(ballX,ballY,false,false);
+    	//System.out.println("obs");
+        setVelocityToTarget(180,90,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bot;
-        /*
-        if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
-            r.linearVelocity = 0;
-            r.angularVelocity = 0;
-            return;
-        }
-        
-        /*
-        //check if robot is stuck
-        double newTargetDistance = getDistanceToTarget(r);
-      //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
-            countTimesThatSeemStuck++;
-        } else if (r.linearVelocity >= 0){
-            countTimesThatSeemStuck = 0;
-        }
-        if (countTimesThatSeemStuck > 20) {
-            countTimesThatSeemStuck = 0;
-            return;
-        } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 10;
-            countTimesThatSeemStuck++;
-            return;
-        }
+        double obstacleX = 110;
+        double obstacleY = 90;
 
-
-        //see if robot is not in positive situation
-        
-        if (ballX < r.getXPosition()) {
-            int yPos;
-            if (ballY > 90) {
-                yPos = (int)(60*Math.random()) + 120;
-            } else {
-                yPos = (int)(60*Math.random());
-            }
-            oldDistanceToTarget = newTargetDistance;
-            MoveToSpot.move(r, new Coordinate(20, yPos), 1);
-            return;
-        }
-        */
-
-        double targetDist;
+        double targetDist,obstacleDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
 //       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta " 
@@ -81,8 +38,19 @@ public class testSelfMade extends Action {
         }
         difference = Math.toDegrees(difference);
         targetTheta = difference;
+        
+        double obstacleTheta = Math.atan2(r.getYPosition() - obstacleY, obstacleX - r.getXPosition());
+        double obsDifference = obstacleTheta - Math.toRadians(r.getTheta());
+        if (obsDifference > Math.PI) {
+        	obsDifference -= (2 * Math.PI);
+        } else if (obsDifference < -Math.PI) {
+        	obsDifference += (2 * Math.PI);
+        }
+        obsDifference = Math.toDegrees(obsDifference);
+        obstacleTheta = obsDifference;
+        
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-        double ballDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
+        obstacleDist = Math.sqrt(Math.pow((obstacleX-r.getXPosition()),2) + Math.pow((obstacleY-r.getYPosition()),2));
 
         boolean isFacingTop = true;
         boolean isTargetTop = true;
@@ -109,8 +77,9 @@ public class testSelfMade extends Action {
             }
         }
 
-        FunctionBlock fb = loadFuzzy("selfMade.fcl");
-
+        FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
+        fb.setVariable("obstacleDist", obstacleDist);
+        fb.setVariable("obstacleTheta", obstacleTheta);
         fb.setVariable("targetTheta", targetTheta);
         fb.setVariable("targetDist", Math.abs(targetDist));
         fb.setVariable("direction", r.getTheta());
@@ -127,9 +96,9 @@ public class testSelfMade extends Action {
         // Show output variable's chart
         fb.getVariable("linearVelocity").defuzzify();
         fb.getVariable("angularVelocity").defuzzify();
-        //    JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
-        //     JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
-        //    JOptionPane.showMessageDialog(null, "nwa"); 
+     //      JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
+      //       JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
+      //      JOptionPane.showMessageDialog(null, "nwa"); 
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
@@ -138,30 +107,6 @@ public class testSelfMade extends Action {
 
         r.linearVelocity = linear;
         r.angularVelocity = angular*-1;
-        /*
-        double angleToGoal = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
-
-        if (ballDist <= 7) {
-            if (!fastForward && angleToGoal > Math.PI / 18) {
-     //           System.out.println("fast_right");
-                r.angularVelocity = 12;
-                r.linearVelocity = 0.7;
-            } else if (!fastForward && angleToGoal < -(Math.PI / 18)) {
-       //         System.out.println("fast_left");
-                r.linearVelocity = 0.7;
-                r.angularVelocity = -12;
-            } else {
-        //        System.out.println("fast " + angleToGoal);
-        //        fastForward = true;
-                r.linearVelocity = 2;
-            }
-//        }
-        } else {
-            fastForward = false;
-        } */
-
-
-
 //            System.out.println("linear: " + linear + " angular:" + angular*-1
 //            					+ " x: " + r.getXPosition() + " y: " + r.getYPosition()
 //            					+ " r theta: " + r.getTheta() + " t theta: " + targetTheta
@@ -171,13 +116,11 @@ public class testSelfMade extends Action {
             r.linearVelocity *= -1;
             r.angularVelocity *= -1;
         }
-        if (targetDist <=2.5) {
+        if (targetDist <=3.75) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
         }
-
-       // oldDistanceToTarget = newTargetDistance;
-
+        System.out.println(targetDist);
 //          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
 //        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
 
@@ -188,18 +131,6 @@ public class testSelfMade extends Action {
 
         // }
         return;
-    }
-
-    private double angleDifferenceFromGoal(double x, double y, double theta) {
-        double targetTheta = Math.atan2(y - 90, 220 - x);
-        double difference = targetTheta - Math.toRadians(theta);
-        //some hack to make the difference -Pi < theta < Pi
-        if (difference > Math.PI) {
-            difference -= (2 * Math.PI);
-        } else if (difference < -Math.PI) {
-            difference += (2 * Math.PI);
-        }
-        return difference;
     }
 
     private double getDistanceToTarget(Robot r) {
