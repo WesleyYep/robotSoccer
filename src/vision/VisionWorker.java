@@ -75,7 +75,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	    	Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
 	    	
 			Mat ballBinary, teamBinary, greenBinary, opponentBinary;
-			
+
 			dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
 			erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
 			//kFilter = new KalmanFilter();
@@ -146,8 +146,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
 			// Ball
 			Core.inRange(webcamImageMat, ballMin, ballMax, ballBinary);
-			Imgproc.erode(ballBinary, ballBinary, erodeKernel);
-			Imgproc.dilate(ballBinary, ballBinary, dilateKernel);
+		//	Imgproc.erode(ballBinary, ballBinary, erodeKernel);
+		//	Imgproc.dilate(ballBinary, ballBinary, dilateKernel);
 			Imgproc.findContours(ballBinary, ballContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
 			int ballX = 0, ballY = 0;
@@ -175,6 +175,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			Imgproc.dilate(teamBinary, teamBinary, dilateKernel);
 			Imgproc.findContours(teamBinary, teamContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
+			ballBinary.release();
+			teamBinary.release();
+
 			// Create robot data.
 			RobotData[] data = new RobotData[5];
 
@@ -193,20 +196,23 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					// Get the rotated rect and find the points.
 					MatOfPoint2f teamContour2f = new MatOfPoint2f();
 					teamContours.get(i).convertTo(teamContour2f, CvType.CV_32FC2);
+				//	RotatedRect patch1 = Imgproc.fitEllipse(teamContour2f);
+				//	System.out.println("angle ellipse - degrees:" + patch1.angle);
 					RotatedRect patch = Imgproc.minAreaRect(teamContour2f);
+//					System.out.println("angle rect - degrees:" + patch.angle);
 					org.opencv.core.Point[] p = new org.opencv.core.Point[4];
 					patch.points(p);
 
 					data[numRobots] = new RobotData(p, new org.opencv.core.Point(teamX, teamY));
+//
+//					double longPairDist = data[numRobots].getLongPair().getEuclideanDistance();
+//					double shortPairDist = data[numRobots].getShortPair().getEuclideanDistance();
 					
-					double longPairDist = data[numRobots].getLongPair().getEuclideanDistance();
-					double shortPairDist = data[numRobots].getShortPair().getEuclideanDistance();
-					
-					if ((longPairDist/shortPairDist) < 2.5) {
-						data[numRobots] = null;
-					} else {
+//					if ((longPairDist/shortPairDist) < 2.5) {
+//						data[numRobots] = null;
+//					} else {
 						numRobots++;
-					}
+//					}
 					/*
 				for (int k = 0; k < p.length; k++) {
 					Core.line(webcamImageMat, p[k], p[(k + 1) % 4], new Scalar(255, 255, 255));
@@ -222,29 +228,29 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			}
 
 			// Green
-			Core.inRange(webcamImageMat, greenMin, greenMax, greenBinary);
-			Imgproc.erode(greenBinary, greenBinary, erodeKernel);
-			Imgproc.dilate(greenBinary, greenBinary, dilateKernel);
-			Imgproc.findContours(greenBinary, greenContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-			correctGreenContour.clear();
-			int greenX = 0, greenY = 0;
-			for (int i = 0; i < greenContours.size(); i++) {
-				double area =  Imgproc.contourArea(greenContours.get(i));
-				if (greenMinSize <= area && area <= greenMaxSize) {
-					Moments m = Imgproc.moments(greenContours.get(i));
-					greenX = (int) (m.get_m10() / m.get_m00());
-					greenY = (int) (m.get_m01() / m.get_m00());
-					correctGreenContour.add(greenContours.get(i));
-					for (int j = 0; j < data.length; j++) {
-						if (data[j] != null) {
-							data[j].addGreenPatch(new org.opencv.core.Point(greenX, greenY));
-						}
-					}
-
-					//centerPoint.add(new Point(greenX, greenY));
-					//Imgproc.drawContours(webcamImageMat, greenContours, i, new Scalar(180, 105, 255));
-				}
-			}
+//			Core.inRange(webcamImageMat, greenMin, greenMax, greenBinary);
+//			Imgproc.erode(greenBinary, greenBinary, erodeKernel);
+//			Imgproc.dilate(greenBinary, greenBinary, dilateKernel);
+//			Imgproc.findContours(greenBinary, greenContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+//			correctGreenContour.clear();
+//			int greenX = 0, greenY = 0;
+//			for (int i = 0; i < greenContours.size(); i++) {
+//				double area =  Imgproc.contourArea(greenContours.get(i));
+//				if (greenMinSize <= area && area <= greenMaxSize) {
+//					Moments m = Imgproc.moments(greenContours.get(i));
+//					greenX = (int) (m.get_m10() / m.get_m00());
+//					greenY = (int) (m.get_m01() / m.get_m00());
+//					correctGreenContour.add(greenContours.get(i));
+//					for (int j = 0; j < data.length; j++) {
+//						if (data[j] != null) {
+//							data[j].addGreenPatch(new org.opencv.core.Point(greenX, greenY));
+//						}
+//					}
+//
+//					//centerPoint.add(new Point(greenX, greenY));
+//					//Imgproc.drawContours(webcamImageMat, greenContours, i, new Scalar(180, 105, 255));
+//				}
+//			}
 			
 			int[] robotNumber = new int[5];
 			int robotCount = 0;
@@ -269,8 +275,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					robotCount++;	
 				}
 			}
-			
-		
+
 			/*
 			int[] robotDuplicate = new int[5];
 			boolean isDuplicate = false;
@@ -292,11 +297,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         double startTheta = rd.getLongPair().getTheta(); //in degrees
 
         for (int i = 0; i < 4; i++) { //loop through each quadrant and check if black pixel
-			double dist = Math.sqrt(2 * Math.pow(rd.getShortPair().getEuclideanDistance(),2));
+			double dist = 8;//Math.sqrt(2 * Math.pow(rd.getShortPair().getEuclideanDistance(),2));
 		//	System.out.println("short pair dist: " + rd.getShortPair().getEuclideanDistance());
 		//	System.out.println("dist - " + dist);
 			double theta = Math.toRadians(startTheta + i*90 +45); //eg. the theta of the middle of each quadrant
-            Point centre = rd.getTeamCenterPoint();
+			Point centre = rd.getTeamCenterPoint();
 			//get coordinates of the point to check
             int x = (int) (centre.x + dist * Math.cos(theta));
             int y = (int) (centre.y + dist * Math.sin(theta));
@@ -316,14 +321,14 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         else if (areasAreBlack[1]) {rd.setTheta(startTheta); robotNum = 4;}
         else if (areasAreBlack[0]) {rd.setTheta(startTheta+180); robotNum = 5;}
         else if (areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 5;}
-		System.out.println(robotNum + " detected");
+	//	System.out.println(robotNum + " detected");
 		return robotNum;
     }
 
     private boolean isBlack(double[] scalar) {
 		try {
-			System.out.println("h: " + scalar[0] + "s: " + scalar[1] + "v: " + scalar[2]);
-			return (scalar[2] < 70);
+	//		System.out.println("h: " + scalar[0] + "s: " + scalar[1] + "v: " + scalar[2]);
+			return (scalar[2] < 130);
 		}
 		catch (ArrayIndexOutOfBoundsException | NullPointerException e){
 			System.out.println(scalar);
