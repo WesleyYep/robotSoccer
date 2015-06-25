@@ -11,6 +11,7 @@ import config.ConfigFile;
 import config.ConfigPreviousFile;
 import controllers.*;
 import game.Tick;
+import jssc.SerialPortList;
 import net.miginfocom.swing.MigLayout;
 
 import org.opencv.core.Core;
@@ -31,6 +32,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
+import java.util.*;
+import java.util.List;
 
 public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener, NetworkSocketListener {
 
@@ -41,43 +44,26 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 	private NetworkSocket serverSocket;
 	private FieldController fieldController;
-	private BallController ballController;
-	private Field field;
-	private Ball ball;
 	private JTextField portField, webcamURLField;
 	private RobotInfoPanel[] robotInfoPanels;
-	private TestComPanel testComPanel;
 	private SerialPortCommunicator serialCom;
-	private Robots bots;
 	private JComboBox<String> webcamTypeComboBox;
 
 	private Tick gameTick;
 
-	private SituationPanel situationPanel;
-	private PlaysPanel playsPanel;
-	private RolesPanel rolesPanel;
-	private ColourPanel colourPanel;
-	private CurrentStrategy currentStrategy;
-
 	private JTabbedPane tabPane;
-	private DrawAreaGlassPanel glassPanel;
 
 	private WebcamController webcamController;
 
-	private JPanel cards;
 	private VisionPanel visionPanel;
 	private VisionSettingFile visionSetting;
 
 	private VisionWorker visionWorker;
 	private VisionController visionController;
 	private WindowController windowController;
-    private WebcamDisplayPanel webcamDisplayPanel;
 
-	private JButton runStratButton;
-	private JButton stopStratButton;
-    private JButton runSetPlayButton;
-	private JLabel	stratStatusLbl;
-	private ActionParameterPanel actionPanel;
+	private boolean manualControl = false;
+	private boolean simulation = false;
 
 	// Constant string so that you can switch between cards.
 	private final static String FIELDSTRING = "Card with Field";
@@ -93,12 +79,16 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		// https://www.youtube.com/watch?v=U6xJfP7-HCc
 		// Layout constraint, column constraint
 		super("BLAZE Robot Soccer");
+		setLayout(new BorderLayout());
+		// Set default close operation.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel contentPane = new JPanel(new MigLayout("wrap 12"));
+		// Toolbar
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
 		toolbar.setLayout(new MigLayout("ins 0, top"));
+
 		//Create the demo's UI.
 		//create start button and text field for port number
 		startButton = new JButton("Start");
@@ -115,53 +105,162 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		networkPanel.add(startButton, "span, align right");
 		networkPanel.setOpaque(false);
 
-		toolbar.add(networkPanel);
-
-		runStratButton = new JButton("Run Strat");
-		stopStratButton = new JButton("Stop");
-        runSetPlayButton = new JButton("Set play");
-		stratStatusLbl = new JLabel("Stopped");
-
-		JPanel stratControlPanel = new JPanel(new MigLayout());
-		stratControlPanel.add(runStratButton);
-		stratControlPanel.add(stopStratButton);
-		stratControlPanel.add(stratStatusLbl, "wrap");
-        stratControlPanel.add(runSetPlayButton);
-
 		//create serial port communicator;
 		serialCom = new SerialPortCommunicator();
-		bots = new Robots(serialCom);
+		Robots bots = new Robots(serialCom);
 		bots.makeRealRobots();
 
-		ball = new Ball();
-		field = new Field(bots, ball);
-		ballController = new BallController(ball);
-		fieldController = new FieldController(field, bots, ball);
+		Ball ball = new Ball();
+		Field field = new Field(bots, ball);
+		fieldController = new FieldController(field);
 
-		JPanel testComContainerPanel = new JPanel(new MigLayout("ins 0"));
-		testComPanel = new TestComPanel(serialCom, bots);
-		testComContainerPanel.add(testComPanel, "pushx, growx");
+		// connectionPanel
+		JPanel connectionPanel = new JPanel(new MigLayout());
+		JLabel connectionLabel = new JLabel("Connection");
+		connectionLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+		// get the port names.
+		String[] portNames = SerialPortList.getPortNames();
+		JComboBox<String> portNamesComboBox = new JComboBox<String>(portNames);
+		JToggleButton testRotateButton = new JToggleButton("Rotate");
+		JToggleButton testBackwardButton = new JToggleButton("Backward");
+		JToggleButton testForwardButton = new JToggleButton("Forward");
+
+		List<JToggleButton> toggleButtonList = new ArrayList<JToggleButton>();
+		toggleButtonList.add(testForwardButton);
+		toggleButtonList.add(testRotateButton);
+		toggleButtonList.add(testBackwardButton);
+
+		//open the port and selecting COM3 port if available;
+		for (int i =0; i<portNames.length; i++) {
+			if (portNames[i].equals("COM3")) {
+				portNamesComboBox.setSelectedIndex(i);
+			}
+
+			if (portNames[i].equals("COM4")) {
+				portNamesComboBox.setSelectedIndex(i);
+			}
+		}
+
+		serialCom.openPort((String) portNamesComboBox.getSelectedItem());
+
+		portNamesComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				serialCom.closePort();
+				serialCom.openPort((String) portNamesComboBox.getSelectedItem());
+			}
+
+		});
+
+		testForwardButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					for (JToggleButton b : toggleButtonList) {
+						if (!b.equals(testForwardButton)) {
+							b.setSelected(false);
+						}
+					}
+					bots.testForward();
+					manualControl = true;
+				} else {
+					manualControl = false;
+					bots.stopAllMovement();
+				}
+			}
+		});
+
+		testBackwardButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					for (JToggleButton b : toggleButtonList) {
+						if (!b.equals(testBackwardButton)) {
+							b.setSelected(false);
+						}
+					}
+					bots.testBackwards();
+					manualControl = true;
+				} else {
+					manualControl = false;
+					bots.stopAllMovement();
+				}
+			}
+		});
+
+		testRotateButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					for (JToggleButton b : toggleButtonList) {
+						if (!b.equals(testRotateButton)) {
+							b.setSelected(false);
+						}
+					}
+					bots.testRotate();
+					manualControl = true;
+				} else {
+					manualControl = false;
+					bots.stopAllMovement();
+				}
+			}
+		});
+
+		connectionPanel.setOpaque(false);
+		connectionPanel.add(connectionLabel, "wrap");
+		connectionPanel.add(new JLabel("COM"));
+		connectionPanel.add(portNamesComboBox, "w 80, wrap");
+		connectionPanel.add(testForwardButton, "w 80");
+		connectionPanel.add(testBackwardButton, "w 80, wrap");
+		connectionPanel.add(testRotateButton, "w 80");
+
+		JButton runStratButton = new JButton("Run Strat");
+		JButton stopStratButton = new JButton("Stop");
+		JButton runSetPlayButton = new JButton("Set play");
+		JLabel stratStatusLbl = new JLabel("Stopped");
+		JLabel stratLabel = new JLabel("Strategy");
+		stratLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+
+		JCheckBox simCheckBox = new JCheckBox("Simulation");
+
+		simCheckBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					simulation = true;
+				} else {
+					simulation = false;
+				}
+			}
+		});
+
+		JPanel stratControlPanel = new JPanel(new MigLayout());
+		stratControlPanel.setOpaque(false);
+		stratControlPanel.add(stratLabel, "wrap");
+		stratControlPanel.add(stratStatusLbl);
+		stratControlPanel.add(simCheckBox, "wrap");
+		stratControlPanel.add(runStratButton, "w 80");
+		stratControlPanel.add(stopStratButton, "w 80, wrap");
+		stratControlPanel.add(runSetPlayButton, "w 80");
 
 		//creating panel holding robot informations
 		JPanel infoPanel = new JPanel();
 		infoPanel.setLayout(new FlowLayout());
 		robotInfoPanels = new RobotInfoPanel[5];
 
-		fieldController.setComPanel(testComPanel);
-
 		for (int i = 0; i<5; i++) {
 			robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
 			infoPanel.add(robotInfoPanels[i]);
 		}
 
-		currentStrategy = new CurrentStrategy(fieldController);
+		CurrentStrategy currentStrategy = new CurrentStrategy(fieldController);
 		field.setCurrentStrategy(currentStrategy);
-		situationPanel = new SituationPanel(fieldController, currentStrategy);
-		playsPanel = new PlaysPanel(currentStrategy);
-		rolesPanel = new RolesPanel(currentStrategy);
-		actionPanel = new ActionParameterPanel();
+		SituationPanel situationPanel = new SituationPanel(fieldController, currentStrategy);
+		PlaysPanel playsPanel = new PlaysPanel(currentStrategy);
+		RolesPanel rolesPanel = new RolesPanel(currentStrategy);
+		ActionParameterPanel actionPanel = new ActionParameterPanel();
 
-		glassPanel = new DrawAreaGlassPanel(field, situationPanel);
+		DrawAreaGlassPanel glassPanel = new DrawAreaGlassPanel(field, situationPanel);
 		glassPanel.setVisible(false);
 		field.add(glassPanel);
 		field.addComponentListener(glassPanel);
@@ -197,16 +296,12 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		webcamComponentPanel.add(connectionButton, "span, align right");
 		webcamComponentPanel.setOpaque(false);
 
-		toolbar.add(webcamComponentPanel);
-		// Create the cards.
-		cards = new JPanel(new CardLayout());
-
         //create the gameTick
-        gameTick = new Tick(field, bots, testComPanel);
+        gameTick = new Tick(this);
 
-        webcamDisplayPanel = new WebcamDisplayPanel();
+        WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel();
 		webcamController = new WebcamController(webcamDisplayPanel, gameTick);
-		colourPanel = new ColourPanel(webcamController);
+		ColourPanel colourPanel = new ColourPanel(webcamController);
 		
 		visionWorker = new VisionWorker(colourPanel);
 		visionWorker.addListener(fieldController);
@@ -215,12 +310,11 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
-		
-		
+
 		visionController = new VisionController();
 		
-		cards.add(field, FIELDSTRING);
-		cards.add(webcamDisplayPanel, CAMSTRING);
+		//cards.add(field, FIELDSTRING);
+		//cards.add(webcamDisplayPanel, CAMSTRING);
 
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
 		tabPane.addTab("Colour", colourPanel);
@@ -261,9 +355,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 				}
 
 				if (tabTitle.equals("Colour") || tabTitle.equals("Vision")) {
-					changeCard(CAMSTRING);
+					//changeCard(CAMSTRING);
 				} else {
-					changeCard(FIELDSTRING);
+					//changeCard(FIELDSTRING);
 				}
 
 				if (tabTitle.equals("Colour")) {
@@ -314,117 +408,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         configPreviousFile.createConfigFile();
 
 		// Create the menu
-		createMenu();
-		setLayout(new BorderLayout());
-		add(toolbar, BorderLayout.PAGE_START);
-		add(contentPane, BorderLayout.CENTER);
-    }
-    
-    /**
-     * Invoked when the user presses the start button.
-     */
-    public void actionPerformed(ActionEvent evt) {
-        //Instances of javax.swing.SwingWorker are not reusuable, so
-        //we create new instances as needed.
-    	if (evt.getSource() == startButton) {
-    		if (startButton.getText() == "Start") {
-    	    	
-    	    	int portNumber;
-    	    	try {
-    	    		portNumber = Integer.parseInt(portField.getText());
-    	    	}	catch (NumberFormatException e) {
-    	    		portNumber = DEFAULT_PORT_NUMBER;
-    	    		System.out.println("Incorrect character, will use default port: 31000");
-    	    	}
-    	    	
-
-    	    	serverSocket = new NetworkSocket(portNumber);
-    	    	System.out.println("created new socket");
-    	    	serverSocket.execute();
-    	    	serverSocket.addReceiverListener(fieldController);
-    	    	serverSocket.addSenderListener(gameTick);
-    	    	serverSocket.addSenderListener(testComPanel);
-                serverSocket.setGameTick(gameTick);
-    		} else {
-        		//tell the serverSocket to begin the closing procedure;
-        		serverSocket.close();
-    		}
-    	} else if (evt.getSource() == connectionButton) {
-
-    		if (connectionButton.getText().equals(CONNECTION[0])) {
-
-				String selectedType = (String)webcamTypeComboBox.getSelectedItem();
-				if (selectedType.equals(WEBCAMCONNECTIONTYPE[0])) {
-					webcamController.connect();
-				} else {
-					webcamController.connect(webcamURLField.getText());
-				}
-
-            } else {
-    			webcamController.disconnect();
-    		}
-    		
-    	} else if (evt.getSource() == webcamTypeComboBox) {
-			String selectedType = (String)webcamTypeComboBox.getSelectedItem();
-			if (selectedType.equals(WEBCAMCONNECTIONTYPE[0])) {
-				webcamURLField.setEditable(false);
-			} else {
-				webcamURLField.setEditable(true);
-			}
-		}
-    }
-
-    public void changeCard(String cardName) {
-    	CardLayout layout = (CardLayout)cards.getLayout();
-    	layout.show(cards, cardName);
-    }
-
-//	public void setUpGame() {
-//		java.util.Timer timer = new java.util.Timer();
-//		timer.schedule(gameTick, 0, TICK_TIME_MS);
-//	}
-
-
-	@Override
-	public void viewStateChanged(ViewState currentViewState) {
-
-		switch(currentViewState) {
-		case CONNECTED:
-			connectionButton.setText(CONNECTION[1]);
-			break;
-		default:
-			connectionButton.setText(CONNECTION[0]);
-			break;
-		}
-	}
-
-	@Override
-	public void imageUpdated(BufferedImage image) {
-	}
-	
-	/**
-	 * Create the GUI and show it. As with all GUI code, this must run
-	 * on the event-dispatching thread.
-	 * @throws MalformedURLException 
-	 */
-	private static void createAndShowGUI() throws MalformedURLException {
-
-
-		//Create and set up the content pane.
-		JFrame frame = new RobotSoccerMain();
-		frame.setMinimumSize(new Dimension(1290, 1000));
-
-		//Display the window.
-		frame.pack();
-		frame.setVisible(true);
-	}
-
-	/**
-	 * <p>Creates Menu</p>
-	 * @param
-	 */
-
-	private void createMenu() {
 		JMenuBar menuBar = new JMenuBar();
 
 		JMenu visionMenu = new JMenu("Vision");
@@ -482,9 +465,116 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		menuBar.add(visionMenu);
 		menuBar.add(stratMenu);
-        menuBar.add(openPreviousFilesMenu);
+		menuBar.add(openPreviousFilesMenu);
 
 		setJMenuBar(menuBar);
+
+		// set toolbar
+		toolbar.add(networkPanel);
+		toolbar.add(webcamComponentPanel);
+		toolbar.add(connectionPanel);
+		toolbar.add(stratControlPanel);
+
+		add(toolbar, BorderLayout.PAGE_START);
+		add(contentPane, BorderLayout.CENTER);
+    }
+    
+    /**
+     * Invoked when the user presses the start button.
+     */
+    public void actionPerformed(ActionEvent evt) {
+        //Instances of javax.swing.SwingWorker are not reusuable, so
+        //we create new instances as needed.
+    	if (evt.getSource() == startButton) {
+    		if (startButton.getText() == "Start") {
+
+    	    	int portNumber;
+    	    	try {
+    	    		portNumber = Integer.parseInt(portField.getText());
+    	    	}	catch (NumberFormatException e) {
+    	    		portNumber = DEFAULT_PORT_NUMBER;
+    	    		System.out.println("Incorrect character, will use default port: 31000");
+    	    	}
+
+
+    	    	serverSocket = new NetworkSocket(portNumber);
+    	    	System.out.println("created new socket");
+    	    	serverSocket.execute();
+    	    	serverSocket.addReceiverListener(fieldController);
+    	    	serverSocket.addSenderListener(gameTick);
+                serverSocket.setGameTick(gameTick);
+    		} else {
+        		//tell the serverSocket to begin the closing procedure;
+        		serverSocket.close();
+    		}
+    	} else if (evt.getSource() == connectionButton) {
+
+    		if (connectionButton.getText().equals(CONNECTION[0])) {
+
+				String selectedType = (String)webcamTypeComboBox.getSelectedItem();
+				if (selectedType.equals(WEBCAMCONNECTIONTYPE[0])) {
+					webcamController.connect();
+				} else {
+					webcamController.connect(webcamURLField.getText());
+				}
+
+            } else {
+    			webcamController.disconnect();
+    		}
+
+    	} else if (evt.getSource() == webcamTypeComboBox) {
+			String selectedType = (String)webcamTypeComboBox.getSelectedItem();
+			if (selectedType.equals(WEBCAMCONNECTIONTYPE[0])) {
+				webcamURLField.setEditable(false);
+			} else {
+				webcamURLField.setEditable(true);
+			}
+		}
+    }
+
+//    public void changeCard(String cardName) {
+//    	CardLayout layout = (CardLayout)cards.getLayout();
+//    	layout.show(cards, cardName);
+//    }
+
+//	public void setUpGame() {
+//		java.util.Timer timer = new java.util.Timer();
+//		timer.schedule(gameTick, 0, TICK_TIME_MS);
+//	}
+
+
+	@Override
+	public void viewStateChanged(ViewState currentViewState) {
+
+		switch(currentViewState) {
+		case CONNECTED:
+			connectionButton.setText(CONNECTION[1]);
+			break;
+		default:
+			connectionButton.setText(CONNECTION[0]);
+			break;
+		}
+	}
+
+	@Override
+	public void imageUpdated(BufferedImage image) {
+	}
+	
+	/**
+	 * Create the GUI and show it. As with all GUI code, this must run
+	 * on the event-dispatching thread.
+	 * @throws MalformedURLException 
+	 */
+	private static void createAndShowGUI() throws MalformedURLException {
+
+
+		//Create and set up the content pane.
+		JFrame frame = new RobotSoccerMain();
+		frame.setMinimumSize(new Dimension(1290, 1000));
+
+		//Display the window.
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 	public static void main(String[] args) {
@@ -521,5 +611,29 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	@Override
 	public void connectionClose() {
 		startButton.setText("Start");
+	}
+
+	public boolean isManualControl() {
+		return manualControl;
+	}
+
+	public boolean isSimulation() {
+		return simulation;
+	}
+
+	public FieldController getFieldController() {
+		return fieldController;
+	}
+
+	public VisionController getVisionController() {
+		return visionController;
+	}
+
+	public WebcamController getWebcamController() {
+		return webcamController;
+	}
+
+	public WindowController getWindowController() {
+		return windowController;
 	}
 }

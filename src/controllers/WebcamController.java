@@ -1,22 +1,14 @@
 package controllers;
 
-import bot.Robots;
-import communication.Sender;
-import communication.SenderListener;
 import game.Tick;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
-
-import ui.Field;
-import ui.TestComPanel;
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

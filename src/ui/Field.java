@@ -477,4 +477,11 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		predY = predY2;
 	}
 
+	public Robots getRobots() {
+		return bots;
+	}
+
+	public Ball getBall() {
+		return ball;
+	}
 }

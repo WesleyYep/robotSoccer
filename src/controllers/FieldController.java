@@ -18,24 +18,14 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	private Ball ball;
 	private Robots bots;
 
-	private TestComPanel comPanel;
-
 	private SituationArea selectedArea;
 	
-	public FieldController(Field field, Robots bots, Ball ball) {
-		this.bots = bots;
-		this.ball = ball;
+	public FieldController(Field field) {
 		this.field = field;
+		bots = field.getRobots();
+		ball = field.getBall();
 		//kFilter = new KalmanFilter();
 		field.setBackground(Color.green);
-	}
-
-	/*
-	 * We don't do anything with comPanel.
-	 */
-	
-	public void setComPanel(TestComPanel p) {
-		comPanel = p;
 	}
 
 	/**
@@ -201,5 +191,25 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
 
 		}
+	}
+
+	public void executeStrategy() {
+		field.executeStrategy();
+	}
+
+	public void executeSetPlay() {
+		field.executeSetPlay();
+	}
+
+	public Ball getBall() {
+		return ball;
+	}
+
+	public Robots getRobots() {
+		return bots;
+	}
+
+	public void setPredPoint(double x, double y) {
+		field.setPredPoint(x, y);
 	}
 }

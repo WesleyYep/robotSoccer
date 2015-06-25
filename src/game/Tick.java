@@ -4,22 +4,20 @@ import bot.Robot;
 import bot.Robots;
 import communication.Sender;
 import communication.SenderListener;
-import ui.Field;
-import ui.TestComPanel;
-import vision.KalmanFilter;
-
-import java.util.TimerTask;
-
+import controllers.FieldController;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
+import ui.RobotSoccerMain;
+import vision.KalmanFilter;
+
+import java.util.TimerTask;
 
 public class Tick implements SenderListener {
-	private Field field;
+	private FieldController fieldController;
 	private Robots bots;
-	private TestComPanel comPanel;
-
+	private RobotSoccerMain main;
 	private int count = 0;
 	private boolean runStrat = false;
     private boolean runSetPlay = false;
@@ -40,10 +38,10 @@ public class Tick implements SenderListener {
 	private boolean firstTime = true;
     public static double PREDICT_TIME = 0.5;
 
-    public Tick(Field field, Robots bots, TestComPanel comPanel) {
-		this.bots = bots;
-		this.field = field;
-		this.comPanel = comPanel;
+    public Tick(RobotSoccerMain main) {
+		this.main = main;
+		this.fieldController = main.getFieldController();
+		this.bots = fieldController.getRobots();
 		//physics = new Physics();
 
 		/*
@@ -105,11 +103,11 @@ public class Tick implements SenderListener {
 
 	public void run() {
         //link to actions class somewhere here, set linearVelocity and angularVelocity of robots.;
-		if (!comPanel.isManualControl()) {
+		if (!main.isManualControl()) {
 			if (runStrat) {
-				field.executeStrategy();
+				fieldController.executeStrategy();
 			} else if (runSetPlay) {
-                field.executeSetPlay();
+				fieldController.executeSetPlay();
             } else {
 				bots.stopAllMovement();
 			}
@@ -117,7 +115,7 @@ public class Tick implements SenderListener {
 		//	Robot r = bots.getRobot(0);
 		//	System.out.println("r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " lin ang " + r.linearVelocity + " " + r.angularVelocity + " " + System.currentTimeMillis() );
 		}
-		field.repaint();
+		fieldController.redrawArea();
 
 		/*
 		if (!firstTime) {
@@ -157,8 +155,8 @@ public class Tick implements SenderListener {
 
 			kFilter.predict(new Mat());
 
-			meas.put(0, 0, field.getBallX());
-			meas.put(1,0,field.getBallY());
+			meas.put(0, 0, fieldController.getBallX());
+			meas.put(1,0,fieldController.getBallY());
 			meas.put(2, 0, 7);
 			meas.put(3, 0, 7);
 
@@ -182,10 +180,10 @@ public class Tick implements SenderListener {
 		//System.out.println(temp.dump());
 		//System.out.println(r.getXPosition() +  " " + r.getYPosition());
 			//System.out.println(field.getBallX() + " " + field.getBallY());
-			field.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
+			fieldController.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
 		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
 		temp.release();	
-		if (comPanel.isSimulation()) {
+		if (main.isSimulation()) {
 			if (sender != null) {
 				sender.sendStuff(createBotCoordinatesMessage());
 			}
