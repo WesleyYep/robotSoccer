@@ -5,6 +5,7 @@ import bot.Robots;
 import com.alee.laf.WebLookAndFeel;
 
 import communication.NetworkSocket;
+import communication.NetworkSocketListener;
 import communication.SerialPortCommunicator;
 import config.ConfigFile;
 import config.ConfigPreviousFile;
@@ -26,16 +27,17 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
-public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener {
+public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener, NetworkSocketListener {
 
 	public static final int DEFAULT_PORT_NUMBER = 31000;
 	public static final int TICK_TIME_MS = 5;
 
-	private JButton startButton, connectionButton, recordButton;
-	private JTextArea taskOutput;
+	private JButton startButton, connectionButton;
 
 	private NetworkSocket serverSocket;
 	private FieldController fieldController;
@@ -47,7 +49,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private TestComPanel testComPanel;
 	private SerialPortCommunicator serialCom;
 	private Robots bots;
-	private JRadioButton defaultWebcamRadioButton, IPWebcamRadioButton;
+	private JComboBox<String> webcamTypeComboBox;
 
 	private Tick gameTick;
 
@@ -82,7 +84,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private final static String CAMSTRING = "Card with Cam";
 
 	private final static String[] CONNECTION = {"Connect", "Disconnect"};
-	private final static String[] VIDEOCAPTURE = {"Record", "Stop"};
 
 	private final static String[] WEBCAMCONNECTIONTYPE = {"Default", "IP"};
 
@@ -95,12 +96,27 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel contentPane = new JPanel(new MigLayout("wrap 12"));
+		JToolBar toolbar = new JToolBar();
+		toolbar.setFloatable(false);
+		toolbar.setLayout(new MigLayout("ins 0, top"));
 		//Create the demo's UI.
 		//create start button and text field for port number
 		startButton = new JButton("Start");
 		startButton.setActionCommand("start");
 		startButton.addActionListener(this);
-		portField = new JTextField();
+		portField = new JTextField(7);
+		JLabel networkLabel = new JLabel("Network");
+		networkLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+
+		JPanel networkPanel = new JPanel(new MigLayout());
+		networkPanel.add(networkLabel, "span, wrap");
+		networkPanel.add(new JLabel("Port Number"));
+		networkPanel.add(portField, "wrap");
+		networkPanel.add(startButton, "span, align right");
+		networkPanel.setOpaque(false);
+
+		toolbar.add(networkPanel);
+
 		runStratButton = new JButton("Run Strat");
 		stopStratButton = new JButton("Stop");
         runSetPlayButton = new JButton("Set play");
@@ -111,14 +127,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stratControlPanel.add(stopStratButton);
 		stratControlPanel.add(stratStatusLbl, "wrap");
         stratControlPanel.add(runSetPlayButton);
-
-		JPanel portPanel = new JPanel(new MigLayout());
-		portPanel.add(startButton);
-		portPanel.add(portField, "pushx, growx");
-
-		taskOutput = new JTextArea(5, 20);
-		taskOutput.setMargin(new Insets(5,5,5,5));
-		taskOutput.setEditable(false); 
 
 		//create serial port communicator;
 		serialCom = new SerialPortCommunicator();
@@ -161,7 +169,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//create tab pane
 		tabPane = new JTabbedPane();
-		tabPane.addTab("Output", new JScrollPane(taskOutput));
 		tabPane.addTab("Situation", situationPanel);
 		tabPane.addTab("Plays", playsPanel);
 		tabPane.addTab("Roles", rolesPanel);
@@ -169,39 +176,28 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		// Create webcam component panel.
 		JPanel webcamComponentPanel = new JPanel(new MigLayout());
-		JLabel webcamURLLabel = new JLabel("URL");
+		JLabel webcamLabel = new JLabel("Webcam");
+		webcamLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 		// Create the components.
-		webcamURLField = new JTextField();
-
-		defaultWebcamRadioButton = new JRadioButton(WEBCAMCONNECTIONTYPE[0]);
-		IPWebcamRadioButton = new JRadioButton(WEBCAMCONNECTIONTYPE[1]);
-
-		ButtonGroup webcamSelectionGroup = new ButtonGroup();
-		webcamSelectionGroup.add(defaultWebcamRadioButton);
-		webcamSelectionGroup.add(IPWebcamRadioButton);
-
-		// Add Listener for radio buttons.
-		defaultWebcamRadioButton.addActionListener(this);
-		IPWebcamRadioButton.addActionListener(this);
-
-		// Initially set defaultWebcamRadioButton
-		defaultWebcamRadioButton.doClick();
-
+		webcamURLField = new JTextField(15);
+		webcamTypeComboBox = new JComboBox<String>(WEBCAMCONNECTIONTYPE);
+		webcamTypeComboBox.addActionListener(this);
+		webcamTypeComboBox.setSelectedIndex(0);
 		connectionButton = new JButton(CONNECTION[0]);
-		recordButton = new JButton(VIDEOCAPTURE[0]);
 
 		// Add listeners
 		connectionButton.addActionListener(this);
-		recordButton.addActionListener(this);
 
 		// Add components into panel.
-		webcamComponentPanel.add(webcamURLLabel, "wrap");
-		webcamComponentPanel.add(webcamURLField, "span 2, pushx, growx, wrap");
-		webcamComponentPanel.add(defaultWebcamRadioButton, "split 2");
-		webcamComponentPanel.add(IPWebcamRadioButton, "wrap");
-		webcamComponentPanel.add(connectionButton, "w 50%");
-		webcamComponentPanel.add(recordButton, "w 50%, wrap");
+		webcamComponentPanel.add(webcamLabel, "span, wrap");
+		webcamComponentPanel.add(new JLabel("Type"));
+		webcamComponentPanel.add(webcamTypeComboBox, "align right, wrap");
+		webcamComponentPanel.add(new JLabel("URL"), "gapright 10");
+		webcamComponentPanel.add(webcamURLField, "wrap");
+		webcamComponentPanel.add(connectionButton, "span, align right");
+		webcamComponentPanel.setOpaque(false);
 
+		toolbar.add(webcamComponentPanel);
 		// Create the cards.
 		cards = new JPanel(new CardLayout());
 
@@ -239,17 +235,17 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(windowController);
 		
-		contentPane.add(cards, "span 6, width 640:640:640, height 480:480:480");
-		contentPane.add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
-		contentPane.add(infoPanel, "span 6, width 600:600:600, wrap");
-		contentPane.add(portPanel, "span 3, width 300:300:300");
-		contentPane.add(webcamComponentPanel, "span 3, width 300:300:300");
-		contentPane.add(testComContainerPanel, "span 3, width 300:300:300");
-		contentPane.add(stratControlPanel, "span 3, width 300:300:300");
+		//contentPane.add(cards, "span 6, width 640:640:640, height 480:480:480");
+		//contentPane.add(tabPane, "span 6 5, width 600:600:600, pushy, growy, wrap");
+		//contentPane.add(infoPanel, "span 6, width 600:600:600, wrap");
+		//contentPane.add(portPanel, "span 3, width 300:300:300");
+		//contentPane.add(webcamComponentPanel, "span 3, width 300:300:300");
+		//contentPane.add(testComContainerPanel, "span 3, width 300:300:300");
+		//contentPane.add(stratControlPanel, "span 3, width 300:300:300");
 
-		contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		//contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-		contentPane.setPreferredSize(new Dimension(1290, 900));
+		//contentPane.setPreferredSize(new Dimension(1290, 900));
 
 		tabPane.addChangeListener(new ChangeListener() {
 
@@ -319,7 +315,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		// Create the menu
 		createMenu();
-		add(contentPane);
+		setLayout(new BorderLayout());
+		add(toolbar, BorderLayout.PAGE_START);
+		add(contentPane, BorderLayout.CENTER);
     }
     
     /**
@@ -336,11 +334,11 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
     	    		portNumber = Integer.parseInt(portField.getText());
     	    	}	catch (NumberFormatException e) {
     	    		portNumber = DEFAULT_PORT_NUMBER;
-    	    		taskOutput.append("\nIncorrect character, will use default port: 31000\n");
+    	    		System.out.println("Incorrect character, will use default port: 31000");
     	    	}
     	    	
 
-    	    	serverSocket = new NetworkSocket(portNumber, taskOutput, startButton);
+    	    	serverSocket = new NetworkSocket(portNumber);
     	    	System.out.println("created new socket");
     	    	serverSocket.execute();
     	    	serverSocket.addReceiverListener(fieldController);
@@ -351,33 +349,29 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         		//tell the serverSocket to begin the closing procedure;
         		serverSocket.close();
     		}
-    	} else if (evt.getSource() == defaultWebcamRadioButton) {
-    		webcamURLField.setEditable(false);
-    	} else if (evt.getSource() == IPWebcamRadioButton) {
-    		webcamURLField.setEditable(true);
     	} else if (evt.getSource() == connectionButton) {
-    		
+
     		if (connectionButton.getText().equals(CONNECTION[0])) {
 
-    			// Only one of the radio buttons can be selected at a time
-    			if (defaultWebcamRadioButton.isSelected()) {
-    				webcamController.connect();
-    			} else {
-    				webcamController.connect(webcamURLField.getText());
-    			}
-                
+				String selectedType = (String)webcamTypeComboBox.getSelectedItem();
+				if (selectedType.equals(WEBCAMCONNECTIONTYPE[0])) {
+					webcamController.connect();
+				} else {
+					webcamController.connect(webcamURLField.getText());
+				}
+
             } else {
     			webcamController.disconnect();
     		}
     		
-    	} else if (evt.getSource() == recordButton) {
-    		
-    		if (recordButton.getText().equals(VIDEOCAPTURE[0])) {
-    			recordButton.setText(VIDEOCAPTURE[1]);
-    		} else {
-    			recordButton.setText(VIDEOCAPTURE[0]);
-    		}
-    	}
+    	} else if (evt.getSource() == webcamTypeComboBox) {
+			String selectedType = (String)webcamTypeComboBox.getSelectedItem();
+			if (selectedType.equals(WEBCAMCONNECTIONTYPE[0])) {
+				webcamURLField.setEditable(false);
+			} else {
+				webcamURLField.setEditable(true);
+			}
+		}
     }
 
     public void changeCard(String cardName) {
@@ -516,5 +510,16 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 				}
 			}
 		});
+	}
+
+	// TODO Check if EDT thread
+	@Override
+	public void connectionOpen() {
+		startButton.setText("Stop");
+	}
+
+	@Override
+	public void connectionClose() {
+		startButton.setText("Start");
 	}
 }

@@ -16,18 +16,14 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 	private Sender sender;
 	private ServerSocket serverSocket;
 	private Socket clientSocket;
-	private JTextArea output;
 	private List<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
 	private List<SenderListener> senderListeners = new ArrayList<SenderListener>();
-	private JButton toggleButton;
+	private List<NetworkSocketListener> networkListeners = new ArrayList<NetworkSocketListener>();
 	private boolean isClientConnected = false;
     private Tick gameTick;
 
-    public NetworkSocket(int portNumber, JTextArea o, JButton button) {
+    public NetworkSocket(int portNumber) {
 		try {
-			toggleButton = button;
-			toggleButton.setText("Stop");
-			output = o;
 			this.portNumber = portNumber;
 			serverSocket = new ServerSocket(portNumber);
 			sender = null;
@@ -41,9 +37,10 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 
 	@Override
 	protected Integer doInBackground() throws Exception {
-		output.append("Started\n");
+		System.out.println("Started");;
 		clientSocket = serverSocket.accept();
-		output.append("connected\n");
+		notifyNetworkSocketListenerConnectionOpen();
+		System.out.println("connected");
 		publish(new Sender(clientSocket));
 		receiver = new Receiver(clientSocket, this);
         receiver.setGameTick(gameTick);
@@ -76,7 +73,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 
 	}
 
-	public void closeOutputStream() {	
+	public void closeOutputStream() {
 		if (sender != null) {
 			sender.close();
 		}
@@ -94,6 +91,26 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 		senderListeners.add(listener);
 	}
 
+	public void addNetworkSocketListener(NetworkSocketListener listener) {
+		networkListeners.add(listener);
+	}
+
+	public void removeNetworkSocketListener(NetworkSocketListener listener) {
+		networkListeners.remove(listener);
+	}
+
+	private void notifyNetworkSocketListenerConnectionOpen() {
+		for (NetworkSocketListener l : networkListeners) {
+			l.connectionOpen();
+		}
+	}
+
+	private void notifyNetworkSocketListenerConnectionClose() {
+		for (NetworkSocketListener l : networkListeners) {
+			l.connectionClose();
+		}
+	}
+
 	public void closeServerSocket() {
 		try {
 			this.clientSocket.close();
@@ -101,7 +118,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		toggleButton.setText("Start");
+		notifyNetworkSocketListenerConnectionClose();
 
 	}
 
@@ -129,7 +146,7 @@ public class NetworkSocket extends SwingWorker<Integer, Sender> {
 		else {
 			this.cancel(true);
 			System.out.println("no client connected, stopping the server socket");
-			toggleButton.setText("Start");
+			notifyNetworkSocketListenerConnectionClose();
 		}
 	}
 
