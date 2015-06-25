@@ -169,12 +169,12 @@ public class WebcamDisplayPanel extends JPanel {
             			Imgproc.drawContours(tempMat, teamContour, i, new Scalar(0, 255, 128));
             		}
             	} 
-            	/*
+
             	if (opponentContour != null) {
             		for (int i = 0; i<opponentContour.size(); i++) {
             			Imgproc.drawContours(tempMat, opponentContour, i, new Scalar(0, 255, 128));
             		}
-            	}*/
+            	}
             	
             } 
             

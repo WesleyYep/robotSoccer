@@ -11,6 +11,7 @@ public class Role {
     private CriteriaActionPair[] pairs = {null, null, null, null, null};
     private Robot bot;
     private Robots teamRobots;
+    private Robots opponentRobots;
     private double ballX;
     private double ballY;
     private double predictedBallX;
@@ -64,6 +65,7 @@ public class Role {
                 Action a = cap.getAction();
                 a.addRobot(bot);
                 a.addTeamRobots(teamRobots);
+                a.addOpponentRobots(opponentRobots);
                 a.setBallPosition(ballX, ballY);
                 a.setPredBallPosition(predictedBallX, predictedBallY);
                 a.execute();
@@ -83,6 +85,8 @@ public class Role {
     public void addTeamRobots (Robots team) {
     	this.teamRobots = team;
     }
+
+    public void addOpponentRobots (Robots opponent) {this.opponentRobots = opponent;}
 
     public void setBallPosition(double x, double y) {
         this.ballX = x;

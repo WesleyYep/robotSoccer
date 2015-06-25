@@ -49,7 +49,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private ViewState webcamDisplayPanelState;
 	private List<MatOfPoint> correctGreenContour;
 	private List<MatOfPoint> correctTeamContour;
-	private KalmanFilter kFilter;
+	private List<MatOfPoint> correctOpponentContour;
+ 	private KalmanFilter kFilter;
 	
 	
 	private static final int KERNELSIZE = 3;
@@ -65,6 +66,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		correctBallContour = new ArrayList<MatOfPoint>();
 		correctTeamContour = new ArrayList<MatOfPoint>();
 		correctGreenContour = new ArrayList<MatOfPoint>();
+		correctOpponentContour = new ArrayList<MatOfPoint>();
 
 	}
 
@@ -155,7 +157,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			robotMinSize = colourPanel.getRobotSizeMinimum();
 			greenMinSize = colourPanel.getGreenSizeMinimum();
 			
-			opponentRobotMinSize = colourPanel.getRobotSizeMinimum();
+			opponentRobotMinSize = 25;
 			
 			//Get the maximum length
 			ballMaxSize = colourPanel.getBallSizeMaximum();
@@ -296,26 +298,32 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 				}
 			}
 			
-			/*
+
 			//opponent
 			int opponentX = 0, opponentY = 0;
 			Core.inRange(webcamImageMat, opponentMin, opponentMax, opponentBinary);
 			Imgproc.erode(opponentBinary, opponentBinary, erodeKernel);
-			Imgproc.dilate(teamBinary, opponentBinary, dilateKernel);
+			Imgproc.dilate(opponentBinary, opponentBinary, dilateKernel);
 			Imgproc.findContours(opponentBinary, opponentContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 			int count = 0;
+			correctOpponentContour.clear();
 			for (int i = 0; i < opponentContours.size(); i++) {
 				double area = Imgproc.contourArea(opponentContours.get(i));
 				if (opponentRobotMinSize <= area && area <= opponentRobotMaxSize ) {
+					correctOpponentContour.add(opponentContours.get(i));
 					Moments m = Imgproc.moments(opponentContours.get(i));
 					opponentX = (int) (m.get_m10() / m.get_m00());
 					opponentY = (int) (m.get_m01() / m.get_m00());
-					
+
 					notifyListeners(new VisionData(new Point(opponentX, opponentY), 0, "opponent:" + count));
 					count++;
-					if (count > 4) count = 4;
 				}
-			} */
+			}
+
+
+			//notifyListeners(new VisionData(new Point(500, 500), 0, "opponent:" + 4));
+
+
 		
 			/*
 			int[] robotDuplicate = new int[5];
@@ -357,7 +365,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
 	public List<MatOfPoint> getOpponentContours() {
-		return opponentContours;
+		return correctOpponentContour;
 	}
 	
 

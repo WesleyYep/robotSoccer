@@ -52,6 +52,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 	private Ball ball;
 	private Robots bots;
+	private Robots opponentBots;
 
 	private Point startPoint;
 	private Point endPoint;
@@ -64,9 +65,10 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private double predX = 0;
 	private double predY = 0;
 
-    public Field(Robots bots, Ball ball) {
+    public Field(Robots bots, Robots opponents, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
+		this.opponentBots = opponents;
 		isMouseDrag = false;
 
 		// Add mouse listeners
@@ -409,6 +411,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 					if (role == null) { continue; }
 					role.addRobot(order.get(j));
 					role.addTeamRobots(bots);
+					role.addOpponentRobots(opponentBots);
 					//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setPredictedPosition(predX, predY);

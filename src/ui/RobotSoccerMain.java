@@ -47,6 +47,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private TestComPanel testComPanel;
 	private SerialPortCommunicator serialCom;
 	private Robots bots;
+	private Robots opponentBots;
 	private JRadioButton defaultWebcamRadioButton, IPWebcamRadioButton;
 
 	private Tick gameTick;
@@ -127,11 +128,13 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		serialCom = new SerialPortCommunicator();
 		bots = new Robots(serialCom);
 		bots.makeRealRobots();
+		opponentBots = new Robots(serialCom);
+		bots.makeRealRobots();
 
 		ball = new Ball();
-		field = new Field(bots, ball);
+		field = new Field(bots,opponentBots, ball);
 		ballController = new BallController(ball);
-		fieldController = new FieldController(field, bots, ball);
+		fieldController = new FieldController(field, bots,opponentBots, ball);
 
 		JPanel testComContainerPanel = new JPanel(new MigLayout("ins 0"));
 		testComPanel = new TestComPanel(serialCom, bots);
