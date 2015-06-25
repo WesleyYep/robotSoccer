@@ -14,10 +14,19 @@ import ui.Field;
 public class testSelfMadeObstacle extends Action {
 
     private double error = 2.5;
+
+    //non-static initialiser block
+    {
+        parameters.put("fixed point1 x", 180);
+        parameters.put("fixed point1 y", 90);
+        //parameters.put("error", 2.5);
+    }
     @Override
     public void execute() {
     	//System.out.println("obs");
-        setVelocityToTarget(180,90,false,false);
+        int x = parameters.get("fixed point1 x");
+        int y = parameters.get("fixed point1 y");
+        setVelocityToTarget(x,y,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -90,15 +99,15 @@ public class testSelfMadeObstacle extends Action {
         // Evaluate
         fb.evaluate();
 
-        //     JFuzzyChart.get().chart(fb);
+      //       JFuzzyChart.get().chart(fb);
 
 
         // Show output variable's chart
-        fb.getVariable("linearVelocity").defuzzify();
-        fb.getVariable("angularVelocity").defuzzify();
-     //      JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
-      //       JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
-      //      JOptionPane.showMessageDialog(null, "nwa"); 
+       // fb.getVariable("linearVelocity").defuzzify();
+       // fb.getVariable("angularVelocity").defuzzify();
+       //    JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
+     //   JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
+         //   JOptionPane.showMessageDialog(null, "nwa");
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
@@ -116,8 +125,8 @@ public class testSelfMadeObstacle extends Action {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
         }
-//          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-//        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
+          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
+        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
 
         //    System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
 //             r.linearVelocity = 0;

@@ -53,8 +53,10 @@ FUZZIFY direction
 	TERM left2:= trian -270 -180 -90;
 END_FUZZIFY
 
-FUZZIFY obstacleDist			
-	TERM near := trian 0 30 60;
+FUZZIFY obstacleDist
+	TERM beside := trape 0 2 15 22.5;
+	TERM close := trian 15 22.5 30;
+	TERM near := trian 22.5 45 60;
 	TERM far := trian 30 220 250;
 END_FUZZIFY
 
@@ -69,6 +71,7 @@ END_FUZZIFY
 
 
 DEFUZZIFY linearVelocity
+	TERM reverse := trian -0.8 -0.6 -0.25;
 	TERM verySlow :=  trian -0.6 0 0.45;
  	TERM slow := trian 0 0.25 0.7;
 	TERM medium := trian 0.5 0.7 1;
@@ -193,9 +196,33 @@ RULEBLOCK No1
 	RULE 70: IF obstacleDist IS near AND (targetDist IS far OR targetDist is middle) AND obstacleTheta IS frontLeft THEN angularVelocity is SR;
 	RULE 71: IF obstacleDist IS near AND (targetDist IS far OR targetDist IS middle) AND obstacleTheta IS frontRight THEN angularVelocity is SL;
 	
-	RULE 70: IF obstacleDist IS near AND targetDist IS close AND obstacleTheta IS frontLeft THEN angularVelocity is LR;
-	RULE 71: IF obstacleDist IS near AND targetDist IS close AND obstacleTheta IS frontRight THEN angularVelocity is LL;
-	
+	RULE 70: IF (obstacleDist IS near) AND targetDist IS close AND obstacleTheta IS frontLeft THEN angularVelocity is LR;
+	RULE 71: IF (obstacleDist IS near) AND targetDist IS close AND obstacleTheta IS frontRight THEN angularVelocity is LL;
+
+	RULE 72: If obstacleDist IS close AND (obstacleTheta IS frontLeft OR obstacleTheta is frontRight OR obstacleTheta is straightLeft OR obstacleTheta is straightRight) THEN linearVelocity is verySlow;
+	RULE 73: If obstacleDist Is close AND (obstacleTheta IS frontLeft or obstacleTheta is straightLeft) Then angularVelocity IS MR;
+	RULE 74: IF obstacleDist is close ANd (obstacleTheta IS frontRight or obstacleTheta is straightRight) THEN angularVelocity Is ML;
+
+	RULE 75: if obstacleDist is beside THen linearVelocity is reverse;
+	RULE 76: IF obstacleDist is beside AND (obstacleTheta is frontLeft OR obstacleTheta is straightLeft) Then angularVelocity is MR;
+	RULE 77: IF obstacleDist is beside AND (obstacleTheta is frontRight OR obstacleTheta is straightRight) THEN angularVelocity is ML;
+
+	RULE 78: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) AND yPos is closeToTopWall AND direction IS right THEN angularVelocity IS ML;
+	RULE 79: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) ANd yPos is closeToTopWall and direction IS left1 Then angularVelocity IS MR;
+	RULE 80: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) ANd yPos is closeToTopWall and direction IS left2 Then angularVelocity IS MR;
+
+	RULE 81: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) AND yPos is closeToBottomWall AND direction IS right THEN angularVelocity IS MR;
+    RULE 82: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) ANd yPos is closeToBottomWall and direction IS left1 Then angularVelocity IS ML;
+    RULE 83: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) ANd yPos is closeToBottomWall and direction IS left2 Then angularVelocity IS ML;
+
+    RULE 84: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) AND xPos is closeToRightWall AND direction IS top THEN angularVelocity IS MR;
+    RULE 85: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) ANd xPos is closeToRightWall and direction IS bottom Then angularVelocity IS ML;
+
+     RULE 86: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) AND xPos is closeToLeftWall AND direction IS top THEN angularVelocity IS ML;
+     RULE 87: If (obstacleDist is near OR obstacleDist is close or obstacleDist is beside) ANd xPos is closeToLeftWall and direction IS bottom Then angularVelocity IS MR;
+
+
+
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
