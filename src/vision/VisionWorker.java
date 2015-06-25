@@ -296,7 +296,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 				}
 			}
 			
-			
+			/*
 			//opponent
 			int opponentX = 0, opponentY = 0;
 			Core.inRange(webcamImageMat, opponentMin, opponentMax, opponentBinary);
@@ -315,7 +315,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					count++;
 					if (count > 4) count = 4;
 				}
-			}
+			} */
 		
 			/*
 			int[] robotDuplicate = new int[5];
