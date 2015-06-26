@@ -4,6 +4,7 @@ import bot.Robots;
 
 import com.alee.laf.WebLookAndFeel;
 
+import com.jidesoft.plaf.xerto.VerticalLabelUI;
 import communication.NetworkSocket;
 import communication.NetworkSocketListener;
 import communication.SerialPortCommunicator;
@@ -26,10 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.util.*;
@@ -341,20 +339,44 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//contentPane.setPreferredSize(new Dimension(1290, 900));
 
-		JPanel optionPanel = new JPanel(new BorderLayout());
-		String[] options = {
-				"Situation",
-				"Plays",
-				"Roles",
-				"Colour",
-				"Vision"
-		};
-		JList<String> optionList = new JList<String>(options);
-		optionPanel.add(optionList, BorderLayout.WEST);
-		JPanel optionCards = new JPanel(new CardLayout());
-		optionPanel.add(optionCards, BorderLayout.CENTER);
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+
+		tabbedPane.addTab(null, situationPanel);
+		JLabel situationLabel = new JLabel("Situation");
+		situationLabel.setUI(new VerticalLabelUI(false));
+		situationLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+		tabbedPane.setTabComponentAt(0, situationLabel);
+
+		tabbedPane.addTab(null, playsPanel);
+		JLabel playsLabel = new JLabel("Plays");
+		playsLabel.setUI(new VerticalLabelUI(false));
+		playsLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+		tabbedPane.setTabComponentAt(1, playsLabel);
+
+		tabbedPane.addTab(null, rolesPanel);
+		JLabel rolesLabel = new JLabel("Roles");
+		rolesLabel.setUI(new VerticalLabelUI(false));
+		rolesLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+		tabbedPane.setTabComponentAt(2, rolesLabel);
+
 		JPanel robotViewPanel = new JPanel();
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionPanel, robotViewPanel);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabbedPane, robotViewPanel) {
+			@Override
+			public void setDividerLocation(int location) {
+				int minimumWidth = 200;
+				int maximumWidth = (getSize().width == 0) ? 500 : (int)(getSize().width * 0.3);
+
+				if (location < minimumWidth) {
+					super.setDividerLocation(minimumWidth);
+				} else if (location > maximumWidth) {
+					super.setDividerLocation(maximumWidth);
+				} else {
+					super.setDividerLocation(location);
+				}
+			}
+		};
+		splitPane.setResizeWeight(0.3);
+
 		contentPane.add(splitPane, BorderLayout.CENTER);
 
 		tabPane.addChangeListener(new ChangeListener() {
