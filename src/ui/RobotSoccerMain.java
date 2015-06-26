@@ -83,7 +83,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		// Set default close operation.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		JPanel contentPane = new JPanel(new MigLayout("wrap 12"));
+		JPanel contentPane = new JPanel(new BorderLayout());
 		// Toolbar
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
@@ -340,6 +340,22 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		//contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
 		//contentPane.setPreferredSize(new Dimension(1290, 900));
+
+		JPanel optionPanel = new JPanel(new BorderLayout());
+		String[] options = {
+				"Situation",
+				"Plays",
+				"Roles",
+				"Colour",
+				"Vision"
+		};
+		JList<String> optionList = new JList<String>(options);
+		optionPanel.add(optionList, BorderLayout.WEST);
+		JPanel optionCards = new JPanel(new CardLayout());
+		optionPanel.add(optionCards, BorderLayout.CENTER);
+		JPanel robotViewPanel = new JPanel();
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionPanel, robotViewPanel);
+		contentPane.add(splitPane, BorderLayout.CENTER);
 
 		tabPane.addChangeListener(new ChangeListener() {
 
