@@ -210,7 +210,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         //create the gameTick
         gameTick = new Tick(field, bots, testComPanel);
 
-        webcamDisplayPanel = new WebcamDisplayPanel();
+        visionController = new VisionController();
+        webcamDisplayPanel = new WebcamDisplayPanel(visionController);
 		webcamController = new WebcamController(webcamDisplayPanel, gameTick);
 		colourPanel = new ColourPanel(webcamController);
 		
@@ -221,11 +222,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
-		
-		
-		visionController = new VisionController();
-
-
 		
 		cards.add(field, FIELDSTRING);
 		cards.add(webcamDisplayPanel, CAMSTRING);
