@@ -12,8 +12,7 @@ import controllers.*;
 import game.Tick;
 import net.miginfocom.swing.MigLayout;
 
-import org.opencv.core.Core;
-
+import org.opencv.core.Mat;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
@@ -26,7 +25,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
 public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener {
@@ -215,7 +213,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         //create the gameTick
         gameTick = new Tick(field, bots, testComPanel);
 
-        webcamDisplayPanel = new WebcamDisplayPanel();
+        visionController = new VisionController();
+        webcamDisplayPanel = new WebcamDisplayPanel(visionController);
 		webcamController = new WebcamController(webcamDisplayPanel, gameTick);
 		colourPanel = new ColourPanel(webcamController);
 		
@@ -226,11 +225,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
-		
-		
-		visionController = new VisionController();
-
-
 		
 		cards.add(field, FIELDSTRING);
 		cards.add(webcamDisplayPanel, CAMSTRING);
@@ -299,6 +293,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
                 gameTick.runSetPlay(false);
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
+				System.gc();
 			}
 
 		});
@@ -422,7 +417,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {
+	public void imageUpdated(Mat image) {
 	}
 	
 	/**
