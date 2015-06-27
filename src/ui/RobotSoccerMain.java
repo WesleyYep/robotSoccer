@@ -294,6 +294,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
                 gameTick.runSetPlay(false);
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
+				System.gc();
 			}
 
 		});
