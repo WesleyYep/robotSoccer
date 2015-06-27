@@ -220,7 +220,9 @@ public class WebcamDisplayPanel extends JPanel {
         //clone the original image so we can subtract the mask from the actual image
         Mat original = image.clone();
         //get the points of the region of interest
-        MatOfPoint mop = new MatOfPoint(toPoint(vc.getTopLeft()), toPoint(vc.getBottomLeft()), toPoint(vc.getBottomRight()), toPoint(vc.getTopRight()));
+        MatOfPoint mop = new MatOfPoint(toPoint(vc.getTopLeft()), toPoint(vc.getLeftGoalTopRight()), toPoint(vc.getLeftGoalTopLeft()), toPoint(vc.getLeftGoalBottomLeft()),
+                            toPoint(vc.getLeftGoalBottomRight()), toPoint(vc.getBottomLeft()), toPoint(vc.getBottomRight()), toPoint(vc.getRightGoalBottomLeft()),
+                            toPoint(vc.getRightGoalBottomRight()), toPoint(vc.getRightGoalTopRight()), toPoint(vc.getRightGoalTopLeft()), toPoint(vc.getTopRight()));
         //fill the region of interest black  - rgb(0,0,0)
         Core.fillConvexPoly(image, mop, new Scalar(0.0));
         //subtract the mask from original, everywhere will become black apart from the black region that you filled,

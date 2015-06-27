@@ -4,6 +4,7 @@ import org.opencv.core.Point;
 import ui.Field;
 
 import javax.media.jai.PerspectiveTransform;
+import java.awt.*;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
@@ -22,12 +23,30 @@ public class VisionController {
 	
 	private static PerspectiveTransform t;
 	private static PerspectiveTransform tInverse;
-	
-	public VisionController() {
-		topRight = new Point2D.Double(200,100);
-		topLeft = new Point2D.Double(100,100);
-		bottomLeft = new Point2D.Double(100,200);
-		bottomRight = new Point2D.Double(200,200);
+    private Point2D leftGoalTopLeft;
+    private Point2D rightGoalTopLeft;
+    private Point2D rightGoalTopRight;
+    private Point2D leftGoalTopRight;
+    private Point2D leftGoalBottomRight;
+    private Point2D leftGoalBottomLeft;
+    private Point2D rightGoalBottomRight;
+    private Point2D rightGoalBottomLeft;
+
+    public VisionController() {
+		topRight = new Point2D.Double(450,50);
+		topLeft = new Point2D.Double(50,50);
+		bottomLeft = new Point2D.Double(50,450);
+		bottomRight = new Point2D.Double(450,450);
+
+        leftGoalTopLeft = new Point2D.Double(30,230);
+        leftGoalTopRight = new Point2D.Double(50,230);
+        leftGoalBottomRight = new Point2D.Double(50,270);
+        leftGoalBottomLeft = new Point2D.Double(30,270);
+
+        rightGoalTopLeft = new Point2D.Double(450,230);
+        rightGoalTopRight = new Point2D.Double(470,230);
+        rightGoalBottomRight = new Point2D.Double(470,270);
+        rightGoalBottomLeft = new Point2D.Double(450,270);
 		this.createTransformMatrix();
 	}
 	
@@ -150,5 +169,68 @@ public class VisionController {
 		this.bottomLeft = bottomLeft;
 		this.createTransformMatrix();
 	}
-	
+
+    public Point2D getLeftGoalTopRight() {
+        return leftGoalTopRight;
+    }
+
+    public Point2D getLeftGoalTopLeft() {
+        return leftGoalTopLeft;
+    }
+
+    public Point2D getLeftGoalBottomRight() {
+        return leftGoalBottomRight;
+    }
+
+    public Point2D getLeftGoalBottomLeft() {
+        return leftGoalBottomLeft;
+    }
+
+    public Point2D getRightGoalTopLeft() {
+        return rightGoalTopLeft;
+    }
+
+    public Point2D getRightGoalTopRight() {
+        return rightGoalTopRight;
+    }
+
+    public Point2D getRightGoalBottomLeft() {
+        return rightGoalBottomLeft;
+    }
+
+    public Point2D getRightGoalBottomRight() {
+        return rightGoalBottomRight;
+    }
+
+    public void setLeftGoalTopRight(Point2D p) {
+        leftGoalTopRight = p;
+    }
+
+    public void setLeftGoalTopLeft(Point2D p) {
+        leftGoalTopLeft = p;
+    }
+
+    public void setLeftGoalBottomRight(Point2D p) {
+        leftGoalBottomRight = p;
+    }
+
+    public void setLeftGoalBottomLeft(Point2D p) {
+        leftGoalBottomLeft = p;
+    }
+
+    public void setRightGoalTopLeft(Point2D p) {
+        rightGoalTopLeft = p;
+    }
+
+    public void setRightGoalTopRight(Point2D p) {
+        rightGoalTopRight = p;
+    }
+
+    public void setRightGoalBottomLeft(Point2D p) {
+        rightGoalBottomLeft = p;
+    }
+
+    public void setRightGoalBottomRight(Point2D p) {
+        rightGoalBottomRight = p;
+    }
 }
