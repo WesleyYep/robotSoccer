@@ -12,6 +12,7 @@ import strategy.StrategyListener;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,8 +28,8 @@ public class SituationPanel extends JPanel implements StrategyListener{
 	private JButton removeButton;
 	private JButton addPlayButton = new JButton("Add play");
 	private JButton removePlayButton = new JButton("Remove play");
-	private JButton upButton = new JButton("▲");
-	private JButton downButton = new JButton("▼");
+	private JButton upButton = new JButton("Up");
+	private JButton downButton = new JButton("Down");
 	private JTable tableOfSituations;
 	private JTable tableOfPlays;
 	private JTable tableOfAllPlays;

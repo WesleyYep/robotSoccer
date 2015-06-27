@@ -23,8 +23,11 @@ import vision.VisionSettingFile;
 import vision.VisionWorker;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -339,31 +342,54 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//contentPane.setPreferredSize(new Dimension(1290, 900));
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
-
-		tabbedPane.addTab(null, situationPanel);
-		JLabel situationLabel = new JLabel("Situation");
-		situationLabel.setUI(new VerticalLabelUI(false));
-		situationLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
-		tabbedPane.setTabComponentAt(0, situationLabel);
-
-		tabbedPane.addTab(null, playsPanel);
-		JLabel playsLabel = new JLabel("Plays");
-		playsLabel.setUI(new VerticalLabelUI(false));
-		playsLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
-		tabbedPane.setTabComponentAt(1, playsLabel);
-
-		tabbedPane.addTab(null, rolesPanel);
-		JLabel rolesLabel = new JLabel("Roles");
-		rolesLabel.setUI(new VerticalLabelUI(false));
-		rolesLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
-		tabbedPane.setTabComponentAt(2, rolesLabel);
-
+		JPanel optionContainer = new JPanel(new BorderLayout());
 		JPanel robotViewPanel = new JPanel();
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabbedPane, robotViewPanel) {
+
+		String[] options = {
+			"Situation",
+			"Plays",
+			"Roles"
+		};
+		JList<String> optionList = new JList<String>(options);
+		optionList.setSelectionModel(new DefaultListSelectionModel() {
+			private static final long serialVersionUID = 1L;
+
+			boolean gestureStarted = false;
+
+			@Override
+			public void setSelectionInterval(int index0, int index1) {
+				if (!gestureStarted) {
+					if (isSelectedIndex(index0)) {
+						super.removeSelectionInterval(index0, index1);
+					} else {
+						super.setSelectionInterval(index0, index1);
+					}
+				}
+				gestureStarted = true;
+			}
+
+			@Override
+			public void setValueIsAdjusting(boolean isAdjusting) {
+				if (isAdjusting == false) {
+					gestureStarted = false;
+				}
+			}
+
+		});
+
+		optionList.setCellRenderer(new OptionRenderer());
+		//optionList.setBackground(new Color(121, 121, 121));
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionContainer, robotViewPanel) {
 			@Override
 			public void setDividerLocation(int location) {
-				int minimumWidth = 200;
+				if (optionList.getSelectedValue() == null) {
+					super.setDividerLocation(location);
+					super.setDividerSize(0);
+					return;
+				}
+				super.setDividerSize(6);
+				int minimumWidth = 300;
 				int maximumWidth = (getSize().width == 0) ? 500 : (int)(getSize().width * 0.3);
 
 				if (location < minimumWidth) {
@@ -377,6 +403,65 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		};
 		splitPane.setResizeWeight(0.3);
 
+		JPanel optionCards = new JPanel(new CardLayout());
+		optionCards.add(situationPanel, options[0]);
+		optionCards.add(playsPanel, options[1]);
+		optionCards.add(rolesPanel, options[2]);
+
+		optionList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					if (optionList.getSelectedValue() == null) {
+						if (optionCards.getParent() != null) {
+							optionContainer.remove(optionCards);
+							optionContainer.revalidate();
+							optionContainer.repaint();
+							splitPane.setDividerLocation(0);
+						}
+						return;
+					} else if (optionList.getSelectedValue().equals(options[0])) {
+						CardLayout c = (CardLayout)optionCards.getLayout();
+						c.show(optionCards, options[0]);
+					} else if (optionList.getSelectedValue().equals(options[1])) {
+						CardLayout c = (CardLayout)optionCards.getLayout();
+						c.show(optionCards, options[1]);
+					} else if (optionList.getSelectedValue().equals(options[2])) {
+						CardLayout c = (CardLayout)optionCards.getLayout();
+						c.show(optionCards, options[2]);
+					}
+					optionContainer.add(optionCards, BorderLayout.CENTER);
+					optionContainer.revalidate();
+					optionContainer.repaint();
+					splitPane.setDividerLocation(400);
+				}
+
+			}
+		});
+
+
+		//optionContainer.add(optionCards, BorderLayout.CENTER);
+//		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+//
+//		tabbedPane.addTab(null, situationPanel);
+//		JLabel situationLabel = new JLabel("Situation");
+//		situationLabel.setUI(new VerticalLabelUI(false));
+//		situationLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+//		tabbedPane.setTabComponentAt(0, situationLabel);
+//
+//		tabbedPane.addTab(null, playsPanel);
+//		JLabel playsLabel = new JLabel("Plays");
+//		playsLabel.setUI(new VerticalLabelUI(false));
+//		playsLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+//		tabbedPane.setTabComponentAt(1, playsLabel);
+//
+//		tabbedPane.addTab(null, rolesPanel);
+//		JLabel rolesLabel = new JLabel("Roles");
+//		rolesLabel.setUI(new VerticalLabelUI(false));
+//		rolesLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+//		tabbedPane.setTabComponentAt(2, rolesLabel);
+
+		contentPane.add(optionList, BorderLayout.WEST);
 		contentPane.add(splitPane, BorderLayout.CENTER);
 
 		tabPane.addChangeListener(new ChangeListener() {
