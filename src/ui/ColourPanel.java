@@ -4,6 +4,7 @@ import com.jidesoft.swing.RangeSlider;
 import controllers.WebcamController;
 import data.Coordinate;
 import net.miginfocom.swing.MigLayout;
+import org.opencv.core.Mat;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.ColourRangeListener;
 import vision.LookupTable;
@@ -413,7 +414,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {		
+	public void imageUpdated(Mat image) {
 	}
 	
 	public void setWcPanel(WebcamDisplayPanel panel) {

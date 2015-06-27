@@ -12,7 +12,7 @@ import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
 import utils.Image;
 
-import java.awt.image.BufferedImage;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,11 +67,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {
+	public void imageUpdated(Mat image) {
 		if (webcamDisplayPanelState == ViewState.CONNECTED) {
 
-			Mat webcamImageMat = Image.toMat(image);
-			// Full range HSV. Range 0-255.
+            Mat webcamImageMat = maskCameraImage(image);
+            // Full range HSV. Range 0-255.
 	    	Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
 	    	
 			Mat ballBinary, teamBinary, greenBinary, opponentBinary;
@@ -286,6 +286,20 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			
 		}
 	}
+
+    private Mat maskCameraImage(Mat image) {
+        //clone the original image so we can subtract the mask from the actual image
+        Mat original = image.clone();
+        //get the points of the region of interest
+        MatOfPoint mop = new MatOfPoint(new Point(50,50), new Point(70,410), new Point(500,430),new Point(530,40));
+        //fill the region of interest black  - rgb(0,0,0)
+        Core.fillConvexPoly(image, mop, new Scalar(0.0));
+        //subtract the mask from original, everywhere will become black apart from the black region that you filled,
+        // which will remain the original image
+        Core.subtract(original, image, image);
+
+        return image;
+    }
 
     private int identify(RobotData rd, Mat image) {
 		boolean[] areasAreBlack = new boolean[4];

@@ -126,7 +126,7 @@ public class WebcamDisplayPanel extends JPanel {
             final BufferedImage image = Image.toBufferedImage(mat);
             
             
-            notifyImageUpdate(image);
+            notifyImageUpdate(mat);
             
            
             if (isFiltering) {
@@ -296,10 +296,10 @@ public class WebcamDisplayPanel extends JPanel {
 
 	/**
 	 * <p>Notify all observers of image update on webcamImageLabel</p>
-	 * @param image
-	 */
+     * @param image
+     */
 	
-	public void notifyImageUpdate(BufferedImage image) {
+	public void notifyImageUpdate(Mat image) {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
 			l.imageUpdated(image);
 		}

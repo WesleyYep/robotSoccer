@@ -12,8 +12,7 @@ import controllers.*;
 import game.Tick;
 import net.miginfocom.swing.MigLayout;
 
-import org.opencv.core.Core;
-
+import org.opencv.core.Mat;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
@@ -26,7 +25,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
 public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener {
@@ -419,7 +417,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {
+	public void imageUpdated(Mat image) {
 	}
 	
 	/**
