@@ -348,7 +348,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		String[] options = {
 			"Situation",
 			"Plays",
-			"Roles"
+			"Roles",
+			"Colour",
+			"Vision"
 		};
 		JList<String> optionList = new JList<String>(options);
 		optionList.setSelectionModel(new DefaultListSelectionModel() {
@@ -389,16 +391,17 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 					return;
 				}
 				super.setDividerSize(6);
-				int minimumWidth = 300;
-				int maximumWidth = (getSize().width == 0) ? 500 : (int)(getSize().width * 0.3);
-
-				if (location < minimumWidth) {
-					super.setDividerLocation(minimumWidth);
-				} else if (location > maximumWidth) {
-					super.setDividerLocation(maximumWidth);
-				} else {
-					super.setDividerLocation(location);
-				}
+				super.setDividerLocation(location);
+//				int minimumWidth = 300;
+//				int maximumWidth = (getSize().width == 0) ? 500 : (int)(getSize().width * 0.3);
+//
+//				if (location < minimumWidth) {
+//					super.setDividerLocation(minimumWidth);
+//				} else if (location > maximumWidth) {
+//					super.setDividerLocation(maximumWidth);
+//				} else {
+//					super.setDividerLocation(location);
+//				}
 			}
 		};
 		splitPane.setResizeWeight(0.3);
@@ -429,7 +432,20 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 					} else if (optionList.getSelectedValue().equals(options[2])) {
 						CardLayout c = (CardLayout)optionCards.getLayout();
 						c.show(optionCards, options[2]);
+					} else if (optionList.getSelectedValue().equals(options[3])) {
+						CardLayout c = (CardLayout)optionCards.getLayout();
+						c.show(optionCards, options[3]);
+					} else if (optionList.getSelectedValue().equals(options[4])) {
+						CardLayout c = (CardLayout)optionCards.getLayout();
+						c.show(optionCards, options[4]);
 					}
+
+					if (optionList.getSelectedValue().equals(options[3])) {
+						webcamController.getWebcamDisplayPanel().setZoomCursor();
+					} else {
+						webcamController.getWebcamDisplayPanel().setDefaultCursor();
+					}
+
 					optionContainer.add(optionCards, BorderLayout.CENTER);
 					optionContainer.revalidate();
 					optionContainer.repaint();
