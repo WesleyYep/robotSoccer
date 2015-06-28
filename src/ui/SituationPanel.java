@@ -55,7 +55,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 
 	public SituationPanel(FieldController fieldController, final CurrentStrategy currentStrategy) {
 		this.fieldController = fieldController;
-		this.setLayout(new BorderLayout());
+		this.setLayout(new MigLayout());
 		this.currentStrategy = currentStrategy;
 		currentStrategy.addListener(this);
 
@@ -111,11 +111,11 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		scrollTableAllPlays = new JScrollPane((tableOfAllPlays));
 		scrollTableAllPlays.setPreferredSize(new Dimension(300, 100));
 		playsPanel.add(new JLabel("Plays in situation"), "wrap");
-		playsPanel.add(scrollTablePlays, "wrap, span");
+		playsPanel.add(scrollTablePlays, "pushx, growx, wrap, span");
 		playsPanel.add(upButton, "split 2");
 		playsPanel.add(downButton, "wrap");
 		playsPanel.add(new JLabel("All Plays"), "wrap");
-		playsPanel.add(scrollTableAllPlays, "wrap, span");
+		playsPanel.add(scrollTableAllPlays, "pushx, growx, wrap, span");
 		playsPanel.add(addPlayButton, "split 2");
 		playsPanel.add(removePlayButton, "wrap");
 
@@ -138,9 +138,9 @@ public class SituationPanel extends JPanel implements StrategyListener{
 			}
 		});
 
-		this.add(buttonPanel, BorderLayout.NORTH);
-		this.add(scrollTable, BorderLayout.CENTER);
-		this.add(playsPanel, BorderLayout.SOUTH);
+		this.add(scrollTable, "pushx, alignx 50%, w 70%, wmax 500, wrap");
+		this.add(buttonPanel, "alignx 50%, wrap");
+		this.add(playsPanel, "alignx 50%, w 70%, wmax 500, wrap");
 
 		addButton.addActionListener(new ActionListener() {
 

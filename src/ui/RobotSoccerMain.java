@@ -343,7 +343,13 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		//contentPane.setPreferredSize(new Dimension(1290, 900));
 
 		JPanel optionContainer = new JPanel(new BorderLayout());
-		JPanel robotViewPanel = new JPanel();
+
+		JPanel robotViewPanel = new JPanel(new MigLayout("debug"));
+        robotViewPanel.add(field, "pushx, alignx 50%, wrap");
+        robotViewPanel.add(webcamDisplayPanel, "alignx 50%, width 640:640:640, height 480:480:480, wrap");
+        robotViewPanel.add(infoPanel, "align 50%");
+
+        JScrollPane robotViewScrollPane = new JScrollPane(robotViewPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		String[] options = {
 			"Situation",
@@ -382,7 +388,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		optionList.setCellRenderer(new OptionRenderer());
 		//optionList.setBackground(new Color(121, 121, 121));
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionContainer, robotViewPanel) {
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionContainer, robotViewScrollPane) {
 			@Override
 			public void setDividerLocation(int location) {
 				if (optionList.getSelectedValue() == null) {
@@ -404,12 +410,15 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 //				}
 			}
 		};
-		splitPane.setResizeWeight(0.3);
+		splitPane.setResizeWeight(0.0);
+        splitPane.setDividerLocation(0);
 
 		JPanel optionCards = new JPanel(new CardLayout());
 		optionCards.add(situationPanel, options[0]);
 		optionCards.add(playsPanel, options[1]);
 		optionCards.add(rolesPanel, options[2]);
+        optionCards.add(colourPanel, options[3]);
+        optionCards.add(visionPanel, options[4]);
 
 		optionList.addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -616,6 +625,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		add(toolbar, BorderLayout.PAGE_START);
 		add(contentPane, BorderLayout.CENTER);
+
+        setPreferredSize(new Dimension(1290, 900));
     }
     
     /**

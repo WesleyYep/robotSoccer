@@ -162,16 +162,16 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         add(tabPane, "wrap");
         add(new JLabel("Robot Pixel Minimum"), "wrap");
         add(robotSizeSlider, "grow, wrap");
-        add(robotMinSizeLabel);
-        add(robotMaxSizeLabel, "wrap");
+        add(robotMinSizeLabel, "split 2, pushx, growx");
+        add(robotMaxSizeLabel, "align right, wrap");
         add(new JLabel("Green Pixel Minimum"), "wrap");
         add(greenSizeSlider, "grow, wrap");
-        add(greenMinSizeLabel);
-        add(greenMaxSizeLabel, "wrap");
+        add(greenMinSizeLabel, "split 2, pushx, growx");
+        add(greenMaxSizeLabel, "align right, wrap");
         add(new JLabel("Ball Pixel Minimum"), "wrap");
         add(ballSizeSlider, "grow,wrap");
-        add(ballMinSizeLabel);
-        add(ballMaxSizeLabel,"wrap");
+        add(ballMinSizeLabel, "split 2, pushx, growx");
+        add(ballMaxSizeLabel,"align right, wrap");
         
         ballSamplingPanel.addColourRangeListener(this);
         teamSamplingPanel.addColourRangeListener(this);
@@ -180,7 +180,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
         
-        add(autoRangeCheckBox);
+        add(autoRangeCheckBox, "split 2");
         add(contourCheckBox);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
