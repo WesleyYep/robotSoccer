@@ -31,7 +31,7 @@ public class testSelfMadeObstacle extends Action {
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bot;
-        double obstacleTheta = 180, obstacleDist = 220;
+        double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
         for (int i=0; i<5; i++) {
         	if (!teamRobots.getRobot(i).equals(r)) {
         		Robot obs = teamRobots.getRobot(i);
@@ -50,6 +50,8 @@ public class testSelfMadeObstacle extends Action {
                 	if (tempDist < obstacleDist) {
                 		obstacleDist = tempDist;
                 		obstacleTheta = tempTheta;
+                        obstacleY = obs.getYPosition();
+                        obstacleX = obs.getXPosition();
                 	}
                 }
         	}
@@ -72,14 +74,13 @@ public class testSelfMadeObstacle extends Action {
                 if (tempDist < obstacleDist) {
                     obstacleDist = tempDist;
                     obstacleTheta = tempTheta;
+                    obstacleY = obs.getYPosition();
+                    obstacleX = obs.getXPosition();
                 }
             }
         }
 
-      //  System.out.println(obstacleTheta + " " + obstacleDist);
-        
-        double obstacleX = 110;
-        double obstacleY = 90;
+       // System.out.println(obstacleTheta + " " + obstacleDist + " " + obstacleX + " " + obstacleY);
 
         double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
@@ -121,15 +122,15 @@ public class testSelfMadeObstacle extends Action {
         // Evaluate
         fb.evaluate();
 
-      //       JFuzzyChart.get().chart(fb);
+          //   JFuzzyChart.get().chart(fb);
 
 
         // Show output variable's chart
        // fb.getVariable("linearVelocity").defuzzify();
-       // fb.getVariable("angularVelocity").defuzzify();
-       //    JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
-     //   JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
-         //   JOptionPane.showMessageDialog(null, "nwa");
+      //  fb.getVariable("angularVelocity").defuzzify();
+        //   JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
+        //JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
+        //    JOptionPane.showMessageDialog(null, "nwa");
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
@@ -147,8 +148,8 @@ public class testSelfMadeObstacle extends Action {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
         }
-          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
+      //   System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
+        //		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
 
         //    System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
 //             r.linearVelocity = 0;

@@ -49,10 +49,10 @@
 <groundVUpper>127</groundVUpper>
 <groundVLower>127</groundVLower>
 <opponentHUpper>63</opponentHUpper>
-<opponentHLower>25</opponentHLower>
+<opponentHLower>20</opponentHLower>
 <opponentSUpper>108</opponentSUpper>
 <opponentSLower>59</opponentSLower>
-<opponentVUpper>173</opponentVUpper>
+<opponentVUpper>184</opponentVUpper>
 <opponentVLower>114</opponentVLower>
 <robotMinSize>10</robotMinSize>
 <greenMinSize>10</greenMinSize>
