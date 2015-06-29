@@ -135,7 +135,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     opponentSP.getUpperBoundForV()
             };
 
-
             // Create the scalar values.
             ballMin = new Scalar(hsvBallMin[0], hsvBallMin[1], hsvBallMin[2]);
             ballMax = new Scalar(hsvBallMax[0], hsvBallMax[1], hsvBallMax[2]);
@@ -195,6 +194,28 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     notifyListeners(new VisionData(new Point(ballX, ballY), 0, "ball"));
                 }
             }
+
+			//opponent
+			int opponentX = 0, opponentY = 0;
+			Core.inRange(webcamImageMat, opponentMin, opponentMax, opponentBinary);
+			Imgproc.erode(opponentBinary, opponentBinary, erodeKernel);
+			Imgproc.dilate(opponentBinary, opponentBinary, dilateKernel);
+			Imgproc.findContours(opponentBinary, opponentContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+			int count = 1;
+
+			correctOpponentContour.clear();
+			for (int i = 0; i < opponentContours.size(); i++) {
+				double area = Imgproc.contourArea(opponentContours.get(i));
+				if (opponentRobotMinSize <= area && area <= opponentRobotMaxSize) {
+					Moments m = Imgproc.moments(opponentContours.get(i));
+					correctOpponentContour.add(opponentContours.get(i));
+					opponentX = (int) (m.get_m10() / m.get_m00());
+					opponentY = (int) (m.get_m01() / m.get_m00());
+
+					notifyListeners(new VisionData(new Point(opponentX, opponentY), 0, "opponent:" + count));
+					count++;
+				}
+			}
 
             // Team
             Core.inRange(webcamImageMat, teamMin, teamMax, teamBinary);
@@ -295,28 +316,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 				} else {
 					robotNumber[robotCount] = -1;
 					robotCount++;	
-				}
-			}
-
-
-			//opponent
-			int opponentX = 0, opponentY = 0;
-			Core.inRange(webcamImageMat, opponentMin, opponentMax, opponentBinary);
-			Imgproc.erode(opponentBinary, opponentBinary, erodeKernel);
-			Imgproc.dilate(opponentBinary, opponentBinary, dilateKernel);
-			Imgproc.findContours(opponentBinary, opponentContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-			int count = 0;
-			correctOpponentContour.clear();
-			for (int i = 0; i < opponentContours.size(); i++) {
-				double area = Imgproc.contourArea(opponentContours.get(i));
-				if (opponentRobotMinSize <= area && area <= opponentRobotMaxSize ) {
-					correctOpponentContour.add(opponentContours.get(i));
-					Moments m = Imgproc.moments(opponentContours.get(i));
-					opponentX = (int) (m.get_m10() / m.get_m00());
-					opponentY = (int) (m.get_m01() / m.get_m00());
-
-					notifyListeners(new VisionData(new Point(opponentX, opponentY), 0, "opponent:" + count));
-					count++;
 				}
 			}
 			

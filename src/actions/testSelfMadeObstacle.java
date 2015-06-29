@@ -54,7 +54,7 @@ public class testSelfMadeObstacle extends Action {
                 }
         	}
         }
-        /*
+
         for (int i=0; i<5; i++) {
             Robot obs = opponentRobots.getRobot(i);
             double tempTheta = Math.atan2(r.getYPosition() - obs.getYPosition(), obs.getXPosition() - r.getXPosition());
@@ -74,7 +74,8 @@ public class testSelfMadeObstacle extends Action {
                     obstacleTheta = tempTheta;
                 }
             }
-        }*/
+        }
+
       //  System.out.println(obstacleTheta + " " + obstacleDist);
         
         double obstacleX = 110;
