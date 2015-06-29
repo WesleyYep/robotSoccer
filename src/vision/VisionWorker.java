@@ -73,7 +73,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	@Override
 	public void imageUpdated(Mat image) {
 		if (webcamDisplayPanelState == ViewState.CONNECTED) {
-			time = System.currentTimeMillis();
+			
             Mat webcamImageMat = image;
             // Full range HSV. Range 0-255.
             Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
