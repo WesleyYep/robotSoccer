@@ -3,6 +3,7 @@ package ui;
 import controllers.VisionController;
 import controllers.WebcamController;
 import net.miginfocom.swing.MigLayout;
+import org.opencv.core.Mat;
 import ui.WebcamDisplayPanel.ViewState;
 import utils.Image;
 
@@ -86,7 +87,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 
 	@Override
-	public void imageUpdated(BufferedImage image) {
+	public void imageUpdated(Mat image) {
 		// TODO Auto-generated method stub
 		
 	}

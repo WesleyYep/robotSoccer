@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.util.NoSuchElementException;
 
 public class VisionSettingFile {
 
@@ -89,6 +90,24 @@ public class VisionSettingFile {
 			saveSetting.addProperty("bottomRightY", visionController.getBottomRight().getY());
 			saveSetting.addProperty("bottomLeftX", visionController.getBottomLeft().getX());
 			saveSetting.addProperty("bottomLeftY", visionController.getBottomLeft().getY());
+
+            saveSetting.addProperty("leftGoalTopLeftX", visionController.getLeftGoalTopLeft().getX());
+            saveSetting.addProperty("leftGoalTopLeftY", visionController.getLeftGoalTopLeft().getY());
+            saveSetting.addProperty("leftGoalTopRightX", visionController.getLeftGoalTopRight().getX());
+            saveSetting.addProperty("leftGoalTopRightY", visionController.getLeftGoalTopRight().getY());
+            saveSetting.addProperty("leftGoalBottomLeftX", visionController.getLeftGoalBottomLeft().getX());
+            saveSetting.addProperty("leftGoalBottomLeftY", visionController.getLeftGoalBottomLeft().getY());
+            saveSetting.addProperty("leftGoalBottomRightX", visionController.getLeftGoalBottomRight().getX());
+            saveSetting.addProperty("leftGoalBottomRightY", visionController.getLeftGoalBottomRight().getY());
+
+            saveSetting.addProperty("rightGoalTopLeftX", visionController.getRightGoalTopLeft().getX());
+            saveSetting.addProperty("rightGoalTopLeftY", visionController.getRightGoalTopLeft().getY());
+            saveSetting.addProperty("rightGoalTopRightX", visionController.getRightGoalTopRight().getX());
+            saveSetting.addProperty("rightGoalTopRightY", visionController.getRightGoalTopRight().getY());
+            saveSetting.addProperty("rightGoalBottomLeftX", visionController.getRightGoalBottomLeft().getX());
+            saveSetting.addProperty("rightGoalBottomLeftY", visionController.getRightGoalBottomLeft().getY());
+            saveSetting.addProperty("rightGoalBottomRightX", visionController.getRightGoalBottomRight().getX());
+            saveSetting.addProperty("rightGoalBottomRightY", visionController.getRightGoalBottomRight().getY());
 
 			SamplingPanel ballSP = colourPanel.ballSamplingPanel;
 
@@ -213,6 +232,28 @@ public class VisionSettingFile {
                     openSetting.getDouble("bottomLeftX"), openSetting.getDouble("bottomLeftY")));
             visionController.setBottomRight(new Point2D.Double(
                     openSetting.getDouble("bottomRightX"), openSetting.getDouble("bottomRightY")));
+
+            try {
+                visionController.setLeftGoalTopLeft(new Point2D.Double(
+                        openSetting.getDouble("leftGoalTopLeftX"), openSetting.getDouble("leftGoalTopLeftY")));
+                visionController.setLeftGoalTopRight(new Point2D.Double(
+                        openSetting.getDouble("leftGoalTopRightX"), openSetting.getDouble("leftGoalTopRightY")));
+                visionController.setLeftGoalBottomLeft(new Point2D.Double(
+                        openSetting.getDouble("leftGoalBottomLeftX"), openSetting.getDouble("leftGoalBottomLeftY")));
+                visionController.setLeftGoalBottomRight(new Point2D.Double(
+                        openSetting.getDouble("leftGoalBottomRightX"), openSetting.getDouble("leftGoalBottomRightY")));
+
+                visionController.setRightGoalTopLeft(new Point2D.Double(
+                        openSetting.getDouble("rightGoalTopLeftX"), openSetting.getDouble("rightGoalTopLeftY")));
+                visionController.setRightGoalTopRight(new Point2D.Double(
+                        openSetting.getDouble("rightGoalTopRightX"), openSetting.getDouble("rightGoalTopRightY")));
+                visionController.setRightGoalBottomLeft(new Point2D.Double(
+                        openSetting.getDouble("rightGoalBottomLeftX"), openSetting.getDouble("rightGoalBottomLeftY")));
+                visionController.setRightGoalBottomRight(new Point2D.Double(
+                        openSetting.getDouble("rightGoalBottomRightX"), openSetting.getDouble("rightGoalBottomRightY")));
+            } catch (NoSuchElementException ex) {
+                System.out.println("outdated vision setting file, please update board area and save it again");
+            }
 
             SamplingPanel ballSP = colourPanel.ballSamplingPanel;
 
