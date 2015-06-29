@@ -12,7 +12,6 @@ import strategy.StrategyListener;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -279,7 +278,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
             //add anything else here?
 
             tableOfSituations.setRowSelectionInterval(listOfSituations.size() - 1, listOfSituations.size() - 1);
-            ((JTabbedPane) this.getParent()).setSelectedComponent(this);
+            //((JTabbedPane) this.getParent()).setSelectedComponent(this);
         }
 	}
 }

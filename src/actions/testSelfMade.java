@@ -20,18 +20,20 @@ public class testSelfMade extends Action {
 
     @Override
     public void execute() {
-        setVelocityToTarget(predX,predY,false,false);
+    	System.out.println("norm");
+        setVelocityToTarget(ballX,ballY,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bot;
-
+        /*
         if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
             return;
         }
-
+        
+        /*
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
       //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
@@ -52,6 +54,7 @@ public class testSelfMade extends Action {
 
 
         //see if robot is not in positive situation
+        
         if (ballX < r.getXPosition()) {
             int yPos;
             if (ballY > 90) {
@@ -63,6 +66,7 @@ public class testSelfMade extends Action {
             MoveToSpot.move(r, new Coordinate(20, yPos), 1);
             return;
         }
+        */
 
         double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
@@ -134,7 +138,7 @@ public class testSelfMade extends Action {
 
         r.linearVelocity = linear;
         r.angularVelocity = angular*-1;
-
+        /*
         double angleToGoal = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
 
         if (ballDist <= 7) {
@@ -154,7 +158,7 @@ public class testSelfMade extends Action {
 //        }
         } else {
             fastForward = false;
-        }
+        } */
 
 
 
@@ -172,7 +176,7 @@ public class testSelfMade extends Action {
             r.angularVelocity = 0;
         }
 
-        oldDistanceToTarget = newTargetDistance;
+       // oldDistanceToTarget = newTargetDistance;
 
 //          System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
 //        		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);

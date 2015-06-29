@@ -16,6 +16,8 @@ import java.util.Set;
  */
 public abstract class Action {
 	protected Robot bot;
+	protected Robots opponentRobots;
+	protected Robots teamRobots;
 	protected double ballX;
 	protected double ballY;
 	protected double predX;
@@ -31,6 +33,12 @@ public abstract class Action {
 	public void addRobot (Robot bot) {
 		this.bot = bot;
 	}
+	
+	public void addTeamRobots (Robots team) {
+		this.teamRobots = team;
+	}
+
+	public void addOpponentRobots (Robots opponent) {this.opponentRobots = opponent;}
 
 	public void setBallPosition(double x, double y) {
 		this.ballX = x;

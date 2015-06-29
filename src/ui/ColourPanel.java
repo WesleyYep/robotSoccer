@@ -4,6 +4,7 @@ import com.jidesoft.swing.RangeSlider;
 import controllers.WebcamController;
 import data.Coordinate;
 import net.miginfocom.swing.MigLayout;
+import org.opencv.core.Mat;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.ColourRangeListener;
 import vision.LookupTable;
@@ -42,6 +43,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     
     private JCheckBox autoRangeCheckBox;
     private JCheckBox contourCheckBox;
+    private JCheckBox newYellowVisionCheckBox = new JCheckBox("New Yellow Vision");
     private boolean isAutoRange = false;
     private boolean isContour = false;
 
@@ -179,9 +181,10 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
-        
-        add(autoRangeCheckBox, "split 2");
+
+        add(autoRangeCheckBox, "split 3");
         add(contourCheckBox);
+        add(newYellowVisionCheckBox);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -229,7 +232,11 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         });
         
     }
-    
+
+    public boolean isNewYellowVision() {
+        return newYellowVisionCheckBox.isSelected();
+    }
+
     public boolean isContourActive() {
     	return isContour;
     }
@@ -413,7 +420,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {		
+	public void imageUpdated(Mat image) {
 	}
 	
 	public void setWcPanel(WebcamDisplayPanel panel) {

@@ -52,6 +52,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 	private Ball ball;
 	private Robots bots;
+	private Robots opponentBots;
 
 	private Point startPoint;
 	private Point endPoint;
@@ -64,9 +65,10 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private double predX = 0;
 	private double predY = 0;
 
-    public Field(Robots bots, Ball ball) {
+    public Field(Robots bots, Robots opponents, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
+		this.opponentBots = opponents;
 		isMouseDrag = false;
 
 		// Add mouse listeners
@@ -246,6 +248,19 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 		//draw robots
 		bots.draw(g);
+
+		//draw opponents
+
+		for (int i=0; i<5; i++) {
+			g.setColor(Color.blue);
+			g.fillOval(
+					(int)opponentBots.getRobot(i).getXPosition() *Field.SCALE_FACTOR+Field.ORIGIN_X-(6*Field.SCALE_FACTOR/2),
+					(int)opponentBots.getRobot(i).getYPosition() *Field.SCALE_FACTOR+Field.ORIGIN_Y-(6*Field.SCALE_FACTOR/2),
+					6*Field.SCALE_FACTOR,
+					6*Field.SCALE_FACTOR
+			);
+		}
+
 		
 		//predict ball
 		g.setColor(Color.red);
@@ -271,6 +286,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 			g.drawRect(x, y, w, h);
 		}
+
 
 	}
 
@@ -408,6 +424,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 					Role role = currentStrategy.mapRoles(p.getRoles())[j];
 					if (role == null) { continue; }
 					role.addRobot(order.get(j));
+					role.addTeamRobots(bots);
+					role.addOpponentRobots(opponentBots);
 					//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setBallPosition(ball.getXPosition(), ball.getYPosition());
 					role.setPredictedPosition(predX, predY);
@@ -463,6 +481,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
                     Role role = currentStrategy.mapRoles(p.getRoles())[j];
                     if (role == null) { continue; }
                     role.addRobot(bots.getRobot(j));
+                    role.addTeamRobots(bots);
                     role.setBallPosition(ball.getXPosition(), ball.getYPosition());
                     role.setPredictedPosition(predX, predY);
                     role.execute();
@@ -479,6 +498,10 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 	public Robots getRobots() {
 		return bots;
+	}
+
+	public Robots getOpponentRobots() {
+		return opponentBots;
 	}
 
 	public Ball getBall() {
