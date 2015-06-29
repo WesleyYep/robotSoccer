@@ -52,8 +52,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private List<MatOfPoint> correctGreenContour;
 	private List<MatOfPoint> correctTeamContour;
 	private List<MatOfPoint> correctOpponentContour;
- 	private KalmanFilter kFilter;
-	
 	
 	private static final int KERNELSIZE = 3;
 
@@ -75,7 +73,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	@Override
 	public void imageUpdated(Mat image) {
 		if (webcamDisplayPanelState == ViewState.CONNECTED) {
-
+			time = System.currentTimeMillis();
             Mat webcamImageMat = image;
             // Full range HSV. Range 0-255.
             Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
@@ -214,6 +212,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
 					notifyListeners(new VisionData(new Point(opponentX, opponentY), 0, "opponent:" + count));
 					count++;
+					if (count > 5) count = 5;
 				}
 			}
 

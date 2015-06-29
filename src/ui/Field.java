@@ -248,6 +248,19 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 		//draw robots
 		bots.draw(g);
+
+		//draw opponents
+
+		for (int i=0; i<5; i++) {
+			g.setColor(Color.blue);
+			g.fillOval(
+					(int)opponentBots.getRobot(i).getXPosition() *Field.SCALE_FACTOR+Field.ORIGIN_X-(6*Field.SCALE_FACTOR/2),
+					(int)opponentBots.getRobot(i).getYPosition() *Field.SCALE_FACTOR+Field.ORIGIN_Y-(6*Field.SCALE_FACTOR/2),
+					6*Field.SCALE_FACTOR,
+					6*Field.SCALE_FACTOR
+			);
+		}
+
 		
 		//predict ball
 		g.setColor(Color.red);
@@ -273,6 +286,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 			g.drawRect(x, y, w, h);
 		}
+
 
 	}
 

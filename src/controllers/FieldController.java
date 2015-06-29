@@ -207,7 +207,6 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 			int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
 
-
 			opponentBots.getRobot(index).setX(p.x);
 			opponentBots.getRobot(index).setY(p.y);
 

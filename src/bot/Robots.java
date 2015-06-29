@@ -20,15 +20,25 @@ public class Robots {
     }
     
 
-    public void makeRealRobots() {
+    public void makeTeamRobots() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
     		if (bots[i] == null) {
-        		bots[i] = new RealRobot(50 + 10*i, 50 + 10*i, 0, i);
+        		bots[i] = new RealRobot(-10, 10 + 10*i, 0, i);
     		} else {
         		bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), bots[i].getId());
     		}
     	} 
     }
+
+	public void makeOpponentRobots() {
+		for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+			if (bots[i] == null) {
+				bots[i] = new RealRobot(230, 10 + 10*i, 0, i);
+			} else {
+				bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), bots[i].getId());
+			}
+		}
+	}
     
     public void makeSimRobots() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {

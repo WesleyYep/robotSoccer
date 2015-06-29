@@ -125,9 +125,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		//create serial port communicator;
 		serialCom = new SerialPortCommunicator();
 		bots = new Robots(serialCom);
-		bots.makeRealRobots();
+		bots.makeTeamRobots();
 		opponentBots = new Robots(serialCom);
-		opponentBots.makeRealRobots();
+		opponentBots.makeOpponentRobots();
 
 		ball = new Ball();
 		field = new Field(bots,opponentBots, ball);
