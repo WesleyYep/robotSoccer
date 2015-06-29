@@ -14,10 +14,10 @@
 <ballSLower>127</ballSLower>
 <ballVUpper>127</ballVUpper>
 <ballVLower>127</ballVLower>
-<teamHUpper>71</teamHUpper>
-<teamHLower>25</teamHLower>
-<teamSUpper>128</teamSUpper>
-<teamSLower>64</teamSLower>
+<teamHUpper>170</teamHUpper>
+<teamHLower>122</teamHLower>
+<teamSUpper>191</teamSUpper>
+<teamSLower>114</teamSLower>
 <teamVUpper>183</teamVUpper>
 <teamVLower>50</teamVLower>
 <greenHUpper>127</greenHUpper>
@@ -38,7 +38,7 @@
 <opponentSLower>127</opponentSLower>
 <opponentVUpper>127</opponentVUpper>
 <opponentVLower>127</opponentVLower>
-<robotMinSize>22</robotMinSize>
+<robotMinSize>38</robotMinSize>
 <greenMinSize>10</greenMinSize>
 <ballMinSize>10</ballMinSize>
 <robotMaxSize>109</robotMaxSize>

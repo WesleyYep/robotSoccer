@@ -1,39 +1,38 @@
 package ui;
 
 import bot.Robots;
-
+import com.alee.extended.layout.WrapFlowLayout;
 import com.alee.laf.WebLookAndFeel;
-
-import com.jidesoft.plaf.xerto.VerticalLabelUI;
 import communication.NetworkSocket;
 import communication.NetworkSocketListener;
 import communication.SerialPortCommunicator;
 import config.ConfigFile;
 import config.ConfigPreviousFile;
-import controllers.*;
+import controllers.FieldController;
+import controllers.VisionController;
+import controllers.WebcamController;
+import controllers.WindowController;
 import game.Tick;
 import jssc.SerialPortList;
 import net.miginfocom.swing.MigLayout;
-
-import org.opencv.core.Core;
-
+import org.opencv.core.Mat;
 import strategy.CurrentStrategy;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDisplayPanelListener, NetworkSocketListener {
@@ -48,6 +47,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private JTextField portField, webcamURLField;
 	private RobotInfoPanel[] robotInfoPanels;
 	private SerialPortCommunicator serialCom;
+
 	private JComboBox<String> webcamTypeComboBox;
 
 	private Tick gameTick;
@@ -108,11 +108,15 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//create serial port communicator;
 		serialCom = new SerialPortCommunicator();
-		Robots bots = new Robots(serialCom);
-		bots.makeRealRobots();
+
+		final Robots bots = new Robots(serialCom);
+		bots.makeTeamRobots();
+
+		Robots opponentBots = new Robots(serialCom);
+		opponentBots.makeOpponentRobots();
 
 		Ball ball = new Ball();
-		Field field = new Field(bots, ball);
+		Field field = new Field(bots, opponentBots, ball);
 		fieldController = new FieldController(field);
 
 		// connectionPanel
@@ -121,12 +125,12 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		connectionLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 		// get the port names.
 		String[] portNames = SerialPortList.getPortNames();
-		JComboBox<String> portNamesComboBox = new JComboBox<String>(portNames);
-		JToggleButton testRotateButton = new JToggleButton("Rotate");
-		JToggleButton testBackwardButton = new JToggleButton("Backward");
-		JToggleButton testForwardButton = new JToggleButton("Forward");
+		final JComboBox<String> portNamesComboBox = new JComboBox<String>(portNames);
+		final JToggleButton testRotateButton = new JToggleButton("Rotate");
+		final JToggleButton testBackwardButton = new JToggleButton("Backward");
+		final JToggleButton testForwardButton = new JToggleButton("Forward");
 
-		List<JToggleButton> toggleButtonList = new ArrayList<JToggleButton>();
+		final List<JToggleButton> toggleButtonList = new ArrayList<JToggleButton>();
 		toggleButtonList.add(testForwardButton);
 		toggleButtonList.add(testRotateButton);
 		toggleButtonList.add(testBackwardButton);
@@ -218,7 +222,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		JButton runStratButton = new JButton("Run Strat");
 		JButton stopStratButton = new JButton("Stop");
 		JButton runSetPlayButton = new JButton("Set play");
-		JLabel stratStatusLbl = new JLabel("Stopped");
+		final JLabel stratStatusLbl = new JLabel("Stopped");
 		JLabel stratLabel = new JLabel("Strategy");
 		stratLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
@@ -254,7 +258,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			infoPanel.add(robotInfoPanels[i]);
 		}
 
-		CurrentStrategy currentStrategy = new CurrentStrategy(fieldController);
+		final CurrentStrategy currentStrategy = new CurrentStrategy(fieldController);
 		field.setCurrentStrategy(currentStrategy);
 		SituationPanel situationPanel = new SituationPanel(fieldController, currentStrategy);
 		PlaysPanel playsPanel = new PlaysPanel(currentStrategy);
@@ -300,7 +304,12 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         //create the gameTick
         gameTick = new Tick(this);
 
-        WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel();
+
+        visionController = new VisionController();
+        WebcamDisplayPanel webcamDisplayPanel = new WebcamDisplayPanel(visionController);
+		webcamDisplayPanel.setPreferredSize(new Dimension(640, 480));
+		webcamDisplayPanel.setSize(new Dimension(640, 480));
+
 		webcamController = new WebcamController(webcamDisplayPanel, gameTick);
 		ColourPanel colourPanel = new ColourPanel(webcamController);
 		
@@ -311,11 +320,6 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
-
-		visionController = new VisionController();
-		
-		//cards.add(field, FIELDSTRING);
-		//cards.add(webcamDisplayPanel, CAMSTRING);
 
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);
 		tabPane.addTab("Colour", colourPanel);
@@ -342,23 +346,27 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		//contentPane.setPreferredSize(new Dimension(1290, 900));
 
-		JPanel optionContainer = new JPanel(new BorderLayout());
+		final JPanel optionContainer = new JPanel(new BorderLayout());
 
-		JPanel robotViewPanel = new JPanel(new MigLayout("debug"));
-        robotViewPanel.add(field, "pushx, alignx 50%, wrap");
-        robotViewPanel.add(webcamDisplayPanel, "alignx 50%, width 640:640:640, height 480:480:480, wrap");
-        robotViewPanel.add(infoPanel, "align 50%");
+		JPanel robotViewPanel = new JPanel(new BorderLayout());
+		robotViewPanel.add(infoPanel, BorderLayout.NORTH);
+		WrapFlowLayout flow = new WrapFlowLayout(false, 10, 10);
+		flow.setHalign(SwingConstants.CENTER);
+		JPanel robotScreenPanel = new JPanel(flow);
+        robotScreenPanel.add(field);
+        robotScreenPanel.add(webcamDisplayPanel);
+		robotViewPanel.add(robotScreenPanel, BorderLayout.CENTER);
 
         JScrollPane robotViewScrollPane = new JScrollPane(robotViewPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		String[] options = {
+		final String[] options = {
 			"Situation",
 			"Plays",
 			"Roles",
 			"Colour",
 			"Vision"
 		};
-		JList<String> optionList = new JList<String>(options);
+		final JList<String> optionList = new JList<String>(options);
 		optionList.setSelectionModel(new DefaultListSelectionModel() {
 			private static final long serialVersionUID = 1L;
 
@@ -388,7 +396,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		optionList.setCellRenderer(new OptionRenderer());
 		//optionList.setBackground(new Color(121, 121, 121));
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionContainer, robotViewScrollPane) {
+		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, optionContainer, robotViewScrollPane) {
 			@Override
 			public void setDividerLocation(int location) {
 				if (optionList.getSelectedValue() == null) {
@@ -413,7 +421,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		splitPane.setResizeWeight(0.0);
         splitPane.setDividerLocation(0);
 
-		JPanel optionCards = new JPanel(new CardLayout());
+		final JPanel optionCards = new JPanel(new CardLayout());
 		optionCards.add(situationPanel, options[0]);
 		optionCards.add(playsPanel, options[1]);
 		optionCards.add(rolesPanel, options[2]);
@@ -528,6 +536,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
                 gameTick.runSetPlay(false);
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
+				System.gc();
 			}
 
 		});
@@ -707,7 +716,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {
+	public void imageUpdated(Mat image) {
 	}
 	
 	/**
@@ -735,7 +744,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UIManager.setLookAndFeel( WebLookAndFeel.class.getCanonicalName () );
+					UIManager.setLookAndFeel(WebLookAndFeel.class.getCanonicalName());
 					createAndShowGUI();
 				} catch (MalformedURLException e) {
 					e.printStackTrace();

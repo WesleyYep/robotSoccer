@@ -34,7 +34,7 @@ public class SerialPortCommunicator {
 			//System.out.println(System.currentTimeMillis());
 			try {
 				currentSerialPort.writeIntArray(data);
-				System.out.println(System.currentTimeMillis());
+				//System.out.println(System.currentTimeMillis());
 				return true;
 			} catch (SerialPortException e) {
 				e.printStackTrace();

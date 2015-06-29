@@ -17,6 +17,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	private Ball ball;
 	private Robots bots;
+	private Robots opponentBots;
 
 	private SituationArea selectedArea;
 	
@@ -24,6 +25,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		this.field = field;
 		bots = field.getRobots();
 		ball = field.getBall();
+		opponentBots = field.getOpponentRobots();
 		//kFilter = new KalmanFilter();
 		field.setBackground(Color.green);
 	}
@@ -189,6 +191,17 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			bots.getRobot(index).setX(p.x);
 			bots.getRobot(index).setY(p.y);
 			bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
+
+		} else if (data.getType().startsWith("opponent")) {
+
+			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
+
+			int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+
+			opponentBots.getRobot(index).setX(p.x);
+			opponentBots.getRobot(index).setY(p.y);
+
+			opponentBots.getRobot(index).setTheta(0);
 
 		}
 	}
