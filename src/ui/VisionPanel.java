@@ -39,8 +39,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dialog.setVisible(!dialog.isVisible());
-				
+				dialog.setVisible(!dialog.isVisible());	
 			}
 					
 		});

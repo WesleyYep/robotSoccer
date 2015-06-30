@@ -15,6 +15,7 @@ public class BoardDialog extends JDialog {
 	private JLabel picLabel;
 	private JPanel panel;
 
+
 	private BoardAreaGlassPanel glassPanel;
 
 	public BoardDialog(JFrame jFrame, VisionController vc) {
@@ -38,26 +39,34 @@ public class BoardDialog extends JDialog {
 
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
-
+	
+	
+	/**
+	 * Set the new background image for the board area dialog, resize the dialog if the image changes
+	 * @param image
+	 */
 	public void setBoardImage(BufferedImage image) {
-
+		
 		boardImage = image;
 		picLabel.setIcon(new ImageIcon(image));
 
-		picLabel.setSize(image.getWidth(),image.getHeight());
-		picLabel.setPreferredSize(new Dimension(image.getWidth(),image.getHeight()));
-		panel.setSize(image.getWidth(),image.getHeight());
-		panel.setPreferredSize(new Dimension(image.getWidth(),image.getHeight()));
-
-		glassPanel.setSize(image.getWidth(),image.getHeight());
-		glassPanel.setPreferredSize(new Dimension(image.getWidth(),image.getHeight()));
-		glassPanel.setOpaque(false);
-
-		glassPanel.setBounds(0,0,image.getWidth(),image.getHeight());
-		glassPanel.repaint();
-		this.setSize(image.getWidth()+50,image.getHeight()+50);
-		this.pack();
-		this.validate();
-		this.repaint();
+		if (picLabel.getWidth() != image.getWidth() || picLabel.getHeight() != image.getHeight()) {
+			picLabel.setSize(image.getWidth(),image.getHeight());
+			picLabel.setPreferredSize(new Dimension(image.getWidth(),image.getHeight()));
+			panel.setSize(image.getWidth(),image.getHeight());
+			panel.setPreferredSize(new Dimension(image.getWidth(),image.getHeight()));
+	
+			glassPanel.setSize(image.getWidth(),image.getHeight());
+			glassPanel.setPreferredSize(new Dimension(image.getWidth(),image.getHeight()));
+			glassPanel.setOpaque(false);
+	
+			glassPanel.setBounds(0,0,image.getWidth(),image.getHeight());
+			glassPanel.repaint();
+			this.setSize(image.getWidth()+50,image.getHeight()+50);
+			this.pack();
+			this.validate();
+			this.repaint();
+		}
+		
 	}
 }

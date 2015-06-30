@@ -339,7 +339,7 @@ public class WebcamDisplayPanel extends JPanel {
 	
 	public void notifyImageUpdate(Mat image) {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
-			l.imageUpdated(image);
+			l.imageUpdated(image.clone());
 		}
 	}
 	
