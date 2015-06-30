@@ -23,7 +23,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 	private JLabel mousePoint;
 	
 	private BoardDialog dialog;
-	private BufferedImage webcamImage;
+	private BufferedImage webcamImage = null;
 	
 	
 	public VisionPanel(WebcamController wc, VisionController vc) {
@@ -39,7 +39,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dialog.setVisible(!dialog.isVisible());	
+				if (webcamImage != null) dialog.setVisible(!dialog.isVisible());	
 			}
 					
 		});

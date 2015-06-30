@@ -144,9 +144,9 @@ public class BoardAreaGlassPanel extends JPanel implements MouseListener, MouseM
 			} else if (e.getButton() == MouseEvent.BUTTON3) {
 				vc.rotatePointClockwise();
 			}
-			vc.createTransformMatrix();
 			this.repaint();
 		}
+		vc.createTransformMatrix();
 	}
 
 
