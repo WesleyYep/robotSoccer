@@ -39,14 +39,8 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				webcamImage = Image.toBufferedImage(webcamController.getImageFromWebcam());
-				if (webcamImage != null) {
-					if (webcamImage != null) {
-						dialog.setBoardImage(webcamImage);
-					}
-					dialog.repaint();
-					dialog.setVisible(!dialog.isVisible());
-				}
+				dialog.setVisible(!dialog.isVisible());
+				
 			}
 					
 		});
@@ -80,16 +74,14 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 
 	@Override
-	public void viewStateChanged(ViewState currentViewState) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void viewStateChanged(ViewState currentViewState) {}
 
 
 	@Override
 	public void imageUpdated(Mat image) {
-		// TODO Auto-generated method stub
-		
+		webcamImage = Image.toBufferedImage(image);
+		dialog.setBoardImage(webcamImage);
+		dialog.repaint();
 	}
 
 }
