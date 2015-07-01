@@ -1,11 +1,10 @@
 package actions;
 
+import bot.Robot;
 import data.Coordinate;
-import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import ui.Field;
-import bot.Robot;
 
 public class BasicGoalKeep extends Action {
 
@@ -60,14 +59,14 @@ public class BasicGoalKeep extends Action {
 		//first phase getting the robot to the goal line
 		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
 			int targetPos = 0;
-			if (ballY >= topPoint && ballY <= 110 ) {
+			if (ballY >= topPoint && ballY <= bottomPoint ) {
 				targetPos = (int) ballY;
 			}
 			else if (ballY < topPoint) {
 				targetPos = topPoint;
 			}
-			else if (ballY > 110) {
-				targetPos = 110;
+			else if (ballY > bottomPoint) {
+				targetPos = bottomPoint;
 			}
 			setVelocityToTarget(goalLine,targetPos, false,false);
 			fixPosition = true;
@@ -163,12 +162,12 @@ public class BasicGoalKeep extends Action {
 				setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
 			} else {
 				if (goingVertical || goingHorizontal) {
-					if (ballY >= topPoint && ballY <= 110 && r.getXPosition() < ballX) {
+					if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
 						setVelocityToTarget(goalLine,ballY, true,true);
 					} else if (ballY < topPoint) {
 						setVelocityToTarget(goalLine,topPoint,true,true);
-					} else if (ballY > 110) {
-						setVelocityToTarget(goalLine,110,true,true);
+					} else if (ballY > bottomPoint) {
+						setVelocityToTarget(goalLine,bottomPoint,true,true);
 					}
 				} else if (!(goingVertical || goingHorizontal)) {
 
@@ -181,7 +180,7 @@ public class BasicGoalKeep extends Action {
 
 					if (direction) {
 						//ball going toward the goal
-						if (trajectoryY >= topPoint && trajectoryY <=110) {
+						if (trajectoryY >= topPoint && trajectoryY <=bottomPoint) {
 							if (r.getYPosition()>= (trajectoryY-2) && r.getYPosition() <=(trajectoryY+2)) {
 								setVelocityToTarget(goalLine,r.getYPosition(),true,true);
 							} else {
@@ -189,14 +188,14 @@ public class BasicGoalKeep extends Action {
 							}
 						} else {
 							//ball travelling in the same side of board
-							if ( (trajectoryY> 110 && ballY > 110) || (trajectoryY<= 110 && ballY <= 110)) {
+							if ( (trajectoryY> bottomPoint && ballY > bottomPoint) || (trajectoryY<= bottomPoint && ballY <= bottomPoint)) {
 								// System.out.println("same side");
-								if (ballY >= topPoint && ballY <= 110 && r.getXPosition() < ballX) {
+								if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
 									setVelocityToTarget(goalLine,ballY, true,true);
 								} else if (ballY < topPoint) {
 									setVelocityToTarget(goalLine,topPoint,true,true);
-								} else if (ballY > 110) {
-									setVelocityToTarget(goalLine,110,true,true);
+								} else if (ballY > bottomPoint) {
+									setVelocityToTarget(goalLine,bottomPoint,true,true);
 								}
 							} else {
 								// System.out.println("oppo side");
@@ -204,60 +203,18 @@ public class BasicGoalKeep extends Action {
 							}
 						}
 					} else {
-						if (ballY >= topPoint && ballY <= 110 && r.getXPosition() < ballX) {
+						if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
 							setVelocityToTarget(goalLine,ballY, true,true);
 						} else if (ballY < topPoint) {
 							setVelocityToTarget(goalLine,topPoint,true,true);
-						} else if (ballY > 110) {
-							setVelocityToTarget(goalLine,110,true,true);
+						} else if (ballY > bottomPoint) {
+							setVelocityToTarget(goalLine,bottomPoint,true,true);
 						}
 					}
-
-
-					/*
-					boolean direction;
-					if (goalLine < 110) {
-						direction = xDiff < 0;
-					}
-					else {
-						direction = xDiff > 0;
-					}
-					double tempBallX = ballX;
-					if (ballX < 30) tempBallX = 30;
-					double proportion = 1-((tempBallX-30)/(110-30));
-					double dist = 0;
-					//if (!direction) proportion *= -1;
-					if (trajectoryY >= topPoint && trajectoryY <= 110 ) {
-						dist = 90-((90-trajectoryY)*proportion);
-					}
-					else if (trajectoryY < topPoint) {
-						dist = 90-((90-topPoint)*proportion);
-					}
-					else if (trajectoryY > 110) {
-						dist = 90-((90-110)*proportion);
-					}
-					if (!direction) {
-						if (ballY >= topPoint && ballY <= 110 ) {
-							setVelocityToTarget(goalLine,ballY, true,true);
-						}
-						else if (ballY < topPoint) {
-							setVelocityToTarget(goalLine,topPoint,true,true);
-						}
-						else if (ballY > 110) {
-							setVelocityToTarget(goalLine,110,true,true);
-						}
-					}
-					else {
-						setVelocityToTarget(goalLine,dist,true,true);
-					} */
-				//	System.out.println( "proportion: " + proportion + " dist: " + dist + " trajectoryY: " + trajectoryY + " direction: " + direction);
 				} else {
 					setVelocityToTarget(r.getXPosition(),r.getYPosition(),true,true);
 				}
 			}
-			
-			
-		
 		}
 		lastBallX = ballX;
 		lastBallY = ballY;

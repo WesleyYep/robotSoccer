@@ -103,19 +103,6 @@ public class StrikerTest extends Action {
             r.angularVelocity = 0;
             return true;
         }
-//    	if (Math.abs(r.getYPosition() - ballY) < 3 && ballX > r.getXPosition()) {
-//    		if (Math.abs(r.getTheta())%360 < 5) {
-//        		r.linearVelocity = 3;
-//    		} else if (Math.abs(r.getTheta())%360 > 175) {
-//    			r.linearVelocity = -3;
-//    		}
-//    		return true;
-//    	}
-        //return false if ball is moving away
-//        if ((predY > ballY && ballY > r.getYPosition()) || (predY < ballY && ballY < r.getYPosition())) {
-//            return false;
-//        }
-//        if (!atCentre) {return false;}
 
         //get an equation in the form y = mx + c of the path of ball
         double m = (predY-ballY) / (predX - ballX);
@@ -132,6 +119,12 @@ public class StrikerTest extends Action {
         //use this to get coordinates of intersection point
         double xInt = (cR - c) / (m - mR);
         double yInt = m * xInt + c;
+
+        //return false is intersection point is in the past (ie. ball is between pred and int
+        if (predY > ballY && ballY > yInt || predY < ballY && ballY < yInt) {
+            return false;
+        }
+
         //double x = (r.getYPosition() - c) / m;
         if (xInt < 220 && xInt > r.getXPosition()) {
             //find distance of intersection point from current ball position

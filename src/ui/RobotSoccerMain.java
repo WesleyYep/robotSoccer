@@ -24,6 +24,8 @@ import vision.VisionWorker;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -571,12 +573,17 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			}
 		});
 
-		openPreviousFilesMenu.addActionListener(new ActionListener() {
+		openPreviousFilesMenu.addMenuListener( new MenuListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void menuSelected(MenuEvent e) {
+				System.out.println("open previous");
 				currentStrategy.read(ConfigPreviousFile.getInstance().getPreviousStratFile());
 				visionSetting.open(ConfigPreviousFile.getInstance().getPreviousVisionFile());
 			}
+			@Override
+			public void menuDeselected(MenuEvent e) {}
+			@Override
+			public void menuCanceled(MenuEvent e) {	}
 		});
 
 		visionMenu.add(openVisionMenuItem);
