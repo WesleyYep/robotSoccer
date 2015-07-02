@@ -113,11 +113,10 @@ public class WebcamDisplayPanel extends JPanel {
 			 * This assumes that you cannot have a connection fail if you're already connected hence you are disconnecting.
 			 * If you are unconnected and you get a null image, connection has failed.
 			 */
-			
+
 			if (currentViewState == ViewState.UNCONNECTED) {
 				currentViewState = ViewState.connectionFail();
 			} else if (currentViewState == ViewState.CONNECTED) {
-				removeAll();
 				currentViewState = ViewState.disconnect();
 			}
 			

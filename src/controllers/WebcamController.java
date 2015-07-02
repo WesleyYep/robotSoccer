@@ -45,7 +45,8 @@ public class WebcamController {
 		// Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
         grabber = new VideoCapture(cameraNumber);
-        grabby.execute();
+        grabby = new Grabby();
+		grabby.execute();
 	}
 
 	/**
@@ -56,6 +57,7 @@ public class WebcamController {
 
 	public void connect(String url) {
 		grabber = new VideoCapture(url);
+		grabby = new Grabby();
 		grabby.execute();
 	}
 
@@ -150,23 +152,27 @@ public class WebcamController {
             webcamImageMat = new Mat();
 
             while (!isCancelled() && grabber.isOpened()) {
-            	long start = System.currentTimeMillis();
+            	//long start = System.currentTimeMillis();
                 grabber.read(webcamImageMat);
                // System.out.println(System.currentTimeMillis()-start);
                 if (webcamImageMat == null) {
                 	cancel(true);
-                }
-                webcamDisplayPanel.update(webcamImageMat);
-                gameTick.run();
+                } else {
+					webcamDisplayPanel.update(webcamImageMat);
+					gameTick.run();
+				}
             }
 
-            // All done; clean up
-            grabber.release();
-            grabber = null;
-            webcamImageMat = null;
             return null;
 		}
 
+		@Override
+		protected void done() {
+			// All done; clean up
+			grabber.release();
+			webcamImageMat = null;
+			webcamDisplayPanel.update(webcamImageMat);
+		}
 	}
 
 }

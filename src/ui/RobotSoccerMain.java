@@ -455,7 +455,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 					optionContainer.add(optionCards, BorderLayout.CENTER);
 					optionContainer.revalidate();
 					optionContainer.repaint();
-					splitPane.setDividerLocation(400);
+					splitPane.setDividerLocation(500);
 				}
 
 			}
@@ -682,6 +682,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			connectionButton.setText(CONNECTION[1]);
 			break;
 		default:
+			webcamController.getWebcamDisplayPanel().removeAll();
+			webcamController.getWebcamDisplayPanel().revalidate();
+			webcamController.getWebcamDisplayPanel().repaint();
 			connectionButton.setText(CONNECTION[0]);
 			break;
 		}
