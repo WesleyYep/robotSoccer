@@ -1,15 +1,8 @@
 package actions;
 
-import javax.swing.JOptionPane;
-
-import data.Coordinate;
-import net.sourceforge.jFuzzyLogic.FIS;
-import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
-import strategy.Action;
 import bot.Robot;
-import strategy.GameState;
-import ui.Field;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import strategy.Action;
 
 public class testSelfMadeObstacle extends Action {
 
@@ -108,13 +101,17 @@ public class testSelfMadeObstacle extends Action {
         
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
        // obstacleDist = Math.sqrt(Math.pow((obstacleX-r.getXPosition()),2) + Math.pow((obstacleY-r.getYPosition()),2));
-        
+        double tempAngle = r.getTheta();
+        if (tempAngle < -270) {
+            tempAngle = 0;
+        }
+
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);
         fb.setVariable("targetTheta", targetTheta);
         fb.setVariable("targetDist", Math.abs(targetDist));
-        fb.setVariable("direction", r.getTheta());
+        fb.setVariable("direction", tempAngle);
         fb.setVariable("xPos", r.getXPosition());
         fb.setVariable("yPos", r.getYPosition());
         //      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
@@ -122,15 +119,15 @@ public class testSelfMadeObstacle extends Action {
         // Evaluate
         fb.evaluate();
 
-          //   JFuzzyChart.get().chart(fb);
+          // JFuzzyChart.get().chart(fb);
 
 
         // Show output variable's chart
        // fb.getVariable("linearVelocity").defuzzify();
-      //  fb.getVariable("angularVelocity").defuzzify();
-        //   JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
-        //JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
-        //    JOptionPane.showMessageDialog(null, "nwa");
+       //fb.getVariable("angularVelocity").defuzzify();
+        //  JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
+       //JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
+       // JOptionPane.showMessageDialog(null, "nwa");
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
