@@ -21,6 +21,7 @@ public class Tick implements SenderListener {
 	private int count = 0;
 	private boolean runStrat = false;
     private boolean runSetPlay = false;
+    private boolean runManualMovement = false;
 	private boolean lastSend = false;
     private Sender sender;
 	private double x = 0;
@@ -108,7 +109,9 @@ public class Tick implements SenderListener {
 				fieldController.executeStrategy();
 			} else if (runSetPlay) {
 				fieldController.executeSetPlay();
-            } else {
+            } else if (runManualMovement) {
+                fieldController.executeManualControl();
+            }else {
 				bots.stopAllMovement();
 			}
 		} else {
@@ -254,4 +257,7 @@ public class Tick implements SenderListener {
 	}
 
 
+    public void runManualMovement(boolean b) {
+        runManualMovement = b;
+    }
 }

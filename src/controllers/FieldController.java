@@ -214,6 +214,10 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		field.executeSetPlay();
 	}
 
+    public void executeManualControl() {
+        field.executeManualControl();
+    }
+
 	public Ball getBall() {
 		return ball;
 	}

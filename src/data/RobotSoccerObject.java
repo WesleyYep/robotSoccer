@@ -31,7 +31,10 @@ public abstract class RobotSoccerObject extends JPanel {
 		isStuck = false;
 		xTotal = 0;
 		yTotal = 0;
-	}
+        setFocusable(true);
+        requestFocusInWindow();
+
+    }
 
 	public void setX (double x) {
 		c.x = x;

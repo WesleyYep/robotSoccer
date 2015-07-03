@@ -114,7 +114,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		opponentBots.makeOpponentRobots();
 
 		Ball ball = new Ball();
-		Field field = new Field(bots, opponentBots, ball);
+		final Field field = new Field(bots, opponentBots, ball);
 		fieldController = new FieldController(field);
 
 		// connectionPanel
@@ -220,6 +220,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		JButton runStratButton = new JButton("Run Strat");
 		JButton stopStratButton = new JButton("Stop");
 		JButton runSetPlayButton = new JButton("Set play");
+        JButton manualMovementButton = new JButton("Manual Movement");
 		final JLabel stratStatusLbl = new JLabel("Stopped");
 		JLabel stratLabel = new JLabel("Strategy");
 		stratLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
@@ -245,6 +246,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stratControlPanel.add(runStratButton, "w 80");
 		stratControlPanel.add(stopStratButton, "w 80, wrap");
 		stratControlPanel.add(runSetPlayButton, "w 80");
+        stratControlPanel.add(manualMovementButton, "w 80, wrap");
 
 		//creating panel holding robot informations
 		JPanel infoPanel = new JPanel();
@@ -318,7 +320,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		webcamDisplayPanel.addWebcamDisplayPanelListener(visionPanel);
 
 		//window listener
-		windowController = new WindowController(webcamController,currentStrategy,visionSetting);
+		windowController = WindowController.getWindowController();
+        windowController.setFieldsForWindowController(webcamController,currentStrategy,visionSetting);
 		this.addWindowListener(windowController);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(windowController);
@@ -501,6 +504,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
                 gameTick.runSetPlay(false);
+                gameTick.runManualMovement(false);
+                field.setManualMovement(false);
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
 				System.gc();
@@ -511,6 +516,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stopStratButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                gameTick.runManualMovement(false);
+                field.setManualMovement(false);
                 gameTick.runSetPlay(false);
                 gameTick.runStrategy(false);
 				stratStatusLbl.setText("Stopped");
@@ -520,10 +527,24 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         runSetPlayButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                gameTick.runManualMovement(false);
+                field.setManualMovement(false);
                 gameTick.runSetPlay(true);
             }
         });
 
+        manualMovementButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (field.isManualMovement()) {
+                    field.setManualMovement(false);
+                    gameTick.runManualMovement(false);
+                } else {
+                    field.setManualMovement(true);
+                    gameTick.runManualMovement(true);
+                }
+            }
+        });
 
         //setting up configuration for the program
         ConfigFile configFile = ConfigFile.getInstance();
@@ -573,18 +594,22 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			}
 		});
 
-		openPreviousFilesMenu.addMenuListener( new MenuListener() {
-			@Override
-			public void menuSelected(MenuEvent e) {
-				System.out.println("open previous");
-				currentStrategy.read(ConfigPreviousFile.getInstance().getPreviousStratFile());
-				visionSetting.open(ConfigPreviousFile.getInstance().getPreviousVisionFile());
-			}
-			@Override
-			public void menuDeselected(MenuEvent e) {}
-			@Override
-			public void menuCanceled(MenuEvent e) {	}
-		});
+		openPreviousFilesMenu.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                System.out.println("open previous");
+                currentStrategy.read(ConfigPreviousFile.getInstance().getPreviousStratFile());
+                visionSetting.open(ConfigPreviousFile.getInstance().getPreviousVisionFile());
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+            }
+        });
 
 		visionMenu.add(openVisionMenuItem);
 		visionMenu.add(saveVisionMenuItem);

@@ -1,7 +1,12 @@
 package ui;
 
+import actions.MoveAndTurn;
+import actions.Wait;
 import bot.Robot;
 import bot.Robots;
+import controllers.WindowController;
+import controllers.WindowControllerListener;
+import criteria.Permanent;
 import data.Coordinate;
 import data.Situation;
 import strategy.CurrentStrategy;
@@ -13,14 +18,12 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Field extends JPanel implements MouseListener, MouseMotionListener {
+public class Field extends JPanel implements MouseListener, MouseMotionListener, WindowControllerListener {
 
 
 	//actual measurement of miroSot Middle league playground (in cm);
@@ -58,6 +61,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private Point endPoint;
 
 	private boolean isMouseDrag;
+    private boolean isManualMovement;
 
 	private CurrentStrategy currentStrategy;
     private Situation currentSituation;
@@ -65,17 +69,30 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private double predX = 0;
 	private double predY = 0;
 
+    private Action left = new AbstractAction("Left") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Left!");
+        }
+    };
+
     public Field(Robots bots, Robots opponents, Ball ball) {
 		this.bots = bots;
 		this.ball = ball;
 		this.opponentBots = opponents;
 		isMouseDrag = false;
+        WindowController.getWindowController().addListener(this);
 
 		// Add mouse listeners
 		addMouseListener(this);
 		addMouseMotionListener(this);
 
 		setLayout(null);
+
+        this.getInputMap().put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "Left");
+        this.getActionMap().put("Left", left);
+
 	}
 
 	@Override
@@ -372,7 +389,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	public void mouseMoved(MouseEvent e) {}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {
+    }
 
 	@Override
 	public void mouseEntered(MouseEvent e) {}
@@ -382,7 +400,17 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		startPoint = e.getPoint();
+        startPoint = e.getPoint();
+        for (Robot r : bots.getRobots()) {
+            if (r.isFocused()) {
+                Coordinate c = new Coordinate(e.getX(), e.getY());
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    r.setManualMoveSpot(new Coordinate((int) ((c.x - Field.ORIGIN_X) / Field.SCALE_FACTOR), (int) ((c.y - Field.ORIGIN_Y) / Field.SCALE_FACTOR)));
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    r.setManualTurnSpot(new Coordinate((int) ((c.x - Field.ORIGIN_X) / Field.SCALE_FACTOR), (int) ((c.y - Field.ORIGIN_Y) / Field.SCALE_FACTOR)));
+                }
+            }
+        }
 	}
 
 	@Override
@@ -399,7 +427,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 		repaint();
 	}
 
-	public void setCurrentStrategy(CurrentStrategy c) {
+    public void setCurrentStrategy(CurrentStrategy c) {
 		this.currentStrategy = c;
 	}
 
@@ -490,8 +518,42 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
         }
     }
 
+    public void executeManualControl() {
+        for (int i = 0; i < 5; i++) {
+            Robot bot = bots.getRobot(i);
+            Role role = getRoleToMoveRobotToSpot(bot);
 
-	public void setPredPoint(double predX2, double predY2) {
+            role.addRobot(bot);
+            role.addTeamRobots(bots);
+            role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+            role.setPredictedPosition(predX, predY);
+            role.execute();
+        }
+    }
+
+    private Role getRoleToMoveRobotToSpot(Robot robot) {
+        Role role = new Role();
+        Coordinate c = robot.getManualMoveSpot();
+        Coordinate cTurn = robot.getManualTurnSpot();
+
+        if(c.x == 0 && c.y ==0) {
+            role.setPair(new Permanent(), new Wait(), 0);
+            return role;
+        }
+
+        MoveAndTurn moveAndTurn = new MoveAndTurn();
+
+        moveAndTurn.updateParameters("spotX", (int)c.x);
+        moveAndTurn.updateParameters("spotY", (int)c.y);
+        moveAndTurn.updateParameters("turnSpotX", (int)cTurn.x);
+        moveAndTurn.updateParameters("turnSpotY", (int)cTurn.y);
+
+        role.setPair(new Permanent(), moveAndTurn, 0);
+        return role;
+    }
+
+
+    public void setPredPoint(double predX2, double predY2) {
 		predX = predX2;
 		predY = predY2;
 	}
@@ -507,4 +569,43 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	public Ball getBall() {
 		return ball;
 	}
+
+    public boolean isManualMovement() {
+        return isManualMovement;
+    }
+
+    public void setManualMovement(boolean isManualMovement) {
+        this.isManualMovement = isManualMovement;
+        if (!isManualMovement) {
+            for (Robot r : bots.getRobots()) {
+                r.setManualMoveSpot(new Coordinate(0,0));
+            }
+        }
+    }
+
+    @Override
+    public void windowKeyPressed(String key) {
+        if (!isManualMovement()){
+            return;
+        }
+        for (Robot r : bots.getRobots()) {
+            if (r.isFocused()) {
+                if (key.equals("up")) {
+                    r.setManualMoveSpot(new Coordinate(r.getXPosition(), r.getYPosition() - 10));
+                    r.setManualTurnSpot(new Coordinate(r.getXPosition(), 0));
+                } else if (key.equals("down")) {
+                    r.setManualMoveSpot(new Coordinate(r.getXPosition(), r.getYPosition() + 10));
+                    r.setManualTurnSpot(new Coordinate(r.getXPosition(), 180));
+                } else if (key.equals("left")) {
+                    r.setManualMoveSpot(new Coordinate(r.getXPosition() - 10, r.getYPosition()));
+                    r.setManualTurnSpot(new Coordinate(0, r.getYPosition()));
+                } else if (key.equals("right")) {
+                    r.setManualMoveSpot(new Coordinate(r.getXPosition() + 10, r.getYPosition()));
+                    r.setManualTurnSpot(new Coordinate(220, r.getYPosition()));
+                }
+            }
+        }
+    }
+
+
 }
