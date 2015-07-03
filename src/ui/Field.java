@@ -503,23 +503,16 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 //    }
 
     public void executeSetPlay() {
-        List<Situation> situations = currentStrategy.getSituations();
-        for (int i = 0; i < situations.size(); i++) {
-            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
-                if (situations.get(i).getPlays().size() == 0) { break; }
-                Play p = currentStrategy.getSetPlay();
+        Play p = currentStrategy.getSetPlay();
 
-                if (p == null) { break; }
-                for (int j = 0; j < 5; j++) {
-                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
-                    if (role == null) { continue; }
-                    role.addRobot(bots.getRobot(j));
-                    role.addTeamRobots(bots);
-                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-                    role.setPredictedPosition(predX, predY);
-                    role.execute();
-                }
-            }
+        for (int j = 0; j < 5; j++) {
+            Role role = currentStrategy.mapRoles(p.getRoles())[j];
+            if (role == null) { continue; }
+            role.addRobot(bots.getRobot(j));
+            role.addTeamRobots(bots);
+            role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+            role.setPredictedPosition(predX, predY);
+            role.execute();
         }
     }
 
@@ -596,6 +589,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
         for (Robot r : bots.getRobots()) {
             if (r.isFocused()) {
                 main.toggleMouseControl(false);
+                r.setManualMoveSpot(new Coordinate(0,0));
                 if (key.equals("up")) {
                     r.linearVelocity = 0.5;
                 } else if (key.equals("down")) {
