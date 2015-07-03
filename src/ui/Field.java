@@ -68,6 +68,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
     private List<Robot> currentOrder;
 	private double predX = 0;
 	private double predY = 0;
+    private RobotSoccerMain main;
 
     private Action left = new AbstractAction("Left") {
         @Override
@@ -76,10 +77,11 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
         }
     };
 
-    public Field(Robots bots, Robots opponents, Ball ball) {
+    public Field(Robots bots, Robots opponents, Ball ball, RobotSoccerMain main) {
 		this.bots = bots;
 		this.ball = ball;
 		this.opponentBots = opponents;
+        this.main = main;
 		isMouseDrag = false;
         WindowController.getWindowController().addListener(this);
 
@@ -401,12 +403,13 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	@Override
 	public void mousePressed(MouseEvent e) {
         startPoint = e.getPoint();
+        main.toggleMouseControl(true);
         for (Robot r : bots.getRobots()) {
             if (r.isFocused()) {
                 Coordinate c = new Coordinate(e.getX(), e.getY());
-                if (SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isRightMouseButton(e)) {
                     r.setManualMoveSpot(new Coordinate((int) ((c.x - Field.ORIGIN_X) / Field.SCALE_FACTOR), (int) ((c.y - Field.ORIGIN_Y) / Field.SCALE_FACTOR)));
-                } else if (SwingUtilities.isRightMouseButton(e)) {
+                } else if (SwingUtilities.isMiddleMouseButton(e)) {
                     r.setManualTurnSpot(new Coordinate((int) ((c.x - Field.ORIGIN_X) / Field.SCALE_FACTOR), (int) ((c.y - Field.ORIGIN_Y) / Field.SCALE_FACTOR)));
                 }
             }
@@ -415,16 +418,18 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		endPoint = e.getPoint();
-		isMouseDrag = false;
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            endPoint = e.getPoint();
+            isMouseDrag = false;
 
-		Rectangle r = new Rectangle(startPoint);
-		r.add(endPoint);
+            Rectangle r = new Rectangle(startPoint);
+            r.add(endPoint);
 
-		isRobotFocused(r);
-		isBallFocused(r);
+            isRobotFocused(r);
+            isBallFocused(r);
 
-		repaint();
+            repaint();
+        }
 	}
 
     public void setCurrentStrategy(CurrentStrategy c) {
@@ -590,22 +595,21 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
         }
         for (Robot r : bots.getRobots()) {
             if (r.isFocused()) {
+                main.toggleMouseControl(false);
                 if (key.equals("up")) {
-                    r.setManualMoveSpot(new Coordinate(r.getXPosition(), r.getYPosition() - 10));
-                    r.setManualTurnSpot(new Coordinate(r.getXPosition(), 0));
+                    r.linearVelocity = 0.5;
                 } else if (key.equals("down")) {
-                    r.setManualMoveSpot(new Coordinate(r.getXPosition(), r.getYPosition() + 10));
-                    r.setManualTurnSpot(new Coordinate(r.getXPosition(), 180));
+                    r.linearVelocity = -0.5;
                 } else if (key.equals("left")) {
-                    r.setManualMoveSpot(new Coordinate(r.getXPosition() - 10, r.getYPosition()));
-                    r.setManualTurnSpot(new Coordinate(0, r.getYPosition()));
+                    r.angularVelocity = 3;
                 } else if (key.equals("right")) {
-                    r.setManualMoveSpot(new Coordinate(r.getXPosition() + 10, r.getYPosition()));
-                    r.setManualTurnSpot(new Coordinate(220, r.getYPosition()));
+                    r.angularVelocity = -3;
+                } else if (key.equals("release")) {
+                    r.linearVelocity = 0;
+                    r.angularVelocity = 0;
                 }
             }
         }
     }
-
 
 }

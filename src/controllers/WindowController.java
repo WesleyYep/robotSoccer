@@ -113,6 +113,9 @@ public class WindowController implements WindowListener, KeyListener, KeyEventDi
 
          } else if (e.getID() == KeyEvent.KEY_RELEASED) {
         	 keyMapping.put(e.getKeyCode(), null);
+             for (WindowControllerListener wcl : listeners) {
+                 wcl.windowKeyPressed("release");
+             }
          }
 		return false;
 	}

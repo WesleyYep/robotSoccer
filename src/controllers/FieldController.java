@@ -42,6 +42,14 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		}
 	}
 
+    public void toggleVisibilityForGlassPanels(boolean visible) {
+        for (Component c : field.getComponents()) {
+            if (c instanceof SituationArea) {
+                c.setVisible(visible);
+            }
+        }
+    }
+
 	@Override
 	public void action(List<String> chunks) {
 		for (String s : chunks) {
@@ -86,14 +94,6 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	public void kickBall(double linearVelocity, double theta) {
 		ball.setLinearVelocity(linearVelocity);
 		ball.setTheta(theta);
-	}
-
-	public void bounceBall() {
-		ball.bounce();
-	}
-
-	public void moveBall() {
-		ball.move();
 	}
 
 	@Override

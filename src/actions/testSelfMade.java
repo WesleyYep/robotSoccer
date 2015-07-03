@@ -26,38 +26,38 @@ public class testSelfMade extends Action {
             return;
         }
 
-        //check if robot is stuck
-        double newTargetDistance = getDistanceToTarget(r);
-      //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
-            countTimesThatSeemStuck++;
-        } else if (r.linearVelocity >= 0){
-            countTimesThatSeemStuck = 0;
-        }
-        if (countTimesThatSeemStuck > 20) {
-            countTimesThatSeemStuck = 0;
-            return;
-        } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 10;
-            countTimesThatSeemStuck++;
-            return;
-        }
-
-
-        //see if robot is not in positive situation
-        if (ballX < r.getXPosition()) {
-            int yPos;
-            if (ballY > 90) {
-                yPos = (int)(60*Math.random()) + 120;
-            } else {
-                yPos = (int)(60*Math.random());
-            }
-            oldDistanceToTarget = newTargetDistance;
-            MoveToSpot.move(r, new Coordinate(30, yPos), 1);
-            return;
-        }
-
+//        //check if robot is stuck
+//        double newTargetDistance = getDistanceToTarget(r);
+//      //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+//        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
+//            countTimesThatSeemStuck++;
+//        } else if (r.linearVelocity >= 0){
+//            countTimesThatSeemStuck = 0;
+//        }
+//        if (countTimesThatSeemStuck > 20) {
+//            countTimesThatSeemStuck = 0;
+//            return;
+//        } else if (countTimesThatSeemStuck > 10) {
+//            r.linearVelocity = -0.5;
+//            r.angularVelocity = 10;
+//            countTimesThatSeemStuck++;
+//            return;
+//        }
+//
+//
+//        //see if robot is not in positive situation
+//        if (ballX < r.getXPosition()) {
+//            int yPos;
+//            if (ballY > 90) {
+//                yPos = (int)(60*Math.random()) + 120;
+//            } else {
+//                yPos = (int)(60*Math.random());
+//            }
+//            oldDistanceToTarget = newTargetDistance;
+//            MoveToSpot.move(r, new Coordinate(30, yPos), 1);
+//            return;
+//        }
+//
         double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
@@ -72,32 +72,31 @@ public class testSelfMade extends Action {
         difference = Math.toDegrees(difference);
         targetTheta = difference;
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-
-        //dribble ball towards goal if we are in a dribbling position
-        double ballDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
-        double angleToGoal = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
-        if (ballDist <= 7) {
-            if (angleToGoal > Math.PI / 18) {
-                // System.out.println("fast_right");
-                r.angularVelocity = 12;
-                r.linearVelocity = 0.7;
-            } else if (angleToGoal < -(Math.PI / 18)) {
-                //  System.out.println("fast_left");
-                r.linearVelocity = 0.7;
-                r.angularVelocity = -12;
-            } else {
-                r.linearVelocity = 2;
-            }
-            return;
-        }
-        //charge ball if we are in a kicking position
-        if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
-            r.linearVelocity = 2;
-            r.angularVelocity = 0;
-            return;
-        }
-
-
+//
+//        //dribble ball towards goal if we are in a dribbling position
+//        double ballDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
+//        double angleToGoal = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
+//        if (ballDist <= 7) {
+//            if (angleToGoal > Math.PI / 18) {
+//                // System.out.println("fast_right");
+//                r.angularVelocity = 12;
+//                r.linearVelocity = 0.7;
+//            } else if (angleToGoal < -(Math.PI / 18)) {
+//                //  System.out.println("fast_left");
+//                r.linearVelocity = 0.7;
+//                r.angularVelocity = -12;
+//            } else {
+//                r.linearVelocity = 2;
+//            }
+//            return;
+//        }
+//        //charge ball if we are in a kicking position
+//        if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
+//            r.linearVelocity = 2;
+//            r.angularVelocity = 0;
+//            return;
+//        }
+//
 
         boolean isFacingTop = true;
         boolean isTargetTop = true;
