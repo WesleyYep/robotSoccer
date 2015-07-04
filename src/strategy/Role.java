@@ -16,6 +16,7 @@ public class Role {
     private double ballY;
     private double predictedBallX;
     private double predictedBallY;
+    private boolean isSetPlayRole = false;
 
     public void setRoleName(String value) {
         this.roleName = value;
@@ -104,4 +105,11 @@ public class Role {
     }
 
 
+    public boolean isSetPlayRole() {
+        return isSetPlayRole;
+    }
+
+    public void setIsSetPlayRole(boolean isSetPlayRole) {
+        this.isSetPlayRole = isSetPlayRole;
+    }
 }
