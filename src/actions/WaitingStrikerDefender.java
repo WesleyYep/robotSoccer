@@ -53,7 +53,7 @@ public class WaitingStrikerDefender extends Defender {
                 return;
             }
             Coordinate c = new Coordinate(goalLine, 90);
-            MoveToSpot.move(r, c, 1);
+            MoveToSpot.move(r, c, 1, true);
             return;
         }
 

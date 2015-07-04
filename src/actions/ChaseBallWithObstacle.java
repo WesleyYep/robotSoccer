@@ -57,7 +57,7 @@ public class ChaseBallWithObstacle extends Action {
                 yPos = (int)(60*Math.random());
             }
             oldDistanceToTarget = newTargetDistance;
-            MoveToSpot.move(r, new Coordinate(30, yPos), 1);
+            MoveToSpot.move(r, new Coordinate(30, yPos), 1, true);
             return;
         }
 

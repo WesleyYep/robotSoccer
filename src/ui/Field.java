@@ -510,6 +510,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
             if (role == null) { continue; }
             role.addRobot(bots.getRobot(j));
             role.addTeamRobots(bots);
+            role.addOpponentRobots(opponentBots);
             role.setBallPosition(ball.getXPosition(), ball.getYPosition());
             role.setPredictedPosition(predX, predY);
             role.execute();
@@ -523,6 +524,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
             role.addRobot(bot);
             role.addTeamRobots(bots);
+            role.addOpponentRobots(opponentBots);
             role.setBallPosition(ball.getXPosition(), ball.getYPosition());
             role.setPredictedPosition(predX, predY);
             role.execute();
