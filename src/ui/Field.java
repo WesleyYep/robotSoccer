@@ -1,7 +1,12 @@
 package ui;
 
+import actions.MoveAndTurn;
+import actions.Wait;
 import bot.Robot;
 import bot.Robots;
+import controllers.WindowController;
+import controllers.WindowControllerListener;
+import criteria.Permanent;
 import data.Coordinate;
 import data.Situation;
 import strategy.CurrentStrategy;
@@ -13,14 +18,12 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Field extends JPanel implements MouseListener, MouseMotionListener {
+public class Field extends JPanel implements MouseListener, MouseMotionListener, WindowControllerListener {
 
 
 	//actual measurement of miroSot Middle league playground (in cm);
@@ -58,24 +61,40 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	private Point endPoint;
 
 	private boolean isMouseDrag;
+    private boolean isManualMovement;
 
 	private CurrentStrategy currentStrategy;
     private Situation currentSituation;
     private List<Robot> currentOrder;
 	private double predX = 0;
 	private double predY = 0;
+    private RobotSoccerMain main;
 
-    public Field(Robots bots, Robots opponents, Ball ball) {
+    private Action left = new AbstractAction("Left") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Left!");
+        }
+    };
+
+    public Field(Robots bots, Robots opponents, Ball ball, RobotSoccerMain main) {
 		this.bots = bots;
 		this.ball = ball;
 		this.opponentBots = opponents;
+        this.main = main;
 		isMouseDrag = false;
+        WindowController.getWindowController().addListener(this);
 
 		// Add mouse listeners
 		addMouseListener(this);
 		addMouseMotionListener(this);
 
 		setLayout(null);
+
+        this.getInputMap().put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "Left");
+        this.getActionMap().put("Left", left);
+
 	}
 
 	@Override
@@ -372,7 +391,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	public void mouseMoved(MouseEvent e) {}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {
+    }
 
 	@Override
 	public void mouseEntered(MouseEvent e) {}
@@ -382,24 +402,37 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		startPoint = e.getPoint();
+        startPoint = e.getPoint();
+        main.toggleMouseControl(true);
+        for (Robot r : bots.getRobots()) {
+            if (r.isFocused()) {
+                Coordinate c = new Coordinate(e.getX(), e.getY());
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    r.setManualMoveSpot(new Coordinate((int) ((c.x - Field.ORIGIN_X) / Field.SCALE_FACTOR), (int) ((c.y - Field.ORIGIN_Y) / Field.SCALE_FACTOR)));
+                } else if (SwingUtilities.isMiddleMouseButton(e)) {
+                    r.setManualTurnSpot(new Coordinate((int) ((c.x - Field.ORIGIN_X) / Field.SCALE_FACTOR), (int) ((c.y - Field.ORIGIN_Y) / Field.SCALE_FACTOR)));
+                }
+            }
+        }
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		endPoint = e.getPoint();
-		isMouseDrag = false;
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            endPoint = e.getPoint();
+            isMouseDrag = false;
 
-		Rectangle r = new Rectangle(startPoint);
-		r.add(endPoint);
+            Rectangle r = new Rectangle(startPoint);
+            r.add(endPoint);
 
-		isRobotFocused(r);
-		isBallFocused(r);
+            isRobotFocused(r);
+            isBallFocused(r);
 
-		repaint();
+            repaint();
+        }
 	}
 
-	public void setCurrentStrategy(CurrentStrategy c) {
+    public void setCurrentStrategy(CurrentStrategy c) {
 		this.currentStrategy = c;
 	}
 
@@ -470,28 +503,57 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 //    }
 
     public void executeSetPlay() {
-        List<Situation> situations = currentStrategy.getSituations();
-        for (int i = 0; i < situations.size(); i++) {
-            if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
-                if (situations.get(i).getPlays().size() == 0) { break; }
-                Play p = currentStrategy.getSetPlay();
+        Play p = currentStrategy.getSetPlay();
 
-                if (p == null) { break; }
-                for (int j = 0; j < 5; j++) {
-                    Role role = currentStrategy.mapRoles(p.getRoles())[j];
-                    if (role == null) { continue; }
-                    role.addRobot(bots.getRobot(j));
-                    role.addTeamRobots(bots);
-                    role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-                    role.setPredictedPosition(predX, predY);
-                    role.execute();
-                }
-            }
+        for (int j = 0; j < 5; j++) {
+            Role role = currentStrategy.mapRoles(p.getRoles())[j];
+            if (role == null) { continue; }
+            role.addRobot(bots.getRobot(j));
+            role.addTeamRobots(bots);
+            role.addOpponentRobots(opponentBots);
+            role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+            role.setPredictedPosition(predX, predY);
+            role.execute();
         }
     }
 
+    public void executeManualControl() {
+        for (int i = 0; i < 5; i++) {
+            Robot bot = bots.getRobot(i);
+            Role role = getRoleToMoveRobotToSpot(bot);
 
-	public void setPredPoint(double predX2, double predY2) {
+            role.addRobot(bot);
+            role.addTeamRobots(bots);
+            role.addOpponentRobots(opponentBots);
+            role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+            role.setPredictedPosition(predX, predY);
+            role.execute();
+        }
+    }
+
+    private Role getRoleToMoveRobotToSpot(Robot robot) {
+        Role role = new Role();
+        Coordinate c = robot.getManualMoveSpot();
+        Coordinate cTurn = robot.getManualTurnSpot();
+
+        if(c.x == 0 && c.y ==0) {
+            role.setPair(new Permanent(), new Wait(), 0);
+            return role;
+        }
+
+        MoveAndTurn moveAndTurn = new MoveAndTurn();
+
+        moveAndTurn.updateParameters("spotX", (int)c.x);
+        moveAndTurn.updateParameters("spotY", (int)c.y);
+        moveAndTurn.updateParameters("turnSpotX", (int)cTurn.x);
+        moveAndTurn.updateParameters("turnSpotY", (int)cTurn.y);
+
+        role.setPair(new Permanent(), moveAndTurn, 0);
+        return role;
+    }
+
+
+    public void setPredPoint(double predX2, double predY2) {
 		predX = predX2;
 		predY = predY2;
 	}
@@ -507,4 +569,43 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener 
 	public Ball getBall() {
 		return ball;
 	}
+
+    public boolean isManualMovement() {
+        return isManualMovement;
+    }
+
+    public void setManualMovement(boolean isManualMovement) {
+        this.isManualMovement = isManualMovement;
+        if (!isManualMovement) {
+            for (Robot r : bots.getRobots()) {
+                r.setManualMoveSpot(new Coordinate(0,0));
+            }
+        }
+    }
+
+    @Override
+    public void windowKeyPressed(String key) {
+        if (!isManualMovement()){
+            return;
+        }
+        for (Robot r : bots.getRobots()) {
+            if (r.isFocused()) {
+                main.toggleMouseControl(false);
+                r.setManualMoveSpot(new Coordinate(0,0));
+                if (key.equals("up")) {
+                    r.linearVelocity = 0.5;
+                } else if (key.equals("down")) {
+                    r.linearVelocity = -0.5;
+                } else if (key.equals("left")) {
+                    r.angularVelocity = 3;
+                } else if (key.equals("right")) {
+                    r.angularVelocity = -3;
+                } else if (key.equals("release")) {
+                    r.linearVelocity = 0;
+                    r.angularVelocity = 0;
+                }
+            }
+        }
+    }
+
 }

@@ -129,6 +129,9 @@ public class CurrentStrategy {
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             for (Role r : getRoles()) {
+                if (r.isSetPlayRole()) {
+                    continue;
+                }
                 bufferedWriter.write("Role:" + r.toString() + "\n");
                 for (int i = 0; i < r.getCriterias().length; i++) {
                     if (r.getActions()[i] == null || r.getCriterias()[i] == null) {
@@ -142,6 +145,9 @@ public class CurrentStrategy {
             }
 
             for (Play p : getPlays()) {
+                if (p.isSetPlay()) {
+                    continue;
+                }
                 bufferedWriter.write("Play:" + p.toString() + "\n");
                 for (Role r : p.getRoles()) {
                     if (r == null) {
@@ -312,6 +318,7 @@ public class CurrentStrategy {
                     if (containsRole(role)) {
                         continue;
                     }
+                    role.setIsSetPlayRole(true);
 
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
@@ -333,6 +340,7 @@ public class CurrentStrategy {
                 } else if (line.startsWith("Play:")) {
                     Play play = new Play();
                     play.setPlayName(line.split(":")[1]);
+                    play.setIsSetPlay(true);
                     int i = 0;
 
                     while (!(line = bufferedReader.readLine()).equals("-----")) {

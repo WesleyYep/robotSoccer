@@ -64,7 +64,7 @@ moveAndTurn:0:80:80:90
 -----
 Play:freeBallBotSetUp
 gk
-moveAndTurn:30:220:30:30
+moveAndTurn:150:220:30:150
 moveAndTurn:0:40:40:90
 moveAndTurn:0:60:60:90
 moveAndTurn:0:80:80:90

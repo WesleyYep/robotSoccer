@@ -15,7 +15,7 @@ public class ChaseBallWithObstacle extends Action {
 
     @Override
     public void execute() {
-        setVelocityToTarget(ballX,ballY,false,false);
+        setVelocityToTarget(predX,predY,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -57,7 +57,7 @@ public class ChaseBallWithObstacle extends Action {
                 yPos = (int)(60*Math.random());
             }
             oldDistanceToTarget = newTargetDistance;
-            MoveToSpot.move(r, new Coordinate(30, yPos), 1);
+            MoveToSpot.move(r, new Coordinate(30, yPos), 1, true);
             return;
         }
 
@@ -95,7 +95,7 @@ public class ChaseBallWithObstacle extends Action {
         }
         //charge ball if we are in a kicking position
         if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
-            r.linearVelocity = 2;
+            r.linearVelocity = 1;
             r.angularVelocity = 0;
             return;
         }

@@ -1,6 +1,8 @@
 package strategy;
 
+import actions.MoveToSpot;
 import bot.Robot;
+import javafx.scene.shape.MoveTo;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import vision.KalmanFilter;
@@ -36,9 +38,13 @@ public abstract class Action {
 	
 	public void addTeamRobots (Robots team) {
 		this.teamRobots = team;
+        MoveToSpot.addTeamRobotsToMoveToSpot(team);
 	}
 
-	public void addOpponentRobots (Robots opponent) {this.opponentRobots = opponent;}
+	public void addOpponentRobots (Robots opponent) {
+        this.opponentRobots = opponent;
+        MoveToSpot.addOpponentRobotsToMoveToSpot(opponent);
+    }
 
 	public void setBallPosition(double x, double y) {
 		this.ballX = x;

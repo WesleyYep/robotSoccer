@@ -48,10 +48,10 @@ public class BasicGoalKeep extends Action {
 		//clear the ball
 		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
 			if (ballY > r.getYPosition() && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
-				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 1.5);
+				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 1.5, false);
 				return;
 			} else if (ballY < r.getYPosition()) {
-				MoveToSpot.move(r, new Coordinate((int) goalLine, 5), 1.5);
+				MoveToSpot.move(r, new Coordinate((int) goalLine, 5), 1.5, false);
 				return;
 			}
 		}

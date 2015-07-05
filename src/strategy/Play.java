@@ -10,6 +10,7 @@ public class Play {
 //    private Point[] criterias = {new Point(-1,-1), new Point(-1,-1), new Point(-1,-1), new Point(-1,-1), new Point(-1,-1)}; //-1 is permanent, -2 is closest to ball
     private String playName;
     private int playParams[] = new int[]{0,0,0,0};
+    private boolean isSetPlay = false;
 
     public void addRole(int index, Role role) {
         if (role == null) {
@@ -54,5 +55,13 @@ public class Play {
         playParams[1] = param2;
         playParams[2] = param3;
         playParams[3] = param4;
+    }
+
+    public boolean isSetPlay() {
+        return isSetPlay;
+    }
+
+    public void setIsSetPlay(boolean isSetPlay) {
+        this.isSetPlay = isSetPlay;
     }
 }

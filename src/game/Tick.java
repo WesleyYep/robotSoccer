@@ -21,6 +21,7 @@ public class Tick implements SenderListener {
 	private int count = 0;
 	private boolean runStrat = false;
     private boolean runSetPlay = false;
+    private boolean runManualMovement = false;
 	private boolean lastSend = false;
     private Sender sender;
 	private double x = 0;
@@ -103,18 +104,15 @@ public class Tick implements SenderListener {
 
 	public void run() {
         //link to actions class somewhere here, set linearVelocity and angularVelocity of robots.;
-		if (!main.isManualControl()) {
-			if (runStrat) {
-				fieldController.executeStrategy();
-			} else if (runSetPlay) {
-				fieldController.executeSetPlay();
-            } else {
-				bots.stopAllMovement();
-			}
-		} else {
-		//	Robot r = bots.getRobot(0);
-		//	System.out.println("r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " lin ang " + r.linearVelocity + " " + r.angularVelocity + " " + System.currentTimeMillis() );
-		}
+
+        if (runStrat) {
+            fieldController.executeStrategy();
+        } else if (runSetPlay) {
+            fieldController.executeSetPlay();
+        } else if (runManualMovement) {
+            fieldController.executeManualControl();
+        }
+
 		fieldController.redrawArea();
 
 		/*
@@ -254,4 +252,7 @@ public class Tick implements SenderListener {
 	}
 
 
+    public void runManualMovement(boolean b) {
+        runManualMovement = b;
+    }
 }

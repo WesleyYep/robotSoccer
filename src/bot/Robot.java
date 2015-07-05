@@ -18,6 +18,8 @@ public abstract class Robot extends RobotSoccerObject {
 	public double linearVelocity;
 	public double angularVelocity;
     public String criteriaName = "";
+    private Coordinate manualMoveSpot;
+    private Coordinate manualTurnSpot;
 	
 	/*
 	 * 
@@ -38,6 +40,8 @@ public abstract class Robot extends RobotSoccerObject {
 		super(c);
 		setTheta(theta);
 		setId(id);
+        manualMoveSpot = new Coordinate(0,0);
+        manualTurnSpot = new Coordinate(0,0);
 	}
 	
 	public void setX (double x) {
@@ -183,4 +187,19 @@ public abstract class Robot extends RobotSoccerObject {
     
     public abstract void moveAngular();
 
+    public Coordinate getManualMoveSpot() {
+        return manualMoveSpot;
+    }
+
+    public Coordinate getManualTurnSpot() {
+        return manualTurnSpot;
+    }
+
+    public void setManualMoveSpot(Coordinate c) {
+        manualMoveSpot = c;
+    }
+
+    public void setManualTurnSpot(Coordinate c) {
+        manualTurnSpot = c;
+    }
 }
