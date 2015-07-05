@@ -40,6 +40,7 @@ public class Actions {
           add(new MoveToSpot());
           add(new MoveAndTurn());
           add(new WaitingStrikerDefender());
+          add(new Circle());
         add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
       }};
 

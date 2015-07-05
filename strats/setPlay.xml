@@ -40,6 +40,13 @@ null-null
 null-null
 null-null
 -----
+Role:circle
+permanent-actions.Circle-[t]-[0]
+null-null
+null-null
+null-null
+null-null
+-----
 //for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
 Play:kickOffSetUp
 gk
@@ -82,4 +89,11 @@ chaseBall
 defenderTop
 chaseBall
 defender
+-----
+Play:circle
+circle:0
+circle:125
+circle:251
+circle:377
+circle:502
 -----

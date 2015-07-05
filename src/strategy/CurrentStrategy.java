@@ -1,19 +1,16 @@
 package strategy;
 
-import actions.Actions;
 import config.ConfigFile;
 import config.ConfigPreviousFile;
 import controllers.FieldController;
 import criteria.Criterias;
 import data.Situation;
-import org.opencv.core.Point;
 import ui.SituationArea;
 
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Wesley on 23/01/2015.
@@ -350,10 +347,11 @@ public class CurrentStrategy {
                             Action firstAction = roleToAdd.getActions()[0];
                             Object[] params = firstAction.getParameters().toArray();
                             for (int j = 0; j < params.length; j++) {
-                                if (lineArray.length == 5) {
+                                if (lineArray.length >= params.length) {
                                     firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
                                 } else {
                                     firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
+                                    break;
                                 }
                             }
                         play.addRole(i, roleToAdd);

@@ -48,6 +48,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 	private JTextField portField, webcamURLField;
 	private RobotInfoPanel[] robotInfoPanels;
 	private SerialPortCommunicator serialCom;
+	final private Robots bots;
 
 	private JComboBox<String> webcamTypeComboBox;
 
@@ -108,7 +109,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		//create serial port communicator;
 		serialCom = new SerialPortCommunicator();
 
-		final Robots bots = new Robots(serialCom);
+		bots = new Robots(serialCom);
 		bots.makeTeamRobots();
 
 		Robots opponentBots = new Robots(serialCom);
@@ -221,6 +222,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		JButton runStratButton = new JButton("Run Strat");
 		JButton stopStratButton = new JButton("Stop");
 		JButton runSetPlayButton = new JButton("Set play");
+		JButton runSetUpPlayButton = new JButton("Set up play");
         JButton manualMovementButton = new JButton("Manual Movement");
 		final JLabel stratStatusLbl = new JLabel("Stopped");
 		JLabel stratLabel = new JLabel("Strategy");
@@ -247,6 +249,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stratControlPanel.add(runStratButton, "w 80");
 		stratControlPanel.add(stopStratButton, "w 80, wrap");
 		stratControlPanel.add(runSetPlayButton, "w 80");
+		stratControlPanel.add(runSetUpPlayButton, "w 80");
         stratControlPanel.add(manualMovementButton, "w 80, wrap");
 
 		//creating panel holding robot informations
@@ -504,7 +507,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                gameTick.runSetPlay(false);
+                gameTick.runSetPlay(false, false);
                 disableManualMovement();
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
@@ -516,10 +519,10 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stopStratButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                disableManualMovement();
-                gameTick.runSetPlay(false);
+				bots.stopAllMovement();
+				disableManualMovement();
+                gameTick.runSetPlay(false, false);
                 gameTick.runStrategy(false);
-                bots.stopAllMovement();
 				stratStatusLbl.setText("Stopped");
 			}
              });
@@ -527,10 +530,16 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         runSetPlayButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                disableManualMovement();
-                gameTick.runSetPlay(true);
+                setPlay(false);
             }
         });
+
+		runSetUpPlayButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setPlay(true);
+			}
+		});
 
         manualMovementButton.addActionListener(new ActionListener() {
             @Override
@@ -635,7 +644,17 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         setPreferredSize(new Dimension(1290, 900));
     }
 
-    private void disableManualMovement(){
+	private void setPlay(boolean isPermanent) {
+		disableManualMovement();
+		if (!gameTick.isRunSetPlay()) {
+			gameTick.runSetPlay(true, isPermanent);
+		} else {
+			bots.stopAllMovement();
+			gameTick.runSetPlay(false, isPermanent);
+		}
+	}
+
+	private void disableManualMovement(){
         manualControl = false;
         field.setManualMovement(false);
         gameTick.runManualMovement(false);

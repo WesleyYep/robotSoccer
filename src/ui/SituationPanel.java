@@ -108,7 +108,7 @@ public class SituationPanel extends JPanel implements StrategyListener{
 		scrollTablePlays = new JScrollPane((tableOfPlays));
 		scrollTablePlays.setPreferredSize(new Dimension(300, 100));
 		scrollTableAllPlays = new JScrollPane((tableOfAllPlays));
-		scrollTableAllPlays.setPreferredSize(new Dimension(300, 100));
+		scrollTableAllPlays.setPreferredSize(new Dimension(300, 300));
 		playsPanel.add(new JLabel("Plays in situation"), "wrap");
 		playsPanel.add(scrollTablePlays, "pushx, growx, wrap, span");
 		playsPanel.add(upButton, "split 2");

@@ -20,7 +20,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	private Robots opponentBots;
 
 	private SituationArea selectedArea;
-	
+
 	public FieldController(Field field) {
 		this.field = field;
 		bots = field.getRobots();

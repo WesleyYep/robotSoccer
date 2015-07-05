@@ -232,9 +232,9 @@ public class Tick implements SenderListener {
 		this.sender = sender;
 	}
 
-    public void runSetPlay (boolean run) {
+    public void runSetPlay (boolean run, boolean isPermanent) {
         runSetPlay = run;
-        if (run) {
+        if (run && !isPermanent) {
             new java.util.Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -246,6 +246,10 @@ public class Tick implements SenderListener {
             }, 10000);
         }
     }
+
+	public boolean isRunSetPlay() {
+		return runSetPlay;
+	}
 
 	public void runStrategy(boolean run) {
 		runStrat = run;
