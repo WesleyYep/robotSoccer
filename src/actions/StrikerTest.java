@@ -89,12 +89,12 @@ public class StrikerTest extends Action {
     }
 
     private boolean ballComingIntoPath(Robot r) {
-        //return true if ball is directly in front (or behind) of robot
         double angleToBall = Math.abs(getTargetTheta(r, ballX, ballY));
         boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;
+        double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
 
         if (!isFacingGoal) {return false;}
-        if ( angleToBall < 10) {
+        if ( angleToBall < (10 + 50-ballDistanceFromRobot)) {
             r.linearVelocity = 3;
             r.angularVelocity = 0;
             return true;
@@ -121,7 +121,8 @@ public class StrikerTest extends Action {
         double yInt = m * xInt + c;
 
         //return false is intersection point is in the past (ie. ball is between pred and int
-        if (predY > ballY && ballY > yInt || predY < ballY && ballY < yInt) {
+        if (predY - ballY > 5 && ballY - yInt > 5 || ballY - predY > 5 && yInt - ballY > 5) {
+   //         System.out.println("moving away");
             return false;
         }
 
@@ -129,6 +130,12 @@ public class StrikerTest extends Action {
         if (xInt < 220 && xInt > r.getXPosition()) {
             //find distance of intersection point from current ball position
             double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-yInt));
+            if (ballDistance < 5) {
+                r.linearVelocity = 2;
+                r.angularVelocity = 0;
+            //    System.out.println("ball so close");
+                return true;
+            }
             //find speed of ball
             double ballSpeed = (Math.sqrt(squared(predX-ballX) + squared(predY-ballY))) / Tick.PREDICT_TIME;
             //find time taken for ball to reach intersection point
