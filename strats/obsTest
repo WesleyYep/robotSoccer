@@ -1,5 +1,5 @@
 Role:obs
-permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[180, 175]
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[190, 29]
 null-null
 null-null
 null-null
@@ -55,12 +55,12 @@ null-null
 null-null
 -----
 Play:new play
-wait
 obs
 wait
 wait
 wait
+wait
 -----
-Situation:new situation 1:30:1:452:367
+Situation:new situation 1:25:4:452:367
 new play
 -----

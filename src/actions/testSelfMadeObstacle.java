@@ -1,7 +1,10 @@
 package actions;
 
+import javax.swing.JOptionPane;
+
 import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
 
 public class testSelfMadeObstacle extends Action {
@@ -105,8 +108,11 @@ public class testSelfMadeObstacle extends Action {
         if (tempAngle < -270) {
             tempAngle = 0;
         }
-
+        
+        double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
+        System.out.println(targetDist + " " + distBetweenObsAndTarget);
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
+        fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);
         fb.setVariable("targetTheta", targetTheta);
@@ -118,21 +124,21 @@ public class testSelfMadeObstacle extends Action {
         //      		+ r.getYPosition() + " targetDist " + targetDist);
         // Evaluate
         fb.evaluate();
+        /*
+           JFuzzyChart.get().chart(fb);
 
-          // JFuzzyChart.get().chart(fb);
-
-
+           
         // Show output variable's chart
-       // fb.getVariable("linearVelocity").defuzzify();
-       //fb.getVariable("angularVelocity").defuzzify();
-        //  JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
-       //JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
-       // JOptionPane.showMessageDialog(null, "nwa");
+       fb.getVariable("linearVelocity").defuzzify();
+       fb.getVariable("angularVelocity").defuzzify();
+          JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
+       JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
+        JOptionPane.showMessageDialog(null, "nwa");  */
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
 
-        //    System.out.println("right :" + right + "left " + left);
+        //    System.out.println("right :" + right + "left " + left); 
 
         r.linearVelocity = linear;
         r.angularVelocity = angular*-1;

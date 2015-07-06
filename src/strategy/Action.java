@@ -2,7 +2,6 @@ package strategy;
 
 import actions.MoveToSpot;
 import bot.Robot;
-import javafx.scene.shape.MoveTo;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import vision.KalmanFilter;
