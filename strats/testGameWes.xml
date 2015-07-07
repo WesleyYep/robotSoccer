@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[50, 130, 50]
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 50, 50, 50]
 null-null
 null-null
 null-null

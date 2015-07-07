@@ -319,17 +319,16 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 				}
 			}
 
-//            for (int i = 0; i < 5; i++) {
-//                if (robotsDetected[i]) {
-//                    robotNotSeen[i] = 0;
-//                } else {
-//                    robotNotSeen[i]++;
-//                    if (robotNotSeen[i] >= 20) {
-//                        notifyListeners(new VisionData(new Point(-10, -10), 0, "robot:" + i));
-//                        System.out.println("robot " + (i+1) + " not detected!");
-//                    }
-//                }
-//            }
+            for (int i = 0; i < 5; i++) {
+                if (robotsDetected[i]) {
+                    robotNotSeen[i] = 0;
+                } else {
+                    robotNotSeen[i]++;
+                    if (robotNotSeen[i] >= 20) {
+                        notifyListeners(new VisionData(new Point(30, 50+20*i), 0, "robot:" + (i + 1)));
+                    }
+                }
+            }
 			
 		}
 	}

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-<topRightX>578.0</topRightX>
-<topRightY>16.0</topRightY>
+<topRightX>576.0</topRightX>
+<topRightY>24.0</topRightY>
 <topLeftX>49.0</topLeftX>
-<topLeftY>18.0</topLeftY>
+<topLeftY>22.0</topLeftY>
 <bottomRightX>619.0</bottomRightX>
 <bottomRightY>472.0</bottomRightY>
 <bottomLeftX>18.0</bottomLeftX>
 <bottomLeftY>475.0</bottomLeftY>
 <leftGoalTopLeftX>3.0</leftGoalTopLeftX>
 <leftGoalTopLeftY>177.0</leftGoalTopLeftY>
-<leftGoalTopRightX>36.0</leftGoalTopRightX>
-<leftGoalTopRightY>179.0</leftGoalTopRightY>
+<leftGoalTopRightX>44.0</leftGoalTopRightX>
+<leftGoalTopRightY>174.0</leftGoalTopRightY>
 <leftGoalBottomLeftX>2.0</leftGoalBottomLeftX>
 <leftGoalBottomLeftY>292.0</leftGoalBottomLeftY>
 <leftGoalBottomRightX>28.0</leftGoalBottomRightX>
@@ -34,7 +34,7 @@
 <teamHLower>19</teamHLower>
 <teamSUpper>128</teamSUpper>
 <teamSLower>50</teamSLower>
-<teamVUpper>184</teamVUpper>
+<teamVUpper>206</teamVUpper>
 <teamVLower>75</teamVLower>
 <greenHUpper>127</greenHUpper>
 <greenHLower>127</greenHLower>

@@ -519,10 +519,10 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stopStratButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				bots.stopAllMovement();
 				disableManualMovement();
                 gameTick.runSetPlay(false, false);
                 gameTick.runStrategy(false);
+				bots.stopAllMovement();
 				stratStatusLbl.setText("Stopped");
 			}
              });

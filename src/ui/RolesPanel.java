@@ -15,12 +15,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -192,6 +188,7 @@ public class RolesPanel extends JPanel implements StrategyListener {
                     try {
                         int selectedRow = lsm.getMinSelectionIndex();
                         Action action = (Action) criteriaActionTable.getValueAt(selectedRow, 1);
+                        System.out.println("setting last selected action = " + action.toString());
                         lastSelectedAction = action;
                         List<String> keys = new ArrayList<String>(action.getParameters());
                         List<Integer> values = new ArrayList<Integer>(action.getValues());
