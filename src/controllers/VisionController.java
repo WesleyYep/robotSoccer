@@ -1,5 +1,6 @@
 package controllers;
 
+import data.Coordinate;
 import org.opencv.core.Point;
 import ui.Field;
 
@@ -31,6 +32,8 @@ public class VisionController {
     private Point2D leftGoalBottomLeft;
     private Point2D rightGoalBottomRight;
     private Point2D rightGoalBottomLeft;
+    private int fieldFacing = 0; // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
+                                //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
 
     public VisionController() {
 		topRight = new Point2D.Double(450,50);
@@ -97,6 +100,7 @@ public class VisionController {
 		}
 		
 	}
+
 	
 	public void rotatePointAntiClockwise() {
 		Point2D tempBottomLeft = bottomLeft;
@@ -110,6 +114,21 @@ public class VisionController {
 		
 		topRight = tempTopLeft;
 		bottomRight = tempTopRight;
+        //swap if needed
+        if (fieldFacing == 1 || fieldFacing == 4) {
+            swapGoals();
+        }
+        //for fieldFacing:
+        // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
+        //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
+        if (fieldFacing == 0 || fieldFacing == 3) {
+            fieldFacing++;
+        } else if (fieldFacing == 1 || fieldFacing == 5) {
+            fieldFacing = 3;
+        } else if (fieldFacing == 2 || fieldFacing == 4) {
+            fieldFacing = 0;
+        }
+        //swap if needed
 	}
 	
 	public void rotatePointClockwise() {
@@ -124,8 +143,39 @@ public class VisionController {
 		
 		topRight = tempBottomRight;
 		bottomRight = tempBottomLeft;
+        //swap if needed
+        if (fieldFacing == 2 || fieldFacing == 5) {
+            swapGoals();
+        }
+        //for fieldFacing:
+        // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
+        //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
+        if (fieldFacing == 0 || fieldFacing == 3) {
+            fieldFacing += 2;
+        } else if (fieldFacing == 1 || fieldFacing == 5) {
+            fieldFacing = 0;
+        } else if (fieldFacing == 2 || fieldFacing == 4) {
+            fieldFacing = 3;
+        }
 	}
-	
+
+    private void swapGoals() {
+        //temps
+        Point2D a = rightGoalTopLeft;
+        Point2D b = rightGoalTopRight;
+        Point2D c = rightGoalBottomLeft;
+        Point2D d = rightGoalBottomRight;
+
+        rightGoalTopLeft = leftGoalBottomRight;
+        rightGoalTopRight = leftGoalBottomLeft;
+        rightGoalBottomLeft = leftGoalTopRight;
+        rightGoalBottomRight = leftGoalTopLeft;
+
+        leftGoalTopLeft = d;
+        leftGoalTopRight = c;
+        leftGoalBottomLeft = b;
+        leftGoalBottomRight = a;
+    }
 
 	public Point2D getTopRight() {
 		return topRight;
