@@ -11,7 +11,7 @@ public class RobotController {
 	}
 	
 	public void sendVelocity(double[] linearVelocity, double[] angularVelocity) {
-		
+
 		int[] sdata = new int[48];
 		
 		sdata[0] = 255;
@@ -22,6 +22,12 @@ public class RobotController {
 		int checksum = (sdata[0] +sdata[1] + sdata[2]) & 0xff;
 		
 		for (int i=0; i < 11; i++) {
+
+			if (angularVelocity[i] == 1.11 && linearVelocity[i] == 1.11) {
+				System.out.print("     : send  - " + System.currentTimeMillis());
+				System.out.println("");
+			}
+
 			double tempLin = linearVelocity[i];
 			double tempAng = angularVelocity[i];
 			

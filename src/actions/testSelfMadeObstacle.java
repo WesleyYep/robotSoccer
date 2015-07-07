@@ -1,10 +1,7 @@
 package actions;
 
-import javax.swing.JOptionPane;
-
 import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import strategy.Action;
 
 public class testSelfMadeObstacle extends Action {
@@ -110,7 +107,6 @@ public class testSelfMadeObstacle extends Action {
         }
         
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
-        System.out.println(targetDist + " " + distBetweenObsAndTarget);
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
         fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
         fb.setVariable("obstacleDist", obstacleDist);

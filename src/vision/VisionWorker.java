@@ -10,9 +10,7 @@ import ui.SamplingPanel;
 import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
-import utils.Image;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +50,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private List<MatOfPoint> correctGreenContour;
 	private List<MatOfPoint> correctTeamContour;
 	private List<MatOfPoint> correctOpponentContour;
+    private int[] robotNotSeen = new int[]{0,0,0,0,0};
 	
 	private static final int KERNELSIZE = 3;
 
@@ -292,6 +291,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 			
 			int[] robotNumber = new int[5];
 			int robotCount = 0;
+            boolean[] robotsDetected = new boolean[5];
 			// Update robot positions.
 			for (RobotData rd : data) {
 				if (rd != null) {
@@ -310,6 +310,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                             notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
                         }
                         oldRobotPositions[robotNum-1] = pos;
+                        robotsDetected[robotNum-1] = true;
                     }
 
 				} else {
@@ -317,6 +318,18 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					robotCount++;	
 				}
 			}
+
+//            for (int i = 0; i < 5; i++) {
+//                if (robotsDetected[i]) {
+//                    robotNotSeen[i] = 0;
+//                } else {
+//                    robotNotSeen[i]++;
+//                    if (robotNotSeen[i] >= 20) {
+//                        notifyListeners(new VisionData(new Point(-10, -10), 0, "robot:" + i));
+//                        System.out.println("robot " + (i+1) + " not detected!");
+//                    }
+//                }
+//            }
 			
 		}
 	}
