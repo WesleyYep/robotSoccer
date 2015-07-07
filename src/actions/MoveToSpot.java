@@ -119,9 +119,11 @@ public class MoveToSpot extends Action{
                 System.exit(1);
             }
 
+            double distBetweenObsAndTarget = Math.sqrt(Math.pow((spot.x-obstacleX),2) + Math.pow((spot.y-obstacleY),2));
+
             // Get default function block
             fb = fis.getFunctionBlock(null);
-
+            fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
             fb.setVariable("obstacleDist", obstacleDist);
             fb.setVariable("obstacleTheta", obstacleTheta);
             fb.setVariable("targetTheta", targetTheta);

@@ -149,8 +149,10 @@ public class ChaseBallWithObstacle extends Action {
                 }
             }
         }
+        double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
 
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
+        fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);
         fb.setVariable("targetTheta", targetTheta);
