@@ -307,7 +307,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
                         if (distance < 15) { //change this if needed
                             //	System.out.println(pos.x + ", " + pos.y);
-                            notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+                          //  if (robotNum != 2) {
+                                notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+                          //  }
                         }
                         oldRobotPositions[robotNum-1] = pos;
                         robotsDetected[robotNum-1] = true;

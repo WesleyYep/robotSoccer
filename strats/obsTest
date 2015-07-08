@@ -55,10 +55,10 @@ null-null
 null-null
 -----
 Play:new play
+wait
+wait
+wait
 obs
-wait
-wait
-wait
 wait
 -----
 Situation:new situation 1:25:4:452:367

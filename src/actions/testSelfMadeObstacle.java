@@ -102,9 +102,11 @@ public class testSelfMadeObstacle extends Action {
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
        // obstacleDist = Math.sqrt(Math.pow((obstacleX-r.getXPosition()),2) + Math.pow((obstacleY-r.getYPosition()),2));
         double tempAngle = r.getTheta();
+
+        /*
         if (tempAngle < -270) {
             tempAngle = 0;
-        }
+        }*/
         
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
@@ -129,7 +131,7 @@ public class testSelfMadeObstacle extends Action {
        fb.getVariable("angularVelocity").defuzzify();
           JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
        JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
-        JOptionPane.showMessageDialog(null, "nwa");  */
+        JOptionPane.showMessageDialog(null, "nwa"); */
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());

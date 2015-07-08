@@ -11,7 +11,7 @@
 <leftGoalTopLeftX>3.0</leftGoalTopLeftX>
 <leftGoalTopLeftY>167.0</leftGoalTopLeftY>
 <leftGoalTopRightX>55.0</leftGoalTopRightX>
-<leftGoalTopRightY>166.0</leftGoalTopRightY>
+<leftGoalTopRightY>168.0</leftGoalTopRightY>
 <leftGoalBottomLeftX>5.0</leftGoalBottomLeftX>
 <leftGoalBottomLeftY>276.0</leftGoalBottomLeftY>
 <leftGoalBottomRightX>47.0</leftGoalBottomRightX>
@@ -34,7 +34,7 @@
 <teamHLower>19</teamHLower>
 <teamSUpper>128</teamSUpper>
 <teamSLower>50</teamSLower>
-<teamVUpper>184</teamVUpper>
+<teamVUpper>255</teamVUpper>
 <teamVLower>75</teamVLower>
 <greenHUpper>127</greenHUpper>
 <greenHLower>127</greenHLower>
@@ -48,12 +48,12 @@
 <groundSLower>127</groundSLower>
 <groundVUpper>127</groundVUpper>
 <groundVLower>127</groundVLower>
-<opponentHUpper>127</opponentHUpper>
-<opponentHLower>127</opponentHLower>
-<opponentSUpper>127</opponentSUpper>
-<opponentSLower>127</opponentSLower>
-<opponentVUpper>127</opponentVUpper>
-<opponentVLower>127</opponentVLower>
+<opponentHUpper>162</opponentHUpper>
+<opponentHLower>137</opponentHLower>
+<opponentSUpper>182</opponentSUpper>
+<opponentSLower>124</opponentSLower>
+<opponentVUpper>184</opponentVUpper>
+<opponentVLower>32</opponentVLower>
 <robotMinSize>40</robotMinSize>
 <greenMinSize>10</greenMinSize>
 <ballMinSize>10</ballMinSize>
