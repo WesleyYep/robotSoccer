@@ -23,11 +23,6 @@ public class RobotController {
 		
 		for (int i=0; i < 11; i++) {
 
-			if (angularVelocity[i] == 1.11 && linearVelocity[i] == 1.11) {
-				System.out.print("     : send  - " + System.currentTimeMillis());
-				System.out.println("");
-			}
-
 			double tempLin = linearVelocity[i];
 			double tempAng = angularVelocity[i];
 			
