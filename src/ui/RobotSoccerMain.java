@@ -166,6 +166,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 							b.setSelected(false);
 						}
 					}
+
 					bots.testForward();
 					manualControl = true;
 				} else {

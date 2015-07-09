@@ -118,6 +118,8 @@ public class Robots {
 		double[] linearVelocity = new double[11];
 		double[] angularVelocity = new double[11];
 
+		//System.out.println(bots[0].linearVelocity + " " + bots[0].getXPosition() + " " + bots[0].getYPosition() + " " + System.currentTimeMillis());
+
 		for (int i = 0; i < 11; i++) {
 			if (i < 5) {
 				linearVelocity[i] = bots[i].linearVelocity;

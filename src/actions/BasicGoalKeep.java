@@ -47,7 +47,7 @@ public class BasicGoalKeep extends Action {
 
 		//clear the ball
 		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
-			System.out.println(targetTheta);
+			//System.out.println(targetTheta);
 			if (ballY > r.getYPosition() && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
 				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 1.5, false);
 				return;
@@ -61,6 +61,7 @@ public class BasicGoalKeep extends Action {
 
 		//first phase getting the robot to the goal line
 		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
+			///ystem.out.println("getting to the goal");
 			int targetPos = 0;
 			if (ballY >= topPoint && ballY <= bottomPoint ) {
 				targetPos = (int) ballY;
@@ -72,10 +73,83 @@ public class BasicGoalKeep extends Action {
 				targetPos = bottomPoint;
 			}
 			setVelocityToTarget(goalLine,targetPos, false,false);
+
+			//code start for getting stuck in the inner goal area
+			double pointY1 = Field.OUTER_BOUNDARY_HEIGHT/2 - Field.INNER_GOAL_AREA_HEIGHT/2 + 3.5;
+			double pointY2 = Field.OUTER_BOUNDARY_HEIGHT/2 + Field.INNER_GOAL_AREA_HEIGHT/2 - 3.5;
+
+			double angleLeft = 0;
+			double angleRight = 0;
+
+			double roundedXPosition = Math.round(r.getXPosition()*10)/10;
+			double roundedYPosition = Math.round(r.getYPosition()*10)/10;
+
+			//finding the angle in the inner goal area so the robot can get out of the inner area
+			/*
+			 ---           -----
+			   |\\      //|
+			   | \\    // |
+			   |  \\  //  |
+			   |___\\//___|
+				   ^  ^
+				   Angles
+			 */
+
+			if (roundedYPosition == pointY1) {
+				//System.out.println("angle left is 0");
+				angleLeft = 0;
+				double adjacent = Math.sqrt(Math.pow((0-(-15)),2) + Math.pow((roundedYPosition-roundedYPosition),2));
+				double hypothenus = Math.sqrt(Math.pow((0 - (-15)), 2) + Math.pow((pointY2 - roundedYPosition), 2));
+
+				angleRight = Math.acos(adjacent/hypothenus);
+			} else if ( roundedYPosition == pointY2) {
+				//System.out.println("angle right is 0");
+				angleRight = 0;
+				double adjacent = Math.sqrt(Math.pow((roundedXPosition-(-15)),2) + Math.pow((roundedYPosition-roundedYPosition),2));
+				double hypothenus = Math.sqrt(Math.pow((0 - (-15)), 2) + Math.pow((pointY1 - roundedYPosition), 2));
+				angleLeft = Math.acos(adjacent/hypothenus);
+			} else {
+				//System.out.println("both calculating");
+				double leftAdjacent = Math.sqrt(Math.pow((roundedXPosition-(-15)),2) + Math.pow((roundedYPosition-roundedYPosition),2));
+				double leftHypothenus = Math.sqrt(Math.pow((0 - (-15)), 2) + Math.pow((pointY1 - roundedYPosition), 2));
+				angleLeft = Math.acos(leftAdjacent/leftHypothenus);
+
+				double rightAdjacent = Math.sqrt(Math.pow((roundedXPosition-(-15)),2) + Math.pow((roundedYPosition-roundedYPosition),2));
+				double rightHypothenus = Math.sqrt(Math.pow((0 - (-15)), 2) + Math.pow((pointY2 - roundedYPosition), 2));
+
+				angleRight = Math.acos(rightAdjacent/rightHypothenus);
+			}
+
+			angleRight = Math.toDegrees(angleRight)+10;
+			angleLeft  = Math.toDegrees(angleLeft)+10;
+			//System.out.println("angle right: " + angleRight + " angle left: " + angleLeft + "robot theta: " + r.getTheta() );
+
+			if (r.getXPosition() <= 4.2 ) {
+				//System.out.println("here");
+				if (r.getXPosition() > 0) {
+					double adjacent =  Math.sqrt(Math.pow((roundedXPosition-(0)),2) + Math.pow((roundedYPosition-roundedYPosition),2));
+					double leftHypotenuse =  Math.sqrt(Math.pow((roundedXPosition-(0)),2) + Math.pow((roundedYPosition-pointY1),2));
+					double rightHypotenuse =  Math.sqrt(Math.pow((roundedXPosition-(0)),2) + Math.pow((roundedYPosition-pointY2),2));
+
+					double tempLeftAngle = Math.toDegrees(Math.acos(adjacent/leftHypotenuse));
+					double tempRightAngle = Math.toDegrees(Math.acos(adjacent/rightHypotenuse));
+					System.out.println("angle right: " + tempRightAngle + " angle left: " + tempLeftAngle + "robot theta: " + r.getTheta() );
+					if ( r.getTheta() > (55) || r.getTheta() < -1*(55)) {
+						r.linearVelocity = 0;
+					}
+				} else {
+					if ( r.getTheta() > angleLeft || r.getTheta() < -1*angleRight ) {
+						r.linearVelocity = 0;
+					}
+				}
+			}
+			//code end for getting stuck in the inner goal area
+
 			fixPosition = true;
 		}
 		//correct it's position
-		else if (fixPosition) {;
+		else if (fixPosition) {
+			System.out.println("fixing position");
 			if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
 			//	System.out.println("turning negative: " + r.getTheta() );
 				r.angularVelocity = -Math.PI/5;
@@ -98,7 +172,7 @@ public class BasicGoalKeep extends Action {
 		}
 		//ball tracking
 		else{
-
+			System.out.println("ball tracking");
 			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
 			double xDiff = Math.round(ballX-lastBallX);

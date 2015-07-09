@@ -183,6 +183,8 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			//Point2D p = VisionController.imagePosToActualPos(ballCoord.x, ballCoord.y);
 			ball.setX(p.x); //hardcoded for now
 			ball.setY(p.y);
+
+
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);

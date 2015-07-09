@@ -73,7 +73,29 @@ public class testSelfMadeObstacle extends Action {
             }
         }
 
-       // System.out.println(obstacleTheta + " " + obstacleDist + " " + obstacleX + " " + obstacleY);
+
+        /*
+        if (r.getXPosition() - ballX > 25|| Math.abs(r.getTheta()) > 60) {
+            double tempTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+            double tempDifference = tempTheta - Math.toRadians(r.getTheta());
+            if (tempDifference > Math.PI) {
+                tempDifference -= (2 * Math.PI);
+            } else if (tempDifference < -Math.PI) {
+                tempDifference += (2 * Math.PI);
+            }
+            tempDifference = Math.toDegrees(tempDifference);
+            tempTheta = tempDifference;
+
+            if (Math.abs(tempTheta) < 50) {
+                double tempDist = Math.sqrt(Math.pow((obs.getXPosition()-r.getXPosition()),2) + Math.pow((obs.getYPosition()-r.getYPosition()),2));
+                if (tempDist < obstacleDist) {
+                    obstacleDist = tempDist;
+                    obstacleTheta = tempTheta;
+                    obstacleY = obs.getYPosition();
+                    obstacleX = obs.getXPosition();
+                }
+            }
+        } */
 
         double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
