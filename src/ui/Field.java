@@ -62,6 +62,7 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 	private boolean isMouseDrag;
     private boolean isManualMovement;
+    private int movingOpponentRobot = -1; //-1 means no robot being moved
 
 	private CurrentStrategy currentStrategy;
     private Situation currentSituation;
@@ -343,25 +344,33 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	 */
 
 	private void isRobotFocused(Rectangle r) {
-		Rectangle botRect;
-
-		// Casts so it may not be super accurate.
-		for (Robot element : bots.getRobots()) {
-			botRect = new Rectangle(
-					(int)(element.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2)),
-					(int)(element.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2)),
-					Robot.ROBOT_WIDTH*SCALE_FACTOR,
-					Robot.ROBOT_HEIGHT*SCALE_FACTOR
-					);
-
-			if (botRect.intersects(r) || botRect.contains(new Point(r.x, r.y))) {
-				element.setFocus(true);
-			} else {
-				element.setFocus(false);
-			}
-
-		}
+        // Casts so it may not be super accurate.
+        for (Robot element : bots.getRobots()) {
+            checkFocus(element, r);
+        }
 	}
+
+    private void isOpponentFocused(Rectangle r) {
+        // Casts so it may not be super accurate.
+        for (Robot element : opponentBots.getRobots()) {
+            checkFocus(element, r);
+        }
+    }
+
+    private void checkFocus(Robot element, Rectangle r) {
+        Rectangle botRect = new Rectangle(
+                (int)(element.getXPosition()*SCALE_FACTOR+ORIGIN_X-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2)),
+                (int)(element.getYPosition()*SCALE_FACTOR+ORIGIN_Y-(Robot.ROBOT_WIDTH*SCALE_FACTOR/2)),
+                Robot.ROBOT_WIDTH*SCALE_FACTOR,
+                Robot.ROBOT_HEIGHT*SCALE_FACTOR
+        );
+
+        if (botRect.intersects(r) || botRect.contains(new Point(r.x, r.y))) {
+            element.setFocus(true);
+        } else {
+            element.setFocus(false);
+        }
+    }
 
 	private void isBallFocused(Rectangle r) {
 		Rectangle ballRect = new Rectangle(
@@ -383,12 +392,18 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	public void mouseDragged(MouseEvent e) {
 		isMouseDrag = true;
 		endPoint = e.getPoint();
+        if (movingOpponentRobot >= 0) {
+            Robot or = opponentBots.getRobot(movingOpponentRobot);
+            or.setX((e.getX()-Field.ORIGIN_X)/Field.SCALE_FACTOR);
+            or.setY((e.getY()-Field.ORIGIN_Y)/Field.SCALE_FACTOR);
+        }
 
 		repaint();
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {
+    }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -414,10 +429,20 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
                 }
             }
         }
+        Rectangle r = new Rectangle(startPoint);
+        r.add(startPoint);
+        isOpponentFocused(r);
+        movingOpponentRobot = -1;
+        for (Robot or : opponentBots.getRobots()) {
+            if (or.isFocused()) {
+                movingOpponentRobot = or.getId();
+            }
+        }
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+        movingOpponentRobot = -1;
         if (SwingUtilities.isLeftMouseButton(e)) {
             endPoint = e.getPoint();
             isMouseDrag = false;
