@@ -47,6 +47,13 @@ null-null
 null-null
 null-null
 -----
+Role:PenaltyStraight
+IsFirst2Seconds-actions.PenaltyStraight-[]-[]
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+-----
 //for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
 Play:kickOffSetUp
 gk
@@ -86,6 +93,13 @@ moveAndTurn:0:60:60:110
 Play:goalKick
 gk
 chaseBall
+defenderTop
+chaseBall
+defender
+-----
+Play:penaltyDirect
+gk
+PenaltyStraight
 defenderTop
 chaseBall
 defender

@@ -17,6 +17,7 @@ import jssc.SerialPortList;
 import net.miginfocom.swing.MigLayout;
 import org.opencv.core.Mat;
 import strategy.CurrentStrategy;
+import strategy.GameState;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
@@ -512,7 +513,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
                 disableManualMovement();
                 gameTick.runStrategy(true);
 				stratStatusLbl.setText("Running");
-				System.gc();
+                GameState.getInstance().setLastStartedTime();
+                System.gc();
 			}
 
 		});
@@ -531,6 +533,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
         runSetPlayButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                GameState.getInstance().setLastStartedTime();
                 setPlay(false);
             }
         });
@@ -538,7 +541,8 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		runSetUpPlayButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setPlay(true);
+                System.gc();
+                setPlay(true);
 			}
 		});
 

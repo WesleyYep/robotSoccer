@@ -13,7 +13,8 @@ public class Criterias {
             new PointingAtBall(),
             new PositiveSituation(),
             new NegativeSituation(),
-            new IsSpinningFast()
+            new IsSpinningFast(),
+            new IsFirst2Seconds()
 
     };
 

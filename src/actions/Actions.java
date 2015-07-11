@@ -39,6 +39,7 @@ public class Actions {
           add(new MoveAndTurn());
           add(new Circle());
           add(new BlockOpponentClosestToBall());
+          add(new PenaltyStraight());
         add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
       }};
 
