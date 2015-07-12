@@ -2,7 +2,6 @@ package actions;
 
 import bot.Robot;
 import data.Coordinate;
-import javafx.scene.shape.MoveTo;
 import strategy.Action;
 
 /**

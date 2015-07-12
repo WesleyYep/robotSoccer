@@ -1,0 +1,321 @@
+
+
+FUNCTION_BLOCK selfMade	// Block definition (there may be more than one block per file)
+
+VAR_INPUT				// Define input variables
+	targetDist : REAL;
+	robotPosition : REAL;
+	robotDirection : REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	linearVelocity: REAL;
+	angularVelocity: REAL;
+END_VAR
+
+FUZZIFY targetDist
+	TERM close := trian -73.2 0 50;
+	TERM middle := trian 25 50 75;
+	TERM far := trape 75 125 412 412;
+END_FUZZIFY
+
+FUZZIFY robotPosition
+	TERM backLeftStraight := trian -185 -180 -175;
+	TERM backLeftFront := trian -175 -165 -155;
+	TERM backLeftSide := trian -155 -145 -135;
+	TERM backLeftRest := trian -135 -112.5 -90;
+	TERM frontLeftRest := trian -90 -50 -10;
+	TERM frontLeft := trape -10 -5 0 0;
+	TERM frontRight:= trape 0 0 5 10;
+	TERM frontRightRest := trian 10 50 90;
+	TERM backRightRest := trian 90 112.5 135;
+	TERM backRightSide := trian 135 145 155;
+	TERM backRightFront := trian  155 165 175;
+	TERM backRightStraight :=  trian 175 180 185;
+END_FUZZIFY
+
+FUZZIFY robotDirection
+	TERM front := trian -90 0 90;
+	TERM left := trian  -180 -90 0;
+	TERM right := trian 0 90 180;
+	TERM backLeft := trian -270 -180 -90;
+	TERM backRight := trian 90 180 270;
+END_FUZZIFY
+
+
+DEFUZZIFY linearVelocity
+	TERM verySlow :=  trian -0.45 0 0.45;
+ 	TERM slow := trian 0 0.35 0.7;
+	TERM medium := trian 0.5 0.7 1;
+	TERM fast := trian 0.7 1 1.25;
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+DEFUZZIFY angularVelocity
+	TERM LR := trian -9 -7 -5;
+	TERM MR := trian -7 -5 -1;
+	TERM SR := trian -2 -0.5 0;
+	TERM zero := trian -0.5 0 0.5;
+	TERM SL := trian 0 0.5 2;
+	TERM ML := trian 1 5 7;
+	TERM LL := trian 5 7 9;
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	//RULE 1 : IF service IS poor OR food IS rancid THEN tip IS cheap;
+	//RULE 2 : IF service IS good THEN tip IS average; 
+	//RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;	
+	
+	/*
+	//==========================
+	//frontLeft
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is front THEN angularVelocity is LL;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is left THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeft AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is MR;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is front THEN angularVelocity is LL;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is left THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeft AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is MR;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is front THEN angularVelocity is LL;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is left THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeft AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is MR;
+	//===========================
+	
+	
+	//==========================
+	//frontLeftRest
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is front THEN angularVelocity is LR;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is left THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is fast;
+	RULE 1: IF targetDist is far AND robotPosition is frontLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is zero;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is front THEN angularVelocity is LR;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is left THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is frontLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is zero;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is front THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is front THEN angularVelocity is LR;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is frontLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is zero;
+	//===========================
+	*/
+	
+	//==========================
+	//backLeftRest
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is front THEN angularVelocity is LL;	
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is left THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is right THEN linearVelocity is medium;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is medium;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is SL;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is front THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is front THEN angularVelocity is LL;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is right THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is ML;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is front THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is front THEN angularVelocity is LL;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is left THEN angularVelocity is LL;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftRest AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is ML;
+	//===========================
+
+	/*
+	//============================
+	//backLeftSide
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is front THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is front THEN angularVelocity is LR;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is right THEN linearVelocity is medium;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is right THEN angularVelocity is SR;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is medium;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftSide AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is ML;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is front THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is front THEN angularVelocity is LR;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is right THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is right THEN angularVelocity is SR;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftSide AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is ML;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is front THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is front THEN angularVelocity is LR;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is right THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is medium;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftSide AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is ML;
+	//===========================
+	
+	//==========================
+	//backLeftFront
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is front THEN linearVelocity is fast;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is front THEN angularVelocity is SR;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is left THEN angularVelocity is ML;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is right THEN angularVelocity is LL;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftFront AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is LL;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is front THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is front THEN angularVelocity is SR;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is left THEN angularVelocity is LL;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftFront AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is LL;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is front THEN angularVelocity is SR;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is left THEN angularVelocity is LL;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is right THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftFront AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is LL;
+	//===========================
+	
+	//==========================
+	//backLeftStraight
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is front THEN linearVelocity is fast;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is front THEN angularVelocity is zero;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backLeftStraight AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is MR;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is front THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is front THEN angularVelocity is zero;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backLeftStraight AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is MR;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is front THEN angularVelocity is zero;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backLeftStraight AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is MR;
+	//===========================
+	
+	//==========================
+	//backRightStraight
+	//==========================
+	//far
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is front THEN linearVelocity is fast;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is front THEN angularVelocity is zero;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is far AND robotPosition is backRightStraight AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is LL;
+	
+	//middle
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is front THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is front THEN angularVelocity is zero;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is right THEN linearVelocity is medium;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is middle AND robotPosition is backRightStraight AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is LL;
+	
+	//slow
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is front THEN linearVelocity is slow;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is front THEN angularVelocity is zero;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is left THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is left THEN angularVelocity is MR;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is right THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is right THEN angularVelocity is ML;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is backLeft OR robotDirection is backRight THEN linearVelocity is verySlow;
+	RULE 1: IF targetDist is close AND robotPosition is backRightStraight AND robotDirection is backLeft OR robotDirection is backRight THEN angularVelocity is LL;
+	//=========================== 
+	*/
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

@@ -61,7 +61,7 @@ public class BasicGoalKeep extends Action {
 
 		//first phase getting the robot to the goal line
 		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
-			///ystem.out.println("getting to the goal");
+			System.out.println("getting to the goal");
 			int targetPos = 0;
 			if (ballY >= topPoint && ballY <= bottomPoint ) {
 				targetPos = (int) ballY;
@@ -149,7 +149,7 @@ public class BasicGoalKeep extends Action {
 		}
 		//correct it's position
 		else if (fixPosition) {
-			System.out.println("fixing position");
+			//System.out.println("fixing position " + fixPosition );
 			if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
 			//	System.out.println("turning negative: " + r.getTheta() );
 				r.angularVelocity = -Math.PI/5;
@@ -172,7 +172,7 @@ public class BasicGoalKeep extends Action {
 		}
 		//ball tracking
 		else{
-			System.out.println("ball tracking");
+			//System.out.println("ball tracking " + fixPosition);
 			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
 			double xDiff = Math.round(ballX-lastBallX);
@@ -344,7 +344,7 @@ public class BasicGoalKeep extends Action {
 		if (targetDist <=1.7) {
 			targetDist = 0;
 			targetTheta = 0;
-			fixPosition = true;
+			//fixPosition = true;
 		}
 		// targetTheta = Math.round(targetTheta/5)*5;
 
@@ -352,8 +352,8 @@ public class BasicGoalKeep extends Action {
 
 		fb.setVariable("angleError", targetTheta);
 		fb.setVariable("distanceError", Math.abs(targetDist));
-		//      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
-		//      		+ r.getYPosition() + " targetDist " + targetDist);
+		     System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
+		      		+ r.getYPosition() + " targetDist " + targetDist);
 
 		// Evaluate
 		fb.evaluate();
@@ -372,7 +372,6 @@ public class BasicGoalKeep extends Action {
 		double linear =  (right+left)/2;
 		double angular = (right-left)*(2/0.135);
 		//    System.out.println("right :" + right + "left " + left);
-
 		r.linearVelocity = linear*2.5;
 		r.angularVelocity = angular*1;
 

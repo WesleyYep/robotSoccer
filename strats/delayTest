@@ -1,3 +1,10 @@
+Role:entry
+permanent-actions.MoveToFacing-[fixed point1 x, fixed point1 y, direction facing]-[110, 115, 0]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:wait
 permanent-actions.Wait-[]-[]
 null-null
@@ -5,20 +12,13 @@ null-null
 null-null
 null-null
 -----
-Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
-null-null
-null-null
-null-null
-null-null
------
 Play:new play
+entry
 wait
 wait
 wait
 wait
-gk
 -----
-Situation:new situation 1:27:3:458:360
+Situation:new situation 1:30:3:452:363
 new play
 -----
