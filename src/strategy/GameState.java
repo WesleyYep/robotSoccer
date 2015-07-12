@@ -9,6 +9,7 @@ public class GameState {
 
 	private static GameState instance = null;
 	private List<String> whatsGoingOn = new ArrayList<String>();
+    private long lastStartedTime = 0;
 	
 	public static GameState getInstance() {
 		if (instance == null) {
@@ -30,6 +31,13 @@ public class GameState {
 	public boolean isGoingOn(String action) {
 		return whatsGoingOn.contains(action);
 	}
-	
+
+    public long getLastStartedTime() {
+        return lastStartedTime;
+    }
+
+    public void setLastStartedTime() {
+        lastStartedTime = System.currentTimeMillis();
+    }
 
 }

@@ -347,7 +347,10 @@ public class CurrentStrategy {
                             Action firstAction = roleToAdd.getActions()[0];
                             Object[] params = firstAction.getParameters().toArray();
                             for (int j = 0; j < params.length; j++) {
-                                if (lineArray.length >= params.length) {
+                                if (lineArray.length > params.length) {
+                                    if (firstAction.getName().equals("PenaltySpin")) {
+                                        System.out.println("wtf");
+                                    }
                                     firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
                                 } else {
                                     firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
