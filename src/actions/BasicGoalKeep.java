@@ -61,7 +61,7 @@ public class BasicGoalKeep extends Action {
 
 		//first phase getting the robot to the goal line
 		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
-			System.out.println("getting to the goal");
+			//System.out.println("getting to the goal");
 			int targetPos = 0;
 			if (ballY >= topPoint && ballY <= bottomPoint ) {
 				targetPos = (int) ballY;
@@ -133,7 +133,7 @@ public class BasicGoalKeep extends Action {
 
 					double tempLeftAngle = Math.toDegrees(Math.acos(adjacent/leftHypotenuse));
 					double tempRightAngle = Math.toDegrees(Math.acos(adjacent/rightHypotenuse));
-					System.out.println("angle right: " + tempRightAngle + " angle left: " + tempLeftAngle + "robot theta: " + r.getTheta() );
+				//	System.out.println("angle right: " + tempRightAngle + " angle left: " + tempLeftAngle + "robot theta: " + r.getTheta() );
 					if ( r.getTheta() > (55) || r.getTheta() < -1*(55)) {
 						r.linearVelocity = 0;
 					}
@@ -352,8 +352,8 @@ public class BasicGoalKeep extends Action {
 
 		fb.setVariable("angleError", targetTheta);
 		fb.setVariable("distanceError", Math.abs(targetDist));
-		     System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
-		      		+ r.getYPosition() + " targetDist " + targetDist);
+	//	     System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
+	//	      		+ r.getYPosition() + " targetDist " + targetDist);
 
 		// Evaluate
 		fb.evaluate();

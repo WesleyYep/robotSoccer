@@ -57,7 +57,7 @@
 <robotMinSize>40</robotMinSize>
 <greenMinSize>10</greenMinSize>
 <ballMinSize>10</ballMinSize>
-<robotMaxSize>111</robotMaxSize>
+<robotMaxSize>167</robotMaxSize>
 <greenMaxSize>100</greenMaxSize>
 <ballMaxSize>100</ballMaxSize>
 </configuration>

@@ -61,6 +61,7 @@ public class WebcamDisplayPanel extends JPanel {
 			System.err.println("Could not find zoom.png file");
 		}
 
+
         webcamImageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
