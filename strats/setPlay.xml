@@ -74,7 +74,7 @@ gk
 moveAndTurn:90:110:90:110
 moveAndTurn:90:110:90:70
 moveAndTurn:90:110:80:90
-moveAndTurn:90:110:100:90
+defender
 -----
 Play:KickOffStart
 gk
