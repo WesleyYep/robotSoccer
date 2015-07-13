@@ -19,9 +19,9 @@ public class PenaltySpin extends Action {
     public void execute() {
         bot.linearVelocity = 0.5;
         if (parameters.get("spin") == 0) {
-            bot.angularVelocity = -12;
+            bot.angularVelocity = -7;
         } else {
-            bot.angularVelocity = 12;
+            bot.angularVelocity = 7;
         }
     }
 

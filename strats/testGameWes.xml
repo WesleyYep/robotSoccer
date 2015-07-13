@@ -47,6 +47,13 @@ null-null
 null-null
 null-null
 -----
+Role:blockingDefender
+permanent-actions.BlockOpponentClosestToBall-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:waitingStrikerTop
 permanent-actions.StrikerTest-[startingY, startingX]-[105, 150]
 null-null
@@ -85,14 +92,14 @@ null-null
 Play:defendTop
 gk
 defender
-chaseBall
+blockingDefender
 chaseBall
 chaseBall
 -----
 Play:defendBot
 gk
 defender
-chaseBall
+blockingDefender
 chaseBall
 chaseBall
 -----
