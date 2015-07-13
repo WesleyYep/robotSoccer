@@ -1,15 +1,11 @@
 package actions;
 
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
-import org.opencv.core.Point;
-
-import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
-import strategy.Action;
 import bot.Robot;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import org.opencv.core.Point;
+import strategy.Action;
+
+import java.util.ArrayList;
 
 public class MoveToFacing  extends Action {
 
@@ -22,7 +18,8 @@ public class MoveToFacing  extends Action {
 	private boolean stationary= false;
 	private double previousX = 0;
 	private double previousY = 0;
-    
+    private double highestY = 0;
+    private double lowestY = 180;
     //non-static initialiser block
     {
         parameters.put("fixed point1 x", 140);
@@ -121,10 +118,16 @@ public class MoveToFacing  extends Action {
         if (r.getXPosition() == previousX && r.getYPosition() == previousY) {
         	stationary = true;
         }
-        System.out.println(stationary + " " + currentPointIndex);
+        //System.out.println(stationary + " " + currentPointIndex);
         previousX = r.getXPosition();
         previousY = r.getYPosition();
+
+        r.linearVelocity = 0.5;
+        r.angularVelocity = 7;
         //System.out.println(r.linearVelocity + " " + r.angularVelocity);
+        if (r.getYPosition() > highestY) highestY = r.getYPosition();
+        if (r.getYPosition() < lowestY) lowestY = r.getYPosition();
+        System.out.println(highestY + " " + lowestY);
     }
 
     /*
