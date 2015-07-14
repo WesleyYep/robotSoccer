@@ -63,6 +63,8 @@ public class MoveToSpot extends Action{
 
         if (avoidObstacles) {
             double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
+
+
             for (int i = 0; i < 5; i++) {
                 if (!teamBots.getRobot(i).equals(r)) {
                     Robot obs = teamBots.getRobot(i);

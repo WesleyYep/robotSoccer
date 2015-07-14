@@ -231,9 +231,10 @@ public class WebcamDisplayPanel extends JPanel {
         Core.subtract(original, image, image);
 
         return image;
+
     }
 
-    private org.opencv.core.Point toPoint(Point2D p) {
+	private org.opencv.core.Point toPoint(Point2D p) {
         return new org.opencv.core.Point(p.getX(), p.getY());
     }
 

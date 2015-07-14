@@ -1,5 +1,5 @@
 Role:entry
-permanent-actions.MoveToFacing-[fixed point1 x, fixed point1 y, direction facing]-[110, 115, 0]
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[180, 90]
 null-null
 null-null
 null-null
@@ -20,8 +20,8 @@ null-null
 null-null
 -----
 Play:new play
-goalKeeper
 wait
+entry
 wait
 wait
 wait

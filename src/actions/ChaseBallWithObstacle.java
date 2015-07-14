@@ -1,7 +1,6 @@
 package actions;
 
 import bot.Robot;
-import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import strategy.GameState;
@@ -49,7 +48,9 @@ public class ChaseBallWithObstacle extends Action {
 
 
         //see if robot is not in positive situation
+        /*
         if (ballX < r.getXPosition()) {
+            System.out.println("here");
             int yPos;
             if (ballY > 90) {
                 yPos = (int)(60*Math.random()) + 120;
@@ -59,6 +60,16 @@ public class ChaseBallWithObstacle extends Action {
             oldDistanceToTarget = newTargetDistance;
             MoveToSpot.move(r, new Coordinate(30, yPos), 1, true);
             return;
+        } */
+
+        if (ballX < r.getXPosition()) {
+            int yPos;
+            if (ballY > 90) {
+                yPos = (int)(60*Math.random()) + 120;
+            } else {
+                yPos = (int)(60*Math.random());
+            }
+            y = yPos;
         }
 
         double targetDist;
@@ -102,6 +113,7 @@ public class ChaseBallWithObstacle extends Action {
 
 
         double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
+        /*
         for (int i=0; i<5; i++) {
             if (!teamRobots.getRobot(i).equals(r)) {
                 Robot obs = teamRobots.getRobot(i);
@@ -148,7 +160,30 @@ public class ChaseBallWithObstacle extends Action {
                     obstacleX = obs.getXPosition();
                 }
             }
+        } */
+
+        if (ballX < r.getXPosition()) {
+            double tempTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+            double tempDifference = tempTheta - Math.toRadians(r.getTheta());
+            if (tempDifference > Math.PI) {
+                tempDifference -= (2 * Math.PI);
+            } else if (tempDifference < -Math.PI) {
+                tempDifference += (2 * Math.PI);
+            }
+            tempDifference = Math.toDegrees(tempDifference);
+            tempTheta = tempDifference;
+
+            if (Math.abs(tempTheta) < 50) {
+                double tempDist = Math.sqrt(Math.pow((ballX - r.getXPosition()), 2) + Math.pow((ballY - r.getYPosition()), 2));
+                if (tempDist < obstacleDist) {
+                    obstacleDist = tempDist;
+                    obstacleTheta = tempTheta;
+                    obstacleY = ballY;
+                    obstacleX = ballX;
+                }
+            }
         }
+
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
 
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
