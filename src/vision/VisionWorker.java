@@ -3,6 +3,7 @@ package vision;
 import data.RobotData;
 import data.VisionData;
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import ui.ColourPanel;
@@ -12,6 +13,7 @@ import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +77,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         imageLbl = new JLabel();
         testPanel.add(imageLbl);
         testFrame.add(testPanel);
+        testFrame.setSize(new Dimension(600,600));
         testFrame.setVisible(true);
 
 	}
@@ -230,7 +233,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
             Imgproc.erode(teamBinary, teamBinary, erodeKernel);
             Imgproc.dilate(teamBinary, teamBinary, dilateKernel);
 
-    //        distanceTransform(teamBinary);
+      //      teamBinary = distanceTransform(teamBinary);
 
             Imgproc.findContours(teamBinary, teamContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -348,17 +351,21 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
 
-    private void distanceTransform(Mat teamBinary) {
+    private Mat distanceTransform(Mat teamBinary) {
         Mat dist =  new Mat(teamBinary.size(), CvType.CV_8UC1);
-        Imgproc.distanceTransform(teamBinary, dist, Imgproc.CV_DIST_L2, 0);
-        Core.normalize(dist, dist, 0, 1., Core.NORM_MINMAX);
-
+        Imgproc.distanceTransform(teamBinary, dist, Imgproc.CV_DIST_L2, 3);
+        Core.normalize(dist, dist, -50, 100, Core.NORM_MINMAX);
+   //     Imgproc.threshold(dist, dist, 40, 100, Imgproc.THRESH_BINARY);
+        Mat kernel1 = Mat.ones(3, 3, CvType.CV_8UC1);
+        Imgproc.filter2D(dist, dist, CvType.CV_32F, kernel1);
         try {
             imageLbl.setIcon(new ImageIcon(utils.Image.toBufferedImage(dist)));
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+        dist.convertTo(dist, CvType.CV_8U);
+        return dist;
     }
 
     private int identify(RobotData rd, Mat image) {
