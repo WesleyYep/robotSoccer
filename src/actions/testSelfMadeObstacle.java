@@ -7,6 +7,8 @@ import strategy.Action;
 public class testSelfMadeObstacle extends Action {
 
     private double error = 2.5;
+    private double highestTheta = -1000;
+    private double lowestTheta = 1000;
 
     //non-static initialiser block
     {
@@ -19,12 +21,24 @@ public class testSelfMadeObstacle extends Action {
     	//System.out.println("obs");
         int x = parameters.get("fixed point1 x");
         int y = parameters.get("fixed point1 y");
-        setVelocityToTarget(x,y,false,false);
+        //setVelocityToTarget(x,y,true,false);
+        Robot r = bot;
+
+        r.linearVelocity = 0;
+        r.angularVelocity = 0;
+
+        if (r.getTheta() > highestTheta) highestTheta = r.getTheta();
+        if (r.getTheta() < lowestTheta) lowestTheta = r.getTheta();
+        System.out.println(highestTheta + " " + lowestTheta);
+
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bot;
+
+
         double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
+        /*
         for (int i=0; i<5; i++) {
         	if (!teamRobots.getRobot(i).equals(r)) {
         		Robot obs = teamRobots.getRobot(i);
@@ -72,6 +86,7 @@ public class testSelfMadeObstacle extends Action {
                 }
             }
         }
+        */
 
 
         /*
@@ -87,12 +102,13 @@ public class testSelfMadeObstacle extends Action {
             tempTheta = tempDifference;
 
             if (Math.abs(tempTheta) < 50) {
-                double tempDist = Math.sqrt(Math.pow((obs.getXPosition()-r.getXPosition()),2) + Math.pow((obs.getYPosition()-r.getYPosition()),2));
+                double tempDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
                 if (tempDist < obstacleDist) {
+                    System.out.println("ball is obs " + " " + System.currentTimeMillis() );
                     obstacleDist = tempDist;
                     obstacleTheta = tempTheta;
-                    obstacleY = obs.getYPosition();
-                    obstacleX = obs.getXPosition();
+                    obstacleY = ballY;
+                    obstacleX = ballX;
                 }
             }
         } */
@@ -129,6 +145,20 @@ public class testSelfMadeObstacle extends Action {
         if (tempAngle < -270) {
             tempAngle = 0;
         }*/
+
+        boolean front  = true;
+        if (targetTheta > 90 || targetTheta < -90) {
+            front = false;
+        }
+
+        if (!front && reverse) {
+            if (targetTheta < 0) {
+                targetTheta = -180 - targetTheta;
+            }
+            else if (targetTheta > 0) {
+                targetTheta = 180 - targetTheta;
+            }
+        }
         
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
@@ -166,18 +196,15 @@ public class testSelfMadeObstacle extends Action {
 //            					+ " x: " + r.getXPosition() + " y: " + r.getYPosition()
 //            					+ " r theta: " + r.getTheta() + " t theta: " + targetTheta
 //            					+ " t dist" + targetDist + " time: " + System.currentTimeMillis());
+        if (!front &&reverse) {
+            r.linearVelocity *= -1;
+            r.angularVelocity *= -1;
+        }
 
         if (targetDist <=3.75) {
             r.linearVelocity = 0;
             r.angularVelocity = 0;
         }
-      //   System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-        //		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-
-        //    System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
-//             r.linearVelocity = 0;
-//            r.angularVelocity = 0;
-//        	
 
         // }
         return;
