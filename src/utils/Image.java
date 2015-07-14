@@ -2,10 +2,16 @@ package utils;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.highgui.Highgui;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * <p>Consists of static utility classes when working with images</p>
@@ -39,21 +45,36 @@ public class Image {
      */
     
     public static BufferedImage toBufferedImage(Mat matrix) {
-        int type = BufferedImage.TYPE_BYTE_GRAY;
+        MatOfByte bytemat = new MatOfByte();
 
-        if ( matrix.channels() > 1 ) {
-            type = BufferedImage.TYPE_3BYTE_BGR;
+        Highgui.imencode(".jpg", matrix, bytemat);
+
+        byte[] bytes = bytemat.toArray();
+
+        InputStream in = new ByteArrayInputStream(bytes);
+
+        try {
+            BufferedImage img = ImageIO.read(in);
+            return  img;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        int bufferSize = matrix.channels()*matrix.cols()*matrix.rows();
-        byte [] b = new byte[bufferSize];
-
-        matrix.get(0, 0, b); // get all the pixels
-        BufferedImage image = new BufferedImage(matrix.cols(), matrix.rows(), type);
-        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-
-        System.arraycopy(b, 0, targetPixels, 0, b.length);
-        return image;
+//        int type = BufferedImage.TYPE_BYTE_GRAY;
+//
+//        if ( matrix.channels() > 1 ) {
+//            type = BufferedImage.TYPE_3BYTE_BGR;
+//        }
+//
+//        int bufferSize = matrix.channels()*matrix.cols()*matrix.rows();
+//        byte [] b = new byte[bufferSize];
+//
+//        matrix.get(0, 0, b); // get all the pixels
+//        BufferedImage image = new BufferedImage(matrix.cols(), matrix.rows(), type);
+//        final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+//
+//        System.arraycopy(b, 0, targetPixels, 0, b.length);
+//        return image;
     }
     
     /**

@@ -230,18 +230,9 @@ public class WebcamDisplayPanel extends JPanel {
         // which will remain the original image
         Core.subtract(original, image, image);
 
-		image = distanceTransform(image);
-
         return image;
 
     }
-
-	private Mat distanceTransform(Mat image) {
-		Imgproc.distanceTransform(image, image, Imgproc.CV_DIST_L2, 3);
-		Core.normalize(image, image, 0, 1., Core.NORM_MINMAX);
-		return image;
-	}
-
 
 	private org.opencv.core.Point toPoint(Point2D p) {
         return new org.opencv.core.Point(p.getX(), p.getY());

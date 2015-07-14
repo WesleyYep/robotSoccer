@@ -11,6 +11,7 @@ import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,10 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	
 	private static final int KERNELSIZE = 3;
 
+    private JFrame testFrame = new JFrame();
+    private JPanel testPanel = new JPanel();
+    private JLabel imageLbl;
+
 	public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
 
@@ -66,6 +71,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		correctTeamContour = new ArrayList<MatOfPoint>();
 		correctGreenContour = new ArrayList<MatOfPoint>();
 		correctOpponentContour = new ArrayList<MatOfPoint>();
+
+        imageLbl = new JLabel();
+        testPanel.add(imageLbl);
+        testFrame.add(testPanel);
+        testFrame.setVisible(true);
 
 	}
 
@@ -219,6 +229,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
             Core.inRange(webcamImageMat, teamMin, teamMax, teamBinary);
             Imgproc.erode(teamBinary, teamBinary, erodeKernel);
             Imgproc.dilate(teamBinary, teamBinary, dilateKernel);
+
+    //        distanceTransform(teamBinary);
+
             Imgproc.findContours(teamBinary, teamContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             ballBinary.release();
@@ -331,9 +344,22 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     }
                 }
             }
-			
-		}
+        }
 	}
+
+
+    private void distanceTransform(Mat teamBinary) {
+        Mat dist =  new Mat(teamBinary.size(), CvType.CV_8UC1);
+        Imgproc.distanceTransform(teamBinary, dist, Imgproc.CV_DIST_L2, 0);
+        Core.normalize(dist, dist, 0, 1., Core.NORM_MINMAX);
+
+        try {
+            imageLbl.setIcon(new ImageIcon(utils.Image.toBufferedImage(dist)));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private int identify(RobotData rd, Mat image) {
 		boolean[] areasAreBlack = new boolean[4];
@@ -420,7 +446,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		listeners.add(listener);
 	}
 
-	protected int squared (int x) {
-		return x * x;
-	}
+	protected int squared (int x){
+        return x*x;
+    }
+
+
 }
