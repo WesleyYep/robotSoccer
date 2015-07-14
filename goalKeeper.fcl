@@ -1,0 +1,94 @@
+FUNCTION_BLOCK selfMade	// Block definition (there may be more than one block per file)
+
+VAR_INPUT				// Define input variables
+	targetDist : REAL;
+	targetTheta: REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	linearVelocity: REAL;
+	angularVelocity: REAL;
+END_VAR
+
+FUZZIFY targetDist
+	TERM close := trian -20 0 20;
+	TERM middle := trian 0 40 80;
+	TERM far := trape 70 125 412 412;
+END_FUZZIFY
+
+FUZZIFY targetTheta
+	TERM L6 := trian -540 -180 -120;
+	TERM L5 := trian -135 -80 -30;
+	TERM L4 := trian -45 -30 -20;
+	TERM L3 := trian -30 -20 -10;
+	TERM L2 := trian -20 -10 -5;
+	TERM L1 := trian -10 5 0;
+	TERM straight := trian -5 0 5;
+	TERM R1 := trian 0 5 10;
+	TERM R2 := trian 5 10 20;
+	TERm R3 := trian 10 20 30;
+	TERM R4 := trian 20 30 45;
+	TERM R5 := trian 30 80 135;
+	TERM R6 := trian 120 180 540;
+END_FUZZIFY
+
+DEFUZZIFY linearVelocity
+	TERM verySlow :=  trian -0.6 0 0.45;
+ 	TERM slow := trian 0 0.35 0.7;
+	TERM medium := trian 0.5 0.7 1;
+	TERM fast := trian 0.7 1 1.25;
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+DEFUZZIFY angularVelocity
+	TERM L6 := trian -9 -7 -5;
+	TERM L5 := trian -7 -5 -2;
+	TERM L4 := trian -2 -0.4 -0.3;
+	TERM L3 := trian -0.4 -0.3 -0.2;
+	TERM L2 := trian -0.3 -0.2 -0.1;
+	TERM L1 := trian -0.2 -0.1 0;
+	TERM zero := trian -0.1 0 0.1;
+	TERM R1 := trian 0 0.1 0.2;
+	TERM R2 := trian 0.1 0.2 0.3;
+	TERM R3 := trian 0.2 0.3 0.4;
+	TERM R4 := trian 0.3 0.4 2;
+	TERM R5 := trian 2 5 7;
+	TERM R6 := trian 5 7 9;
+	METHOD : COG;
+	DEFAULT :=0;
+END_DEFUZZIFY
+
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	//RULE 1 : IF service IS poor OR food IS rancid THEN tip IS cheap;
+	//RULE 2 : IF service IS good THEN tip IS average;
+	//RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;
+
+	RULE 1: IF targetTheta IS R6 Then angularVelocity is R6;
+	RULE 2: IF targetTheta is R5 then angularVelocity is R5;
+	RULE 3: if targetTheta is R4 THEN angularVelocity is R4;
+	RULE 4: if targetTheta is R3 THEN angularVelocity is R3;
+	RULE 5: if targetTheta is R2 THEN angularVelocity is R2;
+	RULE 6: if targetTheta is R1 THEN angularVelocity is R1;
+
+	RULE 7: if targetTheta is straight THEN angularVelocity is zero;
+
+	RULE 1: IF targetTheta IS L6 Then angularVelocity is L6;
+	RULE 2: IF targetTheta is L5 then angularVelocity is L5;
+	RULE 3: if targetTheta is L4 THEN angularVelocity is L4;
+	RULE 4: if targetTheta is L3 THEN angularVelocity is L3;
+	RULE 5: if targetTheta is L2 THEN angularVelocity is L2;
+	RULE 6: if targetTheta is L1 THEN angularVelocity is L1;
+
+	RULE 8: if targetDist is close THEN linearVelocity is slow;
+	RULE 9: if targetDist is middle THEN linearVelocity is slow;
+	RULE 10: if targetDist is far THEN linearVelocity is slow;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

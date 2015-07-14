@@ -367,9 +367,9 @@ public class BasicGoalKeep extends Action {
 
 		// Evaluate
 		fb.evaluate();
-             /*
-             JFuzzyChart.get().chart(fb);
-              JOptionPane.showMessageDialog(null, "nwa"); */
+
+          //   JFuzzyChart.get().chart(fb);
+         //     JOptionPane.showMessageDialog(null, "nwa");
 
 		// Show output variable's chart
 		fb.getVariable("rightWheelVelocity").defuzzify();
@@ -383,22 +383,22 @@ public class BasicGoalKeep extends Action {
 		double angular = (right-left)*(2/0.135);
 		//    System.out.println("right :" + right + "left " + left);
 		r.linearVelocity = linear*2.5;
-		r.angularVelocity = angular*1;
+		r.angularVelocity = angular*1; 
+
+		/*
+		FunctionBlock fb = loadFuzzy("goalKeeper.fcl");
+		fb.setVariable("targetTheta", targetTheta);
+		fb.setVariable("targetDist", targetDist);
+		fb.evaluate();
+		r.linearVelocity = fb.getVariable("linearVelocity").getValue();
+		r.angularVelocity = fb.getVariable("angularVelocity").getValue();
+
+		*/
 
 		if (!front &&reverse) {
 			r.linearVelocity *= -1;
 			r.angularVelocity *= -1;
 		}
-		//      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-		//  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-		//	System.out.println("x:" + x + " y: " + y + " r.x: " + r.getXPosition() + " r.y" + r.getYPosition());
-		//     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
-		//r.linearVelocity = 0;
-//            r.angularVelocity = 0;
-//        	
-	//	System.out.println("ball X Y: " + ballX + " " + ballY + " x y: " + x + " " + y + " r.x r.y: " + r.getXPosition() + " " + r.getYPosition() + " r.lin r.ang: "
-	//			+ r.linearVelocity + " " + r.angularVelocity + " timestamp: " + System.currentTimeMillis());
-		// }
 	}
 
 	private double getHalfAnglePosition() {
