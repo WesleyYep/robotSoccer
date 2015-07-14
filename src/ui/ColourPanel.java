@@ -44,6 +44,11 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     private JCheckBox autoRangeCheckBox;
     private JCheckBox contourCheckBox;
     private JCheckBox newYellowVisionCheckBox = new JCheckBox("New Yellow Vision");
+    private JCheckBox newNewYellowVisionCheckBox = new JCheckBox("New (New) Yellow Vision");
+    private JTextField robotNotPresentField = new JTextField("", 20);
+    private JButton robotNotPresentSaveButton = new JButton("Save");
+    private boolean robotNotPresentUpdated = false;
+
     private boolean isAutoRange = false;
     private boolean isContour = false;
 
@@ -182,9 +187,14 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
 
-        add(autoRangeCheckBox, "split 3");
+        add(autoRangeCheckBox, "split 4");
         add(contourCheckBox);
         add(newYellowVisionCheckBox);
+        add(newNewYellowVisionCheckBox, "wrap");
+
+        add(new JLabel("Robots not present: (eg. 1,4,5)"), "split 3");
+        add(robotNotPresentField);
+        add(robotNotPresentSaveButton);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -192,7 +202,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
                 robotMinSizeLabel.setText(robotSizeSlider.getLowValue() + "");
                 robotMaxSizeLabel.setText(robotSizeSlider.getHighValue() + "");
             }
-            
+
         });
 
         ballSizeSlider.addChangeListener(new ChangeListener() {
@@ -228,7 +238,15 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         	@Override
 			public void actionPerformed(ActionEvent arg0) {
 				isContour = !isContour;
-			}   
+			}
+
+        });
+
+        robotNotPresentSaveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                robotNotPresentUpdated = true;
+            }
         });
         
     }
@@ -237,8 +255,24 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         return newYellowVisionCheckBox.isSelected();
     }
 
+    public boolean isNewNewYellowVision() { return  newNewYellowVisionCheckBox.isSelected();}
+
     public boolean isContourActive() {
     	return isContour;
+    }
+
+    public int[] getRobotsNotSeen() {
+        int[] robotNotSeen = new int[]{0,0,0,0,0}; //0 means it is seen, 1 means not seen
+        try {
+            String[] array = robotNotPresentField.getText().split(",");
+            for (int i = 0; i < array.length; i++) {
+                robotNotSeen[Integer.parseInt(array[i]) - 1] = 1;
+            }
+            return robotNotSeen;
+        } catch (Exception e) {
+            System.out.println("number format exception on the robots not seen");
+            return new int[]{0,0,0,0,0};
+        }
     }
 
     protected void displayCircleOnIcon(MouseEvent e) {
@@ -426,7 +460,14 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 	public void setWcPanel(WebcamDisplayPanel panel) {
 		wcPanel = panel;
 	}
-		
 
+
+    public boolean isRobotNotPresentUpdated() {
+        if (robotNotPresentUpdated) {
+            robotNotPresentUpdated = false;
+            return true;
+        }
+        return false;
+    }
 }
 

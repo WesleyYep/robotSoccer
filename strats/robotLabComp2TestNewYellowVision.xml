@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-<topRightX>576.0</topRightX>
-<topRightY>24.0</topRightY>
+<topRightX>575.0</topRightX>
+<topRightY>17.0</topRightY>
 <topLeftX>49.0</topLeftX>
 <topLeftY>22.0</topLeftY>
 <bottomRightX>609.0</bottomRightX>
@@ -54,7 +54,7 @@
 <opponentSLower>123</opponentSLower>
 <opponentVUpper>138</opponentVUpper>
 <opponentVLower>58</opponentVLower>
-<robotMinSize>40</robotMinSize>
+<robotMinSize>15</robotMinSize>
 <greenMinSize>10</greenMinSize>
 <ballMinSize>10</ballMinSize>
 <robotMaxSize>167</robotMaxSize>
