@@ -2,9 +2,7 @@ package actions;
 
 import bot.Robot;
 import data.Coordinate;
-import game.Tick;
 import strategy.Action;
-import strategy.GameState;
 
 
 /**
@@ -13,8 +11,12 @@ import strategy.GameState;
 public class MoveAndTurn extends Action {
     private int targetX = 0;
     private int targetY = 0;
+    private int targetTurnX = 0;
+    private int targetTurnY = 0;
     private double oldDistanceToTarget = 0;
     private int countTimesThatSeemStuck = 0;
+    private boolean madeItToPrespot = false;
+    private boolean madeItToFinalSpot = false;
 
     //non-static initialiser block
     {
@@ -31,41 +33,79 @@ public class MoveAndTurn extends Action {
     public void execute() {
         Robot r = bot;
 
-        //check if robot is stuck
-        double newTargetDistance = getDistanceToTarget(r);
-        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
-            countTimesThatSeemStuck++;
-        } else if (r.linearVelocity >= 0){
-            countTimesThatSeemStuck = 0;
-        }
-        if (countTimesThatSeemStuck > 20) {
-            countTimesThatSeemStuck = 0;
-            return;
-        } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 10;
-            countTimesThatSeemStuck++;
-            return;
-        }
+//        //check if robot is stuck
+//        double newTargetDistance = getDistanceToTarget(r);
+//        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+//        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
+//            countTimesThatSeemStuck++;
+//        } else if (r.linearVelocity >= 0){
+//            countTimesThatSeemStuck = 0;
+//        }
+//        if (countTimesThatSeemStuck > 20) {
+//            countTimesThatSeemStuck = 0;
+//            return;
+//        } else if (countTimesThatSeemStuck > 10) {
+//            r.linearVelocity = -0.5;
+//            r.angularVelocity = 10;
+//            countTimesThatSeemStuck++;
+//            return;
+//        }
 
+        targetX = parameters.get("spotX");
+        targetY = parameters.get("spotY");
+        targetTurnX = parameters.get("turnSpotX");
+        targetTurnY = parameters.get("turnSpotY");
 
-        //move and turn
-        if (Math.abs(r.getXPosition() - parameters.get("spotX")) < 5 && Math.abs(r.getYPosition() - parameters.get("spotY")) < 5 ) { //already at spot, now turn to target
-            TurnTo.turn(r, new Coordinate(parameters.get("turnSpotX"), parameters.get("turnSpotY")), 1);
-            double targetTheta = getTargetTheta(r, parameters.get("turnSpotX"), parameters.get("turnSpotY"));
-            r.linearVelocity = 0;
-            if (Math.abs(targetTheta) < 5) {
-                r.angularVelocity = 0;
+        //get pre-spot
+        Coordinate prespot = new Coordinate(0,0);
+        double endAngle = Math.atan2(targetY - targetTurnY, targetTurnX - targetX);
+        double oppositeAngle = endAngle + Math.PI;
+        if (oppositeAngle > Math.PI) {
+            oppositeAngle -= (2 * Math.PI);
+        } else if (oppositeAngle < -Math.PI) {
+            oppositeAngle += (2 * Math.PI);
+        }
+        prespot.x = targetX + 10 * Math.cos(oppositeAngle);
+        prespot.y = targetY - 10 * Math.sin(oppositeAngle);
+        System.out.println("angle: " + endAngle + " opp: " + oppositeAngle + " pre-x: " + prespot.x + " pre-y: " + prespot.y);
+
+        if (!madeItToPrespot) {
+            //move and turn
+            if (Math.abs(r.getXPosition() - prespot.x) < 5 && Math.abs(r.getYPosition() - prespot.y) < 5) { //already at spot, now turn to target
+                TurnTo.turn(r, new Coordinate(targetTurnX, targetTurnY), 1);
+                double targetTheta = getTargetTheta(r, targetTurnX, targetTurnY);
+                r.linearVelocity = 0;
+                if (Math.abs(targetTheta) < 5) {
+                    r.angularVelocity = 0;
+                    madeItToPrespot = true;
+                }
+                countTimesThatSeemStuck = 0;
+            } else {
+                MoveToSpot.move(r, new Coordinate(prespot.x, prespot.y), 0.5, false);
+                oldDistanceToTarget = getDistanceToTarget(r);
             }
-            countTimesThatSeemStuck = 0;
+        } else {
+            //already went to prespot
+            //move and turn
+            if (Math.abs(r.getXPosition() - targetX) < 5 && Math.abs(r.getYPosition() - targetY) < 5) { //already at spot, now turn to target
+                TurnTo.turn(r, new Coordinate(targetTurnX, targetTurnY), 1);
+                double targetTheta = getTargetTheta(r, targetTurnX, targetTurnY);
+                r.linearVelocity = 0;
+                if (Math.abs(targetTheta) < 5) {
+                    r.angularVelocity = 0;
+                    madeItToPrespot = true;
+                }
+                countTimesThatSeemStuck = 0;
+            } else {
+                MoveToSpot.move(r, new Coordinate(targetX, targetY), 0.5, false);
+                oldDistanceToTarget = getDistanceToTarget(r);
+            }
+            if (getDistanceToTarget(r) > 12) {
+                madeItToPrespot = false;
+            }
         }
-        else {
-            targetX = parameters.get("spotX");
-            targetY = parameters.get("spotY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 0.5, false);
-            oldDistanceToTarget = getDistanceToTarget(r);
-        }
+
+
     }
 
     private double getTargetTheta(Robot r, double x, double y) {
