@@ -8,7 +8,7 @@ import ui.Field;
 
 public class BasicGoalKeep extends Action {
 
-	private double error = 2.5;
+	private double error = 3.75;
 	//	private double goalLine = 214;
 	private boolean fixPosition = false;
 	private double lastBallX = 0;
@@ -18,7 +18,7 @@ public class BasicGoalKeep extends Action {
 
 	//non-static initialiser block
 	{
-		parameters.put("goalLine", 7);
+		parameters.put("goalLine", 5);
 		parameters.put("topPoint", 70);
 		parameters.put("bottomPoint", 110);
 		//parameters.put("error", 2.5);
@@ -60,7 +60,7 @@ public class BasicGoalKeep extends Action {
 		}
 
 		//first phase getting the robot to the goal line
-		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error || r.getYPosition() < topPoint-10 || r.getYPosition() > bottomPoint+10) {
+		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
 			//System.out.println("getting to the goal");
 			int targetPos = 0;
 			if (ballY >= topPoint && ballY <= bottomPoint ) {
@@ -177,6 +177,7 @@ public class BasicGoalKeep extends Action {
 		}
 		//ball tracking
 		else{
+
 			//System.out.println("ball tracking " + fixPosition);
 			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
@@ -245,11 +246,11 @@ public class BasicGoalKeep extends Action {
 			} else {
 				if (goingVertical || goingHorizontal) {
 					if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
-						setVelocityToTarget(goalLine,ballY, true,true);
+						setVelocityToTarget(goalLine, ballY, true, true);
 					} else if (ballY < topPoint) {
-						setVelocityToTarget(goalLine,topPoint,true,true);
+						setVelocityToTarget(goalLine, topPoint, true, true);
 					} else if (ballY > bottomPoint) {
-						setVelocityToTarget(goalLine,bottomPoint,true,true);
+						setVelocityToTarget(goalLine, bottomPoint, true, true);
 					}
 				} else if (!(goingVertical || goingHorizontal)) {
 
@@ -262,43 +263,41 @@ public class BasicGoalKeep extends Action {
 
 					if (direction) {
 						//ball going toward the goal
-						if (trajectoryY >= topPoint && trajectoryY <=bottomPoint) {
-							if (r.getYPosition()>= (trajectoryY-2) && r.getYPosition() <=(trajectoryY+2)) {
-								setVelocityToTarget(goalLine,r.getYPosition(),true,true);
+						if (trajectoryY >= topPoint && trajectoryY <= bottomPoint) {
+							if (r.getYPosition() >= (trajectoryY - 2) && r.getYPosition() <= (trajectoryY + 2)) {
+								setVelocityToTarget(goalLine, r.getYPosition(), true, true);
 							} else {
-								setVelocityToTarget(goalLine,trajectoryY,true,true);
+								setVelocityToTarget(goalLine, trajectoryY, true, true);
 							}
 						} else {
 							//ball travelling in the same side of board
-							if ( (trajectoryY> bottomPoint && ballY > bottomPoint) || (trajectoryY<= bottomPoint && ballY <= bottomPoint)) {
+							if ((trajectoryY > bottomPoint && ballY > bottomPoint) || (trajectoryY <= bottomPoint && ballY <= bottomPoint)) {
 								// System.out.println("same side");
 								if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
-									setVelocityToTarget(goalLine,ballY, true,true);
+									setVelocityToTarget(goalLine, ballY, true, true);
 								} else if (ballY < topPoint) {
-									setVelocityToTarget(goalLine,topPoint-5,true,true);
+									setVelocityToTarget(goalLine, topPoint - 5, true, true);
 								} else if (ballY > bottomPoint) {
-									setVelocityToTarget(goalLine,bottomPoint+5,true,true);
+									setVelocityToTarget(goalLine, bottomPoint + 5, true, true);
 								}
 							} else {
 								// System.out.println("oppo side");
-								setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2,true,true);
+								setVelocityToTarget(goalLine, Field.OUTER_BOUNDARY_HEIGHT / 2, true, true);
 							}
 						}
 					} else {
 						if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
-							setVelocityToTarget(goalLine,ballY, true,true);
+							setVelocityToTarget(goalLine, ballY, true, true);
 						} else if (ballY < topPoint) {
-							setVelocityToTarget(goalLine,topPoint,true,true);
+							setVelocityToTarget(goalLine, topPoint, true, true);
 						} else if (ballY > bottomPoint) {
-							setVelocityToTarget(goalLine,bottomPoint,true,true);
+							setVelocityToTarget(goalLine, bottomPoint, true, true);
 						}
 					}
 				} else {
-					setVelocityToTarget(r.getXPosition(),r.getYPosition(),true,true);
+					setVelocityToTarget(r.getXPosition(), r.getYPosition(), true, true);
 				}
 			}
-
-			r.angularVelocity *= 0.5;
 		}
 
 		lastBallX = ballX;
@@ -349,13 +348,14 @@ public class BasicGoalKeep extends Action {
 			}
 		}
 
-		if (targetDist <=1.7) {
-			targetDist = 0;
-			targetTheta = 0;
-			fixPosition = true;
-		}
-		// targetTheta = Math.round(targetTheta/5)*5;
 
+		//if (targetDist <=1.7) {
+		//	targetDist = 0;
+		//	targetTheta = 0;
+		//	fixPosition = true;
+		//}
+		// targetTheta = Math.round(targetTheta/5)*5;
+		/*
 		FunctionBlock fb = loadFuzzy("newFuzzy.fcl");
 
 		fb.setVariable("angleError", targetTheta);
@@ -379,22 +379,30 @@ public class BasicGoalKeep extends Action {
 		double angular = (right-left)*(2/0.135);
 		//    System.out.println("right :" + right + "left " + left);
 		r.linearVelocity = linear*2.5;
-		r.angularVelocity = angular*1; 
+		r.angularVelocity = angular*1;  */
 
-		/*
+
 		FunctionBlock fb = loadFuzzy("goalKeeper.fcl");
 		fb.setVariable("targetTheta", targetTheta);
 		fb.setVariable("targetDist", targetDist);
 		fb.evaluate();
+		fb.getVariable("linearVelocity").defuzzify();
+		fb.getVariable("angularVelocity").defuzzify();
 		r.linearVelocity = fb.getVariable("linearVelocity").getValue();
 		r.angularVelocity = fb.getVariable("angularVelocity").getValue();
 
-		*/
+		if (targetDist <= 3.75) {
+			r.linearVelocity = 0;
+			r.angularVelocity = 0;
+			fixPosition = true;
+		}
 
 		if (!front &&reverse) {
 			r.linearVelocity *= -1;
 			r.angularVelocity *= -1;
 		}
+
+		System.out.println(r.linearVelocity + " " + r.angularVelocity);
 	}
 
 	private double getHalfAnglePosition() {

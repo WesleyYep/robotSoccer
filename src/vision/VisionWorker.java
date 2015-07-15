@@ -3,6 +3,7 @@ package vision;
 import data.RobotData;
 import data.VisionData;
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import ui.ColourPanel;
@@ -11,6 +12,8 @@ import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +60,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	
 	private static final int KERNELSIZE = 3;
 
-//    private JFrame testFrame = new JFrame();
-//    private JPanel testPanel = new JPanel();
-//    private JLabel imageLbl;
+    private JFrame testFrame = new JFrame();
+    private JPanel testPanel = new JPanel();
+    private JLabel imageLbl;
 
 	public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
@@ -74,11 +77,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		correctGreenContour = new ArrayList<MatOfPoint>();
 		correctOpponentContour = new ArrayList<MatOfPoint>();
 
-//        imageLbl = new JLabel();
-//        testPanel.add(imageLbl);
-//        testFrame.add(testPanel);
-//        testFrame.setSize(new Dimension(600,600));
-//        testFrame.setVisible(true);
+        imageLbl = new JLabel();
+        testPanel.add(imageLbl);
+        testFrame.add(testPanel);
+        testFrame.setSize(new Dimension(600,600));
+        testFrame.setVisible(true);
 
 	}
 
@@ -375,7 +378,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
     private Mat distanceTransform(Mat teamBinary) {
         Mat dist =  new Mat(teamBinary.size(), CvType.CV_8UC1);
         Imgproc.distanceTransform(teamBinary, dist, Imgproc.CV_DIST_L2, 3);
-        Core.normalize(dist, dist, -100, 100, Core.NORM_MINMAX);
+        Core.normalize(dist, dist, -50, 100, Core.NORM_MINMAX);
 //        System.out.println("new vision");
 //        Imgproc.threshold(dist, dist, 40, 100, Imgproc.THRESH_BINARY);
 //        Mat kernel1 = Mat.ones(3, 3, CvType.CV_8UC1);
