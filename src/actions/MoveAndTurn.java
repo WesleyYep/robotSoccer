@@ -9,14 +9,9 @@ import strategy.Action;
  * Created by Wesley on 27/02/2015.
  */
 public class MoveAndTurn extends Action {
-    private int targetX = 0;
-    private int targetY = 0;
-    private int targetTurnX = 0;
-    private int targetTurnY = 0;
-    private double oldDistanceToTarget = 0;
-    private int countTimesThatSeemStuck = 0;
-    private boolean madeItToPrespot = false;
-    private boolean madeItToFinalSpot = false;
+//    private double oldDistanceToTarget = 0;
+//    private int countTimesThatSeemStuck = 0;
+    private static boolean madeItToPrespot = false;
 
     //non-static initialiser block
     {
@@ -31,7 +26,6 @@ public class MoveAndTurn extends Action {
 
     @Override
     public void execute() {
-        Robot r = bot;
 
 //        //check if robot is stuck
 //        double newTargetDistance = getDistanceToTarget(r);
@@ -51,11 +45,17 @@ public class MoveAndTurn extends Action {
 //            return;
 //        }
 
-        targetX = parameters.get("spotX");
-        targetY = parameters.get("spotY");
-        targetTurnX = parameters.get("turnSpotX");
-        targetTurnY = parameters.get("turnSpotY");
+        int targetX = parameters.get("spotX");
+        int targetY = parameters.get("spotY");
+        int targetTurnX = parameters.get("turnSpotX");
+        int targetTurnY = parameters.get("turnSpotY");
 
+
+        moveAndTurn(bot, targetX, targetY, targetTurnX, targetTurnY);
+
+    }
+
+    public static void moveAndTurn(Robot r, int targetX, int targetY, int targetTurnX, int targetTurnY) {
         //get pre-spot
         Coordinate prespot = new Coordinate(0,0);
         double endAngle = Math.atan2(targetY - targetTurnY, targetTurnX - targetX);
@@ -67,7 +67,7 @@ public class MoveAndTurn extends Action {
         }
         prespot.x = targetX + 10 * Math.cos(oppositeAngle);
         prespot.y = targetY - 10 * Math.sin(oppositeAngle);
-        System.out.println("angle: " + endAngle + " opp: " + oppositeAngle + " pre-x: " + prespot.x + " pre-y: " + prespot.y);
+  //      System.out.println("angle: " + endAngle + " opp: " + oppositeAngle + " pre-x: " + prespot.x + " pre-y: " + prespot.y);
 
         if (!madeItToPrespot) {
             //move and turn
@@ -79,10 +79,9 @@ public class MoveAndTurn extends Action {
                     r.angularVelocity = 0;
                     madeItToPrespot = true;
                 }
-                countTimesThatSeemStuck = 0;
             } else {
                 MoveToSpot.move(r, new Coordinate(prespot.x, prespot.y), 0.5, false);
-                oldDistanceToTarget = getDistanceToTarget(r);
+    //            oldDistanceToTarget = getDistanceToTarget(r);
             }
         } else {
             //already went to prespot
@@ -95,20 +94,18 @@ public class MoveAndTurn extends Action {
                     r.angularVelocity = 0;
                     madeItToPrespot = true;
                 }
-                countTimesThatSeemStuck = 0;
+      //          countTimesThatSeemStuck = 0;
             } else {
                 MoveToSpot.move(r, new Coordinate(targetX, targetY), 0.5, false);
-                oldDistanceToTarget = getDistanceToTarget(r);
+     //           oldDistanceToTarget = getDistanceToTarget(r);
             }
-            if (getDistanceToTarget(r) > 12) {
+            if (getDistanceToTarget(r, targetX, targetY) > 12) {
                 madeItToPrespot = false;
             }
         }
-
-
     }
 
-    private double getTargetTheta(Robot r, double x, double y) {
+    private static double getTargetTheta(Robot r, double x, double y) {
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
         //some hack to make the difference -Pi < theta < Pi
@@ -121,7 +118,7 @@ public class MoveAndTurn extends Action {
     }
 
 
-    private double getDistanceToTarget(Robot r) {
+    public static double getDistanceToTarget(Robot r, int targetX, int targetY) {
         return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
     }
 
