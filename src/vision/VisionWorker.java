@@ -15,6 +15,7 @@ import utils.Geometry;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -64,7 +65,10 @@ public class VisionWorker implements WebcamDisplayPanelListener {
     private JPanel testPanel = new JPanel();
     private JLabel imageLbl;
 
-	public VisionWorker(ColourPanel cp) {
+    private LimitedQueue[] weightedAverageThetas = new LimitedQueue[5];
+
+
+    public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
 
 		ballSP = colourPanel.ballSamplingPanel;
@@ -83,6 +87,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         testFrame.setSize(new Dimension(600,600));
         testFrame.setVisible(true);
 
+        for (int i = 0; i < weightedAverageThetas.length; i++) {
+            weightedAverageThetas[i] = new LimitedQueue(5);
+        }
 	}
 
     private void updateRobotNotSeen() {
@@ -251,14 +258,13 @@ public class VisionWorker implements WebcamDisplayPanelListener {
             Imgproc.erode(teamBinary, teamBinary, erodeKernel);
             Imgproc.dilate(teamBinary, teamBinary, dilateKernel);
 
-            if (colourPanel.isNewNewYellowVision()) {
-                teamBinary = distanceTransform(teamBinary);
-            }
+//            if (colourPanel.isNewNewYellowVision()) {
+//                teamBinary = distanceTransform(teamBinary);
+//            }
 
             Imgproc.findContours(teamBinary, teamContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             ballBinary.release();
-            teamBinary.release();
 
             // Create robot data.
             RobotData[] data = new RobotData[5];
@@ -272,6 +278,9 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     Moments m = Imgproc.moments(teamContours.get(i));
                     teamX = (int) (m.get_m10() / m.get_m00());
                     teamY = (int) (m.get_m01() / m.get_m00());
+
+      //              getAngle(teamX, teamY, teamBinary);
+
                     correctTeamContour.add(teamContours.get(i));
 
                     // Get the rotated rect and find the points.
@@ -300,6 +309,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     }
                 }
             }
+            teamBinary.release();
 
             // Green
         if (!colourPanel.isNewYellowVision()) {
@@ -345,7 +355,13 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                             //	System.out.println(pos.x + ", " + pos.y);
                           //  if (robotNum != 2) {
                             if (!anyRobotsNotSeen || robotNotSeen[robotNum-1] == 0) {
-                                notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+                                double angle = 0;
+                                if (colourPanel.isNewNewYellowVision()) {
+                                    angle =  getWeightedAverageTheta(rd.getTheta(), robotNum);
+                                } else {
+                                    angle = rd.getTheta();
+                                }
+                                notifyListeners(new VisionData(pos,angle, "robot:" + robotNum));
                             } else {
                                 notifyListeners(new VisionData(new Point(30, 50+20*(robotNum-1)), 0, "robot:" + ((robotNum))));
                             }
@@ -375,6 +391,51 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
 
+    private double getWeightedAverageTheta(double currentTheta, int robotNum) {
+        try {
+            LimitedQueue lastThetaValues = weightedAverageThetas[robotNum - 1];
+            if (lastThetaValues.size() > 5) {
+                System.out.println("Limited queue is not working properly!");
+            }
+            lastThetaValues.add(currentTheta);
+            double sum = 0;
+            for (int i = 0; i < lastThetaValues.size(); i++) {
+                sum += lastThetaValues.get(i);
+            }
+    //        System.out.println("weighted average theta  = " + sum / lastThetaValues.size());
+            return sum / lastThetaValues.size();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+//    private double getAngle(int teamX, int teamY, Mat teamBinary) {
+////        int count = 0;
+//        double a=0, b=0, c=0;
+//        for (int i = teamX - 10; i < teamX + 10; i++) {
+//            for (int j = teamY - 10; j < teamY + 10; j++) {
+//                double[] rgb = teamBinary.get(j,i); //row, col
+//                try {
+//                    if (rgb[0] > 100) {
+//   //                     count++;
+//                        a += ( i - teamX ) * (i - teamX );
+//                        b += ( i - teamX ) * ( j - teamY );
+//                        c += ( j - teamY ) * ( j - teamY );
+//                    }
+//                }catch (Exception e) {
+//                    //e.printStackTrace();
+//                }
+//            }
+//        }
+//        double angle_rad = Math.atan2(b, a - c)/2;
+//        System.out.println(Math.toDegrees(angle_rad));
+////        System.out.println("number of pixels in area = " + count);
+////        return count;
+//        return 0;
+//    }
+
+
     private Mat distanceTransform(Mat teamBinary) {
         Mat dist =  new Mat(teamBinary.size(), CvType.CV_8UC1);
         Imgproc.distanceTransform(teamBinary, dist, Imgproc.CV_DIST_L2, 3);
@@ -385,7 +446,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 //        Imgproc.filter2D(dist, dist, CvType.CV_32F, kernel1);
 
 //        try {
-//            imageLbl.setIcon(new ImageIcon(utils.Image.toBufferedImage(dist)));
+//            imageLbl.setIcon(new ImageIcon(utils.Image.toBufferedImage(teamBinary)));
 //        }
 //        catch (Exception e) {
 //            e.printStackTrace();
@@ -485,4 +546,19 @@ public class VisionWorker implements WebcamDisplayPanelListener {
     }
 
 
+}
+
+
+class LimitedQueue extends LinkedList<Double> {
+    private int limit;
+
+    public LimitedQueue(int limit) {
+        this.limit = limit;
+    }
+
+    public boolean add(double o) {
+        super.add(o);
+        while (size() > limit) { super.remove(); }
+        return true;
+    }
 }
