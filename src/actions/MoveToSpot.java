@@ -55,7 +55,7 @@ public class MoveToSpot extends Action{
         //if directly behind, just hard code
         if (Math.abs(targetTheta) > 175) {
             r.angularVelocity = 0;
-            r.linearVelocity = -1;
+            r.linearVelocity = -0.3;
             return;
         }
 

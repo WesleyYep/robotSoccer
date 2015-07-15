@@ -1,7 +1,6 @@
 package actions;
 
 import bot.Robot;
-import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import strategy.GameState;

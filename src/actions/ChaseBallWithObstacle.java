@@ -30,7 +30,7 @@ public class ChaseBallWithObstacle extends Action {
 
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
-        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+       //   System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
             countTimesThatSeemStuck++;
         } else if (r.linearVelocity >= 0){
@@ -57,10 +57,11 @@ public class ChaseBallWithObstacle extends Action {
             } else {
                 yPos = (int)(60*Math.random());
             }
-            oldDistanceToTarget = newTargetDistance;
             MoveToSpot.move(r, new Coordinate(30, yPos), 1, true);
             return;
         } */
+        oldDistanceToTarget = newTargetDistance;
+
 
         if (ballX < r.getXPosition()) {
             int yPos;

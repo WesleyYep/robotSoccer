@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:moveAndTurn
-permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 50, 50, 50]
 null-null
 null-null
 null-null
@@ -27,7 +27,7 @@ null-null
 null-null
 -----
 Role:chaseBall
-permanent-actions.testSelfMade-[]-[]
+permanent-actions.ChaseBallWithObstacle-[]-[]
 null-null
 null-null
 null-null

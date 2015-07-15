@@ -389,6 +389,7 @@ public class BasicGoalKeep extends Action {
 		fb.getVariable("linearVelocity").defuzzify();
 		fb.getVariable("angularVelocity").defuzzify();
 		r.linearVelocity = fb.getVariable("linearVelocity").getValue();
+		r.linearVelocity = 0.25;
 		r.angularVelocity = fb.getVariable("angularVelocity").getValue();
 
 		if (targetDist <= 3.75) {
