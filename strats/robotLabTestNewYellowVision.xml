@@ -54,7 +54,7 @@
 <opponentSLower>124</opponentSLower>
 <opponentVUpper>184</opponentVUpper>
 <opponentVLower>32</opponentVLower>
-<robotMinSize>40</robotMinSize>
+<robotMinSize>13</robotMinSize>
 <greenMinSize>10</greenMinSize>
 <ballMinSize>10</ballMinSize>
 <robotMaxSize>111</robotMaxSize>

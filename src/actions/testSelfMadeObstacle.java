@@ -21,16 +21,7 @@ public class testSelfMadeObstacle extends Action {
     	//System.out.println("obs");
         int x = parameters.get("fixed point1 x");
         int y = parameters.get("fixed point1 y");
-        //setVelocityToTarget(x,y,true,false);
-        Robot r = bot;
-
-        r.linearVelocity = 0;
-        r.angularVelocity = 0;
-
-        if (r.getTheta() > highestTheta) highestTheta = r.getTheta();
-        if (r.getTheta() < lowestTheta) lowestTheta = r.getTheta();
-        System.out.println(highestTheta + " " + lowestTheta);
-
+        setVelocityToTarget(x,y,true,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -38,7 +29,7 @@ public class testSelfMadeObstacle extends Action {
 
 
         double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
-        /*
+
         for (int i=0; i<5; i++) {
         	if (!teamRobots.getRobot(i).equals(r)) {
         		Robot obs = teamRobots.getRobot(i);
@@ -86,32 +77,10 @@ public class testSelfMadeObstacle extends Action {
                 }
             }
         }
-        */
 
 
-        /*
-        if (r.getXPosition() - ballX > 25|| Math.abs(r.getTheta()) > 60) {
-            double tempTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
-            double tempDifference = tempTheta - Math.toRadians(r.getTheta());
-            if (tempDifference > Math.PI) {
-                tempDifference -= (2 * Math.PI);
-            } else if (tempDifference < -Math.PI) {
-                tempDifference += (2 * Math.PI);
-            }
-            tempDifference = Math.toDegrees(tempDifference);
-            tempTheta = tempDifference;
 
-            if (Math.abs(tempTheta) < 50) {
-                double tempDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
-                if (tempDist < obstacleDist) {
-                    System.out.println("ball is obs " + " " + System.currentTimeMillis() );
-                    obstacleDist = tempDist;
-                    obstacleTheta = tempTheta;
-                    obstacleY = ballY;
-                    obstacleX = ballX;
-                }
-            }
-        } */
+
 
         double targetDist;
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
@@ -126,39 +95,10 @@ public class testSelfMadeObstacle extends Action {
         }
         difference = Math.toDegrees(difference);
         targetTheta = difference;
-        /*
-        obstacleTheta = Math.atan2(r.getYPosition() - obstacleY, obstacleX - r.getXPosition());
-        double obsDifference = obstacleTheta - Math.toRadians(r.getTheta());
-        if (obsDifference > Math.PI) {
-        	obsDifference -= (2 * Math.PI);
-        } else if (obsDifference < -Math.PI) {
-        	obsDifference += (2 * Math.PI);
-        }
-        obsDifference = Math.toDegrees(obsDifference);
-        obstacleTheta = obsDifference;*/
         
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-       // obstacleDist = Math.sqrt(Math.pow((obstacleX-r.getXPosition()),2) + Math.pow((obstacleY-r.getYPosition()),2));
+
         double tempAngle = r.getTheta();
-
-        /*
-        if (tempAngle < -270) {
-            tempAngle = 0;
-        }*/
-
-        boolean front  = true;
-        if (targetTheta > 90 || targetTheta < -90) {
-            front = false;
-        }
-
-        if (!front && reverse) {
-            if (targetTheta < 0) {
-                targetTheta = -180 - targetTheta;
-            }
-            else if (targetTheta > 0) {
-                targetTheta = 180 - targetTheta;
-            }
-        }
         
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
         FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
@@ -174,16 +114,16 @@ public class testSelfMadeObstacle extends Action {
         //      		+ r.getYPosition() + " targetDist " + targetDist);
         // Evaluate
         fb.evaluate();
+
         /*
            JFuzzyChart.get().chart(fb);
-
-           
         // Show output variable's chart
        fb.getVariable("linearVelocity").defuzzify();
        fb.getVariable("angularVelocity").defuzzify();
           JFuzzyChart.get().chart(fb.getVariable("linearVelocity"), fb.getVariable("linearVelocity").getDefuzzifier(), true);
        JFuzzyChart.get().chart(fb.getVariable("angularVelocity"), fb.getVariable("angularVelocity").getDefuzzifier(), true);
         JOptionPane.showMessageDialog(null, "nwa"); */
+
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
@@ -192,14 +132,6 @@ public class testSelfMadeObstacle extends Action {
 
         r.linearVelocity = linear;
         r.angularVelocity = angular*-1;
-//            System.out.println("linear: " + linear + " angular:" + angular*-1
-//            					+ " x: " + r.getXPosition() + " y: " + r.getYPosition()
-//            					+ " r theta: " + r.getTheta() + " t theta: " + targetTheta
-//            					+ " t dist" + targetDist + " time: " + System.currentTimeMillis());
-        if (!front &&reverse) {
-            r.linearVelocity *= -1;
-            r.angularVelocity *= -1;
-        }
 
         if (targetDist <=3.75) {
             r.linearVelocity = 0;

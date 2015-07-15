@@ -22,7 +22,7 @@ FUZZIFY targetTheta
 	TERM L4 := trian -45 -30 -20;
 	TERM L3 := trian -30 -20 -10;
 	TERM L2 := trian -20 -10 -5;
-	TERM L1 := trian -10 5 0;
+	TERM L1 := trian -10 -5 0;
 	TERM straight := trian -5 0 5;
 	TERM R1 := trian 0 5 10;
 	TERM R2 := trian 5 10 20;
@@ -34,7 +34,7 @@ END_FUZZIFY
 
 DEFUZZIFY linearVelocity
 	TERM verySlow :=  trian -0.6 0 0.45;
- 	TERM slow := trian 0 0.35 0.7;
+ 	TERM slow := trian 0 0.25 0.7;
 	TERM medium := trian 0.5 0.7 1;
 	TERM fast := trian 0.7 1 1.25;
 	METHOD : COG;
