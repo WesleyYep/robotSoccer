@@ -12,6 +12,7 @@ import controllers.FieldController;
 import controllers.VisionController;
 import controllers.WebcamController;
 import controllers.WindowController;
+import game.GarageCollector;
 import game.Tick;
 import jssc.SerialPortList;
 import net.miginfocom.swing.MigLayout;
@@ -647,6 +648,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		add(contentPane, BorderLayout.CENTER);
 
         setPreferredSize(new Dimension(1290, 900));
+
+        GarageCollector.runGarbageCollectScheduler();
+
     }
 
 	private void setPlay(boolean isPermanent) {
