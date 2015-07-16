@@ -50,9 +50,9 @@ public class GoalLineSideDefender extends Action {
                     } else if (ballY > bot.getYPosition() && side == BOTTOM) {
                         MoveToSpot.move(bot, new Coordinate(0,180), 2, false);
                     }
-                } else if (15 < ballX && ballX < 55 && (side == TOP && ballY > 50 && ballY < 90) || (side == BOTTOM && ballY < 130 && ballY > 90)) {
+                } /*else if (15 < ballX && ballX < 55 && (side == TOP && ballY > 50 && ballY < 90) || (side == BOTTOM && ballY < 130 && ballY > 90)) {
                     MoveToSpot.move(bot, new Coordinate(ballX, ballY), 1, false);
-                } else if(ballX < 15 && ballY > 50 && ballY < 130) {
+                } */else if(ballX < 15 && ballY > 50 && ballY < 130) {
                     if (side == TOP) {
                         MoveAndTurn.moveAndTurn(bot, 30, 50, 50, 180);
                     } else {

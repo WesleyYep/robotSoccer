@@ -80,7 +80,7 @@ public class MoveAndTurn extends Action {
                     madeItToPrespot = true;
                 }
             } else {
-                MoveToSpot.move(r, new Coordinate(prespot.x, prespot.y), 0.5, false);
+                MoveToSpot.move(r, new Coordinate(prespot.x, prespot.y), 0.5, true);
     //            oldDistanceToTarget = getDistanceToTarget(r);
             }
         } else {

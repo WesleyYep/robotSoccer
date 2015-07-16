@@ -150,7 +150,10 @@ public class RobotData {
         }
 
         Point robotMidPoint = getTeamCenterPoint();
+
         double robotOrientation = getLongPair().getTheta();
+ //       double robotOrientation = theta;
+
         double normAngle  = Math.toDegrees(Math.atan2(shortMidPoint.y - robotMidPoint.y, shortMidPoint.x - robotMidPoint.x));
         double shortAngleToRobot = normAngle - robotOrientation;
 

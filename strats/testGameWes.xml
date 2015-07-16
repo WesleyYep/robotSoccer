@@ -12,36 +12,8 @@ null-null
 null-null
 null-null
 -----
-Role:waitingDefenderTop
-permanent-actions.StrikerTest-[startingY, startingX]-[20, 30]
-null-null
-null-null
-null-null
-null-null
------
-Role:waitingDefenderBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[160, 30]
-null-null
-null-null
-null-null
-null-null
------
 Role:chaseBall
 permanent-actions.ChaseBallWithObstacle-[]-[]
-null-null
-null-null
-null-null
-null-null
------
-Role:defenderBottom
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 20, 40, 130]
-null-null
-null-null
-null-null
-null-null
------
-Role:defenderTop
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[50, 20, 40, 50]
 null-null
 null-null
 null-null
@@ -82,13 +54,6 @@ null-null
 null-null
 null-null
 -----
-Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
-null-null
-null-null
-null-null
-null-null
------
 Role:goalLineDefenderTop
 permanent-actions.GoalLineSideDefender-[side]-[0]
 null-null
@@ -98,6 +63,20 @@ null-null
 -----
 Role:goalLineDefenderBot
 permanent-actions.GoalLineSideDefender-[side]-[1]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:goalLineAttackerTop
+permanent-actions.GoalLineSideAttacker-[side]-[0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:goalLineAttackerBot
+permanent-actions.GoalLineSideAttacker-[side]-[1]
 null-null
 null-null
 null-null
@@ -119,14 +98,14 @@ chaseBall
 -----
 Play:attackTop
 gk
-defender
+goalLineAttackerTop
 chaseBall
 chaseBall
 waitingStrikerTop
 -----
 Play:attackBottom
 gk
-defender
+goalLineAttackerBot
 chaseBall
 chaseBall
 waitingStrikerBottom

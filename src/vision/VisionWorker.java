@@ -290,6 +290,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     patch.points(p);
 
                     data[numRobots] = new RobotData(p, new org.opencv.core.Point(teamX, teamY));
+             //       data[numRobots].setTheta(getAngle(teamX, teamY, teamBinary)); 
                     if (colourPanel.isNewYellowVision()) {
                         numRobots++;
                     } else {
@@ -409,30 +410,30 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         }
     }
 
-//    private double getAngle(int teamX, int teamY, Mat teamBinary) {
-////        int count = 0;
-//        double a=0, b=0, c=0;
-//        for (int i = teamX - 10; i < teamX + 10; i++) {
-//            for (int j = teamY - 10; j < teamY + 10; j++) {
-//                double[] rgb = teamBinary.get(j,i); //row, col
-//                try {
-//                    if (rgb[0] > 100) {
-//   //                     count++;
-//                        a += ( i - teamX ) * (i - teamX );
-//                        b += ( i - teamX ) * ( j - teamY );
-//                        c += ( j - teamY ) * ( j - teamY );
-//                    }
-//                }catch (Exception e) {
-//                    //e.printStackTrace();
-//                }
-//            }
-//        }
-//        double angle_rad = Math.atan2(b, a - c)/2;
-//        System.out.println(Math.toDegrees(angle_rad));
-////        System.out.println("number of pixels in area = " + count);
-////        return count;
-//        return 0;
-//    }
+    private double getAngle(int teamX, int teamY, Mat teamBinary) {
+//        int count = 0;
+        double a=0, b=0, c=0;
+        for (int i = teamX - 10; i < teamX + 10; i++) {
+            for (int j = teamY - 10; j < teamY + 10; j++) {
+                double[] rgb = teamBinary.get(j,i); //row, col
+                try {
+                    if (rgb[0] > 100) {
+   //                     count++;
+                        a += ( i - teamX ) * (i - teamX );
+                        b += ( i - teamX ) * ( j - teamY );
+                        c += ( j - teamY ) * ( j - teamY );
+                    }
+                }catch (Exception e) {
+                    //e.printStackTrace();
+                }
+            }
+        }
+        double angle_rad = Math.atan2(b, a - c)/2;
+        System.out.println(Math.toDegrees(angle_rad));
+//        System.out.println("number of pixels in area = " + count);
+//        return count;
+        return Math.toDegrees(angle_rad);
+    }
 
 
     private Mat distanceTransform(Mat teamBinary) {

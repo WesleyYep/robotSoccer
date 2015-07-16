@@ -43,6 +43,7 @@ public class Actions {
           add(new PenaltyStraight());
           add(new PenaltySpin());
           add(new GoalLineSideDefender());
+          add(new GoalLineSideAttacker());
         add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
       }};
 
