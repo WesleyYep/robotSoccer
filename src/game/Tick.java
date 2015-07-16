@@ -175,11 +175,17 @@ public class Tick implements SenderListener {
 			}
 
 		Mat temp = kFilter.predictNextPosition(PREDICT_TIME);
-		//System.out.println(temp.dump());
-		//System.out.println(r.getXPosition() +  " " + r.getYPosition());
-			//System.out.println(field.getBallX() + " " + field.getBallY());
-			fieldController.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
-		//	System.out.println(temp.get(0, 0)[0] + " " + temp.get(1, 0)[0]);
+		double tempX = temp.get(0, 0)[0];
+		double tempY = temp.get(1,0)[0];
+
+		/*
+		if (tempY < 0) tempY *= -1;
+		if (tempY > 180) tempY = 180 - (tempY%180);
+		if (tempX < 0) tempX *= -1;
+		if (tempX > 220) tempX = 220 - (tempX%220); */
+
+		fieldController.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
+
 		temp.release();	
 		if (main.isSimulation()) {
 			if (sender != null) {

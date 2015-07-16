@@ -152,9 +152,9 @@ public class WebcamController {
             webcamImageMat = new Mat();
 
             while (!isCancelled() && grabber.isOpened()) {
-            	//long start = System.currentTimeMillis();
+
                 grabber.read(webcamImageMat);
-               // System.out.println(System.currentTimeMillis()-start);
+
                 if (webcamImageMat == null) {
                 	cancel(true);
                 } else {

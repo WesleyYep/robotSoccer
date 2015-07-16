@@ -178,6 +178,7 @@ public class BasicGoalKeep extends Action {
 		//ball tracking
 		else{
 
+
 			//System.out.println("ball tracking " + fixPosition);
 			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
@@ -228,6 +229,7 @@ public class BasicGoalKeep extends Action {
 
 			boolean goal = false;
 			boolean midSection = false;
+			double boundary1 = 110, boundary2 = 35;
 			if (goalLine > 110) {
 				goal = ballX < goalLine + 100;
 				midSection = ballX < goalLine + 150;
@@ -238,12 +240,91 @@ public class BasicGoalKeep extends Action {
 			}
 
 
+			double area1Weighting = 0; // > 110
+			double area2Weighting = 0; // > 50
+			double area3Weighting = 0; // > 0
+			double resultY = 0;
+			double area1Y = Field.OUTER_BOUNDARY_HEIGHT/2;
+			double area2Y = 0;
+			double area3Y = 0;
 
+			//working out the weighting for each area to ensure smooth transition for the goal keeper
+			//area 1
+			if (ballX > 120) {
+				area1Weighting = 1;
+			} else if (ballX <= 120 && ballX >= 100) {
+				area1Weighting = (ballX - 100.0)/(120.0-100.0);
+			} else {
+				area1Weighting = 0;
+			}
+
+
+			//area 2
+			if (ballX > 120) {
+				area2Weighting = 0;
+			} else if (ballX <= 120 && ballX >= 100) {
+				area2Weighting = (ballX-120.0) /(100.0-120.0);
+			} else if (ballX < 100 && ballX > 45) {
+				area2Weighting = 1;
+			} else if (ballX <= 45 && ballX >= 35) {
+				area2Weighting = (ballX - 35.0) / (45.0-35.0);
+			} else {
+				area2Weighting = 0;
+			}
+
+			area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
+
+			//area 3
+			if (ballX > 45) {
+				area3Weighting = 0;
+			} else if (ballX <= 45 && ballX >= 35) {
+				area3Weighting = (ballX -45.0) /(35.0-45.0);
+			} else {
+				area3Weighting = 1;
+			}
+
+			if (ballY >= topPoint-20 && ballY <= bottomPoint+20) {
+				if (trajectoryY >= topPoint && trajectoryY <= bottomPoint) {
+					area3Y = trajectoryY;
+				} else {
+					if (ballY >= topPoint && ballY <= bottomPoint) {
+						area3Y = ballY;
+					} else if (ballY < topPoint) {
+						area3Y = topPoint;
+					} else if (ballY > bottomPoint) {
+						area3Y = bottomPoint;
+					}
+				}
+			}
+			else {
+				area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
+			}
+
+			/*
+			if (ballY >= topPoint && ballY <= bottomPoint) {
+				area3Y = ballY;
+			} else if (ballY < topPoint) {
+				area3Y = topPoint;
+			} else if (ballY > bottomPoint) {
+				area3Y = bottomPoint;
+			} */
+
+
+			resultY = area1Y*area1Weighting + area2Y*area2Weighting + area3Y*area3Weighting;
+			//System.out.println("ballY: " + ballY + " resultY:" + resultY + " area1Y weghting:" + area1Y + " " + area1Weighting
+			//		+ " area2Y weghting:" + area2Y + " " + area2Weighting
+			//		+ " area3Y weghting:" + area3Y + " " + area3Weighting );
+			setVelocityToTarget(goalLine, resultY, true, false);
+
+
+
+			/*
 			if (goal) {
 				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
 			} else if (midSection) {
 				setVelocityToTarget(goalLine,getHalfAnglePosition(), true,false);
 			} else {
+				//going vertical or horizontal
 				if (goingVertical || goingHorizontal) {
 					if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
 						setVelocityToTarget(goalLine, ballY, true, true);
@@ -252,7 +333,9 @@ public class BasicGoalKeep extends Action {
 					} else if (ballY > bottomPoint) {
 						setVelocityToTarget(goalLine, bottomPoint, true, true);
 					}
+				//going diagonal
 				} else if (!(goingVertical || goingHorizontal)) {
+
 
 					boolean direction;
 					if (goalLine < 110) {
@@ -286,6 +369,7 @@ public class BasicGoalKeep extends Action {
 							}
 						}
 					} else {
+						//away from the goal
 						if (ballY >= topPoint && ballY <= bottomPoint && r.getXPosition() < ballX) {
 							setVelocityToTarget(goalLine, ballY, true, true);
 						} else if (ballY < topPoint) {
@@ -294,11 +378,15 @@ public class BasicGoalKeep extends Action {
 							setVelocityToTarget(goalLine, bottomPoint, true, true);
 						}
 					}
+				//stationary
 				} else {
 					setVelocityToTarget(r.getXPosition(), r.getYPosition(), true, true);
 				}
 			}
+			*/
+
 		}
+
 
 		lastBallX = ballX;
 		lastBallY = ballY;
@@ -403,7 +491,6 @@ public class BasicGoalKeep extends Action {
 			r.angularVelocity *= -1;
 		}
 
-		System.out.println(r.linearVelocity + " " + r.angularVelocity);
 	}
 
 	private double getHalfAnglePosition() {

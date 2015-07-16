@@ -1,11 +1,9 @@
 package controllers;
 
-import data.Coordinate;
 import org.opencv.core.Point;
 import ui.Field;
 
 import javax.media.jai.PerspectiveTransform;
-import java.awt.*;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
@@ -21,7 +19,7 @@ public class VisionController {
 	private static double mapRight = 517;
 	private static double mapTop = 48;
 	private static double mapBot = 372;
-	
+	private static double rotationAngle = 0;
 	private static PerspectiveTransform t;
 	private static PerspectiveTransform tInverse;
     private Point2D leftGoalTopLeft;
@@ -101,6 +99,15 @@ public class VisionController {
 		
 	}
 
+    public static double imageThetaToActualTheta (double theta) {
+        double result = theta + rotationAngle;
+
+        if (result > Math.PI) result -= 2*Math.PI;
+        if (result < -Math.PI) result += 2*Math.PI;
+
+        return result;
+    }
+
 	
 	public void rotatePointAntiClockwise() {
 		Point2D tempBottomLeft = bottomLeft;
@@ -108,6 +115,8 @@ public class VisionController {
 		
 		Point2D tempTopRight = topRight;
 		Point2D tempBottomRight = bottomRight;
+        rotationAngle += Math.PI/2;
+        if (rotationAngle > Math.PI) rotationAngle -= 2*Math.PI;
 		
 		bottomLeft = tempBottomRight;
 		topLeft = tempBottomLeft;
@@ -132,6 +141,8 @@ public class VisionController {
 	}
 	
 	public void rotatePointClockwise() {
+        rotationAngle -= Math.PI/2;
+        if (rotationAngle < -Math.PI) rotationAngle += 2*Math.PI;
 		Point2D tempBottomLeft = bottomLeft;
 		Point2D tempTopLeft = topLeft;
 		

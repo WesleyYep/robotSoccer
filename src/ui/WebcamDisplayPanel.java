@@ -137,6 +137,7 @@ public class WebcamDisplayPanel extends JPanel {
 
 
             notifyImageUpdate(matToProcess);
+
             
            
 //            if (isFiltering) {

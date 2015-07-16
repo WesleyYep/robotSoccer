@@ -103,7 +103,6 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
     @Override
 	public void imageUpdated(Mat image) {
-
         if (colourPanel.isRobotNotPresentUpdated()) {
             System.out.println("robot not seen updated!");
             updateRobotNotSeen();
