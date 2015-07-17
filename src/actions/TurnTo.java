@@ -42,7 +42,7 @@ public class TurnTo extends Action{
         double targetDist = 5;
 
 
-        String filename = "newFuzzy.fcl";
+        String filename = "fuzzy/newFuzzy.fcl";
         FIS fis = FIS.load(filename, true);
 
         if (fis == null) {

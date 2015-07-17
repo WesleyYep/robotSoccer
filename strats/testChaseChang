@@ -1,0 +1,45 @@
+Role:gk
+permanent-actions.BasicGoalKeep-[bottomPoint, topPoint, goalLine]-[110, 70, 6]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new role
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker1
+permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker2
+permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:chaseball
+chaseBall
+new role
+new role
+new role
+new role
+-----
+Situation:chaseball_test:26:6:460:364
+chaseball
+-----
