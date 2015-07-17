@@ -2,8 +2,6 @@ package ui;
 
 import data.PlaysTableModel;
 import net.miginfocom.swing.MigLayout;
-import org.opencv.core.*;
-import org.opencv.core.Point;
 import strategy.CurrentStrategy;
 import strategy.Play;
 import strategy.Role;
@@ -15,8 +13,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -256,5 +252,10 @@ public class PlaysPanel extends JPanel implements StrategyListener{
         playsList = currentStrategy.getPlays();
         playsTableModel.setListOfPlays(playsList);
         playsTableModel.fireTableDataChanged();
+    }
+
+    @Override
+    public void setPlayChanged(Play setPlay) {
+        //nothing
     }
 }

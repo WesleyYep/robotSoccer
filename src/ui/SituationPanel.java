@@ -281,4 +281,9 @@ public class SituationPanel extends JPanel implements StrategyListener{
             //((JTabbedPane) this.getParent()).setSelectedComponent(this);
         }
 	}
+
+	@Override
+	public void setPlayChanged(Play setPlay) {
+
+	}
 }

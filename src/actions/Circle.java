@@ -23,7 +23,7 @@ public class Circle extends Action {
     public void execute() {
         double tToUse = t + parameters.get("t")/100;
         Coordinate spot = new Coordinate(centre.x + radius * Math.cos(tToUse), centre.y + radius*Math.sin(tToUse));
-        MoveToSpot.move(bot, spot, 0.8, true);
+        MoveToSpot.move(bot, spot, 0.6, true);
         t+=0.02;
  //       System.out.println("index: " + bot.getId() + "   - t: " + t + "   -   x: " + spot.x + "   -   y: " + spot.y);
     }

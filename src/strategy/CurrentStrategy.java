@@ -400,6 +400,9 @@ public class CurrentStrategy {
     }
 
     public void setSetPlay(Play play) {
+        for (StrategyListener listener : listeners) {
+            listener.setPlayChanged(play); //this informs situationpanel, playspanel, and rolepanel that they need to update
+        }
         setPlay = play;
     }
 

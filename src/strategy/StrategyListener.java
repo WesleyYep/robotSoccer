@@ -5,4 +5,6 @@ package strategy;
  */
 public interface StrategyListener {
     public void strategyChanged();
+
+    public void setPlayChanged(Play setPlay);
 }

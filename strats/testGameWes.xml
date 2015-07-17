@@ -69,14 +69,14 @@ null-null
 null-null
 -----
 Role:goalLineAttackerTop
-permanent-actions.GoalLineSideAttacker-[side]-[0]
+permanent-actions.GoalLineSideAttacker-[startingX, startingY]-[215, 10]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:goalLineAttackerBot
-permanent-actions.GoalLineSideAttacker-[side]-[1]
+permanent-actions.GoalLineSideAttacker-[startingX, startingY]-[215, 170]
 null-null
 null-null
 null-null
