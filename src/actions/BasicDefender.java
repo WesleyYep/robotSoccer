@@ -184,10 +184,10 @@ public class BasicDefender extends Defender {
 
     @Override
     protected Point getPosition() {
-        Point p1 = defendZone.getFirst();
-        //Point p1 = new Point( parameters.get("point 1 x"), parameters.get("point 1 y"));
-        //Point p2 = new Point( parameters.get("point 2 x"), parameters.get("point 2 y"));
-        Point p2 = defendZone.getSecond();
+        //Point p1 = defendZone.getFirst();
+        Point p1 = new Point( parameters.get("point 1 x"), parameters.get("point 1 y"));
+        Point p2 = new Point( parameters.get("point 2 x"), parameters.get("point 2 y"));
+        //Point p2 = defendZone.getSecond();
         Point p3 = new Point(ballX, ballY);
 
         double[] angles = Geometry.anglesInTriangle(p1, p2, p3);

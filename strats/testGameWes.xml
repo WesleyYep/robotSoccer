@@ -55,28 +55,28 @@ null-null
 null-null
 -----
 Role:goalLineDefenderTop
-permanent-actions.GoalLineSideDefender-[side]-[0]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[45, 5]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:goalLineDefenderBot
-permanent-actions.GoalLineSideDefender-[side]-[1]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[135, 5]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:goalLineAttackerTop
-permanent-actions.GoalLineSideAttacker-[startingX, startingY]-[215, 10]
+permanent-actions.GoalLineSideAttacker-[startingY, startingX]-[10, 215]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:goalLineAttackerBot
-permanent-actions.GoalLineSideAttacker-[startingX, startingY]-[215, 170]
+permanent-actions.GoalLineSideAttacker-[startingY, startingX]-[170, 215]
 null-null
 null-null
 null-null
@@ -86,14 +86,14 @@ Play:defendTop
 gk
 defender
 blockingDefender
-chaseBall
+goalLineDefenderTop
 chaseBall
 -----
 Play:defendBot
 gk
 defender
 blockingDefender
-chaseBall
+goalLineDefenderBot
 chaseBall
 -----
 Play:attackTop

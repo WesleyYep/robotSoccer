@@ -21,8 +21,8 @@ public class GoalLineSideAttacker extends Action {
     {
         if(!(parameters.containsKey("startingX") && parameters.containsKey("startingY"))) {
             //don't bother if these already exist
-            parameters.put("startingX", 10);
-            parameters.put("startingY", 210);
+            parameters.put("startingX", 210);
+            parameters.put("startingY", 10);
         }
     }
 
