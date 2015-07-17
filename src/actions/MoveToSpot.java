@@ -113,7 +113,7 @@ public class MoveToSpot extends Action{
                 }
             }
 
-            String filename = "selfMadeObstacle.fcl";
+            String filename = "fuzzy/selfMadeObstacle.fcl";
             FIS fis = FIS.load(filename, true);
 
             if (fis == null) {
@@ -134,7 +134,7 @@ public class MoveToSpot extends Action{
             fb.setVariable("xPos", r.getXPosition());
             fb.setVariable("yPos", r.getYPosition());
         } else {
-            String filename = "selfMade.fcl";
+            String filename = "fuzzy/selfMade.fcl";
             FIS fis = FIS.load(filename, true);
 
             if (fis == null) {

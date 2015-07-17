@@ -122,7 +122,7 @@ public class testSelfMade extends Action {
             }
         }
 
-        FunctionBlock fb = loadFuzzy("selfMade.fcl");
+        FunctionBlock fb = loadFuzzy("fuzzy/selfMade.fcl");
 
         fb.setVariable("targetTheta", targetTheta);
         fb.setVariable("targetDist", Math.abs(targetDist));

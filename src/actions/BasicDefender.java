@@ -2,10 +2,8 @@ package actions;
 
 import Paths.Path;
 import bot.Robot;
-import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import org.opencv.core.Point;
-import ui.Field;
 import utils.Geometry;
 
 public class BasicDefender extends Defender {
@@ -21,7 +19,6 @@ public class BasicDefender extends Defender {
 
     public BasicDefender(Point p1, Point p2, Path path) {
         super(p1, p2, path);
-
     }
 
     {
@@ -286,16 +283,7 @@ public class BasicDefender extends Defender {
             }
         }
 
-        String filename = "newFuzzy.fcl";
-        FIS fis = FIS.load(filename, true);
-
-        if (fis == null) {
-            System.err.println("Can't load file: '" + filename + "'");
-            System.exit(1);
-        }
-
-        // Get default function block
-        FunctionBlock fb = fis.getFunctionBlock(null);
+        FunctionBlock fb = loadFuzzy("fuzzy/newFuzzy.fcl");
 
              /*
              if (onGoalLine) {
@@ -348,33 +336,6 @@ public class BasicDefender extends Defender {
 //
 
         // }
-    }
-
-    private void checkRobotPosition(double x, double y) {
-        Robot r = bot;
-        int xError = 10;
-        if (r.getXPosition() >= x-xError && r.getXPosition() <= x+xError && r.getYPosition() >= y-10 && r.getYPosition() <= y+10) {
-            r.angularVelocity = 0;
-            r.linearVelocity = 0;
-        }
-    }
-
-    private boolean isCloseToWall() {
-        Robot r = bot;
-        if (r.getYPosition() >= 0 && r.getYPosition() <= 10 ) {
-            return true;
-        }
-        else if (r.getYPosition() >= Field.OUTER_BOUNDARY_HEIGHT-10 && r.getYPosition() <= Field.OUTER_BOUNDARY_HEIGHT) {
-            return true;
-        }
-        else if (r.getXPosition() >= 0 && r.getXPosition() <= 10 ) {
-            return true;
-        }
-        else if (r.getXPosition() >= Field.OUTER_BOUNDARY_WIDTH-10 && r.getXPosition() <= Field.OUTER_BOUNDARY_WIDTH) {
-            return true;
-        }
-
-        return false;
     }
 
 }
