@@ -1,15 +1,14 @@
 package strategy;
 
+import Paths.Path;
 import actions.MoveToSpot;
 import bot.Robot;
+import bot.Robots;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import vision.KalmanFilter;
-import Paths.Path;
-import bot.Robots;
+
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 /**

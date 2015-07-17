@@ -2,7 +2,6 @@ package actions;
 
 import Paths.Path;
 import bot.Robot;
-import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import org.opencv.core.Point;
 import utils.Geometry;
@@ -284,16 +283,7 @@ public class BasicDefender extends Defender {
             }
         }
 
-        String filename = "newFuzzy.fcl";
-        FIS fis = FIS.load(filename, true);
-
-        if (fis == null) {
-            System.err.println("Can't load file: '" + filename + "'");
-            System.exit(1);
-        }
-
-        // Get default function block
-        FunctionBlock fb = fis.getFunctionBlock(null);
+        FunctionBlock fb = loadFuzzy("fuzzy/newFuzzy.fcl");
 
              /*
              if (onGoalLine) {
