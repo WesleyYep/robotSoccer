@@ -470,7 +470,7 @@ public class BasicGoalKeep extends Action {
 		r.angularVelocity = angular*1;  */
 
 
-		FunctionBlock fb = loadFuzzy("goalKeeper.fcl");
+		FunctionBlock fb = loadFuzzy("fuzzy/goalKeeper.fcl");
 		fb.setVariable("targetTheta", targetTheta);
 		fb.setVariable("targetDist", targetDist);
 		fb.evaluate();

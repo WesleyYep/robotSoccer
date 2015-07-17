@@ -102,62 +102,40 @@ public abstract class RobotSoccerObject extends JPanel {
 
 	public final boolean isStuck(Coordinate currentCoordinate) {
 
-		boolean doCheck = false;
-		boolean isStuck = false;
-		Coordinate first = null;
+        // add coordinate to queue
+        if (coordinateQueue.size() == QUEUE_SIZE) {
+            Coordinate first = coordinateQueue.poll();
 
-		if (coordinateQueue.size() == QUEUE_SIZE) {
+            coordinateQueue.add(currentCoordinate);
 
-			Coordinate previous = coordinateQueue.poll();
+            xTotal = xTotal - first.x + currentCoordinate.x;
+            yTotal = yTotal - first.y + currentCoordinate.y;
 
-			coordinateQueue.add(currentCoordinate);
+            double xMean = xTotal / QUEUE_SIZE;
+            double yMean = yTotal / QUEUE_SIZE;
 
-			xTotal = xTotal - previous.x + currentCoordinate.x;
-			yTotal = yTotal - previous.y + currentCoordinate.y;
-
-			first = coordinateQueue.peek();
-			doCheck = true;
-		} else {
-			coordinateQueue.add(currentCoordinate);
-
-			if (coordinateQueue.size() == QUEUE_SIZE) {
-				// using first as reference point.
-				first = coordinateQueue.peek();
-
-				// iterate through coordinate array.
-				Iterator<Coordinate> it = coordinateQueue.iterator();
-				while(it.hasNext()) {
-					Coordinate c = it.next();
-					xTotal += c.x;
-					yTotal += c.y;
-				}
-
-				doCheck = true;
-			}
-		}
-
-		if (doCheck && first != null) {
-			// Calculate mean
-			double xMean = xTotal / QUEUE_SIZE;
-			double yMean = yTotal / QUEUE_SIZE;
-
-			// distance between first point and average point
+            // distance between first point and average point
 			Point p1 = new Point(first.x, first.y);
 			Point p2 = new Point(xMean, yMean);
 
 			int distance = (int) Geometry.euclideanDistance(p1, p2);
 
 			if (distance <= ERROR_MARGIN) {
-				isStuck = true;
-				coordinateQueue.clear();
-				// reset xTotal and yTotal
-				xTotal = 0;
-				yTotal = 0;
-			}
-		}
+				setStuck(true);
+			} else {
+                setStuck(false);
+            }
 
-		setStuck(isStuck);
-		return isStuck;
+        } else {
+            coordinateQueue.add(currentCoordinate);
+
+            xTotal += currentCoordinate.x;
+            yTotal += currentCoordinate.y;
+
+            setStuck(false);
+        }
+
+        return isStuck;
 	}
 
 	/**
