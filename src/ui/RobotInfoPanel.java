@@ -2,6 +2,7 @@ package ui;
 
 import bot.Robot;
 import bot.RobotListener;
+import net.miginfocom.swing.MigLayout;
 import strategy.CurrentStrategy;
 import strategy.Play;
 import strategy.Role;
@@ -34,13 +35,17 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 		orientation = new JLabel("theta = 0");
 		title = new JLabel("Robot " + (i+1));
 
-		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		this.add(title);
-		this.add(xCoordinate);
-		this.add(yCoordinate);
-		this.add(orientation);
-		this.add(manualRolesBox);
-		this.setPreferredSize(new Dimension(100, 100));
+		this.setLayout(new MigLayout(
+				"wrap 1, ins 0", // layout
+				"[min:100:max]", // column
+				"" //row
+		));
+		this.add(title, "span");
+		this.add(xCoordinate, "span");
+		this.add(yCoordinate, "span");
+		this.add(orientation, "span");
+		this.add(manualRolesBox, "span, growx, pushx");
+		//this.setPreferredSize(new Dimension(100, 100));
 
 		// Create border. Initially black.
 		Border border = BorderFactory.createLineBorder(Color.black);
