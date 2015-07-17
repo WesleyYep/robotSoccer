@@ -76,18 +76,6 @@ public class StrikerTest extends Action {
         }
     }
 
-    private double getTargetTheta(Robot r, double x, double y) {
-        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
-        double difference = targetTheta - Math.toRadians(r.getTheta());
-        //some hack to make the difference -Pi < theta < Pi
-        if (difference > Math.PI) {
-            difference -= (2 * Math.PI);
-        } else if (difference < -Math.PI) {
-            difference += (2 * Math.PI);
-        }
-        return Math.toDegrees(difference);
-    }
-
     private boolean ballComingIntoPath(Robot r) {
         double angleToBall = Math.abs(getTargetTheta(r, ballX, ballY));
         boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;

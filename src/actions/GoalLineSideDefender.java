@@ -123,16 +123,4 @@ public class GoalLineSideDefender extends Action {
         return x * x;
     }
 
-    private double getTargetTheta(Robot r, double x, double y) {
-        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
-        double difference = targetTheta - Math.toRadians(r.getTheta());
-        //some hack to make the difference -Pi < theta < Pi
-        if (difference > Math.PI) {
-            difference -= (2 * Math.PI);
-        } else if (difference < -Math.PI) {
-            difference += (2 * Math.PI);
-        }
-        return Math.toDegrees(difference);
-    }
-
 }

@@ -105,18 +105,6 @@ public class MoveAndTurn extends Action {
         }
     }
 
-    private static double getTargetTheta(Robot r, double x, double y) {
-        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
-        double difference = targetTheta - Math.toRadians(r.getTheta());
-        //some hack to make the difference -Pi < theta < Pi
-        if (difference > Math.PI) {
-            difference -= (2 * Math.PI);
-        } else if (difference < -Math.PI) {
-            difference += (2 * Math.PI);
-        }
-        return Math.toDegrees(difference);
-    }
-
 
     public static double getDistanceToTarget(Robot r, int targetX, int targetY) {
         return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
