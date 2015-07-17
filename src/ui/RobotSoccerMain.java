@@ -255,22 +255,23 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		stratControlPanel.add(runSetUpPlayButton, "w 80");
         stratControlPanel.add(manualMovementButton, "w 80, wrap");
 
-		//creating panel holding robot informations
-		JPanel infoPanel = new JPanel();
-		infoPanel.setLayout(new FlowLayout());
-		robotInfoPanels = new RobotInfoPanel[5];
-
-		for (int i = 0; i<5; i++) {
-			robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i);
-			infoPanel.add(robotInfoPanels[i]);
-		}
-
 		final CurrentStrategy currentStrategy = new CurrentStrategy(fieldController);
 		field.setCurrentStrategy(currentStrategy);
 		SituationPanel situationPanel = new SituationPanel(fieldController, currentStrategy);
 		PlaysPanel playsPanel = new PlaysPanel(currentStrategy);
 		RolesPanel rolesPanel = new RolesPanel(currentStrategy);
 		ActionParameterPanel actionPanel = new ActionParameterPanel();
+
+		//creating panel holding robot informations
+		JPanel infoPanel = new JPanel();
+		infoPanel.setLayout(new FlowLayout());
+		robotInfoPanels = new RobotInfoPanel[5];
+
+		for (int i = 0; i<5; i++) {
+			robotInfoPanels[i] = new RobotInfoPanel(bots.getRobot(i), i, currentStrategy);
+			infoPanel.add(robotInfoPanels[i]);
+			currentStrategy.addListener(robotInfoPanels[i]);
+		}
 
 		DrawAreaGlassPanel glassPanel = new DrawAreaGlassPanel(field, situationPanel);
 		glassPanel.setVisible(false);

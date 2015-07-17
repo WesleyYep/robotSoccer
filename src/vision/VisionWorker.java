@@ -3,7 +3,6 @@ package vision;
 import data.RobotData;
 import data.VisionData;
 import org.opencv.core.*;
-import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import ui.ColourPanel;
@@ -13,7 +12,6 @@ import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,11 +79,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		correctGreenContour = new ArrayList<MatOfPoint>();
 		correctOpponentContour = new ArrayList<MatOfPoint>();
 
-        imageLbl = new JLabel();
-        testPanel.add(imageLbl);
-        testFrame.add(testPanel);
-        testFrame.setSize(new Dimension(600,600));
-        testFrame.setVisible(true);
+//        imageLbl = new JLabel();
+//        testPanel.add(imageLbl);
+//        testFrame.add(testPanel);
+//        testFrame.setSize(new Dimension(600,600));
+//        testFrame.setVisible(true);
 
         for (int i = 0; i < weightedAverageThetas.length; i++) {
             weightedAverageThetas[i] = new LimitedQueue(5);
@@ -398,12 +396,12 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                 System.out.println("Limited queue is not working properly!");
             }
             lastThetaValues.add(currentTheta);
-            double sum = 0;
-            for (int i = 0; i < lastThetaValues.size(); i++) {
-                sum += lastThetaValues.get(i);
+            double average = 0;
+            for (int i =0; i < lastThetaValues.size(); i++) {
+                average = (average + lastThetaValues.get(i))/2;
             }
     //        System.out.println("weighted average theta  = " + sum / lastThetaValues.size());
-            return sum / lastThetaValues.size();
+            return average;
         }catch (Exception e) {
             e.printStackTrace();
             return 0;

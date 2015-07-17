@@ -1,16 +1,10 @@
 package actions;
 
-import javax.swing.JOptionPane;
-
 import Paths.Path;
 import bot.Robot;
-import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
-
 import org.opencv.core.Point;
-
 import ui.Field;
 import utils.Geometry;
 
@@ -40,8 +34,13 @@ public class BasicDefender extends Defender {
     @Override
     public void execute() {
         Robot r = bot;
-        setDefendZone(new Point( parameters.get("point 1 x"), parameters.get("point 1 y")),new Point( parameters.get("point 2 x"), parameters.get("point 2 y")));
+        setDefendZone(new Point( 30, 50),new Point( 100, 50));
         Point positionToBe = getPosition();
+        //setVelocityToTarget(positionToBe.x, positionToBe.y, false, false);
+
+//        if (r.isStuck(new Coordinate(r.getXPosition(), r.getYPosition()))) {
+//            System.out.println("robot is stuck");
+//        }
 
         double yDiff = Math.round(ballY-lastBallY);
         double xDiff = Math.round(ballX-lastBallX);
@@ -59,12 +58,12 @@ public class BasicDefender extends Defender {
         }
 
         if (xDiff == 0) {
-            goingVertical = true;  
+            goingVertical = true;
         }
         if (goingVertical && goingHorizontal) {
         	//System.out.println("staying still");
         }
-        
+
         if (!goingVertical && goingHorizontal) {
         	//System.out.println("horizontal line");
         	//for the defender line
@@ -82,12 +81,12 @@ public class BasicDefender extends Defender {
             else {
             	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
             	double yConst = p1.y - (gradient*p1.x);
-            	
+
             	interceptY = ballY;
             	interceptX = (ballY-yConst) / gradient;
             }
         }
-        
+
         if (goingVertical && !goingHorizontal) {
 
            // System.out.println("vertical line");
@@ -107,7 +106,7 @@ public class BasicDefender extends Defender {
             else {
             	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
             	double yConst = p1.y - (gradient*p1.x);
-            	
+
             	interceptY = (gradient*ballX) + yConst;
             	interceptX = ballX;
             }
@@ -133,12 +132,12 @@ public class BasicDefender extends Defender {
 
             double yInt = yMean - slope* xMean;
 
-            
+
             //trajectoryY = (slope*(goalLine+3.75)) + yInt;
 
             //	trajectoryY = (slope*(goalLine-3.75)) + yInt;
           	//for the defender line
-        	
+
             if (Math.abs(p1.x-p2.x) == 0)  {
             	interceptY = (slope*(p1.x-3.75)) + yInt;
             	interceptX = p1.x;
@@ -150,13 +149,13 @@ public class BasicDefender extends Defender {
             else {
             	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
             	double yConst = p1.y - (gradient*p1.x);
-            	
+
             	if (gradient != slope) {
             		interceptX = (yInt - yConst) / (gradient- slope);
             		interceptY = (gradient*interceptX) + yConst;
             	}
             }
-            
+
 
         }
         //System.out.println(interceptY + " " + interceptX);
@@ -175,7 +174,7 @@ public class BasicDefender extends Defender {
         //} else {
         ///	System.out.println("reached");
         //}
-        
+
         lastBallX = ballX;
 		lastBallY = ballY;
 		lastBallX2 = lastBallX;

@@ -231,4 +231,9 @@ public class RolesPanel extends JPanel implements StrategyListener {
         }
     }
 
+    @Override
+    public void setPlayChanged(Play setPlay) {
+        //nothing
+    }
+
 }
