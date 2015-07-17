@@ -313,7 +313,7 @@ public class MoveToFacing  extends Action {
         }*/
         
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
-        FunctionBlock fb = loadFuzzy("selfMadeObstacle.fcl");
+        FunctionBlock fb = loadFuzzy("fuzzy/selfMadeObstacle.fcl");
         fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);
