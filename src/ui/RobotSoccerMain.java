@@ -1,5 +1,6 @@
 package ui;
 
+import actions.Wait;
 import bot.Robots;
 import com.alee.extended.layout.WrapFlowLayout;
 import com.alee.laf.WebLookAndFeel;
@@ -12,6 +13,7 @@ import controllers.FieldController;
 import controllers.VisionController;
 import controllers.WebcamController;
 import controllers.WindowController;
+import criteria.Permanent;
 import game.GarageCollector;
 import game.Tick;
 import jssc.SerialPortList;
@@ -19,6 +21,8 @@ import net.miginfocom.swing.MigLayout;
 import org.opencv.core.Mat;
 import strategy.CurrentStrategy;
 import strategy.GameState;
+import strategy.Play;
+import strategy.Role;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
@@ -257,6 +261,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		final CurrentStrategy currentStrategy = new CurrentStrategy(fieldController);
 		field.setCurrentStrategy(currentStrategy);
+
 		SituationPanel situationPanel = new SituationPanel(fieldController, currentStrategy);
 		PlaysPanel playsPanel = new PlaysPanel(currentStrategy);
 		RolesPanel rolesPanel = new RolesPanel(currentStrategy);
@@ -648,13 +653,33 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		add(toolbar, BorderLayout.PAGE_START);
 		add(contentPane, BorderLayout.CENTER);
 
+        Play play = getDefaultPlay(currentStrategy);
+        currentStrategy.setSetPlay(play);
+
         setPreferredSize(new Dimension(1290, 900));
 
         GarageCollector.runGarbageCollectScheduler();
 
     }
 
-	private void setPlay(boolean isPermanent) {
+    private Play getDefaultPlay(CurrentStrategy cs) {
+        Play play = new Play();
+        Role role = new Role();
+
+        role.setRoleName("wait");
+        role.setPair(new Permanent(), new Wait(), 0);
+        for (int i = 0; i < 5; i++) {
+            play.addRole(i, role);
+        }
+        cs.getRoles().add(role);
+
+        for (int i = 0; i < robotInfoPanels.length; i++) {
+            robotInfoPanels[i].strategyChanged();
+        }
+        return play;
+    }
+
+    private void setPlay(boolean isPermanent) {
 		disableManualMovement();
 		if (!gameTick.isRunSetPlay()) {
 			gameTick.runSetPlay(true, isPermanent);

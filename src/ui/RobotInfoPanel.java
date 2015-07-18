@@ -92,7 +92,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 	@Override
 	public void strategyChanged() {
 		for (int j = 0; j < currentStrategy.getRoles().size(); j++) {
-			manualRolesBox.addItem(currentStrategy.getRoles().get(j));
+            manualRolesBox.addItem(currentStrategy.getRoles().get(j));
 		}
 	}
 
