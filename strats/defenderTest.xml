@@ -1,5 +1,5 @@
 Role:obs
-permanent-actions.BlockOpponentClosestToBall-[]-[]
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 100, 70]
 null-null
 null-null
 null-null
@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Role:new role
-permanent-actions.PIDMoveToBall-[]-[]
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 7, 5]
 null-null
 null-null
 null-null
@@ -55,7 +55,7 @@ null-null
 null-null
 -----
 Play:new play
-new role
+obs
 wait
 wait
 wait
