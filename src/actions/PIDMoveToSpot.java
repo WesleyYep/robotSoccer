@@ -4,27 +4,30 @@ import bot.Robot;
 import strategy.Action;
 import utils.LimitedQueue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Wesley on 18/07/2015.
  */
-public class PIDMoveToBall extends Action {
+public class PIDMoveToSpot extends Action {
 
     private long lastTime = 0;
     private LimitedQueue errorsList = new LimitedQueue(10);
     private boolean isPreviousDirectionForward = true;
     private boolean isCharging = true;
+    private double kp = 5;
+    private double ki = 0;
 
     {
-        parameters.put("speed", 7);
-        parameters.put("kp", 5); //0.5
-        parameters.put("ki", 0);  //0.1
+        parameters.put("spotX", 100);
+        parameters.put("spotY", 70);
+        parameters.put("turnSpotX", 110);
+        parameters.put("turnSpotY", 90);
     }
 
     @Override
     public void execute() {
+
+        double targetX = parameters.get("spotX");
+        double targetY = parameters.get("spotY");
 
         boolean presetToForward = false;  // if true, robot will definitely go forward
         boolean presetToBackward = false; //if true, robot will definitely go backwards
@@ -50,23 +53,23 @@ public class PIDMoveToBall extends Action {
         timePeriod = lastTime == 0 ? 0 : currentTime - lastTime;
         lastTime = currentTime;
 
-        //get angle to ball
-        double angleToBall = getTargetTheta(bot, ballX, ballY);
+        //get angle to target
+        double angleToTarget = getTargetTheta(bot, targetX, targetY);
         double actualAngleError;
 
-        if ((!presetToForward && Math.abs(angleToBall) > 90) || presetToBackward) {
-            if (angleToBall < 0) {
-                actualAngleError = Math.toRadians(-180 - angleToBall);
+        if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
+            if (angleToTarget < 0) {
+                actualAngleError = Math.toRadians(-180 - angleToTarget);
             } else {
-                actualAngleError = Math.toRadians(180 - angleToBall);
+                actualAngleError = Math.toRadians(180 - angleToTarget);
             }
-            bot.angularVelocity = actualAngleError * parameters.get("kp") * -1;
-            bot.linearVelocity = parameters.get("speed")/10.0 * -1;
+            bot.angularVelocity = actualAngleError * kp * -1;
+            bot.linearVelocity = 0.5 * -1;
             isCurrentDirectionForward = false;
         } else {
-            actualAngleError =  Math.toRadians(angleToBall);
-            bot.angularVelocity = actualAngleError * parameters.get("kp");
-            bot.linearVelocity = parameters.get("speed")/10.0;
+            actualAngleError =  Math.toRadians(angleToTarget);
+            bot.angularVelocity = actualAngleError * kp;
+            bot.linearVelocity = 0.5;
             isCurrentDirectionForward = true;
         }
         if (isCurrentDirectionForward == isPreviousDirectionForward) {
@@ -75,20 +78,26 @@ public class PIDMoveToBall extends Action {
             errorsList.clear();
         }
         isPreviousDirectionForward = isCurrentDirectionForward;
-        bot.angularVelocity += errorsList.getTotal() * parameters.get("ki");
+        bot.angularVelocity += errorsList.getTotal() * ki;
 
-        //charge ball into goal
-        double range = 10;
-        if (isCharging) {
-            range = 30;
-        }
-        if (getDistanceToTarget(bot, ballX, ballY) < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
-            bot.linearVelocity = isCurrentDirectionForward ? 1.5 : -1.5;
-            isCharging = true;
-        } else {
-            isCharging = false;
+        double dist = getDistanceToTarget(bot, targetX, targetY);
+        if (dist <= 3) {
+            bot.linearVelocity = 0;
+            turn();
+        }else if (dist < 10) {
+            bot.linearVelocity *= dist/20.0;
         }
 
+
+    }
+
+    private void turn() {
+        double targetX = parameters.get("turnSpotX");
+        double targetY = parameters.get("turnSpotY");
+
+        //get angle to target
+        double angleToTarget = getTargetTheta(bot, targetX, targetY);
+        bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
     }
 
 
