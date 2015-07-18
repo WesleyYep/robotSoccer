@@ -1,9 +1,11 @@
 package strategy;
 
+import actions.Wait;
 import config.ConfigFile;
 import config.ConfigPreviousFile;
 import controllers.FieldController;
 import criteria.Criterias;
+import criteria.Permanent;
 import data.Situation;
 import ui.SituationArea;
 
@@ -212,7 +214,7 @@ public class CurrentStrategy {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            roles.clear();
+            clear(roles);
             plays.clear();
             situations.clear();
             fieldController.removeAllSituationArea();
@@ -370,6 +372,12 @@ public class CurrentStrategy {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    private void clear(List<Role> roles) {
+        Role r = getRoleByName("wait");
+        roles.clear();
+        roles.add(r);
     }
 
     private int[] fromStringInt(String string) {
