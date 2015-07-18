@@ -10,10 +10,10 @@ import ui.SamplingPanel;
 import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
 import utils.Geometry;
+import utils.LimitedQueue;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -547,16 +547,3 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 }
 
 
-class LimitedQueue extends LinkedList<Double> {
-    private int limit;
-
-    public LimitedQueue(int limit) {
-        this.limit = limit;
-    }
-
-    public boolean add(double o) {
-        super.add(o);
-        while (size() > limit) { super.remove(); }
-        return true;
-    }
-}

@@ -119,8 +119,5 @@ public class GoalLineSideDefender extends Action {
         return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
     }
 
-    protected static double squared (double x) {
-        return x * x;
-    }
 
 }

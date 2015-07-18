@@ -104,4 +104,9 @@ public abstract class Action {
         }
         return Math.toDegrees(difference);
     }
+
+    protected static double squared (double x) {
+        return x * x;
+    }
+
 }

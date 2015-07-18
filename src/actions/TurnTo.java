@@ -72,7 +72,4 @@ public class TurnTo extends Action{
         r.angularVelocity = angular*0.5*speed;
     }
 
-    protected double squared (double x) {
-        return x * x;
-    }
 }
