@@ -1,0 +1,113 @@
+Role:goal keeper
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:top spinner
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[5, 40]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:ball chaser
+permanent-actions.ChaseBallWithObstacle-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:mid defender
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 35, 35, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitAtOffenseMid
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[110, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:bot spinner
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[5, 140]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:blockClosetToBall
+permanent-actions.BlockOpponentClosestToBall-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitAtOffenseTop
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[110, 20]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:mid waiting striker
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 185]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:normal defence top
+goal keeper
+mid defender
+ball chaser
+top spinner
+waitAtOffenseMid
+-----
+Play:normal defence bot
+goal keeper
+bot spinner
+ball chaser
+mid defender
+waitAtOffenseMid
+-----
+Play:normal defence inner mid
+goal keeper
+blockClosetToBall
+ball chaser
+ball chaser
+waitAtOffenseMid
+-----
+Play:normal defence outer mid
+goal keeper
+waitAtOffenseTop
+ball chaser
+ball chaser
+mid defender
+-----
+Play:normal attk
+goal keeper
+waitAtOffenseTop
+ball chaser
+ball chaser
+mid defender
+-----
+Situation:def Top:32:1:224:104
+normal defence top
+-----
+Situation:def  Bot:32:266:224:101
+normal defence bot
+-----
+Situation:def inner mid:27:105:112:161
+normal defence inner mid
+-----
+Situation:def outer mid:138:103:121:165
+normal defence outer mid
+-----
+Situation:attk:254:2:226:369
+normal attk
+-----
