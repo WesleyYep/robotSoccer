@@ -2,7 +2,6 @@ package actions;
 
 import bot.Robot;
 import strategy.Action;
-import utils.LimitedQueue;
 
 /**
  * Created by Wesley on 18/07/2015.
@@ -10,10 +9,10 @@ import utils.LimitedQueue;
 public class PIDMoveToSpot extends Action {
 
     private long lastTime = 0;
-    private LimitedQueue errorsList = new LimitedQueue(10);
+//    private LimitedQueue errorsList = new LimitedQueue(10);
     private boolean isPreviousDirectionForward = true;
     private boolean isCharging = true;
-    private double kp = 5;
+    private double kp = 3;
     private double ki = 0;
 
     {
@@ -32,19 +31,33 @@ public class PIDMoveToSpot extends Action {
         boolean presetToForward = false;  // if true, robot will definitely go forward
         boolean presetToBackward = false; //if true, robot will definitely go backwards
 
+//        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
+//            if (!presetToBackward && ! presetToForward) {
+//                System.out.println("bot is stuck :(");
+//                if (isPreviousDirectionForward) {
+//                    presetToBackward = true;
+//                } else {
+//                    presetToForward = true;
+//                }
+//            }
+//        } else {
+//            presetToBackward = false;
+//            presetToForward = false;
+//        }
+
         //check for obstacles
-        for (int i = 0; i < opponentRobots.getRobots().length; i++) {
-            Robot opp = opponentRobots.getRobot(i);
-            if ((isPreviousDirectionForward && Math.abs(getTargetTheta(bot, opp.getXPosition(), opp.getYPosition())) < 20)
-                    || (!isPreviousDirectionForward && Math.abs(getTargetTheta(bot, opp.getXPosition(), opp.getYPosition())) > 160)
-                    && getDistanceToTarget(bot, opp.getXPosition(), opp.getYPosition()) < 20) {
-                if (isPreviousDirectionForward) {
-                    presetToBackward = true;
-                } else {
-                    presetToForward = true;
-                }
-            }
-        }
+//        for (int i = 0; i < opponentRobots.getRobots().length; i++) {
+//            Robot opp = opponentRobots.getRobot(i);
+//            if ((isPreviousDirectionForward && Math.abs(getTargetTheta(bot, opp.getXPosition(), opp.getYPosition())) < 20)
+//                    || (!isPreviousDirectionForward && Math.abs(getTargetTheta(bot, opp.getXPosition(), opp.getYPosition())) > 160)
+//                    && getDistanceToTarget(bot, opp.getXPosition(), opp.getYPosition()) < 20) {
+//                if (isPreviousDirectionForward) {
+//                    presetToBackward = true;
+//                } else {
+//                    presetToForward = true;
+//                }
+//            }
+//        }
 
         boolean isCurrentDirectionForward;
         double timePeriod;
@@ -72,13 +85,13 @@ public class PIDMoveToSpot extends Action {
             bot.linearVelocity = 0.5;
             isCurrentDirectionForward = true;
         }
-        if (isCurrentDirectionForward == isPreviousDirectionForward) {
-            errorsList.add(actualAngleError * timePeriod/1000.0);
-        } else {
-            errorsList.clear();
-        }
+//        if (isCurrentDirectionForward == isPreviousDirectionForward) {
+//            errorsList.add(actualAngleError * timePeriod/1000.0);
+//        } else {
+//            errorsList.clear();
+//        }
         isPreviousDirectionForward = isCurrentDirectionForward;
-        bot.angularVelocity += errorsList.getTotal() * ki;
+//        bot.angularVelocity += errorsList.getTotal() * ki;
 
         double dist = getDistanceToTarget(bot, targetX, targetY);
         if (dist <= 3) {

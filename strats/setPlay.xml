@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:moveAndTurn
-permanent-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 90, 70]
 null-null
 null-null
 null-null
@@ -74,13 +74,13 @@ gk
 moveAndTurn:90:110:92:108
 moveAndTurn:90:110:92:72
 moveAndTurn:90:110:83:90
-defender
+moveAndTurn:150:220:70:150
 -----
 Play:KickOffStart
 gk
 chaseBall
 chaseBall
-defender
+chaseBall
 chaseBall
 -----
 Play:freeBallTopDefSetUp
