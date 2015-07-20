@@ -6,6 +6,9 @@ import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import ui.Field;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BasicGoalKeep extends Action {
 
 	private double error = 3.75;
@@ -15,7 +18,7 @@ public class BasicGoalKeep extends Action {
 	private double lastBallY = 0;
 	private double lastBallX2 = 0;
 	private double lastBallY2 = 0;
-
+	private List<Double> xPositionQueue = new ArrayList<Double>();
 	//non-static initialiser block
 	{
 		parameters.put("goalLine", 5);
@@ -147,8 +150,9 @@ public class BasicGoalKeep extends Action {
 					}
 				}
 			}
-			//code end for getting stuck in the inner goal area
 			*/
+			//code end for getting stuck in the inner goal area
+
 
 			fixPosition = true;
 		}
@@ -177,8 +181,6 @@ public class BasicGoalKeep extends Action {
 		}
 		//ball tracking
 		else{
-
-
 			//System.out.println("ball tracking " + fixPosition);
 			//working out the trajectory of the ball
 			double yDiff = Math.round(ballY-lastBallY);
@@ -435,7 +437,7 @@ public class BasicGoalKeep extends Action {
 				targetTheta = 180 - targetTheta;
 			}
 		}
-
+		System.out.println(targetDist);
 
 		//if (targetDist <=1.7) {
 		//	targetDist = 0;
@@ -477,7 +479,6 @@ public class BasicGoalKeep extends Action {
 		fb.getVariable("linearVelocity").defuzzify();
 		fb.getVariable("angularVelocity").defuzzify();
 		r.linearVelocity = fb.getVariable("linearVelocity").getValue();
-		r.linearVelocity = 0.25;
 		r.angularVelocity = fb.getVariable("angularVelocity").getValue();
 
 		if (targetDist <= 3.75) {
@@ -485,6 +486,7 @@ public class BasicGoalKeep extends Action {
 			r.angularVelocity = 0;
 			fixPosition = true;
 		}
+
 
 		if (!front &&reverse) {
 			r.linearVelocity *= -1;

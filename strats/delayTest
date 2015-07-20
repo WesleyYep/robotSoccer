@@ -1,5 +1,5 @@
-Role:entry
-permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[7, 175]
+Role:wait
+permanent-actions.Wait-[]-[]
 null-null
 null-null
 null-null
@@ -12,20 +12,41 @@ null-null
 null-null
 null-null
 -----
-Role:goalKeeper
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:def
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 120, 110]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:goal keeper
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:chaseballv2
+permanent-actions.ChaseBallWithObstacle-[]-[]
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
+chaseballv2
 wait
 wait
 wait
 wait
-goalKeeper
 -----
-Situation:new situation 1:30:3:452:363
+Situation:new situation 1:25:1:461:369
 new play
 -----

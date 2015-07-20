@@ -38,8 +38,6 @@ public class MoveToFacing  extends Action {
         
         double yDiff = y-15*Math.sin(Math.toRadians(angle*-1));
         double xDiff = x-15*Math.cos(Math.toRadians(angle*-1));
-        
-        
         double robotPosition =  Math.toDegrees(Math.atan2(r.getYPosition() - y, x - r.getXPosition()));
         
         if (angle > 0) {

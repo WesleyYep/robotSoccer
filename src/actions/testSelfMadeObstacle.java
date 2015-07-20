@@ -21,7 +21,7 @@ public class testSelfMadeObstacle extends Action {
     	//System.out.println("obs");
         int x = parameters.get("fixed point1 x");
         int y = parameters.get("fixed point1 y");
-        setVelocityToTarget(x,y,true,false);
+        setVelocityToTarget(ballX,ballY,true,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -101,7 +101,7 @@ public class testSelfMadeObstacle extends Action {
         double tempAngle = r.getTheta();
         
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
-        FunctionBlock fb = loadFuzzy("fuzzy/selfMadeObstacle.fcl");
+        FunctionBlock fb = loadFuzzy("fuzzy/selfMadeObstacleV2.fcl");
         fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);

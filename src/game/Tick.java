@@ -178,13 +178,13 @@ public class Tick implements SenderListener {
 		double tempX = temp.get(0, 0)[0];
 		double tempY = temp.get(1,0)[0];
 
-		/*
+
 		if (tempY < 0) tempY *= -1;
 		if (tempY > 180) tempY = 180 - (tempY%180);
 		if (tempX < 0) tempX *= -1;
-		if (tempX > 220) tempX = 220 - (tempX%220); */
+		if (tempX > 220) tempX = 220 - (tempX%220);
 
-		fieldController.setPredPoint(temp.get(0, 0)[0],temp.get(1, 0)[0]);
+		fieldController.setPredPoint(tempX,tempY);
 
 		temp.release();	
 		if (main.isSimulation()) {

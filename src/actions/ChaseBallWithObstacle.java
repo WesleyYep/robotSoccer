@@ -64,13 +64,69 @@ public class ChaseBallWithObstacle extends Action {
 
 
         if (ballX < r.getXPosition()) {
+            double angle =0;
+            double yDiff = ballY-15*Math.sin(Math.toRadians(angle*-1));
+            double xDiff = ballX-15*Math.cos(Math.toRadians(angle*-1));
+            double robotPosition =  Math.toDegrees(Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition()));
+
+            if (angle > 0) {
+                robotPosition = robotPosition + (180-angle);
+            }
+            else if (angle < 0) {
+                robotPosition += (-180-angle);
+            }
+            else {
+                robotPosition += 180;
+            }
+
+            if (robotPosition >= 180) {
+                robotPosition -= 360;
+            }
+
+            if (robotPosition <= -180) {
+                robotPosition += 360;
+            }
+            robotPosition *= -1;
+
+            double tempAngle = 0;
+            if (Math.abs(robotPosition) > 160) {
+                tempAngle = angle;
+            } else {
+                if (robotPosition > 0) {
+                    tempAngle = angle+ 35;
+                } else {
+                    tempAngle = angle - 35;
+                }
+            }
+
+            if (tempAngle >= 180) {
+                tempAngle -= 360;
+            }
+
+            if (tempAngle <= -180) {
+                tempAngle += 360;
+            }
+
+
+            double yTurn  = yDiff-20*Math.sin(Math.toRadians(tempAngle*-1));
+            double xTurn  = xDiff-20*Math.cos(Math.toRadians(tempAngle*-1));
+            if (Math.abs(robotPosition) > 165) {
+                yTurn = yDiff;
+                xTurn = xDiff;
+            }
+
+            if (xTurn < 3.75) xTurn = 4;
+            if (yTurn > 176) yTurn  = 176;
+            if (yTurn < 3.75) yTurn = 3.75;
+
             int yPos;
             if (ballY > 90) {
                 yPos = (int)(60*Math.random()) + 120;
             } else {
                 yPos = (int)(60*Math.random());
             }
-            y = yPos;
+            y = yTurn;
+            x = xTurn;
         }
 
         double targetDist;
@@ -107,6 +163,7 @@ public class ChaseBallWithObstacle extends Action {
         }
         //charge ball if we are in a kicking position
         if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
+            System.out.println("kicking");
             r.linearVelocity = 1;
             r.angularVelocity = 0;
             return;
@@ -187,7 +244,7 @@ public class ChaseBallWithObstacle extends Action {
 
         double distBetweenObsAndTarget = Math.sqrt(Math.pow((x-obstacleX),2) + Math.pow((y-obstacleY),2));
 
-        FunctionBlock fb = loadFuzzy("fuzzy/selfMadeObstacle.fcl");
+        FunctionBlock fb = loadFuzzy("fuzzy/selfMadeObstacleV2.fcl");
         fb.setVariable("distBetweenObsAndTarget", distBetweenObsAndTarget);
         fb.setVariable("obstacleDist", obstacleDist);
         fb.setVariable("obstacleTheta", obstacleTheta);

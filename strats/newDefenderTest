@@ -5,6 +5,13 @@ null-null
 null-null
 null-null
 -----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:def
 permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 120, 110]
 null-null
@@ -12,18 +19,19 @@ null-null
 null-null
 null-null
 -----
-Play:new play
-def
-wait
-wait
-wait
-wait
+Role:goal keeper
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
+null-null
+null-null
+null-null
 -----
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
--1.0:-1.0
+Play:new play
+goal keeper
+wait
+wait
+wait
+wait
 -----
 Situation:new situation 1:25:1:461:369
 new play
