@@ -1,17 +1,3 @@
-Role:wait
-permanent-actions.Wait-[]-[]
-null-null
-null-null
-null-null
-null-null
------
-Role:wait
-permanent-actions.Wait-[]-[]
-null-null
-null-null
-null-null
-null-null
------
 Role:gk
 permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
 null-null

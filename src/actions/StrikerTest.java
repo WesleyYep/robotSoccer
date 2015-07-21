@@ -11,8 +11,7 @@ import strategy.GameState;
  * Created by Wesley on 27/02/2015.
  */
 public class StrikerTest extends Action {
-    private boolean ready = false;
-    private boolean atCentre = false;
+    private boolean kicking = false;
     private int targetX = 0;
     private int targetY = 0;
     private double oldDistanceToTarget = 0;
@@ -64,7 +63,6 @@ public class StrikerTest extends Action {
             r.linearVelocity = 0;
             if (Math.abs(targetTheta) < 5) {
                 r.angularVelocity = 0;
-                atCentre = true;
             }
             countTimesThatSeemStuck = 0;
         }
@@ -77,20 +75,30 @@ public class StrikerTest extends Action {
     }
 
     private boolean ballComingIntoPath(Robot r) {
-        double angleToBall = Math.abs(getTargetTheta(r, ballX, ballY));
+        double angleToBall = getTargetTheta(r, ballX, ballY);
         boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;
         double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
 
-        if (!isFacingGoal) {return false;}
-        if ( angleToBall < (10 + 50-ballDistanceFromRobot)) {
-            r.linearVelocity = 3;
-            r.angularVelocity = 0;
-            return true;
-        } else if (r.getXPosition() < ballX && angleToBall > 170) {
-            r.linearVelocity = -3;
-            r.angularVelocity = 0;
+        if (kicking) {
+            bot.angularVelocity = Math.toRadians(angleToBall) * 3;
+            bot.linearVelocity = 0.5;
+            if (ballX < bot.getXPosition()) {
+                kicking = false;
+                return false;
+            }
             return true;
         }
+
+        if (!isFacingGoal) {return false;}
+//        if ( angleToBall < (10 + 50-ballDistanceFromRobot)) {
+//            r.linearVelocity = 3;
+//            r.angularVelocity = 0;
+//            return true;
+//        } else if (r.getXPosition() < ballX && angleToBall > 170) {
+//            r.linearVelocity = -3;
+//            r.angularVelocity = 0;
+//            return true;
+//        }
 
         //get an equation in the form y = mx + c of the path of ball
         double m = (predY-ballY) / (predX - ballX);
@@ -118,12 +126,12 @@ public class StrikerTest extends Action {
         if (xInt < 220 && xInt > r.getXPosition()) {
             //find distance of intersection point from current ball position
             double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-yInt));
-            if (ballDistance < 5) {
-                r.linearVelocity = 2;
-                r.angularVelocity = 0;
-            //    System.out.println("ball so close");
-                return true;
-            }
+//            if (ballDistance < 5) {
+//                r.linearVelocity = 2;
+//                r.angularVelocity = 0;
+//            //    System.out.println("ball so close");
+//                return true;
+//            }
             //find speed of ball
             double ballSpeed = (Math.sqrt(squared(predX-ballX) + squared(predY-ballY))) / Tick.PREDICT_TIME;
             //find time taken for ball to reach intersection point
@@ -131,10 +139,13 @@ public class StrikerTest extends Action {
             //only go if the time is under 1 second
             if (time < 1) {
                 //get distance of robot to spot
-                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
-                r.linearVelocity = squared((robotDistance/time)/100);
-                r.angularVelocity = 0;
-                atCentre = false;
+//                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
+//                r.linearVelocity = squared((robotDistance/time)/100);
+//                r.angularVelocity = 0;
+//                atCentre = false;
+                bot.angularVelocity = Math.toRadians(angleToBall) * 3;
+                bot.linearVelocity = 0.5;
+                kicking = true;
                 return true;
             }
         }

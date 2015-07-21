@@ -128,7 +128,7 @@ public class CurrentStrategy {
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             for (Role r : getRoles()) {
-                if (r.isSetPlayRole()) {
+                if (r.isSetPlayRole() || r.toString().equals("wait")) {
                     continue;
                 }
                 bufferedWriter.write("Role:" + r.toString() + "\n");
