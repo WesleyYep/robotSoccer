@@ -1,3 +1,17 @@
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:goal keeper
 permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
 null-null
@@ -70,44 +84,44 @@ waitAtOffenseMid
 -----
 Play:normal defence bot
 goal keeper
-bot spinner
-ball chaser
 mid defender
+ball chaser
+bot spinner
 waitAtOffenseMid
 -----
 Play:normal defence inner mid
 goal keeper
-blockClosetToBall
+mid defender
 ball chaser
 ball chaser
 waitAtOffenseMid
 -----
 Play:normal defence outer mid
 goal keeper
-waitAtOffenseTop
-ball chaser
-ball chaser
 mid defender
+ball chaser
+ball chaser
+waitAtOffenseTop
 -----
 Play:normal attk
 goal keeper
-waitAtOffenseTop
-ball chaser
-ball chaser
 mid defender
+ball chaser
+ball chaser
+waitAtOffenseTop
 -----
-Situation:def Top:32:1:224:104
+Situation:def Top:33:4:224:104
 normal defence top
 -----
-Situation:def  Bot:32:266:224:101
+Situation:def  Bot:34:268:224:101
 normal defence bot
 -----
-Situation:def inner mid:27:105:112:161
+Situation:def inner mid:31:105:112:165
 normal defence inner mid
 -----
-Situation:def outer mid:138:103:121:165
+Situation:def outer mid:139:105:121:165
 normal defence outer mid
 -----
-Situation:attk:254:2:226:369
+Situation:attk:256:2:224:369
 normal attk
 -----

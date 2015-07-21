@@ -76,17 +76,8 @@ public class BasicGoalKeep extends Action {
 				targetPos = bottomPoint;
 			}
 			setVelocityToTarget(goalLine,targetPos, false,false);
-
+			//MoveToSpot.move(r,new Coordinate((int)goalLine,targetPos),1,false);
 			//code start for getting stuck in the inner goal area
-			double pointY1 = Field.OUTER_BOUNDARY_HEIGHT/2 - Field.INNER_GOAL_AREA_HEIGHT/2 + 3.5;
-			double pointY2 = Field.OUTER_BOUNDARY_HEIGHT/2 + Field.INNER_GOAL_AREA_HEIGHT/2 - 3.5;
-
-			double angleLeft = 0;
-			double angleRight = 0;
-
-			double roundedXPosition = Math.round(r.getXPosition()*10)/10;
-			double roundedYPosition = Math.round(r.getYPosition()*10)/10;
-
 			//finding the angle in the inner goal area so the robot can get out of the inner area
 			/*
 			 ---           -----
@@ -99,9 +90,16 @@ public class BasicGoalKeep extends Action {
 			 */
 			/*
 
-			 */
 
-			/*
+			double pointY1 = Field.OUTER_BOUNDARY_HEIGHT/2 - Field.INNER_GOAL_AREA_HEIGHT/2 + 3.5;
+			double pointY2 = Field.OUTER_BOUNDARY_HEIGHT/2 + Field.INNER_GOAL_AREA_HEIGHT/2 - 3.5;
+
+			double angleLeft = 0;
+			double angleRight = 0;
+
+			double roundedXPosition = Math.round(r.getXPosition()*10)/10;
+			double roundedYPosition = Math.round(r.getYPosition()*10)/10;
+
 			if (roundedYPosition == pointY1) {
 				//System.out.println("angle left is 0");
 				angleLeft = 0;
@@ -131,7 +129,7 @@ public class BasicGoalKeep extends Action {
 			angleLeft  = Math.toDegrees(angleLeft)+10;
 			//System.out.println("angle right: " + angleRight + " angle left: " + angleLeft + "robot theta: " + r.getTheta() );
 
-			if (r.getXPosition() <= 4.2 ) {
+			if (r.getXPosition() <= 1 ) {
 				//System.out.println("here");
 				if (r.getXPosition() > 0) {
 					double adjacent =  Math.sqrt(Math.pow((roundedXPosition-(0)),2) + Math.pow((roundedYPosition-roundedYPosition),2));
@@ -150,10 +148,8 @@ public class BasicGoalKeep extends Action {
 					}
 				}
 			}
-			*/
+				*/
 			//code end for getting stuck in the inner goal area
-
-
 			fixPosition = true;
 		}
 		//correct it's position
@@ -316,8 +312,7 @@ public class BasicGoalKeep extends Action {
 			//System.out.println("ballY: " + ballY + " resultY:" + resultY + " area1Y weghting:" + area1Y + " " + area1Weighting
 			//		+ " area2Y weghting:" + area2Y + " " + area2Weighting
 			//		+ " area3Y weghting:" + area3Y + " " + area3Weighting );
-			setVelocityToTarget(goalLine, resultY, true, false);
-
+			 setVelocityToTarget(goalLine, resultY, true, false);
 
 
 			/*
@@ -437,7 +432,6 @@ public class BasicGoalKeep extends Action {
 				targetTheta = 180 - targetTheta;
 			}
 		}
-		System.out.println(targetDist);
 
 		//if (targetDist <=1.7) {
 		//	targetDist = 0;
@@ -479,6 +473,7 @@ public class BasicGoalKeep extends Action {
 		fb.getVariable("linearVelocity").defuzzify();
 		fb.getVariable("angularVelocity").defuzzify();
 		r.linearVelocity = fb.getVariable("linearVelocity").getValue();
+		//r.linearVelocity = 0.275;
 		r.angularVelocity = fb.getVariable("angularVelocity").getValue();
 
 		if (targetDist <= 3.75) {

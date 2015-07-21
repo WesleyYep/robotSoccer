@@ -21,7 +21,7 @@ public class testSelfMadeObstacle extends Action {
     	//System.out.println("obs");
         int x = parameters.get("fixed point1 x");
         int y = parameters.get("fixed point1 y");
-        setVelocityToTarget(ballX,ballY,true,false);
+        setVelocityToTarget(x,y,true,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
