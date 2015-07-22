@@ -1,5 +1,5 @@
 Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[7, 110, 70]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
 null-null
 null-null
 null-null
@@ -27,14 +27,21 @@ null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[105, 150]
+permanent-actions.StrikerTest-[startingY, startingX]-[30, 130]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingStrikerMid
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[75, 150]
+permanent-actions.StrikerTest-[startingY, startingX]-[150, 130]
 null-null
 null-null
 null-null
@@ -98,16 +105,23 @@ blockingDefender
 -----
 Play:attackTop
 gk
-goalLineAttackerTop
-PIDChaseBall
 chaseBall
-waitingStrikerTop
+PIDChaseBall
+waitingStrikerMid
+waitingStrikerBottom
 -----
 Play:attackBottom
 gk
-goalLineAttackerBot
-PIDChaseBall
 chaseBall
+waitingStrikerTop
+waitingStrikerMid
+PIDChaseBall
+-----
+Play:attackMid
+gk
+chaseBall
+waitingStrikerTop
+PIDChaseBall
 waitingStrikerBottom
 -----
 Situation:defendTop:7:3:250:184
@@ -116,9 +130,12 @@ defendTop
 Situation:defendBot:16:186:241:183
 defendBot
 -----
-Situation:attackTop:257:4:223:180
+Situation:attackTop:257:4:223:101
 attackTop
 -----
-Situation:attackBot:255:183:226:186
+Situation:attackBot:255:265:226:104
 attackBottom
+-----
+Situation:attackMid:257:105:226:160
+attackMid
 -----

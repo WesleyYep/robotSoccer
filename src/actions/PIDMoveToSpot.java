@@ -1,6 +1,5 @@
 package actions;
 
-import bot.Robot;
 import data.Coordinate;
 import strategy.Action;
 
@@ -112,10 +111,6 @@ public class PIDMoveToSpot extends Action {
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
     }
 
-
-    private double getDistanceToTarget(Robot r, double targetX, double targetY) {
-        return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
-    }
 
 
 }

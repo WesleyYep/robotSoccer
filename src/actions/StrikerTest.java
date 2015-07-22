@@ -16,6 +16,7 @@ public class StrikerTest extends Action {
     private int targetY = 0;
     private double oldDistanceToTarget = 0;
     private int countTimesThatSeemStuck = 0;
+    private boolean isCharging;
 
     //non-static initialiser block
     {
@@ -77,11 +78,33 @@ public class StrikerTest extends Action {
     private boolean ballComingIntoPath(Robot r) {
         double angleToBall = getTargetTheta(r, ballX, ballY);
         boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;
-        double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
+ //       double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
 
         if (kicking) {
             bot.angularVelocity = Math.toRadians(angleToBall) * 3;
-            bot.linearVelocity = 0.5;
+            bot.linearVelocity = 1;
+
+            double range = 10;
+            if (isCharging) {
+                range = 30;
+            }
+            if (getDistanceToTarget(bot, ballX, ballY) < range && Math.abs(angleToBall) < 20/* radians*/) {
+                bot.linearVelocity = 1.5;
+                if (ballX > 110) {
+                    double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+                    if (Math.abs(angleToGoal) > 45) {
+                        if (angleToGoal > 0) {
+                            bot.angularVelocity = 30;
+                        } else {
+                            bot.angularVelocity = -30;
+                        }
+                    }
+                }
+                isCharging = true;
+            } else {
+                isCharging = false;
+            }
+
             if (ballX < bot.getXPosition()) {
                 kicking = false;
                 return false;
@@ -144,7 +167,7 @@ public class StrikerTest extends Action {
 //                r.angularVelocity = 0;
 //                atCentre = false;
                 bot.angularVelocity = Math.toRadians(angleToBall) * 3;
-                bot.linearVelocity = 0.5;
+                bot.linearVelocity = 1;
                 kicking = true;
                 return true;
             }
