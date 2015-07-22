@@ -265,18 +265,6 @@ public class ChaseBallWithObstacle extends Action {
         return;
     }
 
-    private double angleDifferenceFromGoal(double x, double y, double theta) {
-        double targetTheta = Math.atan2(y - 90, 220 - x);
-        double difference = targetTheta - Math.toRadians(theta);
-        //some hack to make the difference -Pi < theta < Pi
-        if (difference > Math.PI) {
-            difference -= (2 * Math.PI);
-        } else if (difference < -Math.PI) {
-            difference += (2 * Math.PI);
-        }
-        return difference;
-    }
-
     private double getDistanceToTarget(Robot r) {
         return Math.sqrt(squared(110 - r.getXPosition()) + squared(90 - r.getYPosition()));
     }

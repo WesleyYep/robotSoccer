@@ -1,26 +1,12 @@
-Role:wait
-permanent-actions.Wait-[]-[]
-null-null
-null-null
-null-null
-null-null
------
-Role:wait
-permanent-actions.Wait-[]-[]
-null-null
-null-null
-null-null
-null-null
------
 Role:obs
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 100, 70]
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:new role
-permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 3]
+permanent-actions.StrikerTest-[startingY, startingX]-[40, 130]
 null-null
 null-null
 null-null
@@ -62,9 +48,9 @@ null-null
 null-null
 -----
 Play:new play
-wait
-wait
 new role
+wait
+wait
 wait
 wait
 -----

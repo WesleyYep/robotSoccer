@@ -1,6 +1,6 @@
 package actions;
 
-import bot.Robot;
+import data.Coordinate;
 import strategy.Action;
 
 /**
@@ -11,9 +11,10 @@ public class PIDMoveToSpot extends Action {
     private long lastTime = 0;
 //    private LimitedQueue errorsList = new LimitedQueue(10);
     private boolean isPreviousDirectionForward = true;
-    private boolean isCharging = true;
     private double kp = 3;
     private double ki = 0;
+    private boolean presetToForward = false;  // if true, robot will definitely go forward
+    private boolean presetToBackward = false; //if true, robot will definitely go backwards
 
     {
         parameters.put("spotX", 100);
@@ -27,23 +28,21 @@ public class PIDMoveToSpot extends Action {
 
         double targetX = parameters.get("spotX");
         double targetY = parameters.get("spotY");
+        double dist = getDistanceToTarget(bot, targetX, targetY);
 
-        boolean presetToForward = false;  // if true, robot will definitely go forward
-        boolean presetToBackward = false; //if true, robot will definitely go backwards
-
-//        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
-//            if (!presetToBackward && ! presetToForward) {
-//                System.out.println("bot is stuck :(");
-//                if (isPreviousDirectionForward) {
-//                    presetToBackward = true;
-//                } else {
-//                    presetToForward = true;
-//                }
-//            }
-//        } else {
-//            presetToBackward = false;
-//            presetToForward = false;
-//        }
+        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
+            if (!presetToBackward && !presetToForward && dist > 10) {
+                System.out.println("bot is stuck :(");
+                if (isPreviousDirectionForward) {
+                    presetToBackward = true;
+                } else {
+                    presetToForward = true;
+                }
+            }
+        } else {
+            presetToBackward = false;
+            presetToForward = false;
+        }
 
         //check for obstacles
 //        for (int i = 0; i < opponentRobots.getRobots().length; i++) {
@@ -93,7 +92,6 @@ public class PIDMoveToSpot extends Action {
         isPreviousDirectionForward = isCurrentDirectionForward;
 //        bot.angularVelocity += errorsList.getTotal() * ki;
 
-        double dist = getDistanceToTarget(bot, targetX, targetY);
         if (dist <= 3) {
             bot.linearVelocity = 0;
             turn();
@@ -113,10 +111,6 @@ public class PIDMoveToSpot extends Action {
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
     }
 
-
-    private double getDistanceToTarget(Robot r, double targetX, double targetY) {
-        return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
-    }
 
 
 }
