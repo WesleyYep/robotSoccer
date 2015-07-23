@@ -104,6 +104,28 @@ public abstract class RobotSoccerObject extends JPanel {
 
         // add coordinate to queue
         if (coordinateQueue.size() == QUEUE_SIZE) {
+            // initialise variables
+            int distance;
+            double xMean, yMean;
+
+            // check if queue needs to be cleared
+            if (isStuck){
+                xMean = xTotal / QUEUE_SIZE;
+                yMean = yTotal / QUEUE_SIZE;
+
+                distance = (int)Geometry.euclideanDistance(new Point(xMean, yMean), new Point(currentCoordinate.x, currentCoordinate.y));
+
+                if (distance > ERROR_MARGIN) {
+                    // reset values
+                    xTotal = 0;
+                    yTotal = 0;
+                    setStuck(false);
+                    coordinateQueue.clear();
+                    return isStuck;
+                }
+
+            }
+
             Coordinate first = coordinateQueue.poll();
 
             coordinateQueue.add(currentCoordinate);
@@ -111,14 +133,14 @@ public abstract class RobotSoccerObject extends JPanel {
             xTotal = xTotal - first.x + currentCoordinate.x;
             yTotal = yTotal - first.y + currentCoordinate.y;
 
-            double xMean = xTotal / QUEUE_SIZE;
-            double yMean = yTotal / QUEUE_SIZE;
+            xMean = xTotal / QUEUE_SIZE;
+            yMean = yTotal / QUEUE_SIZE;
 
             // distance between first point and average point
 			Point p1 = new Point(first.x, first.y);
 			Point p2 = new Point(xMean, yMean);
 
-			int distance = (int) Geometry.euclideanDistance(p1, p2);
+			distance = (int) Geometry.euclideanDistance(p1, p2);
 
 			if (distance <= ERROR_MARGIN) {
 				setStuck(true);
