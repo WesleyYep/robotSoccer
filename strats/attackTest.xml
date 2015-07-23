@@ -83,15 +83,8 @@ null-null
 null-null
 -----
 Role:PIDChaseBall
+Negative Situation-actions.ChaseBallWithObstacle-[]-[]
 permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
-null-null
-null-null
-null-null
-null-null
------
-Role:PIDGoalKeeper
-permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
-null-null
 null-null
 null-null
 null-null
@@ -138,13 +131,20 @@ waitingStrikerTop
 PIDChaseBall
 waitingStrikerBottom
 -----
-Situation:defendTop:7:3:250:184
+Play:allWait
+wait
+wait
+wait
+wait
+wait
+-----
+Situation:defendTop:7:3:28:184
 defendTop
 -----
-Situation:defendBot:16:186:241:183
+Situation:defendBot:16:186:21:183
 defendBot
 -----
-Situation:attackTop:257:4:223:101
+Situation:attackTop:255:4:225:101
 attackTop
 -----
 Situation:attackBot:255:265:226:104
@@ -152,4 +152,7 @@ attackBottom
 -----
 Situation:attackMid:257:105:226:160
 attackMid
+-----
+Situation:allWait:34:2:223:366
+allWait
 -----

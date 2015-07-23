@@ -111,10 +111,12 @@ public class PIDGoalKeeper extends Action {
         isPreviousDirectionForward = isCurrentDirectionForward;
 //        bot.angularVelocity += errorsList.getTotal() * ki;
 
+        double botTheta = bot.getTheta();
+
         if (dist <= 3) {
             bot.linearVelocity = 0;
             turn();
-        }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
+        }else if (dist < 10 && !((80 < botTheta && botTheta < 100) || (-100 < botTheta && botTheta < -80))) {
             bot.linearVelocity *= dist/10.0;
         }
 

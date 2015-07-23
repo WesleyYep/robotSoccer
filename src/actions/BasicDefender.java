@@ -283,13 +283,8 @@ public class BasicDefender extends Defender {
             }
         }
 
+        /*
         FunctionBlock fb = loadFuzzy("fuzzy/newFuzzy.fcl");
-
-             /*
-             if (onGoalLine) {
-            	targetTheta = 0;
-             }
-             */
         //if (targetDist <= 3.75) targetDist = 0;
         if (targetDist <=3.75) {
             targetDist = 0;
@@ -303,10 +298,6 @@ public class BasicDefender extends Defender {
         //      		+ r.getYPosition() + " targetDist " + targetDist);
         // Evaluate
         fb.evaluate();
-             /*
-             JFuzzyChart.get().chart(fb);
-              JOptionPane.showMessageDialog(null, "nwa"); */
-
         // Show output variable's chart
         fb.getVariable("rightWheelVelocity").defuzzify();
         fb.getVariable("leftWheelVelocity").defuzzify();
@@ -317,11 +308,24 @@ public class BasicDefender extends Defender {
         //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
         double linear =  (right+left)/2;
         double angular = (right-left)*(2/0.135);
-        //    System.out.println("right :" + right + "left " + left);
-
-
+        //    System.out.println("right :" + right + "left " + left)
         r.linearVelocity = linear*2.5;
-        r.angularVelocity = angular*1;
+        r.angularVelocity = angular*1; */
+
+
+        FunctionBlock fb = loadFuzzy("fuzzy/goalKeeper.fcl");
+        fb.setVariable("targetTheta", targetTheta);
+        fb.setVariable("targetDist", targetDist);
+        fb.evaluate();
+        fb.getVariable("linearVelocity").defuzzify();
+        fb.getVariable("angularVelocity").defuzzify();
+        r.linearVelocity = fb.getVariable("linearVelocity").getValue();
+        r.angularVelocity = fb.getVariable("angularVelocity").getValue();
+
+        if (targetDist <= 3.75) {
+            r.linearVelocity = 0;
+            r.angularVelocity = 0;
+        }
 
         if (!front &&reverse) {
             r.linearVelocity *= -1;

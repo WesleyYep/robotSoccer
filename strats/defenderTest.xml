@@ -47,10 +47,17 @@ null-null
 null-null
 null-null
 -----
+Role:PIDGoalKeep
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
 new role
 wait
-wait
+PIDGoalKeep
 wait
 wait
 -----

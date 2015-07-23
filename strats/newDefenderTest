@@ -12,8 +12,22 @@ null-null
 null-null
 null-null
 -----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:def
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 120, 110]
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[70, 35, 35, 110]
 null-null
 null-null
 null-null
@@ -27,8 +41,8 @@ null-null
 null-null
 -----
 Play:new play
+def
 goal keeper
-wait
 wait
 wait
 wait
