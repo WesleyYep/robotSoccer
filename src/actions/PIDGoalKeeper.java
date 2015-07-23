@@ -1,5 +1,6 @@
 package actions;
 
+import data.Coordinate;
 import strategy.Action;
 import ui.Field;
 
@@ -32,6 +33,7 @@ public class PIDGoalKeeper extends Action {
         double targetX = parameters.get("goalLine");
         double targetY = getYPositionForGoalKeeper();
         double dist = getDistanceToTarget(bot, targetX, targetY);
+        double goalLine = parameters.get("goalLine");
 
 //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
 //            if (!presetToBackward && !presetToForward && dist > 10) {
@@ -72,6 +74,20 @@ public class PIDGoalKeeper extends Action {
         double angleToTarget = getTargetTheta(bot, targetX, targetY);
         double actualAngleError;
 
+        //clear the ball
+        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
+            //System.out.println(targetTheta);
+            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 15 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 5 || Math.abs(angleToTarget) > 175 )) {
+                MoveToSpot.move(bot, new Coordinate((int)goalLine, 175), 2, false);
+                return;
+            } else {
+                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 15 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 5 || Math.abs(angleToTarget) > 175 )) {
+                    MoveToSpot.move(bot, new Coordinate((int)goalLine, 5), 2, false);
+                    return;
+                }
+            }
+        }
+
         if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
             if (angleToTarget < 0) {
                 actualAngleError = Math.toRadians(-180 - angleToTarget);
@@ -99,7 +115,7 @@ public class PIDGoalKeeper extends Action {
             bot.linearVelocity = 0;
             turn();
         }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
-            bot.linearVelocity *= dist/20.0;
+            bot.linearVelocity *= dist/10.0;
         }
 
 

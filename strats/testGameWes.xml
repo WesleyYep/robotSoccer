@@ -27,21 +27,21 @@ null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[30, 130]
+permanent-actions.StrikerTest-[startingY, startingX]-[20, 150]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerMid
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 130]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[150, 130]
+permanent-actions.StrikerTest-[startingY, startingX]-[160, 150]
 null-null
 null-null
 null-null
@@ -83,8 +83,15 @@ null-null
 null-null
 -----
 Role:PIDChaseBall
-Positive Situation-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 3]
-permanent-actions.ChaseBallWithObstacle-[]-[]
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:PIDGoalKeeper
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
 null-null
 null-null
 null-null

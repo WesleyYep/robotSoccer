@@ -37,6 +37,8 @@ public class BasicGoalKeep extends Action {
 		//double goalLine = 213;
 		//System.out.println(goalLine);
 
+
+
 		double targetTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
 		double difference = targetTheta - Math.toRadians(r.getTheta());
 		//some hack to make the difference -Pi < theta < Pi
@@ -152,7 +154,9 @@ public class BasicGoalKeep extends Action {
 			}
 			*/
 			//code end for getting stuck in the inner goal area
-
+			if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
+				bot.linearVelocity *=-2;
+			}
 
 			fixPosition = true;
 		}

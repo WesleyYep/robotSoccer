@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:top spinner
-permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[5, 40]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[45, 5]
 null-null
 null-null
 null-null
@@ -34,7 +34,7 @@ null-null
 null-null
 -----
 Role:bot spinner
-permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[5, 140]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[135, 5]
 null-null
 null-null
 null-null
@@ -90,11 +90,11 @@ ball chaser
 mid defender
 -----
 Play:normal attk
-goal keeper
-waitAtOffenseTop
-ball chaser
-ball chaser
-mid defender
+wait
+wait
+wait
+wait
+wait
 -----
 Situation:def Top:32:1:224:104
 normal defence top
@@ -108,6 +108,6 @@ normal defence inner mid
 Situation:def outer mid:138:103:121:165
 normal defence outer mid
 -----
-Situation:attk:254:2:226:369
+Situation:attk:255:2:225:369
 normal attk
 -----
