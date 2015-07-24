@@ -47,11 +47,11 @@ DEFUZZIFY angularVelocity
 	TERM L5 := trian -6.5 -5.5 -4.5;
 	TERM L4 := trian -5.5 -4.5 -3.5;
 	TERM L3 := trian -4.5 -3.5 -2.5;
-	TERM L2 := trian -3.5 -2.5 -1.5;
-	TERM L1 := trian -2.5 -1.5 -0.5;
-	TERM zero := trian -0.5 0 0.5;
-	TERM R1 := trian 0.5 1.5 2.5;
-	TERM R2 := trian 1.5 2.5 3.5;
+	TERM L2 := trian -3.5 -1.5 -0.8;
+	TERM L1 := trian -1.5 -0.8 -0.2;
+	TERM zero := trian -0.2 0 0.2;
+	TERM R1 := trian 0.2 0.8 1.5;
+	TERM R2 := trian 0.8 1.5 3.5;
 	TERM R3 := trian 2.5 3.5 4.5;
 	TERM R4 := trian 3.5 4.5 5.5;
 	TERM R5 := trian 4.5 5.5 6.5;
