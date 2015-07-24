@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CriteriaActionTableModel extends DefaultTableModel {
     private static final String[] COLNAMES = { "Criteria", "Action" };
-    private static final int ROWCOUNT = 5;
+    public static final int ROWCOUNT = 5;
 
     public CriteriaActionTableModel() {
         super(COLNAMES, ROWCOUNT);

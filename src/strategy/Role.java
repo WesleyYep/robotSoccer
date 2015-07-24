@@ -2,6 +2,7 @@ package strategy;
 
 import bot.Robot;
 import bot.Robots;
+import data.CriteriaActionTableModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class Role {
     private String roleName;
-    private List<CriteriaActionPair> pairs = new ArrayList<CriteriaActionPair>(5);
+    private CriteriaActionPair[] pairs = new CriteriaActionPair[CriteriaActionTableModel.ROWCOUNT];
     private Robot bot;
     private Robots teamRobots;
     private Robots opponentRobots;
@@ -26,48 +27,33 @@ public class Role {
     }
 
     public void setPair(Criteria criteria, Action action, int index) {
-        try {
-            // update criteriaaction pair. might throw exception
-            CriteriaActionPair pair = pairs.get(index);
-
-            if (pair == null) {
-                pairs.set(index, new CriteriaActionPair(criteria, action));
-                return;
-            }
-
-            pair.setCriteria(criteria);
-            pair.setAction(action);
-
-            // update criteria action pair in list
-            pairs.set(index, pair);
-        } catch (IndexOutOfBoundsException e) {
-            pairs.add(index, new CriteriaActionPair(criteria, action));
-        }
-        
-        for (CriteriaActionPair pair : pairs) {
-            System.out.println("Action: " + pair.getAction() + " Criteria: " + pair.getCriteria());
+        if (pairs[index] == null) {
+            pairs[index] = new CriteriaActionPair(criteria, action);
+        } else {
+            pairs[index].setAction(action);
+            pairs[index].setCriteria(criteria);
         }
     }
 
     public Action[] getActions() {
-        Action[] actions = new Action[pairs.size()];
-        for (int i = 0; i < pairs.size(); i++) {
-            if (pairs.get(i) == null) {
+        Action[] actions = new Action[pairs.length];
+        for (int i = 0; i < pairs.length; i++) {
+            if (pairs[i] == null) {
                 actions[i] = null;
             } else {
-                actions[i] = pairs.get(i).getAction();
+                actions[i] = pairs[i].getAction();
             }
         }
         return actions;
     }
 
     public Criteria[] getCriterias() {
-        Criteria[] criterias = new Criteria[pairs.size()];
-        for (int i = 0; i < pairs.size(); i++) {
-            if (pairs.get(i) == null) {
+        Criteria[] criterias = new Criteria[pairs.length];
+        for (int i = 0; i < pairs.length; i++) {
+            if (pairs[i] == null) {
                 criterias[i] = null;
             } else {
-                criterias[i] = pairs.get(i).getCriteria();
+                criterias[i] = pairs[i].getCriteria();
             }
         }
         return criterias;

@@ -20,7 +20,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -58,6 +60,7 @@ public class RolesPanel extends JPanel implements StrategyListener {
 
     private Role lastSelectedRole;
     private Action lastSelectedAction;
+    private int criteriaActionLastSelectedIndex;
 
     public RolesPanel(final CurrentStrategy currentStrategy) {
 
@@ -99,12 +102,6 @@ public class RolesPanel extends JPanel implements StrategyListener {
         add(scrollRoles, "wrap");
         add(addButton, "split 2");
         add(removeButton, "wrap");
-
-//        TableColumn col = criteriaActionTable.getColumnModel().getColumn(0);
-//        col.setCellEditor( new DefaultCellEditor(criteria1));
-//
-//        TableColumn col1 = criteriaActionTable.getColumnModel().getColumn(1);
-//        col1.setCellEditor( new DefaultCellEditor(action1));
 
         add(scrollCriteriaActions, "w 250:300:max, wrap");
 
@@ -172,76 +169,71 @@ public class RolesPanel extends JPanel implements StrategyListener {
                     role.setPair(criteria, action, i);
                 }
 
-                //criteriaActionTableModel.getValueAt(0, 0);
-//                role.setPair((Criteria) criteriaActionTableModel.getValueAt(0, 0), (Action) criteriaActionTableModel.getValueAt(0, 1), 0);
-//                role.setPair((Criteria) criteriaActionTableModel.getValueAt(1, 0), (Action) criteriaActionTableModel.getValueAt(1, 1), 1);
-//                role.setPair((Criteria) criteriaActionTableModel.getValueAt(2, 0), (Action) criteriaActionTableModel.getValueAt(2, 1), 2);
-//                role.setPair((Criteria) criteriaActionTableModel.getValueAt(3, 0), (Action) criteriaActionTableModel.getValueAt(3, 1), 3);
-//                role.setPair((Criteria) criteriaActionTableModel.getValueAt(4, 0), (Action) criteriaActionTableModel.getValueAt(4, 1), 4);
             }
         });
 
-//        ListSelectionModel rolesRows = rolesTable.getSelectionModel();
-//        rolesRows.addListSelectionListener(new ListSelectionListener() {
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                //ignore extra messages
-//                if (e.getValueIsAdjusting()) return;
-//
-//                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-//                if (lsm.isSelectionEmpty()) {
-//
-//                } else {
-//                    int selectedRow = lsm.getMinSelectionIndex();
-//                    Role role = (Role) rolesTableModel.getValueAt(selectedRow, 0);
-//                    lastSelectedRole = role;
-//
-//                    // update criteriaactiontable model
-//                    for (int i = 0; i < role.getActions().length; i++) {
-//                        for (int j = 0; j < 5; j++) {
-//                            criteriaActionTableModel.setValueAt(role.getCriterias()[j], j, 0);
-//                            criteriaActionTableModel.setValueAt(role.getActions()[j], j, 1);
-//                        }
-//                    }
-//                }
-//                criteriaActionTable.clearSelection();
-//            }
-//        });
+        ListSelectionModel rolesRows = rolesTable.getSelectionModel();
+        rolesRows.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //ignore extra messages
+                if (e.getValueIsAdjusting()) return;
 
-//        ListSelectionModel actionsRows = criteriaActionTable.getSelectionModel();
-//        actionsRows.addListSelectionListener(new ListSelectionListener() {
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                //ignore extra messages
-//                if (e.getValueIsAdjusting()) return;
-//
-//                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-//                if (lsm.isSelectionEmpty()) {
-//
-//                } else {
-//                    try {
-//                        int selectedRow = lsm.getMinSelectionIndex();
-//                        // print
-//                        Action action = (Action) criteriaActionTable.getValueAt(selectedRow, 1);
-//                        System.out.println("setting last selected action = " + action.toString());
-//                        lastSelectedAction = action;
-//                        List<String> keys = new ArrayList<String>(action.getParameters());
-//                        List<Integer> values = new ArrayList<Integer>(action.getValues());
-//                        for (int i = 0; i < keys.size(); i++) {
-//                            //parameterLabels[i].setText(keys.get(i) + "");
-//                            inputs[i].setText(values.get(i) + "");
-//                        }
-//                        //now fill the rest with defaults
-//                        for (int i = keys.size(); i < 4; i++) {
-//                            //parameterLabels[i].setText("Parameter " + (i + 1) + ":");
-//                            inputs[i].setText("");
-//                        }
-//                    }catch (NullPointerException ex) {
-//                        //do nothing - there is no minimum number of criteria action pairs
-//                    }
-//                }
-//            }
-//        });
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+                if (lsm.isSelectionEmpty()) {
+
+                } else {
+                    int selectedRow = lsm.getMinSelectionIndex();
+                    Role role = (Role) rolesTableModel.getValueAt(selectedRow, 0);
+                    Action[] actions = role.getActions();
+                    Criteria[] criterias = role.getCriterias();
+                    lastSelectedRole = role;
+
+                    // update criteriaactiontable model
+                    for (int i = 0; i < CriteriaActionTableModel.ROWCOUNT; i++) {
+                        try {
+                            criteriaActionTableModel.setValueAt(criterias[i].getClass().getSimpleName(), i, 0);
+                            criteriaActionTableModel.setValueAt(actions[i].getClass().getSimpleName(), i, 1);
+                        } catch (NullPointerException ex) {
+                            criteriaActionTableModel.setValueAt(null, i, 0);
+                            criteriaActionTableModel.setValueAt(null, i, 1);
+                        }
+                    }
+                }
+            }
+        });
+
+        ListSelectionModel actionsRows = criteriaActionTable.getSelectionModel();
+        actionsRows.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //ignore extra messages
+                if (e.getValueIsAdjusting()) return;
+
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+                if (lsm.isSelectionEmpty()) {
+
+                } else {
+                    try {
+                        criteriaActionLastSelectedIndex = lsm.getMinSelectionIndex();
+                        // get action string
+                        String actionString = (String)criteriaActionTableModel.getValueAt(criteriaActionLastSelectedIndex, 1);
+
+                        if (actionString == null) {
+                            return;
+                        }
+
+                        Action action = ActionFactory.getAction(lastSelectedRole, actionString);
+
+                        System.out.println("setting last selected action = " + action.toString());
+                        lastSelectedAction = action;
+                        print(lastSelectedAction);
+                    } catch (NullPointerException ex) {
+                        //do nothing - there is no minimum number of criteria action pairs
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -258,6 +250,17 @@ public class RolesPanel extends JPanel implements StrategyListener {
     @Override
     public void setPlayChanged(Play setPlay) {
         //nothing
+    }
+
+    public void print(Action action) {
+        Set<String> parameters = action.getParameters();
+        for(String s : parameters) {
+            System.out.println(s);
+        }
+        Collection<Integer> values = action.getValues();
+        for(Integer i : values) {
+            System.out.println(i);
+        }
     }
 
 }
