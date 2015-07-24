@@ -2,43 +2,44 @@ package criteria;
 
 import strategy.Criteria;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class Criterias {
-	private static Criteria[] criterias = new Criteria[] {
-            null,
+	private static List<String> criterias = new ArrayList<String>() {{
           //  new ClosestToBall(),
-            new Permanent(),
-            new PointingAtBall(),
-            new PositiveSituation(),
-            new NegativeSituation(),
-            new IsSpinningFast(),
-            new IsFirst2Seconds()
+            add(Permanent.class.getSimpleName());
+            add(PointingAtBall.class.getSimpleName());
+            add(PositiveSituation.class.getSimpleName());
+            add(NegativeSituation.class.getSimpleName());
+            add(IsSpinningFast.class.getSimpleName());
+            add(IsFirst2Seconds.class.getSimpleName());
+    }};
 
-    };
+//	public Criteria getAction(int index) {
+//		return criterias[index];
+//	}
 
-	public Criteria getAction(int index) {
-		return criterias[index];
-	}
+//	public int getLength() {
+//		return criterias.length;
+//	}
 
-	public int getLength() {
-		return criterias.length;
-	}
+//	public Criteria findCriteria(String name) {
+//		for (Criteria c : criterias) {
+//			if (c == null) {
+//				continue;
+//			}
+//			if (c.getName().equals(name)) {
+//				return c;
+//			}
+//		}
+//		return null;
+//	}
 
-	public Criteria findCriteria(String name) {
-		for (Criteria c : criterias) {
-			if (c == null) {
-				continue;
-			}
-			if (c.getName().equals(name)) {
-				return c;
-			}
-		}
-		return null;
-	}
-
-    public static Criteria[] getCriterias() {
+    public static List<String> getCriterias() {
         return criterias;
     }
 

@@ -228,6 +228,7 @@ public class CurrentStrategy {
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
                         Action action = (Action)Class.forName(lineArray[1]).newInstance();
+                        Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
                         if (lineArray.length < 3) {
                             //do nothing
                         } else {
@@ -238,7 +239,7 @@ public class CurrentStrategy {
                                 action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
                             }
                         }
-                        role.setPair(criterias.findCriteria(line.split("-")[0]), action, i);
+                        role.setPair(criteria, action, i);
                         i++;
                     }
                     roles.add(role);
@@ -322,6 +323,7 @@ public class CurrentStrategy {
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
                         Action action = (Action)Class.forName(lineArray[1]).newInstance();
+                        Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
                         if (lineArray.length < 3) {
                             //do nothing
                         } else {
@@ -332,7 +334,7 @@ public class CurrentStrategy {
                                 action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
                             }
                         }
-                        role.setPair(criterias.findCriteria(line.split("-")[0]), action, i);
+                        role.setPair(criteria, action, i);
                         i++;
                     }
                     roles.add(role);
