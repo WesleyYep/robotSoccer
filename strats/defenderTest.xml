@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:new role
-permanent-actions.StrikerTest-[startingY, startingX]-[40, 130]
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 3]
 null-null
 null-null
 null-null
@@ -69,9 +69,9 @@ null-null
 null-null
 -----
 Play:new play
+new role
 wait
 wait
-centreDefender
 wait
 wait
 -----
