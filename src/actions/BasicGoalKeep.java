@@ -193,10 +193,12 @@ public class BasicGoalKeep extends Action {
 			double trajectoryY = 0;
 
 			if (yDiff == 0) {
+				trajectoryY = ballY;
 				goingHorizontal = true;
 			}
 
 			if (xDiff == 0) {
+				trajectoryY = ballY;
 				goingVertical = true;
 			}
 
@@ -207,7 +209,6 @@ public class BasicGoalKeep extends Action {
 				double sumY = ballY + lastBallY + lastBallY2;
 				double sumX = ballX + lastBallX + lastBallX2;
 
-				double sumY2 = (ballY*ballY) + (lastBallY*lastBallY) + (lastBallY2*lastBallY2);
 				double sumX2 = (ballX*ballX) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
 
 				double sumXY = (ballX*ballY) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
@@ -224,11 +225,12 @@ public class BasicGoalKeep extends Action {
 					trajectoryY = (slope*(goalLine+3.75)) + yInt;
 				}
 				else {
-					trajectoryY = (slope*(goalLine-3.75)) + yInt;
+					trajectoryY = (slope * (goalLine - 3.75)) + yInt;
 				}
 
-
 			}
+
+
 
 			boolean goal = false;
 			boolean midSection = false;
@@ -274,9 +276,21 @@ public class BasicGoalKeep extends Action {
 			} else {
 				area2Weighting = 0;
 			}
-
-			area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
-
+			
+			//if ball moving
+			if (!goingHorizontal || !goingVertical ) {
+				if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
+					// System.out.println("same side");
+					area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
+				} else {
+					// System.out.println("oppo side");
+					area2Y = Field.OUTER_BOUNDARY_HEIGHT/2;
+				}
+			} else {
+				//ball idle/going vertical/going horizontal
+				area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
+			}
+			
 			//area 3
 			if (ballX > 45) {
 				area3Weighting = 0;
@@ -285,22 +299,50 @@ public class BasicGoalKeep extends Action {
 			} else {
 				area3Weighting = 1;
 			}
+			
+			boolean direction;
+			if (goalLine < 110) {
+				direction = xDiff < 0;
+			} else {
+				direction = xDiff > 0;
+			}
 
-			if (ballY >= topPoint-20 && ballY <= bottomPoint+20) {
-				if (trajectoryY >= topPoint && trajectoryY <= bottomPoint) {
+			if (direction) {
+				//ball going toward the goal
+				if (trajectoryY >= topPoint-3 && trajectoryY <= bottomPoint+3) {
+					/*
+					if (r.getYPosition() >= (trajectoryY - 2) && r.getYPosition() <= (trajectoryY + 2)) {
+						area3Y = r.getYPosition();
+					} else {
+						if (trajectoryY < topPoint) {
+							area3Y = topPoint;
+;						} else if (trajectoryY > bottomPoint) {
+							area3Y = bottomPoint;
+						} else {
+							area3Y = trajectoryY;
+						}
+					} */
 					area3Y = trajectoryY;
+					//System.out.println("toward the goal");
 				} else {
-					if (ballY >= topPoint && ballY <= bottomPoint) {
-						area3Y = ballY;
-					} else if (ballY < topPoint) {
-						area3Y = topPoint;
-					} else if (ballY > bottomPoint) {
-						area3Y = bottomPoint;
+					//ball travelling in the same side of board
+					if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
+						// System.out.println("same side");
+						area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
+					} else {
+						// System.out.println("oppo side");
+						area3Y = Field.OUTER_BOUNDARY_HEIGHT / 2;
 					}
 				}
-			}
-			else {
-				area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
+			} else {
+				//away from the goal
+				if (ballY >= topPoint && ballY <= bottomPoint) {
+					area3Y = ballY;
+				} else if (ballY < topPoint) {
+					area3Y = topPoint;
+				} else if (ballY > bottomPoint) {
+					area3Y = bottomPoint;
+				}
 			}
 
 			/*
@@ -386,13 +428,6 @@ public class BasicGoalKeep extends Action {
 				}
 			}
 			*/
-			if (ballY >= topPoint && ballY <= bottomPoint ) {
-				setVelocityToTarget(goalLine, ballY, true, true);
-			} else if (ballY < topPoint) {
-				setVelocityToTarget(goalLine, topPoint, true, true);
-			} else if (ballY > bottomPoint) {
-				setVelocityToTarget(goalLine, bottomPoint, true, true);
-			}
 		}
 
 
