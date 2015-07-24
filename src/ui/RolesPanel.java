@@ -2,6 +2,7 @@ package ui;
 
 import actions.ActionFactory;
 import actions.Actions;
+import controllers.FieldController;
 import criteria.CriteriaFactory;
 import criteria.Criterias;
 import data.CriteriaActionTableModel;
@@ -17,8 +18,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -62,11 +63,14 @@ public class RolesPanel extends JPanel implements StrategyListener {
     private Action lastSelectedAction;
     private int criteriaActionLastSelectedIndex;
 
-    public RolesPanel(final CurrentStrategy currentStrategy) {
+    private FieldController fieldController;
+
+    public RolesPanel(final CurrentStrategy currentStrategy, FieldController fieldController) {
 
         this.currentStrategy = currentStrategy;
         currentStrategy.addListener(this);
 
+        this.fieldController = fieldController;
         this.setLayout(new MigLayout());
 
         rolesTableModel = new RolesTableModel(rolesList);
@@ -154,11 +158,13 @@ public class RolesPanel extends JPanel implements StrategyListener {
 
                 Role role = lastSelectedRole;
 
-                if (role == null) { return; }
+                if (role == null) {
+                    return;
+                }
 
                 for (int i = 0; i < criteriaActionTableModel.getRowCount(); i++) {
-                    String criteriaSimpleName = (String)criteriaActionTableModel.getValueAt(i, 0);
-                    String actionSimpleName = (String)criteriaActionTableModel.getValueAt(i, 1);
+                    String criteriaSimpleName = (String) criteriaActionTableModel.getValueAt(i, 0);
+                    String actionSimpleName = (String) criteriaActionTableModel.getValueAt(i, 1);
 
                     if (criteriaSimpleName == null || actionSimpleName == null) {
                         continue;
@@ -220,18 +226,60 @@ public class RolesPanel extends JPanel implements StrategyListener {
                         String actionString = (String)criteriaActionTableModel.getValueAt(criteriaActionLastSelectedIndex, 1);
 
                         if (actionString == null) {
+                            setDrawAction(false);
                             return;
                         }
 
                         Action action = ActionFactory.getAction(lastSelectedRole, actionString);
 
-                        System.out.println("setting last selected action = " + action.toString());
                         lastSelectedAction = action;
-                        print(lastSelectedAction);
+
+                        updateAction(lastSelectedAction);
                     } catch (NullPointerException ex) {
                         //do nothing - there is no minimum number of criteria action pairs
                     }
                 }
+            }
+        });
+
+        criteriaActionTableModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (criteriaActionTable.getSelectedRow() == -1) {
+                    return;
+                }
+
+                // get action string
+                String actionString = (String)criteriaActionTableModel.getValueAt(criteriaActionLastSelectedIndex, 1);
+
+                if (actionString == null) {
+                    setDrawAction(false);
+                    return;
+                }
+
+                Action action = ActionFactory.getAction(lastSelectedRole, actionString);
+
+                lastSelectedAction = action;
+
+                updateAction(lastSelectedAction);
+            }
+        });
+
+        criteriaActionTable.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+//                if (lastSelectedAction == null) {
+//                    setDrawAction(false);
+//                } else {
+//                    setDrawAction(true);
+//                }
+
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                criteriaActionTable.clearSelection();
+                setDrawAction(false);
             }
         });
     }
@@ -252,15 +300,12 @@ public class RolesPanel extends JPanel implements StrategyListener {
         //nothing
     }
 
-    public void print(Action action) {
-        Set<String> parameters = action.getParameters();
-        for(String s : parameters) {
-            System.out.println(s);
-        }
-        Collection<Integer> values = action.getValues();
-        for(Integer i : values) {
-            System.out.println(i);
-        }
+    public void updateAction(Action action) {
+        setDrawAction(true);
+        fieldController.setAction(action);
     }
 
+    public void setDrawAction(boolean draw) {
+        fieldController.setDrawAction(draw);
+    }
 }

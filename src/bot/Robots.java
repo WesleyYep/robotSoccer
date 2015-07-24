@@ -82,9 +82,9 @@ public class Robots {
     	return bots;
     }
     
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
     	for (Robot r : bots) {
-    		r.draw((Graphics2D) g);
+    		r.draw(g);
     	}
     }
 

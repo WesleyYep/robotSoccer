@@ -264,7 +264,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 
 		SituationPanel situationPanel = new SituationPanel(fieldController, currentStrategy);
 		PlaysPanel playsPanel = new PlaysPanel(currentStrategy);
-		RolesPanel rolesPanel = new RolesPanel(currentStrategy);
+		RolesPanel rolesPanel = new RolesPanel(currentStrategy, fieldController);
 		ActionParameterPanel actionPanel = new ActionParameterPanel();
 
 		//creating panel holding robot informations

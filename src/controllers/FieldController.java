@@ -3,6 +3,7 @@ package controllers;
 import bot.Robots;
 import communication.ReceiverListener;
 import data.VisionData;
+import strategy.Action;
 import ui.*;
 import utils.Geometry;
 import vision.KalmanFilter;
@@ -102,7 +103,7 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		int newY = selectedArea.getY()-y;
 
 
-		selectedArea.setBounds(newX, newY, selectedArea.getWidth(),selectedArea.getHeight());
+		selectedArea.setBounds(newX, newY, selectedArea.getWidth(), selectedArea.getHeight());
 		field.repaint();
 	}
 
@@ -228,5 +229,15 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	public void setPredPoint(double x, double y) {
 		field.setPredPoint(x, y);
+	}
+
+	public void setDrawAction(boolean draw) {
+		field.setDrawAction(draw);
+		field.repaint();
+	}
+
+	public void setAction(Action action) {
+		field.setAction(action);
+		field.repaint();
 	}
 }

@@ -6,6 +6,11 @@ import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import org.opencv.core.Point;
 import utils.Geometry;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.Map;
+
 public class BasicDefender extends Defender {
 
     private double lastBallX = 0;
@@ -338,4 +343,30 @@ public class BasicDefender extends Defender {
         // }
     }
 
+    @Override
+    public void draw(Graphics2D g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+
+        g2.setBackground(Color.RED);
+
+        g2.drawString("Left Click", parameters.get("point 1 x"), parameters.get("point 1 y"));
+        g2.drawString("Right Click", parameters.get("point 2 x"), parameters.get("point 2 y"));
+        g2.drawLine(parameters.get("point 1 x"), parameters.get("point 1 y"), parameters.get("point 2 x"), parameters.get("point 2 y"));
+
+        g2.dispose();
+    }
+
+    @Override
+    public void react(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            parameters.put("point 1 x", x);
+            parameters.put("point 1 y", y);
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            parameters.put("point 2 x", x);
+            parameters.put("point 2 y", y);
+        }
+    }
 }

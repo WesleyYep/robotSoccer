@@ -7,8 +7,11 @@ import bot.Robots;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 
+import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -125,4 +128,7 @@ public abstract class Action {
         return x * x;
     }
 
+	public void draw(Graphics2D g) {};
+
+	public void react(MouseEvent e) {};
 }
