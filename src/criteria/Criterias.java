@@ -14,7 +14,8 @@ public class Criterias {
             new PositiveSituation(),
             new NegativeSituation(),
             new IsSpinningFast(),
-            new IsFirst2Seconds()
+            new IsFirst2Seconds(),
+			new VeryCloseToBall()
 
     };
 

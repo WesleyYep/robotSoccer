@@ -1,7 +1,6 @@
 package strategy;
 
 import bot.Robot;
-import bot.Robots;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -35,5 +34,8 @@ public abstract class Criteria {
 		return x * x;
 	}
 
+	protected double getDistanceToTarget(Robot r, double targetX, double targetY) {
+		return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
+	}
 
 }

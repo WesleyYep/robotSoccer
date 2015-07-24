@@ -65,6 +65,17 @@ public class PIDMoveToBall extends Action {
         //get angle to ball
         double angleToBall = getTargetTheta(bot, ballX, ballY);
         double actualAngleError;
+        double distanceToBall = getDistanceToTarget(bot, ballX, ballY);
+
+        //spin if ball is stuck beside robot on positive side
+        if (distanceToBall < 7 && Math.abs((angleToBall-90)%180) < 30 && ballX > bot.getXPosition()) {
+            if (angleToBall > 0) {//ie. around 90
+                bot.angularVelocity = 30;
+            } else {
+                bot.angularVelocity = -30;
+            }
+            return;
+        }
 
         if ((!presetToForward && Math.abs(angleToBall) > 90) || presetToBackward) {
             if (angleToBall < 0) {
@@ -94,7 +105,7 @@ public class PIDMoveToBall extends Action {
         if (isCharging) {
             range = 30;
         }
-        if (getDistanceToTarget(bot, ballX, ballY) < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
+        if (distanceToBall < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
             bot.linearVelocity = isCurrentDirectionForward ? 1 : -1;
             if (ballX > 110) {
                 double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees

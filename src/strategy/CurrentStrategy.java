@@ -1,11 +1,9 @@
 package strategy;
 
-import actions.Wait;
 import config.ConfigFile;
 import config.ConfigPreviousFile;
 import controllers.FieldController;
 import criteria.Criterias;
-import criteria.Permanent;
 import data.Situation;
 import ui.SituationArea;
 
@@ -227,6 +225,9 @@ public class CurrentStrategy {
 
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
+                        if (lineArray[0].equals("VeryCloseToBall")) {
+                            System.out.println("hi");
+                        }
                         Action action = (Action)Class.forName(lineArray[1]).newInstance();
                         if (lineArray.length < 3) {
                             //do nothing
@@ -250,14 +251,17 @@ public class CurrentStrategy {
                     while (!(line = bufferedReader.readLine()).equals("-----")) {
                         String[] lineArray = line.split(":");
                         Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
-                        Action firstAction = roleToAdd.getActions()[0];
-                        Object[] params = firstAction.getParameters().toArray();
+                        for (int k = 0; k < roleToAdd.getActions().length; k++) {
+                            if (roleToAdd.getActions()[k] == null) { break; }
+                            Action firstAction = roleToAdd.getActions()[k];
+                            Object[] params = firstAction.getParameters().toArray();
 
-                        for (int j = 0; j < params.length; j++) {
-                            if (lineArray.length == 5) {
-                                firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
-                            } else {
-                                firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
+                            for (int j = 0; j < params.length; j++) {
+                                if (lineArray.length == 5) {
+                                    firstAction.updateParameters((String) params[j], Integer.parseInt(lineArray[j + 1]));
+                                } else {
+                                    firstAction.parameters = getRoleByName(lineArray[0]).getActions()[k].parameters;
+                                }
                             }
                         }
                         play.addRole(i, roleToAdd);

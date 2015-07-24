@@ -54,10 +54,24 @@ null-null
 null-null
 null-null
 -----
+Role:PIDChaseBall
+Negative Situation-actions.ChaseBallWithObstacle-[]-[]
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
+null-null
+null-null
+null-null
+-----
+Role:centreDefender
+VeryCloseToBall-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 3]
+Negative Situation-actions.ChaseBallWithObstacle-[]-[]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+-----
 Play:new play
-new role
 wait
-PIDGoalKeep
+wait
+centreDefender
 wait
 wait
 -----
