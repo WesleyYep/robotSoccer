@@ -10,42 +10,26 @@ import java.util.List;
  */
 public class Actions {
 
-	// Contains all the actions in an array.
-//    private static Action[] actions = new Action[] {
-//            null,
-//            new ChaseBall(),
-//            new ChaseBall2(),
-//            new BasicGoalKeep(),
-//            new Wait(),
-//            new TurnToFaceBall(),
-//            new MoveToSpot(),
-//            new StrikerTest(),
-//            new GoalKeepTest(),
-//            new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null)
-//    	};
-
-
-
-      private static List<Action> actions = new ArrayList<Action>() {{
-    	  add(new MoveToFacing());
-          add(new testSelfMade());
-          add(new ChaseBallWithObstacle());
-          add(new testSelfMadeObstacle());
-          add(new BasicGoalKeep());
-          add(new Wait());
-          add(new StrikerTest());
-          add(new MoveToSpot());
-          add(new MoveAndTurn());
-          add(new Circle());
-          add(new BlockOpponentClosestToBall());
-          add(new PenaltyStraight());
-          add(new PenaltySpin());
-          add(new GoalLineSideDefender());
-          add(new GoalLineSideAttacker());
-          add(new PIDMoveToBall());
-          add(new PIDMoveToSpot());
-          add(new PIDGoalKeeper());
-        add(new BasicDefender(new org.opencv.core.Point(10, 30), new org.opencv.core.Point(150, 150), null));
+      private static List<String> actions = new ArrayList<String>() {{
+    	  add(MoveToFacing.class.getSimpleName());
+          add(testSelfMade.class.getSimpleName());
+          add(ChaseBallWithObstacle.class.getSimpleName());
+          add(testSelfMadeObstacle.class.getSimpleName());
+          add(BasicGoalKeep.class.getSimpleName());
+          add(Wait.class.getSimpleName());
+          add(StrikerTest.class.getSimpleName());
+          add(MoveToSpot.class.getSimpleName());
+          add(MoveAndTurn.class.getSimpleName());
+          add(Circle.class.getSimpleName());
+          add(BlockOpponentClosestToBall.class.getSimpleName());
+          add(PenaltyStraight.class.getSimpleName());
+          add(PenaltySpin.class.getSimpleName());
+          add(GoalLineSideDefender.class.getSimpleName());
+          add(GoalLineSideAttacker.class.getSimpleName());
+          add(PIDMoveToBall.class.getSimpleName());
+          add(PIDMoveToSpot.class.getSimpleName());
+          add(PIDGoalKeeper.class.getSimpleName());
+          add(BasicDefender.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {
@@ -63,7 +47,7 @@ public class Actions {
 //        return actions[index];
 //    }
 //
-    public static List<Action> getActions() {
+    public static List<String> getActions() {
         return actions;
     }
 //
