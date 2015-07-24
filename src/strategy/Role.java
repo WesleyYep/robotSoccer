@@ -2,13 +2,17 @@ package strategy;
 
 import bot.Robot;
 import bot.Robots;
+import data.CriteriaActionTableModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class Role {
     private String roleName;
-    private CriteriaActionPair[] pairs = {null, null, null, null, null};
+    private CriteriaActionPair[] pairs = new CriteriaActionPair[CriteriaActionTableModel.ROWCOUNT];
     private Robot bot;
     private Robots teamRobots;
     private Robots opponentRobots;
@@ -32,7 +36,7 @@ public class Role {
     }
 
     public Action[] getActions() {
-        Action[] actions = {null, null, null, null, null};
+        Action[] actions = new Action[pairs.length];
         for (int i = 0; i < pairs.length; i++) {
             if (pairs[i] == null) {
                 actions[i] = null;
@@ -44,7 +48,7 @@ public class Role {
     }
 
     public Criteria[] getCriterias() {
-        Criteria[] criterias = {null, null, null, null, null};
+        Criteria[] criterias = new Criteria[pairs.length];
         for (int i = 0; i < pairs.length; i++) {
             if (pairs[i] == null) {
                 criterias[i] = null;

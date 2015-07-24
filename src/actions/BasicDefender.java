@@ -4,7 +4,13 @@ import Paths.Path;
 import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import org.opencv.core.Point;
+import ui.Field;
 import utils.Geometry;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.Map;
 
 public class BasicDefender extends Defender {
 
@@ -342,4 +348,42 @@ public class BasicDefender extends Defender {
         // }
     }
 
+    @Override
+    public void draw(Graphics2D g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+
+        g2.setBackground(Color.RED);
+
+        // Convert parameter values to correct values to be shown on field.
+        int x1 = (parameters.get("point 1 x") * Field.SCALE_FACTOR) + Field.ORIGIN_X;
+        int y1 = (parameters.get("point 1 y") * Field.SCALE_FACTOR) + Field.ORIGIN_Y;
+
+        int x2 = (parameters.get("point 2 x") * Field.SCALE_FACTOR) + Field.ORIGIN_X;
+        int y2 = (parameters.get("point 2 y") * Field.SCALE_FACTOR) + Field.ORIGIN_Y;
+
+        // Draw string and how to change it
+        g2.drawString("Left Click", x1, y1);
+        g2.drawString("Right Click", x2, y2);
+        g2.drawLine(x1, y1, x2, y2);
+
+        g2.dispose();
+    }
+
+    @Override
+    public void react(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        // Transform to actual coordinates for the field
+        x = (x - Field.ORIGIN_X) / Field.SCALE_FACTOR;
+        y = (y - Field.ORIGIN_Y) / Field.SCALE_FACTOR;
+
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            parameters.put("point 1 x", x);
+            parameters.put("point 1 y", y);
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            parameters.put("point 2 x", x);
+            parameters.put("point 2 y", y);
+        }
+    }
 }

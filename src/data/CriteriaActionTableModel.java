@@ -9,18 +9,11 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
 public class CriteriaActionTableModel extends DefaultTableModel {
-    private List<Action> actions = Actions.getActions();
-    private Criteria[] criterias = Criterias.getCriterias();
-    private String[] colNames = { "Criteria", "Action" };
-    private Object[][] data = { { criterias[0], actions.get(0) },
-            { criterias[0], actions.get(0)  },
-            { criterias[0], actions.get(0)  },
-            { criterias[0], actions.get(0)  },
-            { criterias[0], actions.get(0)  } };
+    private static final String[] COLNAMES = { "Criteria", "Action" };
+    public static final int ROWCOUNT = 5;
 
     public CriteriaActionTableModel() {
-        setDataVector( data, colNames );
+        super(COLNAMES, ROWCOUNT);
     }
-
 
 }

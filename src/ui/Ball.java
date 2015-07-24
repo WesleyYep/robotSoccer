@@ -76,7 +76,7 @@ public class Ball extends RobotSoccerObject{
 		}
 	}
 
-	public void draw(Graphics g) {
+	public void draw(Graphics2D g) {
 
 		if (focused) {
 			g.setColor(Color.RED);

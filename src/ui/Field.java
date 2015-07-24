@@ -71,6 +71,9 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	private double predY = 0;
     private RobotSoccerMain main;
 
+	public strategy.Action action;
+	public boolean drawAction;
+
     private Action left = new AbstractAction("Left") {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -102,33 +105,35 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g); 
 
-		g.setColor(Color.black);
+		Graphics2D g2 = (Graphics2D)g.create();
+
+		g2.setColor(Color.black);
 
 		// Draw outer boundary
 		//g.drawRect(5,5,390,190);
 
-		g.drawRect(ORIGIN_X,ORIGIN_Y,SCALE_FACTOR*OUTER_BOUNDARY_WIDTH, SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT);
+		g2.drawRect(ORIGIN_X,ORIGIN_Y,SCALE_FACTOR*OUTER_BOUNDARY_WIDTH, SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT);
 
 		// Draw center line and center circle
 		//g.drawLine(200,5,200,195);
-		g.drawLine(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH/2+ORIGIN_X,
+		g2.drawLine(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH/2+ORIGIN_X,
 				ORIGIN_Y,
 				SCALE_FACTOR*OUTER_BOUNDARY_WIDTH/2+ORIGIN_X,
 				SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+ORIGIN_Y);
 
 		//g.drawOval(200-50/2,100-50/2,50,50);
-		g.drawOval((OUTER_BOUNDARY_WIDTH/2-CENTER_CIRCLE_DIAMETER/2)*SCALE_FACTOR+ORIGIN_X,
+		g2.drawOval((OUTER_BOUNDARY_WIDTH/2-CENTER_CIRCLE_DIAMETER/2)*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT/2-CENTER_CIRCLE_DIAMETER/2)*SCALE_FACTOR+ORIGIN_Y,
 				CENTER_CIRCLE_DIAMETER*SCALE_FACTOR,
 				CENTER_CIRCLE_DIAMETER*SCALE_FACTOR);
 
 		// Draw penalty areas
-		g.drawRect(ORIGIN_X, 
+		g2.drawRect(ORIGIN_X,
 				((OUTER_BOUNDARY_HEIGHT-PENALTY_AREA_HEIGHT)/2)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR*PENALTY_AREA_WIDTH,
 				SCALE_FACTOR*PENALTY_AREA_HEIGHT);
 
-		g.drawRect(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X-SCALE_FACTOR*PENALTY_AREA_WIDTH,
+		g2.drawRect(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X-SCALE_FACTOR*PENALTY_AREA_WIDTH,
 				((OUTER_BOUNDARY_HEIGHT-PENALTY_AREA_HEIGHT)/2)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR*PENALTY_AREA_WIDTH,
 				SCALE_FACTOR*PENALTY_AREA_HEIGHT);
@@ -136,34 +141,34 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 		// Draw corners
 		// lower left
-		g.drawLine(ORIGIN_X,
+		g2.drawLine(ORIGIN_X,
 				ORIGIN_Y+SCALE_FACTOR*CORNER_LENGTH,
 				ORIGIN_X+SCALE_FACTOR*CORNER_LENGTH,
 				ORIGIN_Y);
 		// lower right
-		g.drawLine(SCALE_FACTOR*(OUTER_BOUNDARY_WIDTH-CORNER_LENGTH)+ORIGIN_X,
+		g2.drawLine(SCALE_FACTOR*(OUTER_BOUNDARY_WIDTH-CORNER_LENGTH)+ORIGIN_X,
 				ORIGIN_Y,
 				SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X,
 				ORIGIN_Y+SCALE_FACTOR*CORNER_LENGTH);
 		// upper right
-		g.drawLine(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X,
+		g2.drawLine(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X,
 				SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+ORIGIN_Y-SCALE_FACTOR*CORNER_LENGTH,
 				SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X-SCALE_FACTOR*CORNER_LENGTH,
 				SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+ORIGIN_Y);
 		// upper left
 		//g.drawLine(385,5,395,15);
-		g.drawLine(ORIGIN_X,
+		g2.drawLine(ORIGIN_X,
 				SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+ORIGIN_Y-SCALE_FACTOR*CORNER_LENGTH,
 				ORIGIN_X+SCALE_FACTOR*CORNER_LENGTH,
 				SCALE_FACTOR*OUTER_BOUNDARY_HEIGHT+ORIGIN_Y);
 
 		// Draw goals
-		g.drawRect(ORIGIN_X,
+		g2.drawRect(ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT/2-GOAL_AREA_HEIGHT/2)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR*GOAL_AREA_WIDTH,
 				SCALE_FACTOR*GOAL_AREA_HEIGHT);
 		//g.drawRect(395-15, 75, 15, 50);
-		g.drawRect(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X-SCALE_FACTOR*GOAL_AREA_WIDTH,
+		g2.drawRect(SCALE_FACTOR*OUTER_BOUNDARY_WIDTH+ORIGIN_X-SCALE_FACTOR*GOAL_AREA_WIDTH,
 				(OUTER_BOUNDARY_HEIGHT/2-GOAL_AREA_HEIGHT/2)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR*GOAL_AREA_WIDTH,
 				SCALE_FACTOR*GOAL_AREA_HEIGHT);
@@ -183,97 +188,97 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 		//1st quarter
 		//center
-		g.fillRect(FREE_BALL_FROM_GOAL_LINE*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect(FREE_BALL_FROM_GOAL_LINE*SCALE_FACTOR+ORIGIN_X,
 				FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//right dot
-		g.fillRect((FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 		//left dot
-		g.fillRect((FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//2nd quarter
 		//center dot
-		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE)*SCALE_FACTOR+ORIGIN_X,
 				FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//right dot
-		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 		//left dot
-		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				FREE_BALL_FROM_THE_CLOSEST_SIDE*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//3rd quarter
-		g.fillRect(FREE_BALL_FROM_GOAL_LINE*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect(FREE_BALL_FROM_GOAL_LINE*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT-FREE_BALL_FROM_THE_CLOSEST_SIDE)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//right dot
-		g.fillRect((FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT-FREE_BALL_FROM_THE_CLOSEST_SIDE)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 		//left dot
-		g.fillRect((FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT-FREE_BALL_FROM_THE_CLOSEST_SIDE)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//4th quarter
 		//center dot
-		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE)*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT-FREE_BALL_FROM_THE_CLOSEST_SIDE)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//right dot
-		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE+FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT-FREE_BALL_FROM_THE_CLOSEST_SIDE)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 		//left dot
-		g.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
+		g2.fillRect((OUTER_BOUNDARY_WIDTH-FREE_BALL_FROM_GOAL_LINE-FREE_BALL_DOTS_SPACE)*SCALE_FACTOR+ORIGIN_X,
 				(OUTER_BOUNDARY_HEIGHT-FREE_BALL_FROM_THE_CLOSEST_SIDE)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR,
 				SCALE_FACTOR);
 
 		//inner goal area
-		g.drawRect(ORIGIN_X-(INNER_GOAL_AREA_WIDTH*SCALE_FACTOR),
+		g2.drawRect(ORIGIN_X-(INNER_GOAL_AREA_WIDTH*SCALE_FACTOR),
 				(OUTER_BOUNDARY_HEIGHT/2-INNER_GOAL_AREA_HEIGHT/2)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR*INNER_GOAL_AREA_WIDTH,
 				SCALE_FACTOR*INNER_GOAL_AREA_HEIGHT);
 
-		g.drawRect(ORIGIN_X+(OUTER_BOUNDARY_WIDTH*SCALE_FACTOR),
+		g2.drawRect(ORIGIN_X+(OUTER_BOUNDARY_WIDTH*SCALE_FACTOR),
 				(OUTER_BOUNDARY_HEIGHT/2-INNER_GOAL_AREA_HEIGHT/2)*SCALE_FACTOR+ORIGIN_Y,
 				SCALE_FACTOR*INNER_GOAL_AREA_WIDTH,
 				SCALE_FACTOR*INNER_GOAL_AREA_HEIGHT);
 
 		//draw ball
-		ball.draw(g);
+		ball.draw(g2);
 
 		//draw robots
-		bots.draw(g);
+		bots.draw(g2);
 
 		//draw opponents
 
 		for (int i=0; i<5; i++) {
-			g.setColor(Color.blue);
-			g.fillOval(
+			g2.setColor(Color.blue);
+			g2.fillOval(
 					(int)opponentBots.getRobot(i).getXPosition() *Field.SCALE_FACTOR+Field.ORIGIN_X-(6*Field.SCALE_FACTOR/2),
 					(int)opponentBots.getRobot(i).getYPosition() *Field.SCALE_FACTOR+Field.ORIGIN_Y-(6*Field.SCALE_FACTOR/2),
 					6*Field.SCALE_FACTOR,
@@ -283,15 +288,18 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 		
 		//predict ball
-		g.setColor(Color.red);
-		g.fillOval(
-				(int)predX *Field.SCALE_FACTOR+Field.ORIGIN_X-(4*Field.SCALE_FACTOR/2),
-				(int)predY *Field.SCALE_FACTOR+Field.ORIGIN_Y-(4*Field.SCALE_FACTOR/2),
-				4*Field.SCALE_FACTOR,
-				4*Field.SCALE_FACTOR
-				);  
+		g2.setColor(Color.red);
+		g2.fillOval(
+				(int) predX * Field.SCALE_FACTOR + Field.ORIGIN_X - (4 * Field.SCALE_FACTOR / 2),
+				(int) predY * Field.SCALE_FACTOR + Field.ORIGIN_Y - (4 * Field.SCALE_FACTOR / 2),
+				4 * Field.SCALE_FACTOR,
+				4 * Field.SCALE_FACTOR
+		);
 
-		if (isMouseDrag) {
+		// draw action
+		if (drawAction) {
+			action.draw(g2);
+		} else if (isMouseDrag) {
 			// drawRect does not take negative values hence values need to be calculated so it doesn't fill the rectangle.
 			// Rectangle co-ordinates.
 			int x, y, w, h;
@@ -302,12 +310,12 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 			w = Math.abs(endPoint.x - startPoint.x);
 			h = Math.abs(endPoint.y - startPoint.y);
 
-			g.setColor(Color.BLUE);
+			g2.setColor(Color.BLUE);
 
-			g.drawRect(x, y, w, h);
+			g2.drawRect(x, y, w, h);
 		}
 
-
+		g2.dispose();
 	}
 
 	@Override
@@ -407,6 +415,11 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (drawAction) {
+			action.react(e);
+			isMouseDrag = false;
+			repaint();
+		}
     }
 
 	@Override
@@ -417,6 +430,10 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		if (drawAction) {
+			return;
+		}
+
         startPoint = e.getPoint();
         main.toggleMouseControl(true);
         for (Robot r : bots.getRobots()) {
@@ -442,6 +459,10 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (drawAction) {
+			return;
+		}
+
         movingOpponentRobot = -1;
         if (SwingUtilities.isLeftMouseButton(e)) {
             endPoint = e.getPoint();
@@ -633,4 +654,11 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
         }
     }
 
+	public void setDrawAction(boolean draw) {
+		drawAction = draw;
+	}
+
+	public void setAction(strategy.Action action) {
+		this.action = action;
+	}
 }
