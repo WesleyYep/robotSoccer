@@ -355,11 +355,11 @@ public class BasicDefender extends Defender {
         g2.setBackground(Color.RED);
 
         // Convert parameter values to correct values to be shown on field.
-        int x1 = (parameters.get("point 1 x") * Field.SCALE_FACTOR) + Field.ORIGIN_X;
-        int y1 = (parameters.get("point 1 y") * Field.SCALE_FACTOR) + Field.ORIGIN_Y;
+        int x1 = Field.fieldXValueToGUIValue(parameters.get("point 1 x"));
+        int y1 = Field.fieldYValueToGUIValue(parameters.get("point 1 y"));
 
-        int x2 = (parameters.get("point 2 x") * Field.SCALE_FACTOR) + Field.ORIGIN_X;
-        int y2 = (parameters.get("point 2 y") * Field.SCALE_FACTOR) + Field.ORIGIN_Y;
+        int x2 = Field.fieldXValueToGUIValue(parameters.get("point 2 x"));
+        int y2 = Field.fieldYValueToGUIValue(parameters.get("point 2 y"));
 
         // Draw string and how to change it
         g2.drawString("Left Click", x1, y1);
@@ -375,8 +375,8 @@ public class BasicDefender extends Defender {
         int y = e.getY();
 
         // Transform to actual coordinates for the field
-        x = (x - Field.ORIGIN_X) / Field.SCALE_FACTOR;
-        y = (y - Field.ORIGIN_Y) / Field.SCALE_FACTOR;
+        x = Field.GUIXValueToFieldValue(x);
+        y = Field.GUIYValueToFieldValue(y);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             parameters.put("point 1 x", x);

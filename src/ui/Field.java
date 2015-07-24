@@ -661,4 +661,40 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	public void setAction(strategy.Action action) {
 		this.action = action;
 	}
+
+	/**
+	 * <p>Retrieves x value from field and returns x value to show on GUI field</p>
+	 * @param x
+	 * @return
+	 */
+	public static int fieldXValueToGUIValue(int x) {
+		return x * SCALE_FACTOR + ORIGIN_X;
+	}
+
+	/**
+	 * <p>Retrieves y value from field and returns y value to show on GUI field</p>
+	 * @param y
+	 * @return
+	 */
+	public static int fieldYValueToGUIValue(int y) {
+		return y * SCALE_FACTOR + ORIGIN_X;
+	}
+
+	/**
+	 * <p>Retrieves x value from gui and returns x value for field</p>
+	 * @param x
+	 * @return
+	 */
+	public static int GUIXValueToFieldValue(int x) {
+		return (x - ORIGIN_X) / SCALE_FACTOR;
+	}
+
+	/**
+	 * <p>Retrieves y value from gui and returns y value for field</p>
+	 * @param y
+	 * @return
+	 */
+	public static int GUIYValueToFieldValue(int y) {
+		return (y - ORIGIN_X) / SCALE_FACTOR;
+	}
 }
