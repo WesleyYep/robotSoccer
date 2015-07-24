@@ -43,6 +43,7 @@ public class Role {
         } catch (IndexOutOfBoundsException e) {
             pairs.add(index, new CriteriaActionPair(criteria, action));
         }
+        
         for (CriteriaActionPair pair : pairs) {
             System.out.println("Action: " + pair.getAction() + " Criteria: " + pair.getCriteria());
         }
