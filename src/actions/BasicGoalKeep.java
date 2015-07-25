@@ -193,10 +193,12 @@ public class BasicGoalKeep extends Action {
 			double trajectoryY = 0;
 
 			if (yDiff == 0) {
+				trajectoryY = ballY;
 				goingHorizontal = true;
 			}
 
 			if (xDiff == 0) {
+				trajectoryY = ballY;
 				goingVertical = true;
 			}
 
@@ -207,7 +209,6 @@ public class BasicGoalKeep extends Action {
 				double sumY = ballY + lastBallY + lastBallY2;
 				double sumX = ballX + lastBallX + lastBallX2;
 
-				double sumY2 = (ballY*ballY) + (lastBallY*lastBallY) + (lastBallY2*lastBallY2);
 				double sumX2 = (ballX*ballX) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
 
 				double sumXY = (ballX*ballY) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
@@ -224,11 +225,12 @@ public class BasicGoalKeep extends Action {
 					trajectoryY = (slope*(goalLine+3.75)) + yInt;
 				}
 				else {
-					trajectoryY = (slope*(goalLine-3.75)) + yInt;
+					trajectoryY = (slope * (goalLine - 3.75)) + yInt;
 				}
 
-
 			}
+
+
 
 			boolean goal = false;
 			boolean midSection = false;
@@ -276,7 +278,6 @@ public class BasicGoalKeep extends Action {
 			}
 			
 			//if ball moving
-			System.out.println(goingHorizontal + " " + goingVertical);
 			if (!goingHorizontal || !goingVertical ) {
 				if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
 					// System.out.println("same side");
@@ -286,7 +287,7 @@ public class BasicGoalKeep extends Action {
 					area2Y = Field.OUTER_BOUNDARY_HEIGHT/2;
 				}
 			} else {
-				//ball idle
+				//ball idle/going vertical/going horizontal
 				area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
 			}
 			
@@ -308,12 +309,21 @@ public class BasicGoalKeep extends Action {
 
 			if (direction) {
 				//ball going toward the goal
-				if (trajectoryY >= topPoint && trajectoryY <= bottomPoint) {
+				if (trajectoryY >= topPoint-3 && trajectoryY <= bottomPoint+3) {
+					/*
 					if (r.getYPosition() >= (trajectoryY - 2) && r.getYPosition() <= (trajectoryY + 2)) {
 						area3Y = r.getYPosition();
 					} else {
-						area3Y = trajectoryY;
-					}
+						if (trajectoryY < topPoint) {
+							area3Y = topPoint;
+;						} else if (trajectoryY > bottomPoint) {
+							area3Y = bottomPoint;
+						} else {
+							area3Y = trajectoryY;
+						}
+					} */
+					area3Y = trajectoryY;
+					//System.out.println("toward the goal");
 				} else {
 					//ball travelling in the same side of board
 					if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {

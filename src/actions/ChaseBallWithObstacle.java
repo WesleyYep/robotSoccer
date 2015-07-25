@@ -27,7 +27,7 @@ public class ChaseBallWithObstacle extends Action {
             return;
         }
 
-
+        /*
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
        //   System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
@@ -44,7 +44,7 @@ public class ChaseBallWithObstacle extends Action {
             r.angularVelocity = 10;
             countTimesThatSeemStuck++;
             return;
-        }
+        } */
 
 
         //see if robot is not in positive situation
@@ -60,24 +60,11 @@ public class ChaseBallWithObstacle extends Action {
             MoveToSpot.move(r, new Coordinate(30, yPos), 1, true);
             return;
         } */
-        oldDistanceToTarget = newTargetDistance;
+        //oldDistanceToTarget = newTargetDistance;
 
 
         if (ballX < r.getXPosition()) {
             double angle =0;
-            double strikeX = 220;
-            double strikeY = 90;
-            
-            double strikeTheta = Math.atan2(strikeY - ballY, ballX - strikeX);
-            double strikeDifference = strikeTheta - Math.toRadians(r.getTheta());
-            if (strikeDifference > Math.PI) {
-            	strikeDifference -= (2 * Math.PI);
-            } else if (strikeDifference < -Math.PI) {
-            	strikeDifference += (2 * Math.PI);
-            }
-            strikeDifference = Math.toDegrees(strikeDifference);
-            strikeTheta = strikeDifference;
-            angle = strikeTheta;
             double yDiff = ballY-15*Math.sin(Math.toRadians(angle*-1));
             double xDiff = ballX-15*Math.cos(Math.toRadians(angle*-1));
             double robotPosition =  Math.toDegrees(Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition()));
@@ -128,7 +115,7 @@ public class ChaseBallWithObstacle extends Action {
                 xTurn = xDiff;
             }
 
-            if (xTurn < 3.75) xTurn = 4;
+            if (xTurn < 3.75) xTurn = 6;
             if (yTurn > 176) yTurn  = 176;
             if (yTurn < 3.75) yTurn = 3.75;
 
@@ -157,6 +144,7 @@ public class ChaseBallWithObstacle extends Action {
         targetTheta = difference;
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
 
+
         //dribble ball towards goal if we are in a dribbling position
         double ballDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
         double angleToGoal = angleDifferenceFromGoal(r.getXPosition(), r.getYPosition(), r.getTheta());
@@ -174,14 +162,16 @@ public class ChaseBallWithObstacle extends Action {
             }
             return;
         }
-        
+
+
         //charge ball if we are in a kicking position
         if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
             System.out.println("kicking");
             r.linearVelocity = 1;
             r.angularVelocity = 0;
             return;
-        } 
+        }
+
 
 
         double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
@@ -234,7 +224,7 @@ public class ChaseBallWithObstacle extends Action {
             }
         } */
 
-        if (ballX < r.getXPosition()) {
+        if (ballX < r.getXPosition() && ballX > 35) {
             double tempTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
             double tempDifference = tempTheta - Math.toRadians(r.getTheta());
             if (tempDifference > Math.PI) {
