@@ -65,6 +65,19 @@ public class ChaseBallWithObstacle extends Action {
 
         if (ballX < r.getXPosition()) {
             double angle =0;
+            double strikeX = 220;
+            double strikeY = 90;
+            
+            double strikeTheta = Math.atan2(strikeY - ballY, ballX - strikeX);
+            double strikeDifference = strikeTheta - Math.toRadians(r.getTheta());
+            if (strikeDifference > Math.PI) {
+            	strikeDifference -= (2 * Math.PI);
+            } else if (strikeDifference < -Math.PI) {
+            	strikeDifference += (2 * Math.PI);
+            }
+            strikeDifference = Math.toDegrees(strikeDifference);
+            strikeTheta = strikeDifference;
+            angle = strikeTheta;
             double yDiff = ballY-15*Math.sin(Math.toRadians(angle*-1));
             double xDiff = ballX-15*Math.cos(Math.toRadians(angle*-1));
             double robotPosition =  Math.toDegrees(Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition()));
@@ -161,13 +174,14 @@ public class ChaseBallWithObstacle extends Action {
             }
             return;
         }
+        
         //charge ball if we are in a kicking position
         if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
             System.out.println("kicking");
             r.linearVelocity = 1;
             r.angularVelocity = 0;
             return;
-        }
+        } 
 
 
         double obstacleTheta = 180, obstacleDist = 220, obstacleX = 0, obstacleY = 0;
