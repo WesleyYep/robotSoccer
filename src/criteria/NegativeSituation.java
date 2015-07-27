@@ -7,10 +7,6 @@ import strategy.Criteria;
  * Created by Wesley on 21/03/2015.
  */
 public class NegativeSituation extends Criteria {
-    @Override
-    public String getName() {
-        return "Negative Situation";
-    }
 
     @Override
     public boolean isMet() {

@@ -1,6 +1,5 @@
 package criteria;
 
-import bot.Robot;
 import strategy.Criteria;
 
 public class Permanent extends Criteria {

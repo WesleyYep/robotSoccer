@@ -10,11 +10,6 @@ public class VeryCloseToBall extends Criteria {
     private long lastTimeTrue = 0;
 
     @Override
-    public String getName() {
-        return "VeryCloseToBall";
-    }
-
-    @Override
     public boolean isMet() {
         double distanceToBall = getDistanceToTarget(bot, ballX, ballY);
 

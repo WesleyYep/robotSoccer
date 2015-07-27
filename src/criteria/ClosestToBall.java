@@ -1,17 +1,11 @@
 package criteria;
 
-import bot.Robot;
-import bot.Robots;
 import strategy.Criteria;
 
 /**
  * Created by Wesley on 21/01/2015.
  */
 public class ClosestToBall extends Criteria {
-    @Override
-    public String getName() {
-        return "Closest to Ball";
-    }
 
     /**
      * <p>Checks if the robot is the closest to the ball</p>

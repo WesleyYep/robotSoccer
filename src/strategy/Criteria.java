@@ -11,7 +11,9 @@ public abstract class Criteria {
 	protected double ballY;
 	protected int index;
 
-	public abstract String getName();
+	public String getName() {
+		return getClass().getSimpleName();
+	}
 
 	public void addRobot (Robot bot) {
 		this.bot = bot;

@@ -8,10 +8,6 @@ import strategy.Criteria;
  * Created by Wesley on 7/03/2015.
  */
 public class PointingAtBall extends Criteria {
-    @Override
-    public String getName() {
-        return "PointAlmostToBall";
-    }
 
     @Override
     public boolean isMet() {

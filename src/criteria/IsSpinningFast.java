@@ -1,7 +1,6 @@
 package criteria;
 
 import bot.Robot;
-import bot.Robots;
 import strategy.Criteria;
 
 /**
@@ -11,10 +10,6 @@ public class IsSpinningFast extends Criteria {
 
     private int i = 0;
 
-    @Override
-    public String getName() {
-        return "Is Spinning Fast";
-    }
 
     /**
      * <p>Checks if the robot is spinning out of control</p>

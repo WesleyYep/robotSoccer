@@ -229,7 +229,7 @@ public class CurrentStrategy {
                             System.out.println("hi");
                         }
                         Action action = (Action)Class.forName(lineArray[1]).newInstance();
-                        Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
+                        Criteria criteria = (Criteria)Class.forName("criteria." + capitalize(lineArray[0])).newInstance();
                         if (lineArray.length < 3) {
                             //do nothing
                         } else {
@@ -306,6 +306,10 @@ public class CurrentStrategy {
         }
     }
 
+    private String capitalize(final String line) {
+        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+    }
+
     public void readSetPlay(String directory) {
         String line = null;
         openedStratFile = true;
@@ -327,7 +331,7 @@ public class CurrentStrategy {
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
                         Action action = (Action)Class.forName(lineArray[1]).newInstance();
-                        Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
+                        Criteria criteria = (Criteria)Class.forName("criteria." + capitalize(lineArray[0])).newInstance();
                         if (lineArray.length < 3) {
                             //do nothing
                         } else {
