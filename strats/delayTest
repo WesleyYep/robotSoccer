@@ -1,5 +1,5 @@
 Role:def
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 50, 120, 110]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[35, 130, 50]
 null-null
 null-null
 null-null
@@ -19,12 +19,26 @@ null-null
 null-null
 null-null
 -----
+Role:spinner
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[135, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender
+VeryCloseToBall-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 3]
+NegativeSituation-actions.ChaseBallWithObstacle-[]-[]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+-----
 Play:new play
 wait
+wait
 goal keeper
-wait
-wait
-wait
+def
+spinner
 -----
 Situation:new situation 1:25:1:461:369
 new play

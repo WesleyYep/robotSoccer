@@ -1,7 +1,5 @@
 package actions;
 
-import strategy.Action;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +28,8 @@ public class Actions {
           add(PIDMoveToSpot.class.getSimpleName());
           add(PIDGoalKeeper.class.getSimpleName());
           add(BasicDefender.class.getSimpleName());
+          add(AdvancedGoalKeep.class.getSimpleName());
+          add(ChaseBall2.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {

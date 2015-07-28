@@ -97,6 +97,14 @@ public class ActionFactory {
                 final BasicDefender basicDefender = new BasicDefender();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, basicDefender); }});
                 return basicDefender;
+            } else if (simpleName.equals(ChaseBall2.class.getSimpleName())) {
+                final ChaseBall2 chaseBall2 = new ChaseBall2();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, chaseBall2); }});
+                return chaseBall2;
+            } else if (simpleName.equals(AdvancedGoalKeep.class.getSimpleName())) {
+                final AdvancedGoalKeep a = new AdvancedGoalKeep();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             }
         }
 
