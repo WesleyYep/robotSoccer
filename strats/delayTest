@@ -34,11 +34,11 @@ null-null
 null-null
 -----
 Play:new play
-wait
-wait
 goal keeper
-def
-spinner
+wait
+wait
+wait
+wait
 -----
 Situation:new situation 1:25:1:461:369
 new play

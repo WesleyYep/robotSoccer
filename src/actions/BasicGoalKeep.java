@@ -50,6 +50,169 @@ public class BasicGoalKeep extends Action {
 		difference = Math.toDegrees(difference);
 		targetTheta = difference;
 
+		//finding ball trajectory and resulty
+		double yDiff = Math.round(ballY-lastBallY);
+		double xDiff = Math.round(ballX-lastBallX);
+		double constant;
+
+		boolean goingHorizontal = false;
+		boolean goingVertical = false;
+		double trajectoryY = 0;
+
+		if (yDiff == 0) {
+			trajectoryY = ballY;
+			goingHorizontal = true;
+		}
+
+		if (xDiff == 0) {
+			trajectoryY = ballY;
+			goingVertical = true;
+		}
+
+		if (!(goingVertical || goingHorizontal)) {
+			constant = ballY - ((yDiff/xDiff)*ballX);
+			//trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
+
+			double sumY = ballY + lastBallY + lastBallY2;
+			double sumX = ballX + lastBallX + lastBallX2;
+
+			double sumX2 = (ballX*ballX) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
+
+			double sumXY = (ballX*ballY) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
+
+			double xMean = sumX/3;
+			double yMean = sumY/3;
+
+			double slope = (sumXY - sumX * yMean) / (sumX2 - sumX * xMean);
+
+			double yInt = yMean - slope* xMean;
+
+
+			if (goalLine < 110 ) {
+				trajectoryY = (slope*(goalLine+3.75)) + yInt;
+			}
+			else {
+				trajectoryY = (slope * (goalLine - 3.75)) + yInt;
+			}
+
+		}
+
+
+
+		boolean goal = false;
+		boolean midSection = false;
+		double boundary1 = 110, boundary2 = 35;
+		if (goalLine > 110) {
+			goal = ballX < goalLine + 100;
+			midSection = ballX < goalLine + 150;
+		}
+		else {
+			midSection = ballX > goalLine + 50;
+			goal =ballX >=100+goalLine;
+		}
+
+
+		double area1Weighting = 0; // > 110
+		double area2Weighting = 0; // > 50
+		double area3Weighting = 0; // > 0
+		double resultY = 0;
+		double area1Y = Field.OUTER_BOUNDARY_HEIGHT/2;
+		double area2Y = 0;
+		double area3Y = 0;
+
+		//working out the weighting for each area to ensure smooth transition for the goal keeper
+		//area 1
+		if (ballX > 120) {
+			area1Weighting = 1;
+		} else if (ballX <= 120 && ballX >= 100) {
+			area1Weighting = (ballX - 100.0)/(120.0-100.0);
+		} else {
+			area1Weighting = 0;
+		}
+
+
+		//area 2
+		if (ballX > 120) {
+			area2Weighting = 0;
+		} else if (ballX <= 120 && ballX >= 100) {
+			area2Weighting = (ballX-120.0) /(100.0-120.0);
+		} else if (ballX < 100 && ballX > 45) {
+			area2Weighting = 1;
+		} else if (ballX <= 45 && ballX >= 35) {
+			area2Weighting = (ballX - 35.0) / (45.0-35.0);
+		} else {
+			area2Weighting = 0;
+		}
+
+		//if ball moving
+		if (!goingHorizontal || !goingVertical ) {
+			if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
+				// System.out.println("same side");
+				area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
+			} else {
+				// System.out.println("oppo side");
+				area2Y = Field.OUTER_BOUNDARY_HEIGHT/2;
+			}
+		} else {
+			//ball idle/going vertical/going horizontal
+			area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
+		}
+
+		//area 3
+		if (ballX > 45) {
+			area3Weighting = 0;
+		} else if (ballX <= 45 && ballX >= 35) {
+			area3Weighting = (ballX -45.0) /(35.0-45.0);
+		} else {
+			area3Weighting = 1;
+		}
+
+		boolean direction;
+		if (goalLine < 110) {
+			direction = xDiff < 0;
+		} else {
+			direction = xDiff > 0;
+		}
+
+		if (direction) {
+			//ball going toward the goal
+			if (trajectoryY >= topPoint-3 && trajectoryY <= bottomPoint+3) {
+					/*
+					if (r.getYPosition() >= (trajectoryY - 2) && r.getYPosition() <= (trajectoryY + 2)) {
+						area3Y = r.getYPosition();
+					} else {
+						if (trajectoryY < topPoint) {
+							area3Y = topPoint;
+;						} else if (trajectoryY > bottomPoint) {
+							area3Y = bottomPoint;
+						} else {
+							area3Y = trajectoryY;
+						}
+					} */
+				area3Y = trajectoryY;
+				//System.out.println("toward the goal");
+			} else {
+				//ball travelling in the same side of board
+				if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
+					// System.out.println("same side");
+					area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
+				} else {
+					// System.out.println("oppo side");
+					area3Y = Field.OUTER_BOUNDARY_HEIGHT / 2;
+				}
+			}
+		} else {
+			//away from the goal
+			if (ballY >= topPoint && ballY <= bottomPoint) {
+				area3Y = ballY;
+			} else if (ballY < topPoint) {
+				area3Y = topPoint;
+			} else if (ballY > bottomPoint) {
+				area3Y = bottomPoint;
+			}
+		}
+		resultY = area1Y*area1Weighting + area2Y*area2Weighting + area3Y*area3Weighting;
+
 		//clear the ball
 		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
 			//System.out.println(targetTheta);
@@ -65,20 +228,18 @@ public class BasicGoalKeep extends Action {
 		}
 
 		//first phase getting the robot to the goal line
-		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error) {
+		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error){
 			//System.out.println("getting to the goal");
-			int targetPos = 0;
+			double targetPos = 0;
 			if (ballY >= topPoint && ballY <= bottomPoint ) {
-				targetPos = (int) ballY;
-			}
-			else if (ballY < topPoint) {
+				targetPos = ballY;
+			} else if (ballY < topPoint) {
 				targetPos = topPoint;
-			}
-			else if (ballY > bottomPoint) {
+			} else if (ballY > bottomPoint) {
 				targetPos = bottomPoint;
 			}
 			setVelocityToTarget(goalLine,targetPos, false,false);
-			//MoveToSpot.move(r,new Coordinate((int)goalLine,targetPos),1,false);
+			//MoveToSpot.move(r,new Coordinate((int)goalLine,resultY),1,false);
 			//code start for getting stuck in the inner goal area
 			//finding the angle in the inner goal area so the robot can get out of the inner area
 			/*
@@ -91,8 +252,6 @@ public class BasicGoalKeep extends Action {
 				   Angles
 			 */
 			/*
-
-
 			double pointY1 = Field.OUTER_BOUNDARY_HEIGHT/2 - Field.INNER_GOAL_AREA_HEIGHT/2 + 3.5;
 			double pointY2 = Field.OUTER_BOUNDARY_HEIGHT/2 + Field.INNER_GOAL_AREA_HEIGHT/2 - 3.5;
 
@@ -184,178 +343,6 @@ public class BasicGoalKeep extends Action {
 		else{
 			//System.out.println("ball tracking " + fixPosition);
 			//working out the trajectory of the ball
-			double yDiff = Math.round(ballY-lastBallY);
-			double xDiff = Math.round(ballX-lastBallX);
-			double constant;
-
-			boolean goingHorizontal = false;
-			boolean goingVertical = false;
-			double trajectoryY = 0;
-
-			if (yDiff == 0) {
-				trajectoryY = ballY;
-				goingHorizontal = true;
-			}
-
-			if (xDiff == 0) {
-				trajectoryY = ballY;
-				goingVertical = true;
-			}
-
-			if (!(goingVertical || goingHorizontal)) {
-				constant = ballY - ((yDiff/xDiff)*ballX);
-				//trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
-
-				double sumY = ballY + lastBallY + lastBallY2;
-				double sumX = ballX + lastBallX + lastBallX2;
-
-				double sumX2 = (ballX*ballX) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
-
-				double sumXY = (ballX*ballY) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
-
-				double xMean = sumX/3;
-				double yMean = sumY/3;
-
-				double slope = (sumXY - sumX * yMean) / (sumX2 - sumX * xMean);
-
-				double yInt = yMean - slope* xMean;
-
-
-				if (goalLine < 110 ) {
-					trajectoryY = (slope*(goalLine+3.75)) + yInt;
-				}
-				else {
-					trajectoryY = (slope * (goalLine - 3.75)) + yInt;
-				}
-
-			}
-
-
-
-			boolean goal = false;
-			boolean midSection = false;
-			double boundary1 = 110, boundary2 = 35;
-			if (goalLine > 110) {
-				goal = ballX < goalLine + 100;
-				midSection = ballX < goalLine + 150;
-			}
-			else {
-				midSection = ballX > goalLine + 50;
-				goal =ballX >=100+goalLine;
-			}
-
-
-			double area1Weighting = 0; // > 110
-			double area2Weighting = 0; // > 50
-			double area3Weighting = 0; // > 0
-			double resultY = 0;
-			double area1Y = Field.OUTER_BOUNDARY_HEIGHT/2;
-			double area2Y = 0;
-			double area3Y = 0;
-
-			//working out the weighting for each area to ensure smooth transition for the goal keeper
-			//area 1
-			if (ballX > 120) {
-				area1Weighting = 1;
-			} else if (ballX <= 120 && ballX >= 100) {
-				area1Weighting = (ballX - 100.0)/(120.0-100.0);
-			} else {
-				area1Weighting = 0;
-			}
-
-
-			//area 2
-			if (ballX > 120) {
-				area2Weighting = 0;
-			} else if (ballX <= 120 && ballX >= 100) {
-				area2Weighting = (ballX-120.0) /(100.0-120.0);
-			} else if (ballX < 100 && ballX > 45) {
-				area2Weighting = 1;
-			} else if (ballX <= 45 && ballX >= 35) {
-				area2Weighting = (ballX - 35.0) / (45.0-35.0);
-			} else {
-				area2Weighting = 0;
-			}
-			
-			//if ball moving
-			if (!goingHorizontal || !goingVertical ) {
-				if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
-					// System.out.println("same side");
-					area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
-				} else {
-					// System.out.println("oppo side");
-					area2Y = Field.OUTER_BOUNDARY_HEIGHT/2;
-				}
-			} else {
-				//ball idle/going vertical/going horizontal
-				area2Y = 80 + (((100.0-80.0)/(180.0-0.0))*ballY);
-			}
-			
-			//area 3
-			if (ballX > 45) {
-				area3Weighting = 0;
-			} else if (ballX <= 45 && ballX >= 35) {
-				area3Weighting = (ballX -45.0) /(35.0-45.0);
-			} else {
-				area3Weighting = 1;
-			}
-			
-			boolean direction;
-			if (goalLine < 110) {
-				direction = xDiff < 0;
-			} else {
-				direction = xDiff > 0;
-			}
-
-			if (direction) {
-				//ball going toward the goal
-				if (trajectoryY >= topPoint-3 && trajectoryY <= bottomPoint+3) {
-					/*
-					if (r.getYPosition() >= (trajectoryY - 2) && r.getYPosition() <= (trajectoryY + 2)) {
-						area3Y = r.getYPosition();
-					} else {
-						if (trajectoryY < topPoint) {
-							area3Y = topPoint;
-;						} else if (trajectoryY > bottomPoint) {
-							area3Y = bottomPoint;
-						} else {
-							area3Y = trajectoryY;
-						}
-					} */
-					area3Y = trajectoryY;
-					//System.out.println("toward the goal");
-				} else {
-					//ball travelling in the same side of board
-					if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
-						// System.out.println("same side");
-						area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
-					} else {
-						// System.out.println("oppo side");
-						area3Y = Field.OUTER_BOUNDARY_HEIGHT / 2;
-					}
-				}
-			} else {
-				//away from the goal
-				if (ballY >= topPoint && ballY <= bottomPoint) {
-					area3Y = ballY;
-				} else if (ballY < topPoint) {
-					area3Y = topPoint;
-				} else if (ballY > bottomPoint) {
-					area3Y = bottomPoint;
-				}
-			}
-
-			/*
-			if (ballY >= topPoint && ballY <= bottomPoint) {
-				area3Y = ballY;
-			} else if (ballY < topPoint) {
-				area3Y = topPoint;
-			} else if (ballY > bottomPoint) {
-				area3Y = bottomPoint;
-			} */
-
-
-			resultY = area1Y*area1Weighting + area2Y*area2Weighting + area3Y*area3Weighting;
 			//System.out.println("ballY: " + ballY + " resultY:" + resultY + " area1Y weghting:" + area1Y + " " + area1Weighting
 			//		+ " area2Y weghting:" + area2Y + " " + area2Weighting
 			//		+ " area3Y weghting:" + area3Y + " " + area3Weighting );

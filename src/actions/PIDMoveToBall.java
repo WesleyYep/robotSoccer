@@ -101,6 +101,11 @@ public class PIDMoveToBall extends Action {
         }
         isPreviousDirectionForward = isCurrentDirectionForward;
 
+        if  (Math.abs(actualAngleError) > Math.PI/10) {
+            bot.linearVelocity = 0;
+            return;
+        }
+
         //charge ball into goal
         double range = 10;
         if (isCharging) {

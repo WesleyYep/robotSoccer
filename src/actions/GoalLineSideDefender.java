@@ -57,7 +57,7 @@ public class GoalLineSideDefender extends Action {
         else {
             targetX = parameters.get("startingX");
             targetY = parameters.get("startingY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, true);
+            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, false);
             oldDistanceToTarget = getDistanceToTarget(r);
         }
 

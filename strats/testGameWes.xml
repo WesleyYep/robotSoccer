@@ -47,6 +47,13 @@ null-null
 null-null
 null-null
 -----
+Role:waitingStrikerDeep
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 185]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:fullLengthDefender
 permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[180, 90, 90, 0]
 null-null

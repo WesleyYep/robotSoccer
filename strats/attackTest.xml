@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Role:chaseBall
-permanent-actions.ChaseBallWithObstacle-[]-[]
+permanent-actions.ChaseBall2-[]-[]
 null-null
 null-null
 null-null
@@ -27,7 +27,7 @@ null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[60, 160]
+permanent-actions.StrikerTest-[startingY, startingX]-[50, 170]
 null-null
 null-null
 null-null
@@ -48,7 +48,14 @@ null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[120, 160]
+permanent-actions.StrikerTest-[startingY, startingX]-[130, 170]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingStrikerDeep
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 175]
 null-null
 null-null
 null-null
@@ -120,23 +127,23 @@ blockingDefender
 Play:attackTop
 gk
 centreDefender
-PIDChaseBall
-waitingStrikerMidTop
-waitingStrikerMidTop
+waitingStrikerDeep
+waitingStrikerBottom
+chaseBall
 -----
 Play:attackBottom
 gk
 centreDefender
-waitingStrikerMidTop
-waitingStrikerMidTop
-PIDChaseBall
+waitingStrikerTop
+waitingStrikerDeep
+chaseBall
 -----
 Play:attackMid
 gk
 centreDefender
-waitingStrikerMidTop
-PIDChaseBall
-waitingStrikerMidTop
+chaseBall
+chaseBall
+chaseBall
 -----
 Play:allWait
 gk
@@ -158,13 +165,13 @@ defendTop
 Situation:defendBot:27:235:228:134
 defendBot
 -----
-Situation:attackTop:255:4:225:101
+Situation:attackTop:426:4:54:184
 attackTop
 -----
-Situation:attackBot:255:265:226:104
+Situation:attackBot:426:187:55:182
 attackBottom
 -----
-Situation:attackMid:257:105:226:160
+Situation:attackMid:257:5:170:366
 attackMid
 -----
 Situation:allWait:44:428:223:366

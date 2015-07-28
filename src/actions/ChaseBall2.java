@@ -17,7 +17,9 @@ public class ChaseBall2 extends Action{
 
     @Override
     public void execute() {
+        Robot r = bot;
         setVelocityToTarget(predX, predY, true);
+
     }
 
     public void setVelocityToTarget(double x, double y, boolean front) {
@@ -56,6 +58,21 @@ public class ChaseBall2 extends Action{
             targetDist = Math.sqrt(Math.pow((goalX-r.getXPosition()),2) + Math.pow((goalY-r.getYPosition()),2));
         }
 
+
+        if (targetTheta > 90 || targetTheta < -90) {
+            front = false;
+        }
+
+        if (!front) {
+            if (targetTheta < 0) {
+                targetTheta = -180 - targetTheta;
+            } else if (targetTheta > 0) {
+                targetTheta = 180 - targetTheta;
+            }
+        }
+
+
+
         String filename = "fuzzy/newFuzzy2.fcl";
         FIS fis = FIS.load(filename, true);
 
@@ -84,6 +101,12 @@ public class ChaseBall2 extends Action{
         r.linearVelocity = linear*2.5;
         r.angularVelocity = angular*0.5;
 
+
+
+        if (!front) {
+            r.linearVelocity *= -1;
+            r.angularVelocity *= -1;
+        }
 //        if (isShooting) {
 //            r.linearVelocity *= 2;
 //            r.angularVelocity *= 2;
