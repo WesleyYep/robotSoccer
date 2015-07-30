@@ -40,7 +40,7 @@ public class StrikerTest extends Action {
         }
 
         //check if robot is stuck
-        double newTargetDistance = getDistanceToTarget(r);
+        double newTargetDistance = getDistanceToTarget(r, targetX, targetY);
         //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
         if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
             countTimesThatSeemStuck++;
@@ -71,7 +71,7 @@ public class StrikerTest extends Action {
             targetX = parameters.get("startingX");
             targetY = parameters.get("startingY");
             MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, true);
-            oldDistanceToTarget = getDistanceToTarget(r);
+            oldDistanceToTarget = getDistanceToTarget(r, targetX, targetY);
         }
     }
 
@@ -80,37 +80,37 @@ public class StrikerTest extends Action {
         boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;
  //       double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
 
-        if (kicking) {
-            bot.angularVelocity = Math.toRadians(angleToBall) * 3;
-            bot.linearVelocity = 1;
-
-            double range = 10;
-            if (isCharging) {
-                range = 30;
-            }
-            if (getDistanceToTarget(bot, ballX, ballY) < range && Math.abs(angleToBall) < 20/* radians*/) {
-                bot.linearVelocity = 1.5;
-                if (ballX > 110) {
-                    double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
-                    if (Math.abs(angleToGoal) > 45) {
-                        if (angleToGoal > 0) {
-                            bot.angularVelocity = 30;
-                        } else {
-                            bot.angularVelocity = -30;
-                        }
-                    }
-                }
-                isCharging = true;
-            } else {
-                isCharging = false;
-            }
-
-            if (ballX < bot.getXPosition()) {
-                kicking = false;
-                return false;
-            }
-            return true;
-        }
+//        if (kicking) {
+//            bot.angularVelocity = Math.toRadians(angleToBall) * 3;
+//            bot.linearVelocity = 1;
+//
+//            double range = 10;
+//            if (isCharging) {
+//                range = 30;
+//            }
+//            if (getDistanceToTarget(bot, ballX, ballY) < range && Math.abs(angleToBall) < 20/* radians*/) {
+//                bot.linearVelocity = 1.5;
+//                if (ballX > 110) {
+//                    double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+//                    if (Math.abs(angleToGoal) > 45) {
+//                        if (angleToGoal > 0) {
+//                            bot.angularVelocity = 30;
+//                        } else {
+//                            bot.angularVelocity = -30;
+//                        }
+//                    }
+//                }
+//                isCharging = true;
+//            } else {
+//                isCharging = false;
+//            }
+//
+//            if (ballX < bot.getXPosition()) {
+//                kicking = false;
+//                return false;
+//            }
+//            return true;
+//        }
 
         if (!isFacingGoal) {return false;}
 //        if ( angleToBall < (10 + 50-ballDistanceFromRobot)) {
@@ -162,12 +162,12 @@ public class StrikerTest extends Action {
             //only go if the time is under 1 second
             if (time < 1) {
                 //get distance of robot to spot
-//                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
-//                r.linearVelocity = squared((robotDistance/time)/100);
-//                r.angularVelocity = 0;
+                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
+                r.linearVelocity = squared((robotDistance/time)/100);
+                r.angularVelocity = 0;
 //                atCentre = false;
-                bot.angularVelocity = Math.toRadians(angleToBall) * 3;
-                bot.linearVelocity = 1;
+//                bot.angularVelocity = Math.toRadians(angleToBall) * 3;
+//                bot.linearVelocity = 1;
                 kicking = true;
                 return true;
             }
@@ -175,9 +175,7 @@ public class StrikerTest extends Action {
         return false;
     }
 
-    private double getDistanceToTarget(Robot r) {
-        return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
-    }
+
 
     protected static double squared (double x) {
         return x * x;
