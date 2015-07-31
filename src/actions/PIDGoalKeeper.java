@@ -1,20 +1,18 @@
 package actions;
 
-import data.Coordinate;
-import game.Tick;
 import strategy.Action;
-import ui.Field;
 
 /**
  * Created by Wesley on 18/07/2015.
  */
 public class PIDGoalKeeper extends Action {
 
-    private double kp = 3;
+    private double kp = 5;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
     private double lastBallX = 0;
     private double lastBallY = 0;
+    private long lastTime = 0;
 
     {
         parameters.put("goalLine", 5);
@@ -27,21 +25,28 @@ public class PIDGoalKeeper extends Action {
 
         double targetX = parameters.get("goalLine");
         double targetY = 90;
-        double dist = getDistanceToTarget(bot, targetX, targetY);
         double angleToTop = Math.abs(getTargetTheta(bot, targetX, 0));
+        double goalLine = parameters.get("goalLine");
+
+        if (ballX < 50) {
+            targetY = ballY < 70 ? 75 : ballY > 110 ? 105 : ballY;
+        }
 
         //check if ball is coming into path
-        if (ballComingIntoPath()) {
+        //clear the ball
+        if (ballX <= goalLine + 5 && ballX > goalLine - 5 && ballY > 50 && ballY < 130) {
+            targetX = ballX;
+            targetY = ballY;
+        } else if (ballComingIntoPath()) {
             if (getDistanceToTarget(bot, targetX, 90) > 5 || (angleToTop > 10 && angleToTop < 170)) {
                 //try to intercept
-                System.out.println("not on goaline but trying to intercept");
+       //         System.out.println("not on goaline but trying to intercept");
             } else {
                 lastBallX = ballX;
                 lastBallY = ballY;
                 return;
             }
         }
-
 
 //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
 //            if (!presetToBackward && !presetToForward && dist > 10) {
@@ -57,23 +62,11 @@ public class PIDGoalKeeper extends Action {
 //            presetToForward = false;
 //        }
 
+        double dist = getDistanceToTarget(bot, targetX, targetY);
+
         //get angle to target
         double angleToTarget = getTargetTheta(bot, targetX, targetY);
         double actualAngleError;
-
-        //clear the ball
-//        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
-//            //System.out.println(targetTheta);
-//            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 15 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 5 || Math.abs(angleToTarget) > 175 )) {
-//                MoveToSpot.move(bot, new Coordinate((int)goalLine, 175), 2, false);
-//                return;
-//            } else {
-//                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 15 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 5 || Math.abs(angleToTarget) > 175 )) {
-//                    MoveToSpot.move(bot, new Coordinate((int)goalLine, 5), 2, false);
-//                    return;
-//                }
-//            }
-//        }
 
         if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
             if (angleToTarget < 0) {
@@ -93,7 +86,10 @@ public class PIDGoalKeeper extends Action {
             bot.linearVelocity = 0;
             turn();
         }else if (dist < 10) {
-            bot.linearVelocity *= dist/10.0;
+            bot.linearVelocity *= dist/20.0;
+        }
+        if (Math.abs(bot.angularVelocity) < 0.2) {
+            bot.angularVelocity = 0;
         }
 
         lastBallX = ballX;
@@ -114,21 +110,27 @@ public class PIDGoalKeeper extends Action {
         double yInt = m*x + c;
         double time = 0;
 
-        if (ballX - lastBallX > -3) {
+        if (ballX - lastBallX >= 0) {
             yInt = 0;
         } else {
             double ballDistance = Math.sqrt(squared(ballX-x) + squared(ballY-yInt));
-            double ballSpeed = (Math.sqrt(squared(ballX-lastBallX) + squared(ballY-lastBallY))) / Tick.PREDICT_TIME;
+            long currentTime = System.currentTimeMillis();
+            double ballSpeed = (Math.sqrt(squared(ballX-lastBallX) + squared(ballY-lastBallY))) / ((currentTime - lastTime)/1000);
+            lastTime = currentTime;
             time = ballDistance / ballSpeed;
-            if (time >= 3) {
+            if (time > 1) {
+                //System.out.println("time or distance too long! " + time);
                 yInt = 0;
             }
         }
         if (65 < yInt && yInt < 115) {
-            System.out.println("going to hit goal! " + yInt);
+            if (ballX < 30 && (yInt > 90 && ballY < 90 || yInt < 90 && ballY > 90)) {
+                return false;
+            }
+           // System.out.println("going to hit goal! " + yInt);
             //move forward or back to intercept
             double distanceFromRobotToIntercept = bot.getYPosition() - yInt;
-            bot.linearVelocity = distanceFromRobotToIntercept / 10.0;
+            bot.linearVelocity = (distanceFromRobotToIntercept / 5)/ (time+1);
             bot.angularVelocity = 0;
             return true;
         } else {

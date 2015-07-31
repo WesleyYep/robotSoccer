@@ -1,5 +1,5 @@
 Role:obs
-permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+permanent-actions.ChaseBall2-[]-[]
 null-null
 null-null
 null-null
@@ -69,9 +69,9 @@ null-null
 null-null
 -----
 Play:new play
+wait
+wait
 PIDGoalKeep
-wait
-wait
 wait
 wait
 -----
