@@ -68,6 +68,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
     private int scanInterval = 26;
     private int[] pMarkTable = new int[640*480];
+    private int NEXT_Y;
 
     public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
@@ -519,7 +520,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         // Full range HSV. Range 0-255.
         Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
 
-        int NEXT_X, NEXT_Y3, NEXT_Y;
+        int NEXT_X, NEXT_Y3;
         int p = 0;
         NEXT_X = scanInterval*3;
         NEXT_Y = webcamImageMat.width()*3;
@@ -560,7 +561,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                     teamSP.getLowerBoundForS() <= hsv[1] && hsv[1] <= teamSP.getUpperBoundForS() &&
                     teamSP.getLowerBoundForV() <= hsv[2] && hsv[2] <= teamSP.getUpperBoundForV()) {
 
-                FindPatch(p,x,y);
+                FindPatch(p,x,y,webcamImageMat);
             }
 
             p+= NEXT_X;
@@ -568,11 +569,30 @@ public class VisionWorker implements WebcamDisplayPanelListener {
     }
 
     private void FindPatch(int p, int x, int y, Mat image) {
+        //if (!(pMarkTable[p/3] && mask))
         Patch patch = new Patch();
-        SearchPathRecursive(p,x,y, patch);
+        SearchPathRecursive(p,x,y, patch, image);
+
+        if  (colourPanel.getRobotSizeMinimum() <= patch.getPixels().size() && patch.getPixels().size() <= colourPanel.getRobotSizeMaximum()) {
+
+            Patch patchFilter = new Patch();
+
+            Point[] pointArray = new Point[4];
+
+            int r,g,b;
+            int patchLUTData;
+            int check_neighbor;
+
+            for (Point it : patch.getPixels()) {
+
+
+                
+            }
+
+        }
     }
 
-    private void SearchPathRecursive(int p, int x, int y, Patch patch) {
+    private void SearchPathRecursive(int p, int x, int y, Patch patch, Mat image) {
         int q = p/3;
 
         patch.getPixels().add(new Point(x,y));
@@ -583,10 +603,55 @@ public class VisionWorker implements WebcamDisplayPanelListener {
                 for (int i = 0; i<scanInterval ;i++) {
                     for (int j=0; j<scanInterval; j++) {
 
-                        if (x+1<640 && y+j < 480) pMarkTable[(x+i) + (y+j)*]
+                        //if (x+1<640 && y+j < 480) pMarkTable[(x+i) + (y+j)*image.width()]  |= mask;
                     }
                 }
+            } else {
+                //pMarkTable[q] |= mask;
             }
+
+            /*
+
+            //stop searching if it's erase area
+            if (processingArea[x+y*640] == 1) return;
+             */
+
+            int h,s,v;
+            int patchLUTData;
+
+            //LEFT
+            if ( x > 0 ) {
+                double[] hsv = image.get(x-scanInterval,y);
+
+                //if(patchLUTData & mask)
+                SearchPathRecursive(p-3*scanInterval, x-scanInterval, y,patch,image);
+            }
+
+            //UP
+            if (y > 0 ) {
+                double[] hsv = image.get(x,y-scanInterval);
+
+                //if(patchLUTData & mask)
+                SearchPathRecursive(p-NEXT_Y*scanInterval, x, y-scanInterval,patch,image);
+            }
+
+
+            //RIGHT
+            if (x < image.width()) {
+                double[] hsv = image.get(x+scanInterval, y);
+
+                //if (patchLUTData & mask)
+                SearchPathRecursive(p+3*scanInterval, x+scanInterval, y,patch,image);
+            }
+
+            //DOWN
+            if (y < image.height()) {
+                double[] hsv = image.get(x, y+scanInterval);
+
+                //if (patchLUTData & mask)
+                SearchPathRecursive(p+NEXT_Y*scanInterval,x,y+scanInterval,patch,image);
+            }
+
         }
 
     }
