@@ -1,24 +1,51 @@
-Role:striker
-Positive Situation-Chase Ball (smooth)
-permanent-Move to spot
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
+null-null
 null-null
 null-null
 null-null
 -----
 Role:new role
-permanent-do nothing
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker1
+permanent-actions.StrikerTest-[startingY, startingX]-[60, 180]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker2
+permanent-actions.StrikerTest-[startingY, startingX]-[120, 180]
 null-null
 null-null
 null-null
 null-null
 -----
 Play:new play
+gk
 striker
-new role
-new role
-new role
-new role
+striker
+striker1
+striker2
 -----
-Situation:new situation 1:29:1:451:367
+-1.0:-1.0
+-1.0:-1.0
+-2.0:-2.0
+-3.0:-3.0
+-3.0:-3.0
+-----
+Situation:new situation 1:26:2:456:369
 new play
 -----

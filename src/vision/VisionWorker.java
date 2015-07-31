@@ -1,28 +1,21 @@
 package vision;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.RotatedRect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+import data.RobotData;
+import data.VisionData;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-
 import ui.ColourPanel;
 import ui.SamplingPanel;
 import ui.WebcamDisplayPanel.ViewState;
 import ui.WebcamDisplayPanelListener;
-import utils.Image;
-import data.RobotData;
-import data.VisionData;
+import utils.Geometry;
+import utils.LimitedQueue;
+
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Wesley on 6/02/2015.
@@ -31,7 +24,7 @@ import data.VisionData;
 public class VisionWorker implements WebcamDisplayPanelListener {
 
 	private Mat dilateKernel, erodeKernel;
-	private SamplingPanel ballSP, teamSP, greenSP;
+	private SamplingPanel ballSP, teamSP, greenSP, opponentSP;
 
 	private boolean isTestingColour = false;
 
@@ -43,219 +36,341 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	private int robotMinSize;
 	private int ballMinSize;
 	private int greenMinSize;
+	private int opponentRobotMinSize;
 	
 	private int robotMaxSize;
     private int ballMaxSize;
     private int greenMaxSize;
+    private int opponentRobotMaxSize;
+
+    private Scalar ballMin, ballMax, teamMin, teamMax, greenMin, greenMax, opponentMin, opponentMax;
+
+    private List<MatOfPoint> correctBallContour;
 
 	private Point[] oldRobotPositions = {new Point(),new Point(),new Point(),new Point(),new Point()};
 
 	private ViewState webcamDisplayPanelState;
+	private List<MatOfPoint> correctGreenContour;
+	private List<MatOfPoint> correctTeamContour;
+	private List<MatOfPoint> correctOpponentContour;
+
+    private int[] robotNotSeen = new int[]{0,0,0,0,0}; //0 means it is seen, 1 means not seen
+    private boolean anyRobotsNotSeen = false;
+
 	
 	private static final int KERNELSIZE = 3;
 
-	public VisionWorker(ColourPanel cp) {
+    private JFrame testFrame = new JFrame();
+    private JPanel testPanel = new JPanel();
+    private JLabel imageLbl;
+
+    private LimitedQueue[] weightedAverageThetas = new LimitedQueue[5];
+
+    private int scanInterval = 26;
+    private int[] pMarkTable = new int[640*480];
+    private int NEXT_Y;
+
+    public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
 
 		ballSP = colourPanel.ballSamplingPanel;
 		teamSP = colourPanel.teamSamplingPanel;
 		greenSP = colourPanel.greenSamplingPanel;
+		opponentSP = colourPanel.opponentSamplingPanel;
+		
+		correctBallContour = new ArrayList<MatOfPoint>();
+		correctTeamContour = new ArrayList<MatOfPoint>();
+		correctGreenContour = new ArrayList<MatOfPoint>();
+		correctOpponentContour = new ArrayList<MatOfPoint>();
 
+//        imageLbl = new JLabel();
+//        testPanel.add(imageLbl);
+//        testFrame.add(testPanel);
+//        testFrame.setSize(new Dimension(600,600));
+//        testFrame.setVisible(true);
+
+        for (int i = 0; i < weightedAverageThetas.length; i++) {
+            weightedAverageThetas[i] = new LimitedQueue(5);
+        }
 	}
 
-	@Override
-	public void imageUpdated(BufferedImage image) {
-		if (webcamDisplayPanelState == ViewState.CONNECTED) {
+    private void updateRobotNotSeen() {
+        robotNotSeen = colourPanel.getRobotsNotSeen();
+        for (int val : robotNotSeen) {
+            if (val == 1) {
+                anyRobotsNotSeen = true;
+            }
+        }
+    }
 
-			Mat webcamImageMat = Image.toMat(image);
-			// Full range HSV. Range 0-255.
-	    	Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
-	    	
-			Scalar ballMin, ballMax, teamMin, teamMax, greenMin, greenMax;
-			Mat ballBinary, teamBinary, greenBinary, opponentBinary;
-			
-			dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
-			erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
-			
-			// Get the sampling panel values.
-			double[] hsvBallMin = {
-					ballSP.getLowerBoundForH(),
-					ballSP.getLowerBoundForS(),
-					ballSP.getLowerBoundForV()
-			};
+    @Override
+	public void imageUpdated(Mat image) {
+        if (colourPanel.isRobotNotPresentUpdated()) {
+            System.out.println("robot not seen updated!");
+            updateRobotNotSeen();
+        }
 
-			double[] hsvBallMax = {
-					ballSP.getUpperBoundForH(),
-					ballSP.getUpperBoundForS(),
-					ballSP.getUpperBoundForV()
-			};
+        if (webcamDisplayPanelState == ViewState.CONNECTED) {
 
-			double[] hsvTeamMin = {
-					teamSP.getLowerBoundForH(),
-					teamSP.getLowerBoundForS(),
-					teamSP.getLowerBoundForV()
-			};
+            Mat webcamImageMat = image;
+            // Full range HSV. Range 0-255.
+            Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
 
-			double[] hsvTeamMax = {
-					teamSP.getUpperBoundForH(),
-					teamSP.getUpperBoundForS(),
-					teamSP.getUpperBoundForV()
-			};
+            Mat ballBinary, teamBinary, greenBinary, opponentBinary;
 
-			double[] hsvGreenMin = {
-					greenSP.getLowerBoundForH(),
-					greenSP.getLowerBoundForS(),
-					greenSP.getLowerBoundForV()
-			};
+            dilateKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
+            erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(KERNELSIZE, KERNELSIZE));
+            //kFilter = new KalmanFilter();
+            // Get the sampling panel values.
+            double[] hsvBallMin = {
+                    ballSP.getLowerBoundForH(),
+                    ballSP.getLowerBoundForS(),
+                    ballSP.getLowerBoundForV()
+            };
 
-			double[] hsvGreenMax = {
-					greenSP.getUpperBoundForH(),
-					greenSP.getUpperBoundForS(),
-					greenSP.getUpperBoundForV()
-			};
+            double[] hsvBallMax = {
+                    ballSP.getUpperBoundForH(),
+                    ballSP.getUpperBoundForS(),
+                    ballSP.getUpperBoundForV()
+            };
 
-			// Create the scalar values.
-			ballMin = new Scalar(hsvBallMin[0], hsvBallMin[1], hsvBallMin[2]);
-			ballMax = new Scalar(hsvBallMax[0], hsvBallMax[1], hsvBallMax[2]);
-			teamMin = new Scalar(hsvTeamMin[0], hsvTeamMin[1], hsvTeamMin[2]);
-			teamMax = new Scalar(hsvTeamMax[0], hsvTeamMax[1], hsvTeamMax[2]);
-			greenMin = new Scalar(hsvGreenMin[0], hsvGreenMin[1], hsvGreenMin[2]);
-			greenMax = new Scalar(hsvGreenMax[0], hsvGreenMax[1], hsvGreenMax[2]);
+            double[] hsvTeamMin = {
+                    teamSP.getLowerBoundForH(),
+                    teamSP.getLowerBoundForS(),
+                    teamSP.getLowerBoundForV()
+            };
 
-			// Contour points.
-			ballContours = new ArrayList<MatOfPoint>();
-			teamContours = new ArrayList<MatOfPoint>();
-			greenContours = new ArrayList<MatOfPoint>();
+            double[] hsvTeamMax = {
+                    teamSP.getUpperBoundForH(),
+                    teamSP.getUpperBoundForS(),
+                    teamSP.getUpperBoundForV()
+            };
 
-			// Get the minimum lengths
-			ballMinSize = colourPanel.getBallSizeMinimum();
-			robotMinSize = colourPanel.getRobotSizeMinimum();
-			greenMinSize = colourPanel.getGreenSizeMinimum();
-			
-			//Get the maximum length
-			ballMaxSize = colourPanel.getBallSizeMaximum();
-			robotMaxSize = colourPanel.getRobotSizeMaximum();
-			greenMaxSize = colourPanel.getGreenSizeMaximum();
+            double[] hsvGreenMin = {
+                    greenSP.getLowerBoundForH(),
+                    greenSP.getLowerBoundForS(),
+                    greenSP.getLowerBoundForV()
+            };
 
-			// Create the binary matrix.
-			ballBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
-			teamBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
-			greenBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
+            double[] hsvGreenMax = {
+                    greenSP.getUpperBoundForH(),
+                    greenSP.getUpperBoundForS(),
+                    greenSP.getUpperBoundForV()
+            };
 
-			// Ball
-			Core.inRange(webcamImageMat, ballMin, ballMax, ballBinary);
-			Imgproc.erode(ballBinary, ballBinary, erodeKernel);
-			Imgproc.dilate(ballBinary, ballBinary, dilateKernel);
-			Imgproc.findContours(ballBinary, ballContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-			int ballX = 0, ballY = 0;
+            double[] hsvOpponentMin = {
+                    opponentSP.getLowerBoundForH(),
+                    opponentSP.getLowerBoundForS(),
+                    opponentSP.getLowerBoundForV()
+            };
 
-			for (int i = 0; i < ballContours.size(); i++) {
-				double area = Imgproc.contourArea(ballContours.get(i));
-				if (ballMinSize <= area && area <= ballMaxSize) {
-					Moments m = Imgproc.moments(ballContours.get(i));
-					ballX = (int) (m.get_m10() / m.get_m00());
-					ballY = (int) (m.get_m01() / m.get_m00());
-					//Imgproc.drawContours(webcamImageMat, ballContours, i, new Scalar(255, 255, 255));
-					//centerPoint.add(new Point(ballX, ballY));
+            double[] hsvOpponentMax = {
+                    opponentSP.getUpperBoundForH(),
+                    opponentSP.getUpperBoundForS(),
+                    opponentSP.getUpperBoundForV()
+            };
 
-					// Ball position update.
-					notifyListeners(new VisionData(new Point(ballX, ballY), 0, "ball"));
+            // Create the scalar values.
+            ballMin = new Scalar(hsvBallMin[0], hsvBallMin[1], hsvBallMin[2]);
+            ballMax = new Scalar(hsvBallMax[0], hsvBallMax[1], hsvBallMax[2]);
+            teamMin = new Scalar(hsvTeamMin[0], hsvTeamMin[1], hsvTeamMin[2]);
+            teamMax = new Scalar(hsvTeamMax[0], hsvTeamMax[1], hsvTeamMax[2]);
+            greenMin = new Scalar(hsvGreenMin[0], hsvGreenMin[1], hsvGreenMin[2]);
+            greenMax = new Scalar(hsvGreenMax[0], hsvGreenMax[1], hsvGreenMax[2]);
+            opponentMin = new Scalar(hsvOpponentMin[0], hsvOpponentMin[1], hsvOpponentMin[2]);
+            opponentMax = new Scalar(hsvOpponentMax[0], hsvOpponentMax[1], hsvOpponentMax[2]);
+
+            // Contour points.
+            ballContours = new ArrayList<MatOfPoint>();
+            teamContours = new ArrayList<MatOfPoint>();
+            greenContours = new ArrayList<MatOfPoint>();
+
+            opponentContours = new ArrayList<MatOfPoint>();
+
+            // Get the minimum lengths
+            ballMinSize = colourPanel.getBallSizeMinimum();
+            robotMinSize = colourPanel.getRobotSizeMinimum();
+            greenMinSize = colourPanel.getGreenSizeMinimum();
+
+            opponentRobotMinSize = 25;
+
+            //Get the maximum length
+            ballMaxSize = colourPanel.getBallSizeMaximum();
+            robotMaxSize = colourPanel.getRobotSizeMaximum();
+            greenMaxSize = colourPanel.getGreenSizeMaximum();
+
+            opponentRobotMaxSize = colourPanel.getRobotSizeMaximum();
+
+            // Create the binary matrix.
+            ballBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
+            teamBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
+            greenBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
+            opponentBinary = new Mat(webcamImageMat.size(), CvType.CV_8UC1);
+
+            // Ball
+            Core.inRange(webcamImageMat, ballMin, ballMax, ballBinary);
+            if (!colourPanel.isNewYellowVision()) {
+                Imgproc.erode(ballBinary, ballBinary, erodeKernel);
+                Imgproc.dilate(ballBinary, ballBinary, dilateKernel);
+            }
+            Imgproc.findContours(ballBinary, ballContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            int ballX = 0, ballY = 0;
+            correctBallContour.clear();
+            for (int i = 0; i < ballContours.size(); i++) {
+                double area = Imgproc.contourArea(ballContours.get(i));
+                if (ballMinSize <= area && area <= ballMaxSize) {
+                    Moments m = Imgproc.moments(ballContours.get(i));
+                    correctBallContour.add(ballContours.get(i));
+                    ballX = (int) (m.get_m10() / m.get_m00());
+                    ballY = (int) (m.get_m01() / m.get_m00());
+
+                    // Ball position update.
+                    notifyListeners(new VisionData(new Point(ballX, ballY), 0, "ball"));
+                }
+            }
+
+			//opponent
+			int opponentX = 0, opponentY = 0;
+			Core.inRange(webcamImageMat, opponentMin, opponentMax, opponentBinary);
+			Imgproc.erode(opponentBinary, opponentBinary, erodeKernel);
+			Imgproc.dilate(opponentBinary, opponentBinary, dilateKernel);
+			Imgproc.findContours(opponentBinary, opponentContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+			int count = 1;
+
+			correctOpponentContour.clear();
+			for (int i = 0; i < opponentContours.size(); i++) {
+				double area = Imgproc.contourArea(opponentContours.get(i));
+				if (opponentRobotMinSize <= area && area <= opponentRobotMaxSize) {
+					Moments m = Imgproc.moments(opponentContours.get(i));
+					correctOpponentContour.add(opponentContours.get(i));
+					opponentX = (int) (m.get_m10() / m.get_m00());
+					opponentY = (int) (m.get_m01() / m.get_m00());
+
+					notifyListeners(new VisionData(new Point(opponentX, opponentY), 0, "opponent:" + count));
+					count++;
+					if (count > 5) count = 5;
 				}
 			}
 
-			// Team
-			Core.inRange(webcamImageMat, teamMin, teamMax, teamBinary);
-			Imgproc.erode(teamBinary, teamBinary, erodeKernel);
-			Imgproc.dilate(teamBinary, teamBinary, dilateKernel);
-			Imgproc.findContours(teamBinary, teamContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            // Team
+            Core.inRange(webcamImageMat, teamMin, teamMax, teamBinary);
+            Imgproc.erode(teamBinary, teamBinary, erodeKernel);
+            Imgproc.dilate(teamBinary, teamBinary, dilateKernel);
 
-			// Create robot data.
-			RobotData[] data = new RobotData[5];
+//            if (colourPanel.isNewNewYellowVision()) {
+//                teamBinary = distanceTransform(teamBinary);
+//            }
 
-			int numRobots = 0;
-			int teamX = 0, teamY = 0;
+            Imgproc.findContours(teamBinary, teamContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-			for (int i = 0; i < teamContours.size(); i++) {
-				double area = Imgproc.contourArea(teamContours.get(i));
-				if (robotMinSize <= area && area <= robotMaxSize ) {
-					Moments m = Imgproc.moments(teamContours.get(i));
-					teamX = (int) (m.get_m10() / m.get_m00());
-					teamY = (int) (m.get_m01() / m.get_m00());
+            ballBinary.release();
 
-					//Imgproc.drawContours(webcamImageMat, teamContours, i, new Scalar(0, 255, 128));
+            // Create robot data.
+            RobotData[] data = new RobotData[5];
 
-					// Get the rotated rect and find the points.
-					MatOfPoint2f teamContour2f = new MatOfPoint2f();
-					teamContours.get(i).convertTo(teamContour2f, CvType.CV_32FC2);
-					RotatedRect patch = Imgproc.minAreaRect(teamContour2f);
-					org.opencv.core.Point[] p = new org.opencv.core.Point[4];
-					patch.points(p);
+            int numRobots = 0;
+            int teamX = 0, teamY = 0;
+            correctTeamContour.clear();
+            for (int i = 0; i < teamContours.size(); i++) {
+                double area = Imgproc.contourArea(teamContours.get(i));
+                if (robotMinSize <= area && area <= robotMaxSize) {
+                    Moments m = Imgproc.moments(teamContours.get(i));
+                    teamX = (int) (m.get_m10() / m.get_m00());
+                    teamY = (int) (m.get_m01() / m.get_m00());
 
-					data[numRobots] = new RobotData(p, new org.opencv.core.Point(teamX, teamY));
-					
-					double longPairDist = data[numRobots].getLongPair().getEuclideanDistance();
-					double shortPairDist = data[numRobots].getShortPair().getEuclideanDistance();
-					
-					if ((longPairDist/shortPairDist) < 2.5) {
-						data[numRobots] = null;
-					} else {
-						numRobots++;
-					}
-					/*
-				for (int k = 0; k < p.length; k++) {
-					Core.line(webcamImageMat, p[k], p[(k + 1) % 4], new Scalar(255, 255, 255));
-				}
-					 */
+      //              getAngle(teamX, teamY, teamBinary);
 
-					//centerPoint.add(new Point(teamX, teamY));
+                    correctTeamContour.add(teamContours.get(i));
 
-					if (numRobots >= 5) {
-						break;
-					}
-				}
-			}
+                    // Get the rotated rect and find the points.
+                    MatOfPoint2f teamContour2f = new MatOfPoint2f();
+                    teamContours.get(i).convertTo(teamContour2f, CvType.CV_32FC2);
+                    RotatedRect patch = Imgproc.minAreaRect(teamContour2f);
+                    org.opencv.core.Point[] p = new org.opencv.core.Point[4];
+                    patch.points(p);
 
-			// Green
-			Core.inRange(webcamImageMat, greenMin, greenMax, greenBinary);
-			Imgproc.erode(greenBinary, greenBinary, erodeKernel);
-			Imgproc.dilate(greenBinary, greenBinary, dilateKernel);
-			Imgproc.findContours(greenBinary, greenContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+                    data[numRobots] = new RobotData(p, new org.opencv.core.Point(teamX, teamY));
+             //       data[numRobots].setTheta(getAngle(teamX, teamY, teamBinary)); 
+                    if (colourPanel.isNewYellowVision()) {
+                        numRobots++;
+                    } else {
+                        double longPairDist = data[numRobots].getLongPair().getEuclideanDistance();
+                        double shortPairDist = data[numRobots].getShortPair().getEuclideanDistance();
 
-			int greenX = 0, greenY = 0;
-			for (int i = 0; i < greenContours.size(); i++) {
-				double area =  Imgproc.contourArea(greenContours.get(i));
-				if (greenMinSize <= area && area <= greenMaxSize) {
-					Moments m = Imgproc.moments(greenContours.get(i));
-					greenX = (int) (m.get_m10() / m.get_m00());
-					greenY = (int) (m.get_m01() / m.get_m00());
+                        if ((longPairDist / shortPairDist) < 2.5) {
+                            data[numRobots] = null;
+                        } else {
+                            numRobots++;
+                        }
+                    }
 
-					for (int j = 0; j < data.length; j++) {
-						if (data[j] != null) {
-							data[j].addGreenPatch(new org.opencv.core.Point(greenX, greenY));
-						}
-					}
+                    if (numRobots >= 5) {
+                        break;
+                    }
+                }
+            }
+            teamBinary.release();
 
-					//centerPoint.add(new Point(greenX, greenY));
-					//Imgproc.drawContours(webcamImageMat, greenContours, i, new Scalar(180, 105, 255));
-				}
-			}
+            // Green
+        if (!colourPanel.isNewYellowVision()) {
+            Core.inRange(webcamImageMat, greenMin, greenMax, greenBinary);
+            Imgproc.erode(greenBinary, greenBinary, erodeKernel);
+            Imgproc.dilate(greenBinary, greenBinary, dilateKernel);
+            Imgproc.findContours(greenBinary, greenContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            correctGreenContour.clear();
+            int greenX = 0, greenY = 0;
+            for (int i = 0; i < greenContours.size(); i++) {
+                double area = Imgproc.contourArea(greenContours.get(i));
+                if (greenMinSize <= area && area <= greenMaxSize) {
+                    Moments m = Imgproc.moments(greenContours.get(i));
+                    greenX = (int) (m.get_m10() / m.get_m00());
+                    greenY = (int) (m.get_m01() / m.get_m00());
+                    correctGreenContour.add(greenContours.get(i));
+                    for (int j = 0; j < data.length; j++) {
+                        if (data[j] != null) {
+                            data[j].addGreenPatch(new org.opencv.core.Point(greenX, greenY));
+                        }
+                    }
+                }
+            }
+        }
 			
 			int[] robotNumber = new int[5];
 			int robotCount = 0;
+            boolean[] robotsDetected = new boolean[5];
 			// Update robot positions.
 			for (RobotData rd : data) {
 				if (rd != null) {
-					int robotNum = rd.robotIdentification();
-					robotNumber[robotCount] = robotNum-1;
+                    int robotNum;
+                    if (colourPanel.isNewYellowVision()) {
+                        robotNum = identify(rd, webcamImageMat);
+                    } else {
+                        robotNum = rd.robotIdentification();
+                    }
 					if (robotNum > 0) {
                         Point pos = new Point((int) rd.getTeamCenterPoint().x, (int) rd.getTeamCenterPoint().y);
-                        double distance =  Image.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
+                        double distance =  Geometry.euclideanDistance(pos, oldRobotPositions[robotNum-1]);
 
-                        if (distance < 15) { //change this if needed //todo
-                            notifyListeners(new VisionData(pos, rd.getTheta(), "robot:" + robotNum));
+                        if (distance < 15) { //change this if needed
+                            //	System.out.println(pos.x + ", " + pos.y);
+                          //  if (robotNum != 2) {
+                            if (!anyRobotsNotSeen || robotNotSeen[robotNum-1] == 0) {
+                                double angle = 0;
+                                if (colourPanel.isNewNewYellowVision()) {
+                                    angle =  getWeightedAverageTheta(rd.getTheta(), robotNum);
+                                } else {
+                                    angle = rd.getTheta();
+                                }
+                                notifyListeners(new VisionData(pos,angle, "robot:" + robotNum));
+                            } else {
+                                notifyListeners(new VisionData(new Point(30, 50+20*(robotNum-1)), 0, "robot:" + ((robotNum))));
+                            }
+                          //  }
                         }
                         oldRobotPositions[robotNum-1] = pos;
+                        robotsDetected[robotNum-1] = true;
                     }
 
 				} else {
@@ -263,23 +378,297 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 					robotCount++;	
 				}
 			}
-			/*
-			int[] robotDuplicate = new int[5];
-			boolean isDuplicate = false;
-			for (int i = 0; i<robotDuplicate.length; i++) {
-				if (robotNumber[i]>=0) {
-					robotDuplicate[robotNumber[i]]++;
-					if (robotDuplicate[robotNumber[i]] > 2) {
-						isDuplicate = true;
-						break;
-					}
-				}
-			} */
-			
-		}
+
+//            for (int i = 0; i < 5; i++) {
+//                if (robotsDetected[i]) {
+//                    robotNotSeen[i] = 0;
+//                } else {
+//                    robotNotSeen[i]++;
+//                    if (robotNotSeen[i] >= 20) {
+//                        notifyListeners(new VisionData(new Point(30, 50+20*i), 0, "robot:" + (i + 1)));
+//                    }
+//                }
+//            }
+        }
 	}
-	
-	@Override
+
+
+    private double getWeightedAverageTheta(double currentTheta, int robotNum) {
+        try {
+            LimitedQueue lastThetaValues = weightedAverageThetas[robotNum - 1];
+            if (lastThetaValues.size() > 5) {
+                System.out.println("Limited queue is not working properly!");
+            }
+            lastThetaValues.add(currentTheta);
+            double average = 0;
+            for (int i =0; i < lastThetaValues.size(); i++) {
+                average = (average + lastThetaValues.get(i))/2;
+            }
+    //        System.out.println("weighted average theta  = " + sum / lastThetaValues.size());
+            return average;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private double getAngle(int teamX, int teamY, Mat teamBinary) {
+//        int count = 0;
+        double a=0, b=0, c=0;
+        for (int i = teamX - 10; i < teamX + 10; i++) {
+            for (int j = teamY - 10; j < teamY + 10; j++) {
+                double[] rgb = teamBinary.get(j,i); //row, col
+                try {
+                    if (rgb[0] > 100) {
+   //                     count++;
+                        a += ( i - teamX ) * (i - teamX );
+                        b += ( i - teamX ) * ( j - teamY );
+                        c += ( j - teamY ) * ( j - teamY );
+                    }
+                }catch (Exception e) {
+                    //e.printStackTrace();
+                }
+            }
+        }
+        double angle_rad = Math.atan2(b, a - c)/2;
+        System.out.println(Math.toDegrees(angle_rad));
+//        System.out.println("number of pixels in area = " + count);
+//        return count;
+        return Math.toDegrees(angle_rad);
+    }
+
+
+    private Mat distanceTransform(Mat teamBinary) {
+        Mat dist =  new Mat(teamBinary.size(), CvType.CV_8UC1);
+        Imgproc.distanceTransform(teamBinary, dist, Imgproc.CV_DIST_L2, 3);
+        Core.normalize(dist, dist, -50, 100, Core.NORM_MINMAX);
+//        System.out.println("new vision");
+//        Imgproc.threshold(dist, dist, 40, 100, Imgproc.THRESH_BINARY);
+//        Mat kernel1 = Mat.ones(3, 3, CvType.CV_8UC1);
+//        Imgproc.filter2D(dist, dist, CvType.CV_32F, kernel1);
+
+//        try {
+//            imageLbl.setIcon(new ImageIcon(utils.Image.toBufferedImage(teamBinary)));
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        dist.convertTo(dist, CvType.CV_8U);
+        return dist;
+    }
+
+    private int identify(RobotData rd, Mat image) {
+		boolean[] areasAreBlack = new boolean[4];
+        double startTheta = rd.getLongPair().getTheta(); //in degrees
+
+        for (int i = 0; i < 4; i++) { //loop through each quadrant and check if black pixel
+			double dist = 8;//Math.sqrt(2 * Math.pow(rd.getShortPair().getEuclideanDistance(),2));
+		//	System.out.println("short pair dist: " + rd.getShortPair().getEuclideanDistance());
+		//	System.out.println("dist - " + dist);
+			double theta = Math.toRadians(startTheta + i*90 +45); //eg. the theta of the middle of each quadrant
+			Point centre = rd.getTeamCenterPoint();
+			//get coordinates of the point to check
+            int x = (int) (centre.x + dist * Math.cos(theta));
+            int y = (int) (centre.y + dist * Math.sin(theta));
+		//	System.out.println("x: " + x + " - y: " + y);
+		//	System.out.println("width: " + image.size().width + "height: " + image.size().height);  
+		//	System.out.println("quadrant: " + i);
+			areasAreBlack[i] = isBlack(image.get(y, x));
+		}
+        int robotNum = 1;
+		if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 2;}
+        else if (areasAreBlack[1] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta); robotNum = 2;}
+        else if (areasAreBlack[0] && areasAreBlack[2] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 1;}
+        else if (areasAreBlack[0] && areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 1;}
+        else if (areasAreBlack[0] && areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 3;}
+        else if (areasAreBlack[1] && areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 3;}
+        else if (areasAreBlack[3]) {rd.setTheta(startTheta+180); robotNum = 4;}
+        else if (areasAreBlack[1]) {rd.setTheta(startTheta); robotNum = 4;}
+        else if (areasAreBlack[0]) {rd.setTheta(startTheta+180); robotNum = 5;}
+        else if (areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 5;}
+	//	System.out.println(robotNum + " detected");
+		return robotNum;
+    }
+
+
+    public void Run_FindRobot(RobotData rd, Mat image) {
+
+
+        for (int i =0; i<4; i++) {
+
+            int[] segment_count = new int[4];
+            segment_count[0] = 0;
+            segment_count[1] = 0;
+            segment_count[2] = 0;
+            segment_count[3] = 0;
+
+            double[] robot_angle = new double[2];
+            double[] robot_angle_screen = new double[2];
+
+            {
+                double a = 0, b = 0, c = 0;
+            }
+        }
+    }
+
+
+    public void Run_SearchPatch(Mat image) {
+
+        Mat webcamImageMat = image;
+        BufferedImage rectImage = new BufferedImage(webcamImageMat.width(), webcamImageMat.height(), BufferedImage.TYPE_3BYTE_BGR);
+        // Full range HSV. Range 0-255.
+        Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
+
+        int NEXT_X, NEXT_Y3;
+        int p = 0;
+        NEXT_X = scanInterval*3;
+        NEXT_Y = webcamImageMat.width()*3;
+        NEXT_Y3 = webcamImageMat.width()*3*scanInterval-1;
+
+        int total = (webcamImageMat.width()*webcamImageMat.height()/scanInterval);
+
+        while (total-- > 0) {
+
+            int x = (p/3)%webcamImageMat.width();
+            int y =  p/webcamImageMat.width()/3;
+
+            if( x > 0	&& y > 0
+                    && x < webcamImageMat.width()-1 &&y < webcamImageMat.height() -1)
+            {
+            }
+            else
+            {
+                p+= NEXT_X;
+                continue;
+            }
+
+            /*
+            //processing area = the original image - the part we erase on C++ program
+            if( m_pProcessingArea[ x + y*CAMERA_WIDTH_MAX ] == 0 )
+            {
+            }
+            else
+            {
+                p+= NEXT_X;
+                continue;
+            }
+             */
+
+            double[] hsv = webcamImageMat.get(x,y);
+
+            if ( teamSP.getLowerBoundForH() <= hsv[0] && hsv[0] <= teamSP.getUpperBoundForH() &&
+                    teamSP.getLowerBoundForS() <= hsv[1] && hsv[1] <= teamSP.getUpperBoundForS() &&
+                    teamSP.getLowerBoundForV() <= hsv[2] && hsv[2] <= teamSP.getUpperBoundForV()) {
+
+                FindPatch(p,x,y,webcamImageMat);
+            }
+
+            p+= NEXT_X;
+        }
+    }
+
+    private void FindPatch(int p, int x, int y, Mat image) {
+        //if (!(pMarkTable[p/3] && mask))
+        Patch patch = new Patch();
+        SearchPathRecursive(p,x,y, patch, image);
+
+        if  (colourPanel.getRobotSizeMinimum() <= patch.getPixels().size() && patch.getPixels().size() <= colourPanel.getRobotSizeMaximum()) {
+
+            Patch patchFilter = new Patch();
+
+            Point[] pointArray = new Point[4];
+
+            int r,g,b;
+            int patchLUTData;
+            int check_neighbor;
+
+            for (Point it : patch.getPixels()) {
+
+
+                
+            }
+
+        }
+    }
+
+    private void SearchPathRecursive(int p, int x, int y, Patch patch, Mat image) {
+        int q = p/3;
+
+        patch.getPixels().add(new Point(x,y));
+
+        if (patch.getPixels().size() < colourPanel.getRobotSizeMaximum()) {
+
+            if (scanInterval > 1) {
+                for (int i = 0; i<scanInterval ;i++) {
+                    for (int j=0; j<scanInterval; j++) {
+
+                        //if (x+1<640 && y+j < 480) pMarkTable[(x+i) + (y+j)*image.width()]  |= mask;
+                    }
+                }
+            } else {
+                //pMarkTable[q] |= mask;
+            }
+
+            /*
+
+            //stop searching if it's erase area
+            if (processingArea[x+y*640] == 1) return;
+             */
+
+            int h,s,v;
+            int patchLUTData;
+
+            //LEFT
+            if ( x > 0 ) {
+                double[] hsv = image.get(x-scanInterval,y);
+
+                //if(patchLUTData & mask)
+                SearchPathRecursive(p-3*scanInterval, x-scanInterval, y,patch,image);
+            }
+
+            //UP
+            if (y > 0 ) {
+                double[] hsv = image.get(x,y-scanInterval);
+
+                //if(patchLUTData & mask)
+                SearchPathRecursive(p-NEXT_Y*scanInterval, x, y-scanInterval,patch,image);
+            }
+
+
+            //RIGHT
+            if (x < image.width()) {
+                double[] hsv = image.get(x+scanInterval, y);
+
+                //if (patchLUTData & mask)
+                SearchPathRecursive(p+3*scanInterval, x+scanInterval, y,patch,image);
+            }
+
+            //DOWN
+            if (y < image.height()) {
+                double[] hsv = image.get(x, y+scanInterval);
+
+                //if (patchLUTData & mask)
+                SearchPathRecursive(p+NEXT_Y*scanInterval,x,y+scanInterval,patch,image);
+            }
+
+        }
+
+    }
+
+    private boolean isBlack(double[] scalar) {
+		try {
+	//		System.out.println("h: " + scalar[0] + "s: " + scalar[1] + "v: " + scalar[2]);
+			return (scalar[2] < 130);
+		}
+		catch (ArrayIndexOutOfBoundsException | NullPointerException e){
+			System.out.println(scalar);
+			return false;
+		}
+
+    }
+
+    @Override
 	public void viewStateChanged(ViewState currentViewState) {
 		webcamDisplayPanelState = currentViewState;
 	}
@@ -291,20 +680,21 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	}
 
 	public List<MatOfPoint> getBallContours() {
-		return ballContours;
+		return correctBallContour;
 	}
 
 	public List<MatOfPoint> getTeamContours() {
-		return teamContours;
+		return correctTeamContour;
 	}
 
 	public List<MatOfPoint> getGreenContours() {
-		return greenContours;
+		return correctGreenContour;
 	}
 
 	public List<MatOfPoint> getOpponentContours() {
-		return opponentContours;
+		return correctOpponentContour;
 	}
+	
 
 	public void setCancelled() {
 		isTestingColour = false;
@@ -318,7 +708,11 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 		listeners.add(listener);
 	}
 
-	protected int squared (int x) {
-		return x * x;
-	}
+	protected int squared (int x){
+        return x*x;
+    }
+
+
 }
+
+

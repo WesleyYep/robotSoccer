@@ -33,6 +33,11 @@ public class PlaysPanel extends JPanel implements StrategyListener{
     private JComboBox roleC = new JComboBox();
     private JComboBox roleD = new JComboBox();
     private JComboBox roleE = new JComboBox();
+//    private JComboBox playComboA = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboB = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboC = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboD = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
+//    private JComboBox playComboE = new JComboBox(new String[] {"Permanent", "Closest to Ball", "Closest to Spot", "Rest"});
     JTextField robotAField = new JTextField("1");
     JTextField robotBField = new JTextField("2");
     JTextField robotCField = new JTextField("3");
@@ -41,6 +46,7 @@ public class PlaysPanel extends JPanel implements StrategyListener{
     private List<Play> playsList = new ArrayList<Play>();
     private CurrentStrategy currentStrategy;
     private Play lastSelectedPlay;
+    private boolean updating = false;
 
     public PlaysPanel(final CurrentStrategy currentStrategy) {
         this.setLayout(new MigLayout());
@@ -57,20 +63,30 @@ public class PlaysPanel extends JPanel implements StrategyListener{
         roleC.setPreferredSize(new Dimension(200, 10));
         roleD.setPreferredSize(new Dimension(200, 10));
         roleE.setPreferredSize(new Dimension(200, 10));
+//        playComboA.setPreferredSize(new Dimension(200, 10));
+//        playComboB.setPreferredSize(new Dimension(200, 10));
+//        playComboC.setPreferredSize(new Dimension(200, 10));
+//        playComboD.setPreferredSize(new Dimension(200, 10));
+//        playComboE.setPreferredSize(new Dimension(200, 10));
 
         add(new JLabel("Plays"), "wrap");
         add(playsScrollPane, "wrap");
         add(addButton, "split 2");
         add(removeButton, "wrap");
         add(new JLabel("Robot A:"), "split 2");
+       // add(playComboA, "split 2");
         add(roleA, "wrap, span");
         add(new JLabel("Robot B:"), "split 2");
+        //add(playComboB, "split 2");
         add(roleB, "wrap, span");
         add(new JLabel("Robot C:"), "split 2");
+        //add(playComboC, "split 2");
         add(roleC, "wrap, span");
         add(new JLabel("Robot D:"), "split 2");
+        //add(playComboD, "split 2");
         add(roleD, "wrap, span");
         add(new JLabel("Robot E:"), "split 2");
+        //add(playComboE, "split 2");
         add(roleE, "wrap, span");
         add(saveButton, "wrap");
         add(new JLabel("Robot Mapping"), "wrap");
@@ -109,7 +125,6 @@ public class PlaysPanel extends JPanel implements StrategyListener{
             }
         });
 
-
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,19 +132,18 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                 if (roleA.getSelectedItem() != null) {
                     play.addRole(0, (Role) roleA.getSelectedItem());
                 }
-                if (roleA.getSelectedItem() != null) {
+                if (roleB.getSelectedItem() != null) {
                     play.addRole(1, (Role) roleB.getSelectedItem());
                 }
-                if (roleA.getSelectedItem() != null) {
+                if (roleC.getSelectedItem() != null) {
                     play.addRole(2, (Role) roleC.getSelectedItem());
                 }
-                if (roleA.getSelectedItem() != null) {
+                if (roleD.getSelectedItem() != null) {
                     play.addRole(3, (Role) roleD.getSelectedItem());
                 }
-                if (roleA.getSelectedItem() != null) {
+                if (roleE.getSelectedItem() != null) {
                     play.addRole(4, (Role) roleE.getSelectedItem());
                 }
-
             }
         });
 
@@ -160,19 +174,41 @@ public class PlaysPanel extends JPanel implements StrategyListener{
                     int selectedRow = lsm.getMinSelectionIndex();
                     Play play = (Play)playsTableModel.getValueAt(selectedRow, 0);
                     lastSelectedPlay = play;
-                    for (int i = 0; i < play.getRoles().length; i++){
-                        roleA.setSelectedItem(play.getRoles()[0]);
-                        roleB.setSelectedItem(play.getRoles()[1]);
-                        roleC.setSelectedItem(play.getRoles()[2]);
-                        roleD.setSelectedItem(play.getRoles()[3]);
-                        roleE.setSelectedItem(play.getRoles()[4]);
-                    }
+                    Role[] roles = play.getRoles();
+                    setSelectedValue(roleA, roles[0]);
+                    setSelectedValue(roleB, roles[1]);
+                    setSelectedValue(roleC, roles[2]);
+                    setSelectedValue(roleD, roles[3]);
+                    setSelectedValue(roleE, roles[4]);
+//                    Point[] criteriaPoints = play.getPlayCriterias();
+//                    setComboBox(playComboA, criteriaPoints, 0);
+//                    setComboBox(playComboB, criteriaPoints, 1);
+//                    setComboBox(playComboC, criteriaPoints, 2);
+//                    setComboBox(playComboD, criteriaPoints, 3);
+//                    setComboBox(playComboE, criteriaPoints, 4);
                 }
 
             }
         });
+
     }
 
+    public static void setSelectedValue(JComboBox comboBox, Role theRole)
+    {
+        Role role;
+        if (theRole == null) {
+            return;
+        }
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            if (comboBox.getItemAt(i) != null) {
+                role = (Role) comboBox.getItemAt(i);
+                if (role.toString().equals(theRole.toString())) {
+                    comboBox.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
 
     @Override
     public void repaint() {
@@ -216,5 +252,10 @@ public class PlaysPanel extends JPanel implements StrategyListener{
         playsList = currentStrategy.getPlays();
         playsTableModel.setListOfPlays(playsList);
         playsTableModel.fireTableDataChanged();
+    }
+
+    @Override
+    public void setPlayChanged(Play setPlay) {
+        //nothing
     }
 }

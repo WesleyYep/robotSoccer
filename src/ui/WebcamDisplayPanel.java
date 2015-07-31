@@ -1,30 +1,22 @@
 package ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.IOException;
-import java.util.ArrayList;
+import controllers.VisionController;
+import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
+import utils.Image;
+import vision.VisionWorker;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.opencv.core.Mat;
-
-import utils.ColorSpace;
-import utils.Image;
-import controllers.VisionController;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>Displays the webcam on the JPanel.</p>
@@ -37,7 +29,6 @@ import controllers.VisionController;
 @SuppressWarnings("serial")
 public class WebcamDisplayPanel extends JPanel {
 
-    private final Color DETECTDISPLAYCOLOR = Color.CYAN;
 	private ViewState currentViewState;
 	private JLabel webcamImageLabel = new JLabel();
     private ArrayList<WebcamDisplayPanelListener> wdpListeners;
@@ -45,16 +36,23 @@ public class WebcamDisplayPanel extends JPanel {
     private boolean isFiltering = false;
     private BufferedImage zoomCursorImg;
     private Cursor zoomCursor;
+    private List<MatOfPoint> ballContour;
+	private List<MatOfPoint> greenContour;
+	private List<MatOfPoint> teamContour;
+	private List<MatOfPoint> opponentContour;
+    private VisionController vc;
+	private ColourPanel colourPanel = null;
     
-	public WebcamDisplayPanel() {
+	public WebcamDisplayPanel(VisionController visionController) {
 		super();
-		
+        this.vc = visionController;
 		// Initially not connected to anything.
 		currentViewState = ViewState.UNCONNECTED;
 		wdpListeners = new ArrayList<WebcamDisplayPanelListener>();
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		
+		ballContour = null;
 		try {
 			zoomCursorImg = ImageIO.read(getClass().getClassLoader().getResourceAsStream("zoom.png"));
 			zoomCursor = Toolkit.getDefaultToolkit().createCustomCursor(zoomCursorImg, new Point(zoomCursorImg.getWidth() / 2, zoomCursorImg.getHeight() / 2), "Zoom cursor");
@@ -62,6 +60,7 @@ public class WebcamDisplayPanel extends JPanel {
 			e1.printStackTrace();
 			System.err.println("Could not find zoom.png file");
 		}
+
 
         webcamImageLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -85,11 +84,12 @@ public class WebcamDisplayPanel extends JPanel {
                         }
                         
                     } else if (listener instanceof VisionPanel) {
+                    	/*
                         VisionPanel panel = (VisionPanel) listener;
                         if (panel.isSelectedTab()) {
              //               panel.updateMousePoint(e.getX(), e.getY(), img.getBufferedImage());
                         	System.out.println(VisionController.imagePosToActualPos(new org.opencv.core.Point(e.getX(), e.getY())));
-                        }
+                        } */
                     }
                 }
             }
@@ -104,44 +104,90 @@ public class WebcamDisplayPanel extends JPanel {
 	 * @param webcam
 	 */
 	
-	public void update(Mat mat) {
-		
+	public void update(final Mat matToShow) {
+		long start = System.currentTimeMillis();
 		ViewState oldViewState = currentViewState;
 		
-		if (mat == null) {
+		if (matToShow == null) {
 			
 			/* 
 			 * This assumes that you cannot have a connection fail if you're already connected hence you are disconnecting.
 			 * If you are unconnected and you get a null image, connection has failed.
 			 */
-			
+
 			if (currentViewState == ViewState.UNCONNECTED) {
 				currentViewState = ViewState.connectionFail();
 			} else if (currentViewState == ViewState.CONNECTED) {
-				removeAll();
 				currentViewState = ViewState.disconnect();
 			}
 			
 		} else {
 			currentViewState = ViewState.connectionSuccess();
 
-            final BufferedImage image = Image.toBufferedImage(mat);
+//            final BufferedImage image = Image.toBufferedImage(mat);
+            final Mat matToProcess;
 
-            if (isFiltering) {
-                //old stuff
-                for (int j = 0; j < image.getHeight(); j++) {
-                    for (int i = 0; i < image.getWidth(); i++) {
-                        Color color = new Color(image.getRGB(i, j));
-
-                        float[] hsv = ColorSpace.RGBToHSV(color.getRed(), color.getGreen(), color.getBlue());
-
-                        if (isDetected((int)hsv[0], (int)hsv[1], (int)hsv[2])) {
-                            image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
-                        }
-                    }
-                }
+            if (colourPanel.isContourActive()) {
+                maskCameraImage(matToShow);
+                matToProcess = matToShow.clone();
+            } else {
+                matToProcess = matToShow.clone();
+                maskCameraImage(matToProcess);
             }
 
+
+            notifyImageUpdate(matToProcess);
+
+            
+           
+//            if (isFiltering) {
+//                //old stuff
+//                for (int j = 0; j < image.getHeight(); j++) {
+//                    for (int i = 0; i < image.getWidth(); i++) {
+//                        Color color = new Color(image.getRGB(i, j));
+//
+//                        float[] hsv = ColorSpace.RGBToHSV(color.getRed(), color.getGreen(), color.getBlue());
+//
+//                        if (isDetected((int)hsv[0], (int)hsv[1], (int)hsv[2])) {
+//                            image.setRGB(i, j, DETECTDISPLAYCOLOR.getRGB());
+//                        }
+//                    }
+//                }
+//            }
+            
+  //          final Mat tempMat = Image.toMat(image);
+           // JOptionPane.showMessageDialog(null, new ImageIcon(Image.toBufferedImage(tempMat)));
+           
+            
+            if (colourPanel.isContourActive()) {
+            	if (ballContour != null) {
+            		for (int i = 0; i<ballContour.size(); i++) {
+            			Imgproc.drawContours(matToShow, ballContour, i, new Scalar(0, 255, 128));
+            		}
+            	}
+            	
+            	
+            	if (greenContour != null) {
+            		for (int i = 0; i<greenContour.size(); i++) {
+            			Imgproc.drawContours(matToShow, greenContour, i, new Scalar(0, 255, 128));
+            		}
+            	}
+            	
+            	if (teamContour != null) {
+            		for (int i = 0; i<teamContour.size(); i++) {
+            			Imgproc.drawContours(matToShow, teamContour, i, new Scalar(0, 255, 128));
+            		}
+            	} 
+
+            	if (opponentContour != null) {
+            		for (int i = 0; i<opponentContour.size(); i++) {
+            			Imgproc.drawContours(matToShow, opponentContour, i, new Scalar(0, 255, 128));
+            		}
+            	}
+            	
+            } 
+            
+            
             /*
              * This method is not being called EDT thread so to update the GUI use invokeLater.
              */
@@ -150,7 +196,7 @@ public class WebcamDisplayPanel extends JPanel {
 				@Override
 				public void run() {
 					// Update the image.
-					webcamImageLabel.setIcon(new ImageIcon(image));
+					webcamImageLabel.setIcon(new ImageIcon(Image.toBufferedImage(matToShow)));
 					
 					if (webcamImageLabel.getParent() == null) {
 						add(webcamImageLabel, BorderLayout.CENTER);
@@ -159,7 +205,7 @@ public class WebcamDisplayPanel extends JPanel {
             	
             });
             
-            notifyImageUpdate(image);
+            
 		}
 		
 		if (oldViewState != currentViewState) {
@@ -168,9 +214,32 @@ public class WebcamDisplayPanel extends JPanel {
 
 		// Thread safe call.
 		repaint();
+		//System.out.println("Vision Processing: " + (System.currentTimeMillis()-start));
 	}
-	
-	@Override
+
+
+    private Mat maskCameraImage(Mat image) {
+        //clone the original image so we can subtract the mask from the actual image
+        Mat original = image.clone();
+        //get the points of the region of interest
+        MatOfPoint mop = new MatOfPoint(toPoint(vc.getTopLeft()), toPoint(vc.getLeftGoalTopRight()), toPoint(vc.getLeftGoalTopLeft()), toPoint(vc.getLeftGoalBottomLeft()),
+                            toPoint(vc.getLeftGoalBottomRight()), toPoint(vc.getBottomLeft()), toPoint(vc.getBottomRight()), toPoint(vc.getRightGoalBottomLeft()),
+                            toPoint(vc.getRightGoalBottomRight()), toPoint(vc.getRightGoalTopRight()), toPoint(vc.getRightGoalTopLeft()), toPoint(vc.getTopRight()));
+        //fill the region of interest black  - rgb(0,0,0)
+        Core.fillConvexPoly(image, mop, new Scalar(0.0));
+        //subtract the mask from original, everywhere will become black apart from the black region that you filled,
+        // which will remain the original image
+        Core.subtract(original, image, image);
+
+        return image;
+
+    }
+
+	private org.opencv.core.Point toPoint(Point2D p) {
+        return new org.opencv.core.Point(p.getX(), p.getY());
+    }
+
+    @Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
@@ -235,6 +304,9 @@ public class WebcamDisplayPanel extends JPanel {
 	 */
 	
 	public void addWebcamDisplayPanelListener(WebcamDisplayPanelListener l) {
+		if (l instanceof ColourPanel) {
+			colourPanel = (ColourPanel) l;
+		}
 		wdpListeners.add(l);
 	}
 	
@@ -254,17 +326,23 @@ public class WebcamDisplayPanel extends JPanel {
 	public void notifyViewStateChange(ViewState currentViewState) {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
 			l.viewStateChanged(currentViewState);
+			if (l instanceof VisionWorker) {
+				ballContour = ((VisionWorker) l).getBallContours();
+				greenContour = ((VisionWorker) l).getGreenContours();
+				teamContour = ((VisionWorker) l).getTeamContours();
+				opponentContour = ((VisionWorker)l).getOpponentContours();
+			}
 		}
 	}
 
 	/**
 	 * <p>Notify all observers of image update on webcamImageLabel</p>
-	 * @param image
-	 */
+     * @param image
+     */
 	
-	public void notifyImageUpdate(BufferedImage image) {
+	public void notifyImageUpdate(Mat image) {
 		for (WebcamDisplayPanelListener l : wdpListeners) {
-			l.imageUpdated(image);
+			l.imageUpdated(image.clone());
 		}
 	}
 	
@@ -321,5 +399,6 @@ public class WebcamDisplayPanel extends JPanel {
 		}
 		
 	}
-	
+
+
 }

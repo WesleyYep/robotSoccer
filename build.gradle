@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+// let gradle know where our source root is
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+		resources {
+			srcDirs = ["res"]
+		}
+    }
+}
+
+// Declare where to find dependencies
+repositories {
+    // (flat) filesystem directory
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+}

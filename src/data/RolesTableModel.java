@@ -1,10 +1,9 @@
 package data;
 
-import java.util.List;
+import strategy.Role;
 
 import javax.swing.table.AbstractTableModel;
-
-import strategy.Role;
+import java.util.List;
 
 public class RolesTableModel extends AbstractTableModel {
 

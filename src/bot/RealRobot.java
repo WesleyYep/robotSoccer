@@ -1,11 +1,11 @@
 package bot;
 
-import java.util.List;
+import data.Coordinate;
 
 public class RealRobot extends Robot {
 
 	public RealRobot (double x, double y, double theta, int id) {
-		super(x, y, theta, id);
+		super(new Coordinate(x, y), theta, id);
 	}
 	
 	@Override

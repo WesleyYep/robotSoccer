@@ -1,27 +1,16 @@
 package controllers;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.swing.JPanel;
-
-import data.Coordinate;
-import data.VisionData;
-import ui.*;
-import bot.Robot;
 import bot.Robots;
 import communication.ReceiverListener;
+import data.VisionData;
+import strategy.Action;
+import ui.*;
+import utils.Geometry;
+import vision.KalmanFilter;
 import vision.VisionListener;
+
+import java.awt.*;
+import java.util.List;
 
 public class FieldController implements ReceiverListener, AreaListener, VisionListener {
 
@@ -29,24 +18,17 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 
 	private Ball ball;
 	private Robots bots;
-
-	private TestComPanel comPanel;
+	private Robots opponentBots;
 
 	private SituationArea selectedArea;
 
-	public FieldController(Field field, Robots bots, Ball ball) {
-		this.bots = bots;
-		this.ball = ball;
+	public FieldController(Field field) {
 		this.field = field;
+		bots = field.getRobots();
+		ball = field.getBall();
+		opponentBots = field.getOpponentRobots();
+		//kFilter = new KalmanFilter();
 		field.setBackground(Color.green);
-	}
-
-	/*
-	 * We don't do anything with comPanel.
-	 */
-	
-	public void setComPanel(TestComPanel p) {
-		comPanel = p;
 	}
 
 	/**
@@ -61,10 +43,17 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		}
 	}
 
+    public void toggleVisibilityForGlassPanels(boolean visible) {
+        for (Component c : field.getComponents()) {
+            if (c instanceof SituationArea) {
+                c.setVisible(visible);
+            }
+        }
+    }
+
 	@Override
 	public void action(List<String> chunks) {
 		for (String s : chunks) {
-
 			// -1 doesn't exist.
 			if (s.indexOf("Robot") != -1) {
 				int idIndex = s.indexOf("id=");
@@ -77,21 +66,21 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
 				double y = Double.parseDouble(s.substring(yIndex + 2, thetaIndex - 1));
 				double theta = Double.parseDouble(s.substring(thetaIndex + 6, s.length()));
-
+				
 				bots.setIndividualBotPosition(id, x, y, theta);
 
 			} else if (s.indexOf("Ball") != -1) {
+			
 				int xIndex = s.indexOf("x=");
 				int yIndex = s.indexOf("y=");
 
 				double x = Double.parseDouble(s.substring(xIndex + 2, yIndex - 1));
 				double y = Double.parseDouble(s.substring(yIndex + 2, s.length()));
-
-				ball.setX((int) Math.round(x * 100));
+				
+				ball.setX(Math.round(x * 100));
 				ball.setY(Field.OUTER_BOUNDARY_HEIGHT - (int) Math.round(y * 100));
 			}
 		}
-
 		field.repaint();
 	}
 
@@ -108,21 +97,13 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		ball.setTheta(theta);
 	}
 
-	public void bounceBall() {
-		ball.bounce();
-	}
-
-	public void moveBall() {
-		ball.move();
-	}
-
 	@Override
 	public void moveArea(int x, int y) {
 		int newX = selectedArea.getX()-x;
 		int newY = selectedArea.getY()-y;
 
 
-		selectedArea.setBounds(newX, newY, selectedArea.getWidth(),selectedArea.getHeight());
+		selectedArea.setBounds(newX, newY, selectedArea.getWidth(), selectedArea.getHeight());
 		field.repaint();
 	}
 
@@ -201,17 +182,62 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		if (data.getType().equals("ball")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(ballCoord.x, ballCoord.y);
-			ball.setX((int) p.x); //hardcoded for now
-			ball.setY((int)p.y);
+			ball.setX(p.x); //hardcoded for now
+			ball.setY(p.y);
+
 		} else if (data.getType().startsWith("robot")) {
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);
 			int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
-
+			double correctTheta = VisionController.imageThetaToActualTheta(data.getTheta());
 			bots.getRobot(index).setX(p.x);
 			bots.getRobot(index).setY(p.y);
-			bots.getRobot(index).setTheta(Math.toDegrees(data.getTheta()));
+			bots.getRobot(index).setTheta(Math.toDegrees(correctTheta));
 
+		} else if (data.getType().startsWith("opponent")) {
+
+			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
+
+			int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+
+			opponentBots.getRobot(index).setX(p.x);
+			opponentBots.getRobot(index).setY(p.y);
+
+			opponentBots.getRobot(index).setTheta(0);
 		}
+	}
+
+	public void executeStrategy() {
+		field.executeStrategy();
+	}
+
+	public void executeSetPlay() {
+		field.executeSetPlay();
+	}
+
+    public void executeManualControl() {
+        field.executeManualControl();
+    }
+
+	public Ball getBall() {
+		return ball;
+	}
+
+	public Robots getRobots() {
+		return bots;
+	}
+
+	public void setPredPoint(double x, double y) {
+		field.setPredPoint(x, y);
+	}
+
+	public void setDrawAction(boolean draw) {
+		field.setDrawAction(draw);
+		field.repaint();
+	}
+
+	public void setAction(Action action) {
+		field.setAction(action);
+		field.repaint();
 	}
 }

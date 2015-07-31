@@ -1,8 +1,7 @@
 package data;
 
-import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
+import java.util.List;
 
 public class SituationTableModel extends AbstractTableModel {
 

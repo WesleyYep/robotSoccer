@@ -1,13 +1,11 @@
 package controllers;
 
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
-
-import javax.media.jai.PerspectiveTransform;
-
-import data.Coordinate;
 import org.opencv.core.Point;
 import ui.Field;
+
+import javax.media.jai.PerspectiveTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 public class VisionController {
 	
@@ -17,19 +15,39 @@ public class VisionController {
 	private Point2D bottomRight;
 	private Point2D bottomLeft;
 	
-	private static double mapLeft = 121;
-	private static double mapRight = 517;
-	private static double mapTop = 48;
-	private static double mapBot = 372;
-	
+	public static double mapLeft = 121;
+	public static double mapRight = 517;
+	public static double mapTop = 48;
+	public static double mapBot = 372;
+	private static double rotationAngle = 0;
 	private static PerspectiveTransform t;
 	private static PerspectiveTransform tInverse;
-	
-	public VisionController() {
-		topRight = new Point2D.Double(200,100);
-		topLeft = new Point2D.Double(100,100);
-		bottomLeft = new Point2D.Double(100,200);
-		bottomRight = new Point2D.Double(200,200);
+    private Point2D leftGoalTopLeft;
+    private Point2D rightGoalTopLeft;
+    private Point2D rightGoalTopRight;
+    private Point2D leftGoalTopRight;
+    private Point2D leftGoalBottomRight;
+    private Point2D leftGoalBottomLeft;
+    private Point2D rightGoalBottomRight;
+    private Point2D rightGoalBottomLeft;
+    private int fieldFacing = 0; // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
+                                //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
+
+    public VisionController() {
+		topRight = new Point2D.Double(450,50);
+		topLeft = new Point2D.Double(50,50);
+		bottomLeft = new Point2D.Double(50,450);
+		bottomRight = new Point2D.Double(450,450);
+
+        leftGoalTopLeft = new Point2D.Double(30,230);
+        leftGoalTopRight = new Point2D.Double(50,230);
+        leftGoalBottomRight = new Point2D.Double(50,270);
+        leftGoalBottomLeft = new Point2D.Double(30,270);
+
+        rightGoalTopLeft = new Point2D.Double(450,230);
+        rightGoalTopRight = new Point2D.Double(470,230);
+        rightGoalBottomRight = new Point2D.Double(470,270);
+        rightGoalBottomLeft = new Point2D.Double(450,270);
 		this.createTransformMatrix();
 	}
 	
@@ -80,6 +98,36 @@ public class VisionController {
 		}
 		
 	}
+
+    public static Point actualPosToimagePos(Point p) {
+        double x = p.x;
+        double y = p.y;
+
+
+        if (tInverse != null ) {
+           // x = x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH) + mapLeft;
+            //y = y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT) + mapTop;
+
+            Point2D selectedPoint = new Point2D.Double();
+            tInverse.transform(new Point2D.Double(x,y), selectedPoint);
+
+            return new Point(selectedPoint.getX(), selectedPoint.getY());
+
+         } else {
+            return null;
+        }
+
+    }
+
+    public static double imageThetaToActualTheta (double theta) {
+        double result = theta + rotationAngle;
+
+        if (result > Math.PI) result -= 2*Math.PI;
+        if (result < -Math.PI) result += 2*Math.PI;
+
+        return result;
+    }
+
 	
 	public void rotatePointAntiClockwise() {
 		Point2D tempBottomLeft = bottomLeft;
@@ -87,15 +135,34 @@ public class VisionController {
 		
 		Point2D tempTopRight = topRight;
 		Point2D tempBottomRight = bottomRight;
+        rotationAngle += Math.PI/2;
+        if (rotationAngle > Math.PI) rotationAngle -= 2*Math.PI;
 		
 		bottomLeft = tempBottomRight;
 		topLeft = tempBottomLeft;
 		
 		topRight = tempTopLeft;
 		bottomRight = tempTopRight;
+        //swap if needed
+        if (fieldFacing == 1 || fieldFacing == 4) {
+            swapGoals();
+        }
+        //for fieldFacing:
+        // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
+        //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
+        if (fieldFacing == 0 || fieldFacing == 3) {
+            fieldFacing++;
+        } else if (fieldFacing == 1 || fieldFacing == 5) {
+            fieldFacing = 3;
+        } else if (fieldFacing == 2 || fieldFacing == 4) {
+            fieldFacing = 0;
+        }
+        //swap if needed
 	}
 	
 	public void rotatePointClockwise() {
+        rotationAngle -= Math.PI/2;
+        if (rotationAngle < -Math.PI) rotationAngle += 2*Math.PI;
 		Point2D tempBottomLeft = bottomLeft;
 		Point2D tempTopLeft = topLeft;
 		
@@ -107,8 +174,39 @@ public class VisionController {
 		
 		topRight = tempBottomRight;
 		bottomRight = tempBottomLeft;
+        //swap if needed
+        if (fieldFacing == 2 || fieldFacing == 5) {
+            swapGoals();
+        }
+        //for fieldFacing:
+        // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
+        //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
+        if (fieldFacing == 0 || fieldFacing == 3) {
+            fieldFacing += 2;
+        } else if (fieldFacing == 1 || fieldFacing == 5) {
+            fieldFacing = 0;
+        } else if (fieldFacing == 2 || fieldFacing == 4) {
+            fieldFacing = 3;
+        }
 	}
-	
+
+    private void swapGoals() {
+        //temps
+        Point2D a = rightGoalTopLeft;
+        Point2D b = rightGoalTopRight;
+        Point2D c = rightGoalBottomLeft;
+        Point2D d = rightGoalBottomRight;
+
+        rightGoalTopLeft = leftGoalBottomRight;
+        rightGoalTopRight = leftGoalBottomLeft;
+        rightGoalBottomLeft = leftGoalTopRight;
+        rightGoalBottomRight = leftGoalTopLeft;
+
+        leftGoalTopLeft = d;
+        leftGoalTopRight = c;
+        leftGoalBottomLeft = b;
+        leftGoalBottomRight = a;
+    }
 
 	public Point2D getTopRight() {
 		return topRight;
@@ -152,5 +250,68 @@ public class VisionController {
 		this.bottomLeft = bottomLeft;
 		this.createTransformMatrix();
 	}
-	
+
+    public Point2D getLeftGoalTopRight() {
+        return leftGoalTopRight;
+    }
+
+    public Point2D getLeftGoalTopLeft() {
+        return leftGoalTopLeft;
+    }
+
+    public Point2D getLeftGoalBottomRight() {
+        return leftGoalBottomRight;
+    }
+
+    public Point2D getLeftGoalBottomLeft() {
+        return leftGoalBottomLeft;
+    }
+
+    public Point2D getRightGoalTopLeft() {
+        return rightGoalTopLeft;
+    }
+
+    public Point2D getRightGoalTopRight() {
+        return rightGoalTopRight;
+    }
+
+    public Point2D getRightGoalBottomLeft() {
+        return rightGoalBottomLeft;
+    }
+
+    public Point2D getRightGoalBottomRight() {
+        return rightGoalBottomRight;
+    }
+
+    public void setLeftGoalTopRight(Point2D p) {
+        leftGoalTopRight = p;
+    }
+
+    public void setLeftGoalTopLeft(Point2D p) {
+        leftGoalTopLeft = p;
+    }
+
+    public void setLeftGoalBottomRight(Point2D p) {
+        leftGoalBottomRight = p;
+    }
+
+    public void setLeftGoalBottomLeft(Point2D p) {
+        leftGoalBottomLeft = p;
+    }
+
+    public void setRightGoalTopLeft(Point2D p) {
+        rightGoalTopLeft = p;
+    }
+
+    public void setRightGoalTopRight(Point2D p) {
+        rightGoalTopRight = p;
+    }
+
+    public void setRightGoalBottomLeft(Point2D p) {
+        rightGoalBottomLeft = p;
+    }
+
+    public void setRightGoalBottomRight(Point2D p) {
+        rightGoalBottomRight = p;
+    }
 }

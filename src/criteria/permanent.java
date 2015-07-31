@@ -1,7 +1,6 @@
 package criteria;
 
 import strategy.Criteria;
-import bot.Robot;
 
 public class Permanent extends Criteria {
     @Override
@@ -15,7 +14,6 @@ public class Permanent extends Criteria {
 
     @Override
     public boolean isMet() {
-        Robot r = bots.getRobot(index);
         return true;
     }
 }

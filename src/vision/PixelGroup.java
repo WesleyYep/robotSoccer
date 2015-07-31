@@ -2,8 +2,6 @@ package vision;
 
 import data.Coordinate;
 
-import java.awt.geom.Point2D;
-
 /**
  * Created by Wesley on 7/02/2015.
  */
@@ -23,7 +21,7 @@ public class PixelGroup {
 		mostBottomCorner = new Coordinate(x, y);
 	}
 
-	public int getSize() {
+	public double getSize() {
 		return (mostBottomCorner.y - mostTopCorner.y) + (mostRightCorner.x - mostLeftCorner.x);
 	}
 
@@ -42,7 +40,7 @@ public class PixelGroup {
 		}
 	}
 
-	protected int squared (int x) {
+	protected double squared (double x) {
 		return x * x;
 	}
 

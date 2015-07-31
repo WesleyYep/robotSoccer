@@ -1,21 +1,16 @@
 package ui;
 
+import controllers.VisionController;
+import controllers.WebcamController;
+import net.miginfocom.swing.MigLayout;
+import org.opencv.core.Mat;
+import ui.WebcamDisplayPanel.ViewState;
+import utils.Image;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import ui.WebcamDisplayPanel.ViewState;
-import utils.Image;
-import net.miginfocom.swing.MigLayout;
-import controllers.VisionController;
-import controllers.WebcamController;
 
 public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 	
@@ -28,7 +23,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 	private JLabel mousePoint;
 	
 	private BoardDialog dialog;
-	private BufferedImage webcamImage;
+	private BufferedImage webcamImage = null;
 	
 	
 	public VisionPanel(WebcamController wc, VisionController vc) {
@@ -44,14 +39,7 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				webcamImage = Image.toBufferedImage(webcamController.getImageFromWebcam());
-				if (webcamImage != null) {
-					if (webcamImage != null) {
-						dialog.setBoardImage(webcamImage);
-					}
-					dialog.repaint();
-					dialog.setVisible(!dialog.isVisible());
-				}
+				if (webcamImage != null) dialog.setVisible(!dialog.isVisible());	
 			}
 					
 		});
@@ -85,16 +73,14 @@ public class VisionPanel extends JPanel implements WebcamDisplayPanelListener {
 
 
 	@Override
-	public void viewStateChanged(ViewState currentViewState) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void viewStateChanged(ViewState currentViewState) {}
 
 
 	@Override
-	public void imageUpdated(BufferedImage image) {
-		// TODO Auto-generated method stub
-		
+	public void imageUpdated(Mat image) {
+		webcamImage = Image.toBufferedImage(image);
+		dialog.setBoardImage(webcamImage);
+		dialog.repaint();
 	}
 
 }

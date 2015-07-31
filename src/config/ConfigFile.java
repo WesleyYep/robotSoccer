@@ -1,9 +1,9 @@
 package config;
 
-import java.io.File;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
+
+import java.io.File;
 
 public class ConfigFile {
 

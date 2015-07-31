@@ -1,37 +1,20 @@
 package ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import com.jidesoft.swing.RangeSlider;
+import controllers.WebcamController;
+import data.Coordinate;
 import net.miginfocom.swing.MigLayout;
+import org.opencv.core.Mat;
 import ui.WebcamDisplayPanel.ViewState;
 import vision.ColourRangeListener;
 import vision.LookupTable;
 
-import com.jidesoft.swing.RangeSlider;
-
-import controllers.WebcamController;
-import data.Coordinate;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Wesley on 2/02/2015.
@@ -59,7 +42,15 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     private JTabbedPane tabPane = new JTabbedPane();
     
     private JCheckBox autoRangeCheckBox;
+    private JCheckBox contourCheckBox;
+    private JCheckBox newYellowVisionCheckBox = new JCheckBox("New Yellow Vision");
+    private JCheckBox newNewYellowVisionCheckBox = new JCheckBox("New (New) Yellow Vision");
+    private JTextField robotNotPresentField = new JTextField("", 20);
+    private JButton robotNotPresentSaveButton = new JButton("Save");
+    private boolean robotNotPresentUpdated = false;
+
     private boolean isAutoRange = false;
+    private boolean isContour = false;
 
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
@@ -70,11 +61,14 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     
     private BufferedImage originalImage = null;
     private int selectRadius = 5;
+    
+    private WebcamDisplayPanel wcPanel = null;
 
     public ColourPanel(WebcamController wc) {
         this.setLayout(new MigLayout());
         
         autoRangeCheckBox = new JCheckBox("Auto Range");
+        contourCheckBox = new JCheckBox("Contours");
         
         robotSizeSlider.setLowValue(10);
         ballSizeSlider.setLowValue(10);
@@ -175,16 +169,16 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         add(tabPane, "wrap");
         add(new JLabel("Robot Pixel Minimum"), "wrap");
         add(robotSizeSlider, "grow, wrap");
-        add(robotMinSizeLabel);
-        add(robotMaxSizeLabel, "wrap");
+        add(robotMinSizeLabel, "split 2, pushx, growx");
+        add(robotMaxSizeLabel, "align right, wrap");
         add(new JLabel("Green Pixel Minimum"), "wrap");
         add(greenSizeSlider, "grow, wrap");
-        add(greenMinSizeLabel);
-        add(greenMaxSizeLabel, "wrap");
+        add(greenMinSizeLabel, "split 2, pushx, growx");
+        add(greenMaxSizeLabel, "align right, wrap");
         add(new JLabel("Ball Pixel Minimum"), "wrap");
         add(ballSizeSlider, "grow,wrap");
-        add(ballMinSizeLabel);
-        add(ballMaxSizeLabel,"wrap");
+        add(ballMinSizeLabel, "split 2, pushx, growx");
+        add(ballMaxSizeLabel,"align right, wrap");
         
         ballSamplingPanel.addColourRangeListener(this);
         teamSamplingPanel.addColourRangeListener(this);
@@ -192,8 +186,15 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         
         add(setRobotDimensionButton, "wrap");
         add(robotDimensionField, "wrap, w 50");
-        
-        add(autoRangeCheckBox);
+
+        add(autoRangeCheckBox, "split 4");
+        add(contourCheckBox);
+        add(newYellowVisionCheckBox);
+        add(newNewYellowVisionCheckBox, "wrap");
+
+        add(new JLabel("Robots not present: (eg. 1,4,5)"), "split 3");
+        add(robotNotPresentField);
+        add(robotNotPresentSaveButton);
 
         robotSizeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -201,7 +202,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
                 robotMinSizeLabel.setText(robotSizeSlider.getLowValue() + "");
                 robotMaxSizeLabel.setText(robotSizeSlider.getHighValue() + "");
             }
-            
+
         });
 
         ballSizeSlider.addChangeListener(new ChangeListener() {
@@ -230,10 +231,48 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				isAutoRange = !isAutoRange;
-				System.out.println(isAutoRange);
 			}    	
         });
         
+        contourCheckBox.addActionListener(new ActionListener() {
+        	@Override
+			public void actionPerformed(ActionEvent arg0) {
+				isContour = !isContour;
+			}
+
+        });
+
+        robotNotPresentSaveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                robotNotPresentUpdated = true;
+            }
+        });
+        
+    }
+
+    public boolean isNewYellowVision() {
+        return newYellowVisionCheckBox.isSelected();
+    }
+
+    public boolean isNewNewYellowVision() { return  newNewYellowVisionCheckBox.isSelected();}
+
+    public boolean isContourActive() {
+    	return isContour;
+    }
+
+    public int[] getRobotsNotSeen() {
+        int[] robotNotSeen = new int[]{0,0,0,0,0}; //0 means it is seen, 1 means not seen
+        try {
+            String[] array = robotNotPresentField.getText().split(",");
+            for (int i = 0; i < array.length; i++) {
+                robotNotSeen[Integer.parseInt(array[i]) - 1] = 1;
+            }
+            return robotNotSeen;
+        } catch (Exception e) {
+            System.out.println("number format exception on the robots not seen");
+            return new int[]{0,0,0,0,0};
+        }
     }
 
     protected void displayCircleOnIcon(MouseEvent e) {
@@ -406,7 +445,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		}
 		LookupTable.setVTable(max, min, temp);
 	}
-    protected int squared (int x) {
+    protected double squared (double x) {
         return x * x;
     }
 
@@ -415,8 +454,20 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 	}
 
 	@Override
-	public void imageUpdated(BufferedImage image) {		
+	public void imageUpdated(Mat image) {
+	}
+	
+	public void setWcPanel(WebcamDisplayPanel panel) {
+		wcPanel = panel;
 	}
 
+
+    public boolean isRobotNotPresentUpdated() {
+        if (robotNotPresentUpdated) {
+            robotNotPresentUpdated = false;
+            return true;
+        }
+        return false;
+    }
 }
 

@@ -1,56 +1,184 @@
 package actions;
 
-import strategy.Action;
-import ui.RobotSoccerMain;
-import Paths.BezierCurvePath;
 import bot.Robot;
+import data.Coordinate;
+import game.Tick;
+import strategy.Action;
+import strategy.GameState;
+
 
 /**
  * Created by Wesley on 27/02/2015.
  */
 public class StrikerTest extends Action {
-    @Override
-    public String getName() {
-        return "Striker test1";
+    private boolean kicking = false;
+    private int targetX = 0;
+    private int targetY = 0;
+    private double oldDistanceToTarget = 0;
+    private int countTimesThatSeemStuck = 0;
+    private boolean isCharging;
+
+    //non-static initialiser block
+    {
+        if(!(parameters.containsKey("startingX") && parameters.containsKey("startingY"))) {
+            //don't bother if these already exist
+            parameters.put("startingX", 110);
+            parameters.put("startingY", 90);
+        }
     }
 
     @Override
     public void execute() {
-        Robot r = bots.getRobot(index);
+        Robot r = bot;
 
-        if (Math.abs(r.getTheta()) < 10 /*&& r.getYPosition() > 100*/) { //is robot facing horizontally towards other side
-            if (path == null) {
-                path = new BezierCurvePath(r, (int)r.getXPosition(), (int)r.getYPosition());
-            }
+        //this is number 1 priority
+        if (ballComingIntoPath(r)) {
+            GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+            return;
+        }else {
+            GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
         }
 
-        if (path != null) {
-            if (path.hasReachedTarget()) {
-                path = null;
-            } else {
-                double x = path.getX();
-                double nextX = path.getNextX();
-                double y = path.getY();
-                double nextY = path.getNextY();
+        //check if robot is stuck
+        double newTargetDistance = getDistanceToTarget(r, targetX, targetY);
+        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
+            countTimesThatSeemStuck++;
+        } else if (r.linearVelocity >= 0){
+            countTimesThatSeemStuck = 0;
+        }
+        if (countTimesThatSeemStuck > 20) {
+            countTimesThatSeemStuck = 0;
+            return;
+        } else if (countTimesThatSeemStuck > 10) {
+            r.linearVelocity = -0.5;
+            r.angularVelocity = 10;
+            countTimesThatSeemStuck++;
+            return;
+        }
 
-                double nextTheta = Math.atan2(y - nextY, nextX - x);
-                double difference = nextTheta - Math.toRadians(r.getTheta());
-                if (difference > Math.PI) {
-                    difference -= (2 * Math.PI);
-                } else if (difference < -Math.PI) {
-                    difference += (2 * Math.PI);
-                }
-
-                r.linearVelocity = 1;
-                r.angularVelocity = difference/(RobotSoccerMain.TICK_TIME_MS/20.000);
-       //         System.out.println("angular velocity: " + r.angularVelocity);
-                path.step();
-            }
-        } else {
+        //move and turn
+        if (Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
+            TurnTo.turn(r, new Coordinate(220, 90), 1);
+            double targetTheta = getTargetTheta(r, 220, 90);
             r.linearVelocity = 0;
-            r.angularVelocity = 0;
+            if (Math.abs(targetTheta) < 5) {
+                r.angularVelocity = 0;
+            }
+            countTimesThatSeemStuck = 0;
+        }
+        else {
+            targetX = parameters.get("startingX");
+            targetY = parameters.get("startingY");
+            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, true);
+            oldDistanceToTarget = getDistanceToTarget(r, targetX, targetY);
+        }
+    }
+
+    private boolean ballComingIntoPath(Robot r) {
+        double angleToBall = getTargetTheta(r, ballX, ballY);
+        boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;
+ //       double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
+
+//        if (kicking) {
+//            bot.angularVelocity = Math.toRadians(angleToBall) * 3;
+//            bot.linearVelocity = 1;
+//
+//            double range = 10;
+//            if (isCharging) {
+//                range = 30;
+//            }
+//            if (getDistanceToTarget(bot, ballX, ballY) < range && Math.abs(angleToBall) < 20/* radians*/) {
+//                bot.linearVelocity = 1.5;
+//                if (ballX > 110) {
+//                    double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+//                    if (Math.abs(angleToGoal) > 45) {
+//                        if (angleToGoal > 0) {
+//                            bot.angularVelocity = 30;
+//                        } else {
+//                            bot.angularVelocity = -30;
+//                        }
+//                    }
+//                }
+//                isCharging = true;
+//            } else {
+//                isCharging = false;
+//            }
+//
+//            if (ballX < bot.getXPosition()) {
+//                kicking = false;
+//                return false;
+//            }
+//            return true;
+//        }
+
+        if (!isFacingGoal) {return false;}
+//        if ( angleToBall < (10 + 50-ballDistanceFromRobot)) {
+//            r.linearVelocity = 3;
+//            r.angularVelocity = 0;
+//            return true;
+//        } else if (r.getXPosition() < ballX && angleToBall > 170) {
+//            r.linearVelocity = -3;
+//            r.angularVelocity = 0;
+//            return true;
+//        }
+
+        //get an equation in the form y = mx + c of the path of ball
+        double m = (predY-ballY) / (predX - ballX);
+        double c = ballY - (m * ballX);
+        //get an equation of the line for robot angle
+        double mR = 0 - Math.tan(Math.toRadians(r.getTheta()));
+        double cR = r.getYPosition() - (mR * r.getXPosition());
+
+        //check if line crosses the line y = mRx + cR (old was y = robotY) and 0 < x < r.X]
+        // mx + c = mRx + cR
+        // mx - mRx = cR - c
+        //x(m - mR) = cR - c
+        //x = (cR - c) / (m - mR)
+        //use this to get coordinates of intersection point
+        double xInt = (cR - c) / (m - mR);
+        double yInt = m * xInt + c;
+
+        //return false is intersection point is in the past (ie. ball is between pred and int
+        if (predY - ballY > 5 && ballY - yInt > 5 || ballY - predY > 5 && yInt - ballY > 5) {
+   //         System.out.println("moving away");
+            return false;
         }
 
-
+        //double x = (r.getYPosition() - c) / m;
+        if (xInt < 220 && xInt > r.getXPosition()) {
+            //find distance of intersection point from current ball position
+            double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-yInt));
+//            if (ballDistance < 5) {
+//                r.linearVelocity = 2;
+//                r.angularVelocity = 0;
+//            //    System.out.println("ball so close");
+//                return true;
+//            }
+            //find speed of ball
+            double ballSpeed = (Math.sqrt(squared(predX-ballX) + squared(predY-ballY))) / Tick.PREDICT_TIME;
+            //find time taken for ball to reach intersection point
+            double time = ballDistance / ballSpeed;
+            //only go if the time is under 1 second
+            if (time < 1) {
+                //get distance of robot to spot
+                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
+                r.linearVelocity = squared((robotDistance/time)/100);
+                r.angularVelocity = 0;
+//                atCentre = false;
+//                bot.angularVelocity = Math.toRadians(angleToBall) * 3;
+//                bot.linearVelocity = 1;
+                kicking = true;
+                return true;
+            }
+        }
+        return false;
     }
+
+
+
+    protected static double squared (double x) {
+        return x * x;
+    }
+
 }

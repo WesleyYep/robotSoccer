@@ -1,11 +1,10 @@
 package bot;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
-import controllers.RobotController;
 import communication.SerialPortCommunicator;
+import controllers.RobotController;
 import ui.Field;
+
+import java.awt.*;
 
 public class Robots {
 	
@@ -19,16 +18,27 @@ public class Robots {
 		bots = new Robot[BOTTEAMMEMBERCOUNT];
 		serialCom = s;
     }
+    
 
-    public void makeRealRobots() {
+    public void makeTeamRobots() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
     		if (bots[i] == null) {
-        		bots[i] = new RealRobot(50 + 10*i, 50 + 10*i, 0, i);
+        		bots[i] = new RealRobot(-10, 10 + 10*i, 0, i);
     		} else {
         		bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), bots[i].getId());
     		}
     	} 
     }
+
+	public void makeOpponentRobots() {
+		for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+			if (bots[i] == null) {
+				bots[i] = new RealRobot(230, 10 + 10*i, 0, i);
+			} else {
+				bots[i] = new RealRobot(bots[i].getXPosition(), bots[i].getYPosition(), bots[i].getTheta(), bots[i].getId());
+			}
+		}
+	}
     
     public void makeSimRobots() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
@@ -38,9 +48,16 @@ public class Robots {
     
     public void testForward() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
-    		bots[i].linearVelocity = 0.1;
+    		bots[i].linearVelocity = 0.5;
     		bots[i].angularVelocity = 0;
     	} 
+    }
+
+    public void testBackwards() {
+        for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
+            bots[i].linearVelocity = -0.5;
+            bots[i].angularVelocity = 0;
+        }
     }
     
 	public void testRotate() {
@@ -65,9 +82,9 @@ public class Robots {
     	return bots;
     }
     
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
     	for (Robot r : bots) {
-    		r.draw((Graphics2D) g);
+    		r.draw(g);
     	}
     }
 
@@ -100,6 +117,8 @@ public class Robots {
 	public void send() {
 		double[] linearVelocity = new double[11];
 		double[] angularVelocity = new double[11];
+
+		//System.out.println(bots[0].linearVelocity + " " + bots[0].getXPosition() + " " + bots[0].getYPosition() + " " + System.currentTimeMillis());
 
 		for (int i = 0; i < 11; i++) {
 			if (i < 5) {

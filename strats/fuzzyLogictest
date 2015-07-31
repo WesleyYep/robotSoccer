@@ -1,0 +1,52 @@
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new role
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:striker
+Is Spinning Fast-actions.Wait-[]-[]
+Positive Situation-actions.ChaseBall2-[]-[]
+permanent-actions.MoveToSpot-[startingX]-[20]
+null-null
+null-null
+-----
+Role:striker1
+Is Spinning Fast-actions.Wait-[]-[]
+Positive Situation-actions.ChaseBall-[]-[]
+permanent-actions.MoveToSpot-[startingX]-[20]
+null-null
+null-null
+-----
+Role:waitingStriker
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 110]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:fuzzy
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+new role
+fuzzy
+new role
+new role
+new role
+-----
+Situation:new situation 1:24:1:456:369
+new play
+-----

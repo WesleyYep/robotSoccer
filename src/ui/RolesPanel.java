@@ -1,21 +1,29 @@
 package ui;
 
+import actions.ActionFactory;
 import actions.Actions;
+import controllers.FieldController;
+import criteria.CriteriaFactory;
 import criteria.Criterias;
+import data.CriteriaActionTableModel;
 import data.RolesTableModel;
-import data.Situation;
 import net.miginfocom.swing.MigLayout;
-import strategy.*;
 import strategy.Action;
+import strategy.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wesley on 21/01/2015.
@@ -25,68 +33,91 @@ public class RolesPanel extends JPanel implements StrategyListener {
     private RolesTableModel rolesTableModel;
     private JTable rolesTable;
     private JScrollPane scrollRoles;
+
+    private CriteriaActionTableModel criteriaActionTableModel;
+    private JTable criteriaActionTable;
+    private JScrollPane scrollCriteriaActions;
+
     private JButton addButton = new JButton("Add");
     private JButton removeButton = new JButton("Remove");
-    private JComboBox<Criteria> criteria1;
-    private JComboBox<Criteria> criteria2;
-    private JComboBox<Criteria> criteria3;
-    private JComboBox<Criteria> criteria4;
-    private JComboBox<Criteria> criteria5;
-    private JComboBox<Action> action1;
-    private JComboBox<Action> action2;
-    private JComboBox<Action> action3;
-    private JComboBox<Action> action4;
-    private JComboBox<Action> action5;
+
+    private JComboBox<String> criteriaCombo;
+    private JComboBox<String> actionCombo;
+//    private JLabel paramLabel1 = new JLabel("Parameter 1:");
+//    private JLabel paramLabel2 = new JLabel("Parameter 2:");
+//    private JLabel paramLabel3 = new JLabel("Parameter 3:");
+//    private JLabel paramLabel4 = new JLabel("Parameter 4:");
+//    private JLabel[] parameterLabels = new JLabel[] { paramLabel1, paramLabel2, paramLabel3, paramLabel4 };
+    private JTextField input1 = new JTextField(100);
+    private JTextField input2 = new JTextField(100);
+    private JTextField input3 = new JTextField(100);
+    private JTextField input4 = new JTextField(100);
+    private JTextField[] inputs = new JTextField[]{ input1, input2, input3, input4 };
+
+
     private JButton saveButton = new JButton("Save");
     private List<Role> rolesList = new ArrayList<Role>();
     private CurrentStrategy currentStrategy;
 
     private Role lastSelectedRole;
+    private Action lastSelectedAction;
+    private int criteriaActionLastSelectedIndex;
 
-    public RolesPanel(final CurrentStrategy currentStrategy) {
+    private FieldController fieldController;
+
+    public RolesPanel(final CurrentStrategy currentStrategy, FieldController fieldController) {
 
         this.currentStrategy = currentStrategy;
         currentStrategy.addListener(this);
 
+        this.fieldController = fieldController;
         this.setLayout(new MigLayout());
 
         rolesTableModel = new RolesTableModel(rolesList);
         rolesTable = new JTable(rolesTableModel);
         scrollRoles = new JScrollPane(rolesTable);
-        scrollRoles.setPreferredSize(new Dimension(300, 100));
+        scrollRoles.setPreferredSize(new Dimension(300, 300));
 
-        (criteria1 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140, 10));
-        (criteria2 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
-        (criteria3 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
-        (criteria4 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
-        (criteria5 = new JComboBox<Criteria>()).setPreferredSize(new Dimension(140,10));
+        criteriaActionTableModel = new CriteriaActionTableModel();
+        criteriaActionTable = new JTable(criteriaActionTableModel);
 
-        (action1 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action2 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action3 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action4 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
-        (action5 = new JComboBox<Action>()).setPreferredSize(new Dimension(140, 10));
+        // set up jcombobox
+        // criteria
+        List<String> criteriasList = Criterias.getCriterias();
+        String[] critierias = criteriasList.toArray(new String[criteriasList.size()]);
+        criteriaCombo = new JComboBox<>(critierias);
+        DefaultCellEditor criteriaEditor = new DefaultCellEditor(criteriaCombo);
+        criteriaEditor.setClickCountToStart(2);
+        criteriaActionTable.getColumnModel().getColumn(0).setCellEditor(criteriaEditor);
 
-        setComboBoxes();
+        // actions
+        List<String> actionsList = Actions.getActions();
+        String[] actions = actionsList.toArray(new String[actionsList.size()]);
+        actionCombo = new JComboBox<>(actions);
+        DefaultCellEditor actionEditor = new DefaultCellEditor(actionCombo);
+        actionEditor.setClickCountToStart(2);
+        criteriaActionTable.getColumnModel().getColumn(1).setCellEditor(actionEditor);
+
+        scrollCriteriaActions = new JScrollPane(criteriaActionTable);
+        criteriaActionTable.setPreferredScrollableViewportSize(criteriaActionTable.getPreferredSize());
+        criteriaActionTable.setFillsViewportHeight(true);
 
         add(new JLabel("Roles"), "wrap");
         add(scrollRoles, "wrap");
         add(addButton, "split 2");
         add(removeButton, "wrap");
 
-        add(new JLabel("Criteria"), "split 2");
-        add(new JLabel("Action"), "gapleft 100, wrap");
+        add(scrollCriteriaActions, "w 250:300:max, wrap");
 
-        add(criteria1, "split 2");
-        add(action1, "wrap");
-        add(criteria2, "split 2");
-        add(action2, "wrap");
-        add(criteria3, "split 2");
-        add(action3, "wrap");
-        add(criteria4, "split 2");
-        add(action4, "wrap");
-        add(criteria5, "split 2");
-        add(action5, "wrap");
+        //add(paramLabel1, "split 2");
+        add(input1, "wrap");
+        //add(paramLabel2, "split 2");
+        add(input2, "wrap");
+        //add(paramLabel3, "split 2");
+        add(input3, "wrap");
+        //add(paramLabel4, "split 2");
+        add(input4, "wrap");
+
         add(saveButton);
 
         rolesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -115,22 +146,35 @@ public class RolesPanel extends JPanel implements StrategyListener {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+//                for (int i = 0; i < 4; i++) {
+//                    if (!inputs[i].getText().equals("")) {
+//                        try {
+//                            //lastSelectedAction.updateParameters(parameterLabels[i].getText(), Integer.parseInt(inputs[i].getText()));
+//                        } catch (NumberFormatException ex) {
+//                            //System.out.println("Invalid input for parameter " + parameterLabels[i].getText());
+//                        }
+//                    }
+//                }
+
                 Role role = lastSelectedRole;
-                if (criteria1.getSelectedItem() != null && action1.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria1.getSelectedItem(), (Action) action1.getSelectedItem(), 0);
+
+                if (role == null) {
+                    return;
                 }
-                if (criteria2.getSelectedItem() != null && action2.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria2.getSelectedItem(), (Action) action2.getSelectedItem(), 1);
+
+                for (int i = 0; i < criteriaActionTableModel.getRowCount(); i++) {
+                    String criteriaSimpleName = (String) criteriaActionTableModel.getValueAt(i, 0);
+                    String actionSimpleName = (String) criteriaActionTableModel.getValueAt(i, 1);
+
+                    if (criteriaSimpleName == null || actionSimpleName == null) {
+                        continue;
+                    }
+
+                    Criteria criteria = CriteriaFactory.getCriteria(criteriaSimpleName);
+                    Action action = ActionFactory.getAction(role, actionSimpleName);
+                    role.setPair(criteria, action, i);
                 }
-                if (criteria3.getSelectedItem() != null && action3.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria3.getSelectedItem(), (Action) action3.getSelectedItem(), 2);
-                }
-                if (criteria4.getSelectedItem() != null && action4.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria4.getSelectedItem(), (Action) action4.getSelectedItem(), 3);
-                }
-                if (criteria5.getSelectedItem() != null && action5.getSelectedItem() != null) {
-                    role.setPair((Criteria) criteria5.getSelectedItem(), (Action) action5.getSelectedItem(), 4);
-                }
+
             }
         });
 
@@ -147,42 +191,97 @@ public class RolesPanel extends JPanel implements StrategyListener {
                 } else {
                     int selectedRow = lsm.getMinSelectionIndex();
                     Role role = (Role) rolesTableModel.getValueAt(selectedRow, 0);
+                    Action[] actions = role.getActions();
+                    Criteria[] criterias = role.getCriterias();
                     lastSelectedRole = role;
-                    for (int i = 0; i < role.getActions().length; i++) {
-                        action1.setSelectedItem(role.getActions()[0]);
-                        action2.setSelectedItem(role.getActions()[1]);
-                        action3.setSelectedItem(role.getActions()[2]);
-                        action4.setSelectedItem(role.getActions()[3]);
-                        action5.setSelectedItem(role.getActions()[4]);
-                        criteria1.setSelectedItem(role.getCriterias()[0]);
-                        criteria2.setSelectedItem(role.getCriterias()[1]);
-                        criteria3.setSelectedItem(role.getCriterias()[2]);
-                        criteria4.setSelectedItem(role.getCriterias()[3]);
-                        criteria5.setSelectedItem(role.getCriterias()[4]);
+
+                    // update criteriaactiontable model
+                    for (int i = 0; i < CriteriaActionTableModel.ROWCOUNT; i++) {
+                        try {
+                            criteriaActionTableModel.setValueAt(criterias[i].getClass().getSimpleName(), i, 0);
+                            criteriaActionTableModel.setValueAt(actions[i].getClass().getSimpleName(), i, 1);
+                        } catch (NullPointerException ex) {
+                            criteriaActionTableModel.setValueAt(null, i, 0);
+                            criteriaActionTableModel.setValueAt(null, i, 1);
+                        }
                     }
                 }
-
             }
         });
-    }
 
-    private void setComboBoxes() {
-        Criterias criterias = new Criterias();
-        for (int i = 0; i < criterias.getLength(); i++) {
-            criteria1.addItem(criterias.getAction(i));
-            criteria2.addItem(criterias.getAction(i));
-            criteria3.addItem(criterias.getAction(i));
-            criteria4.addItem(criterias.getAction(i));
-            criteria5.addItem(criterias.getAction(i));
-        }
-        Actions actions = new Actions();
-        for (int i = 0; i < actions.getLength(); i++) {
-            action1.addItem(actions.getAction(i));
-            action2.addItem(actions.getAction(i));
-            action3.addItem(actions.getAction(i));
-            action4.addItem(actions.getAction(i));
-            action5.addItem(actions.getAction(i));
-        }
+        ListSelectionModel actionsRows = criteriaActionTable.getSelectionModel();
+        actionsRows.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //ignore extra messages
+                if (e.getValueIsAdjusting()) return;
+
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+                if (lsm.isSelectionEmpty()) {
+
+                } else {
+                    try {
+                        criteriaActionLastSelectedIndex = lsm.getMinSelectionIndex();
+                        // get action string
+                        String actionString = (String)criteriaActionTableModel.getValueAt(criteriaActionLastSelectedIndex, 1);
+
+                        if (actionString == null) {
+                            setDrawAction(false);
+                            return;
+                        }
+
+                        Action action = ActionFactory.getAction(lastSelectedRole, actionString);
+
+                        lastSelectedAction = action;
+
+                        updateAction(lastSelectedAction);
+                    } catch (NullPointerException ex) {
+                        //do nothing - there is no minimum number of criteria action pairs
+                    }
+                }
+            }
+        });
+
+        criteriaActionTableModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (criteriaActionTable.getSelectedRow() == -1) {
+                    return;
+                }
+
+                // get action string
+                String actionString = (String)criteriaActionTableModel.getValueAt(criteriaActionLastSelectedIndex, 1);
+
+                if (actionString == null) {
+                    setDrawAction(false);
+                    return;
+                }
+
+                Action action = ActionFactory.getAction(lastSelectedRole, actionString);
+
+                lastSelectedAction = action;
+
+                updateAction(lastSelectedAction);
+            }
+        });
+
+        criteriaActionTable.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+//                if (lastSelectedAction == null) {
+//                    setDrawAction(false);
+//                } else {
+//                    setDrawAction(true);
+//                }
+
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                criteriaActionTable.clearSelection();
+                setDrawAction(false);
+            }
+        });
     }
 
     @Override
@@ -190,6 +289,23 @@ public class RolesPanel extends JPanel implements StrategyListener {
         rolesList = currentStrategy.getRoles();
         rolesTableModel.setListOfRoles(rolesList);
         rolesTableModel.fireTableDataChanged();
+        for (int i = 0; i < 4; i++) {
+            //parameterLabels[i].setText("Parameter " + (i + 1) + ":");
+            inputs[i].setText("");
+        }
     }
 
+    @Override
+    public void setPlayChanged(Play setPlay) {
+        //nothing
+    }
+
+    public void updateAction(Action action) {
+        setDrawAction(true);
+        fieldController.setAction(action);
+    }
+
+    public void setDrawAction(boolean draw) {
+        fieldController.setDrawAction(draw);
+    }
 }

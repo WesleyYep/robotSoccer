@@ -1,0 +1,127 @@
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:wait
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:goal keeper
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:top spinner
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[45, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:ball chaser
+permanent-actions.ChaseBallWithObstacle-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:mid defender
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 35, 35, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitAtOffenseMid
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[110, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:bot spinner
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[135, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:blockClosetToBall
+permanent-actions.BlockOpponentClosestToBall-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitAtOffenseTop
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[110, 20]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:mid waiting striker
+permanent-actions.StrikerTest-[startingY, startingX]-[90, 185]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:normal defence top
+goal keeper
+mid defender
+ball chaser
+top spinner
+waitAtOffenseMid
+-----
+Play:normal defence bot
+goal keeper
+mid defender
+ball chaser
+bot spinner
+waitAtOffenseMid
+-----
+Play:normal defence inner mid
+goal keeper
+mid defender
+ball chaser
+ball chaser
+waitAtOffenseMid
+-----
+Play:normal defence outer mid
+goal keeper
+mid defender
+ball chaser
+ball chaser
+waitAtOffenseTop
+-----
+Play:normal attk
+wait
+wait
+wait
+wait
+wait
+-----
+Situation:def Top:33:4:224:104
+normal defence top
+-----
+Situation:def  Bot:34:268:224:101
+normal defence bot
+-----
+Situation:def inner mid:31:105:112:165
+normal defence inner mid
+-----
+Situation:def outer mid:139:105:121:165
+normal defence outer mid
+-----
+Situation:attk:256:2:224:369
+normal attk
+-----

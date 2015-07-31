@@ -1,33 +1,37 @@
 package actions;
 
+import Paths.Path;
 import org.opencv.core.Point;
-
 import strategy.Action;
-import utils.Image;
+import utils.Geometry;
 import utils.PairPoint;
-import bot.Robot;
 
-public class Defender extends Action {
+public abstract class Defender extends Action {
 
-	private PairPoint defendZone;
+	protected PairPoint defendZone;
+	protected Path path;
 	
-	public Defender(Point p1, Point p2) {
-		defendZone = new PairPoint(p1, p2, Image.euclideanDistance(p1, p2), Image.angleBetweenTwoPoints(p1, p2));
-	}
-	
-	@Override
-	public String getName() {
-		return "Defender";
+	protected Defender(Point p1, Point p2, Path path) {
+		defendZone = new PairPoint(p1, p2, Geometry.euclideanDistance(p1, p2), Geometry.angleBetweenTwoPoints(p1, p2));
+		this.path = path;
 	}
 
-	@Override
-	public void execute() {
-		// Get the robot which is assigned to this action.
-		Robot r = bots.getRobot(index);
-		
-		r.linearVelocity = 1;
-		r.angularVelocity = 0;
-		
+	protected PairPoint getDefendZone() {
+		return defendZone;
 	}
+	
+	protected void setDefendZone(Point p1, Point p2) {
+		defendZone = new PairPoint(p1, p2, Geometry.euclideanDistance(p1, p2), Geometry.angleBetweenTwoPoints(p1, p2));
+	}
+	
+	protected Path getPath() {
+		return path;
+	}
+
+	protected void setPath(Path path) {
+		this.path = path;
+	}
+	
+	protected abstract Point getPosition();
 
 }

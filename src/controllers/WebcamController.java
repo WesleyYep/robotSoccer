@@ -1,18 +1,16 @@
 package controllers;
 
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-
-import javax.swing.SwingWorker;
-
+import game.Tick;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
-
 import ui.WebcamDisplayPanel;
 import ui.WebcamDisplayPanel.ViewState;
-import vision.VisionWorker;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * <p>Controls the Webcam and WebcamDisplayPanel instance.
@@ -25,20 +23,17 @@ import vision.VisionWorker;
 public class WebcamController {
 
 	private WebcamDisplayPanel webcamDisplayPanel;
-	private final static String IPWEBCAMDEVICENAME = "BLAZE";
-
-	//javaCV stuff
-	protected double scale = 1.0;					// to downsize the image (for speed), set this to a fraction < 1
-	protected int width, height;					// the size of the grabbed images (scaled if so specified)
 	protected BufferedImage image;					// image grabbed from webcam (if any)
 	private Grabby grabby;							// handles webcam grabbing
     private VideoCapture grabber;
     private int cameraNumber = 0;
     private Mat webcamImageMat;
+    private Tick gameTick;
 
-	public WebcamController(WebcamDisplayPanel webcamDisplayPanel) {
+    public WebcamController(WebcamDisplayPanel webcamDisplayPanel, Tick tick) {
 		this.webcamDisplayPanel = webcamDisplayPanel;
         grabby = new Grabby();
+        gameTick = tick;
     }
 
 	/**
@@ -50,7 +45,8 @@ public class WebcamController {
 		// Spawn a separate thread to handle grabbing.
 		// Set up webcam. DeviceNumber.
         grabber = new VideoCapture(cameraNumber);
-        grabby.execute();
+        grabby = new Grabby();
+		grabby.execute();
 	}
 
 	/**
@@ -61,6 +57,7 @@ public class WebcamController {
 
 	public void connect(String url) {
 		grabber = new VideoCapture(url);
+		grabby = new Grabby();
 		grabby.execute();
 	}
 
@@ -82,7 +79,11 @@ public class WebcamController {
 	 */
 
 	public WebcamDisplayPanel getWebcamDisplayPanel() {
-		return webcamDisplayPanel;
+		if (webcamDisplayPanel != null)
+			return webcamDisplayPanel;
+		else {
+			return null;
+		}
 	}
 
 	/**
@@ -136,8 +137,9 @@ public class WebcamController {
 	public ViewState getWebcamStatus() {
 		return webcamDisplayPanel.getViewState();
 	}
-	
-	/**
+
+
+    /**
 	 * Handles grabbing an image from the webcam (following JavaCV examples)
 	 * storing it in image, and telling the canvas to repaint itself.
 	 */
@@ -146,25 +148,31 @@ public class WebcamController {
 
 			System.out.println("Initializing camera");
             grabber.open(0);
+
             webcamImageMat = new Mat();
 
             while (!isCancelled() && grabber.isOpened()) {
+
                 grabber.read(webcamImageMat);
-                
+
                 if (webcamImageMat == null) {
                 	cancel(true);
-                }
-
-                webcamDisplayPanel.update(webcamImageMat);
+                } else {
+					webcamDisplayPanel.update(webcamImageMat);
+					gameTick.run();
+				}
             }
 
-            // All done; clean up
-            grabber.release();
-            grabber = null;
-            webcamImageMat = null;
             return null;
 		}
 
+		@Override
+		protected void done() {
+			// All done; clean up
+			grabber.release();
+			webcamImageMat = null;
+			webcamDisplayPanel.update(webcamImageMat);
+		}
 	}
 
 }
