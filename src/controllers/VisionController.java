@@ -15,10 +15,10 @@ public class VisionController {
 	private Point2D bottomRight;
 	private Point2D bottomLeft;
 	
-	private static double mapLeft = 121;
-	private static double mapRight = 517;
-	private static double mapTop = 48;
-	private static double mapBot = 372;
+	public static double mapLeft = 121;
+	public static double mapRight = 517;
+	public static double mapTop = 48;
+	public static double mapBot = 372;
 	private static double rotationAngle = 0;
 	private static PerspectiveTransform t;
 	private static PerspectiveTransform tInverse;
@@ -98,6 +98,26 @@ public class VisionController {
 		}
 		
 	}
+
+    public static Point actualPosToimagePos(Point p) {
+        double x = p.x;
+        double y = p.y;
+
+
+        if (tInverse != null ) {
+           // x = x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH) + mapLeft;
+            //y = y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT) + mapTop;
+
+            Point2D selectedPoint = new Point2D.Double();
+            tInverse.transform(new Point2D.Double(x,y), selectedPoint);
+
+            return new Point(selectedPoint.getX(), selectedPoint.getY());
+
+         } else {
+            return null;
+        }
+
+    }
 
     public static double imageThetaToActualTheta (double theta) {
         double result = theta + rotationAngle;

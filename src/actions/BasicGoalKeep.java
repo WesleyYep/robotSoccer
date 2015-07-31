@@ -238,7 +238,7 @@ public class BasicGoalKeep extends Action {
 			} else if (ballY > bottomPoint) {
 				targetPos = bottomPoint;
 			}
-			setVelocityToTarget(goalLine,targetPos, false,false);
+			setVelocityToTarget(goalLine,targetPos, true,false);
 			//MoveToSpot.move(r,new Coordinate((int)goalLine,resultY),1,false);
 			//code start for getting stuck in the inner goal area
 			//finding the angle in the inner goal area so the robot can get out of the inner area
@@ -415,9 +415,17 @@ public class BasicGoalKeep extends Action {
 				}
 			}
 			*/
+			if (ballY >= topPoint && ballY <= bottomPoint) {
+				setVelocityToTarget(goalLine, ballY, true, true);
+			} else if (ballY < topPoint) {
+				setVelocityToTarget(goalLine, topPoint, true, true);
+			} else if (ballY > bottomPoint) {
+				setVelocityToTarget(goalLine, bottomPoint, true, true);
+			}
+
 		}
 
-
+		System.out.println(r.getXPosition());
 		lastBallX = ballX;
 		lastBallY = ballY;
 		lastBallX2 = lastBallX;
@@ -433,17 +441,7 @@ public class BasicGoalKeep extends Action {
 		boolean isFacingTop = true;
 		boolean isTargetTop = true;
 		boolean front  = true;
-		if (r.getTheta() < 0) {
-			isFacingTop = false;
-		}
 
-		if (y > r.getYPosition()) {
-			isTargetTop = false;
-		}
-
-		if (isTargetTop != isFacingTop) {
-			front = false;
-		}
 
 		double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
 		double difference = targetTheta - Math.toRadians(r.getTheta());
@@ -457,6 +455,9 @@ public class BasicGoalKeep extends Action {
 		}
 		difference = Math.toDegrees(difference);
 		targetTheta = difference;
+		if (targetTheta > 90 || targetTheta < -90) {
+			front = false;
+		}
 
 		if (!front && reverse) {
 			if (targetTheta < 0) {

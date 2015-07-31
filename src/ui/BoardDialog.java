@@ -48,6 +48,7 @@ public class BoardDialog extends JDialog {
 	public void setBoardImage(BufferedImage image) {
 		
 		boardImage = image;
+
 		picLabel.setIcon(new ImageIcon(image));
 
 		if (picLabel.getWidth() != image.getWidth() || picLabel.getHeight() != image.getHeight()) {
