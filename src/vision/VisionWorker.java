@@ -13,6 +13,7 @@ import utils.Geometry;
 import utils.LimitedQueue;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,8 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
     private LimitedQueue[] weightedAverageThetas = new LimitedQueue[5];
 
+    private int scanInterval = 26;
+    private int[] pMarkTable = new int[640*480];
 
     public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
@@ -485,6 +488,107 @@ public class VisionWorker implements WebcamDisplayPanelListener {
         else if (areasAreBlack[2]) {rd.setTheta(startTheta); robotNum = 5;}
 	//	System.out.println(robotNum + " detected");
 		return robotNum;
+    }
+
+
+    public void Run_FindRobot(RobotData rd, Mat image) {
+
+
+        for (int i =0; i<4; i++) {
+
+            int[] segment_count = new int[4];
+            segment_count[0] = 0;
+            segment_count[1] = 0;
+            segment_count[2] = 0;
+            segment_count[3] = 0;
+
+            double[] robot_angle = new double[2];
+            double[] robot_angle_screen = new double[2];
+
+            {
+                double a = 0, b = 0, c = 0;
+            }
+        }
+    }
+
+
+    public void Run_SearchPatch(Mat image) {
+
+        Mat webcamImageMat = image;
+        BufferedImage rectImage = new BufferedImage(webcamImageMat.width(), webcamImageMat.height(), BufferedImage.TYPE_3BYTE_BGR);
+        // Full range HSV. Range 0-255.
+        Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
+
+        int NEXT_X, NEXT_Y3, NEXT_Y;
+        int p = 0;
+        NEXT_X = scanInterval*3;
+        NEXT_Y = webcamImageMat.width()*3;
+        NEXT_Y3 = webcamImageMat.width()*3*scanInterval-1;
+
+        int total = (webcamImageMat.width()*webcamImageMat.height()/scanInterval);
+
+        while (total-- > 0) {
+
+            int x = (p/3)%webcamImageMat.width();
+            int y =  p/webcamImageMat.width()/3;
+
+            if( x > 0	&& y > 0
+                    && x < webcamImageMat.width()-1 &&y < webcamImageMat.height() -1)
+            {
+            }
+            else
+            {
+                p+= NEXT_X;
+                continue;
+            }
+
+            /*
+            //processing area = the original image - the part we erase on C++ program
+            if( m_pProcessingArea[ x + y*CAMERA_WIDTH_MAX ] == 0 )
+            {
+            }
+            else
+            {
+                p+= NEXT_X;
+                continue;
+            }
+             */
+
+            double[] hsv = webcamImageMat.get(x,y);
+
+            if ( teamSP.getLowerBoundForH() <= hsv[0] && hsv[0] <= teamSP.getUpperBoundForH() &&
+                    teamSP.getLowerBoundForS() <= hsv[1] && hsv[1] <= teamSP.getUpperBoundForS() &&
+                    teamSP.getLowerBoundForV() <= hsv[2] && hsv[2] <= teamSP.getUpperBoundForV()) {
+
+                FindPatch(p,x,y);
+            }
+
+            p+= NEXT_X;
+        }
+    }
+
+    private void FindPatch(int p, int x, int y, Mat image) {
+        Patch patch = new Patch();
+        SearchPathRecursive(p,x,y, patch);
+    }
+
+    private void SearchPathRecursive(int p, int x, int y, Patch patch) {
+        int q = p/3;
+
+        patch.getPixels().add(new Point(x,y));
+
+        if (patch.getPixels().size() < colourPanel.getRobotSizeMaximum()) {
+
+            if (scanInterval > 1) {
+                for (int i = 0; i<scanInterval ;i++) {
+                    for (int j=0; j<scanInterval; j++) {
+
+                        if (x+1<640 && y+j < 480) pMarkTable[(x+i) + (y+j)*]
+                    }
+                }
+            }
+        }
+
     }
 
     private boolean isBlack(double[] scalar) {
