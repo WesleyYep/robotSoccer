@@ -105,8 +105,8 @@ public class VisionController {
 
 
         if (tInverse != null ) {
-           // x = x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH) + mapLeft;
-            //y = y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT) + mapTop;
+            x = x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH) + mapLeft;
+            y = y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT) + mapTop;
 
             Point2D selectedPoint = new Point2D.Double();
             tInverse.transform(new Point2D.Double(x,y), selectedPoint);

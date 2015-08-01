@@ -412,8 +412,8 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		}
 		else if (panel.equals(this.ballSamplingPanel)) {
 			temp = (1 << LookupTable.BALL_BIT_POS);
-		}
-		LookupTable.setYTable(max, min, temp);
+		}  
+		
 	}
 
 	@Override
@@ -428,7 +428,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		else if (panel.equals(this.ballSamplingPanel)) {
 			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
-		LookupTable.setUTable(max, min, temp);
+		
 	}
 
 	@Override
@@ -443,7 +443,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		else if (panel.equals(this.ballSamplingPanel)) {
 			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
-		LookupTable.setVTable(max, min, temp);
+		
 	}
     protected double squared (double x) {
         return x * x;
