@@ -1,21 +1,18 @@
 package vision;
 
+import controllers.VisionController;
+import data.RobotData;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
+import ui.ColourPanel;
+import ui.SamplingPanel;
+import ui.WebcamDisplayPanel.ViewState;
+import ui.WebcamDisplayPanelListener;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.imgproc.Imgproc;
-
-import controllers.VisionController;
-import data.RobotData;
-import ui.WebcamDisplayPanel.ViewState;
-import ui.ColourPanel;
-import ui.SamplingPanel;
-import ui.WebcamDisplayPanelListener;
-import utils.LimitedQueue;
 
 public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	
@@ -66,7 +63,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 		Run_InitFlags();
 		Run_SearchPatch(image);
 		
-		Run_FindPatchPosition(teamPatchList);
+		//Run_FindPatchPosition(teamPatchList);
 		
 	}
 	
@@ -104,23 +101,23 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
         BufferedImage rectImage = new BufferedImage(webcamImageMat.width(), webcamImageMat.height(), BufferedImage.TYPE_3BYTE_BGR);
         // Full range HSV. Range 0-255.
         Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
+		int imageWidth = webcamImageMat.width();
+		int imageHeight = webcamImageMat.height();
 
-        int NEXT_X, NEXT_Y3;
         int p = 0;
-        NEXT_X = scanInterval*3;
-        NEXT_Y = webcamImageMat.width()*3;
-        NEXT_Y3 = webcamImageMat.width()*3*scanInterval-1;
+        int NEXT_X = scanInterval*3;
+        NEXT_Y = imageWidth*3;
+        int NEXT_Y3 = imageWidth*3*scanInterval-1;
 
-        int total = (webcamImageMat.width()*webcamImageMat.height()/scanInterval);
+        int total = (imageWidth*imageHeight/scanInterval);
 
-        while (total-- > 0) {
+        while ( (total -= 1) > 0) {
+			long start = System.currentTimeMillis();
+            int x = (p/3)%imageWidth;
+            int y =  p/(imageWidth/3);
 
-            int x = (p/3)%webcamImageMat.width();
-            int y =  p/webcamImageMat.width()/3;
 
-            if( x > 0	&& y > 0
-                    && x < webcamImageMat.width()-1 &&y < webcamImageMat.height() -1)
-            {
+			if( x >= 0	&& y >= 0&& x < imageWidth-1 && y < imageHeight -1) {
             }
             else
             {
@@ -128,27 +125,22 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
                 continue;
             }
 
-            /*
-            //processing area = the original image - the part we erase on C++ program
-            if( m_pProcessingArea[ x + y*CAMERA_WIDTH_MAX ] == 0 )
-            {
-            }
-            else
-            {
-                p+= NEXT_X;
-                continue;
-            }
-             */
-
+			System.out.println(p + " " + x + " " + y + " " + total );
             double[] hsv = webcamImageMat.get(x,y);
-            byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-            
-            if ( (patchLUTData & LookupTable.TEAM_COLOUR) > 0 ) {
-                FindPatch(p,x,y,webcamImageMat,LookupTable.TEAM_COLOUR);
-            }
+			System.out.println(hsv.length);
+            //byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
 
-            p+= NEXT_X;
+			/*
+            if ( (patchLUTData & LookupTable.TEAM_COLOUR) > 0 ) {
+
+                //FindPatch(p,x,y,webcamImageMat,LookupTable.TEAM_COLOUR);
+            }*/
+			p = p + NEXT_X;
+			//" " + hsv[0] + " " + hsv[1] + " " + hsv[2] + " " + hsv[3] + " " + (byte) patchLUTData);
+
+
         }
+
     }
 
     private void FindPatch(int p, int x, int y, Mat image, byte mask) {

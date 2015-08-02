@@ -20,7 +20,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="jdk" jdkName="1.7_x86" jdkType="JavaSDK" />
     <orderEntry type="module-library" exported="">
       <library name="Gradle: bridj-0.6.2">
         <CLASSES>
@@ -246,5 +245,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="jdk" jdkName="1.7_x86" jdkType="JavaSDK" />
   </component>
 </module>
