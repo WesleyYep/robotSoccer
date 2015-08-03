@@ -13,6 +13,7 @@ import utils.Geometry;
 import utils.LimitedQueue;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,10 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 
     private LimitedQueue[] weightedAverageThetas = new LimitedQueue[5];
 
+    private int scanInterval = 26;
+    private byte[] pMarkTable = new byte[640*480];
+    private ArrayList<Patch> patchList = new ArrayList<Patch>();
+    private int NEXT_Y;
 
     public VisionWorker(ColourPanel cp) {
 		colourPanel = cp;
@@ -486,6 +491,7 @@ public class VisionWorker implements WebcamDisplayPanelListener {
 	//	System.out.println(robotNum + " detected");
 		return robotNum;
     }
+
 
     private boolean isBlack(double[] scalar) {
 		try {

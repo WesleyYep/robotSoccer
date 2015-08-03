@@ -41,7 +41,7 @@ public class Receiver extends SwingWorker<Void, String> {
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 			//Initialize progress property.
 			while (!isCancelled()) {
-				long start = System.currentTimeMillis();
+
 				String message = bufferedReader.readLine();
 				
 				if (message.equals("closing")) {

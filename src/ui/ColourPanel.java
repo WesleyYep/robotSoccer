@@ -83,6 +83,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         greenSamplingPanel = new SamplingPanel(wc);
         groundSamplingPanel = new SamplingPanel(wc);
         opponentSamplingPanel = new SamplingPanel(wc);
+        teamSamplingPanel.setMask(LookupTable.TEAM_COLOUR);
         samplingPanels = new SamplingPanel[] { ballSamplingPanel, teamSamplingPanel, greenSamplingPanel, groundSamplingPanel, opponentSamplingPanel };
         tabPane.addTab("Ball", ballSamplingPanel);
         tabPane.addTab("Team", teamSamplingPanel);
@@ -412,8 +413,8 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		}
 		else if (panel.equals(this.ballSamplingPanel)) {
 			temp = (1 << LookupTable.BALL_BIT_POS);
-		}
-		LookupTable.setYTable(max, min, temp);
+		}  
+		
 	}
 
 	@Override
@@ -428,7 +429,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		else if (panel.equals(this.ballSamplingPanel)) {
 			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
-		LookupTable.setUTable(max, min, temp);
+		
 	}
 
 	@Override
@@ -443,7 +444,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 		else if (panel.equals(this.ballSamplingPanel)) {
 			temp = (1 << LookupTable.BALL_BIT_POS);
 		}
-		LookupTable.setVTable(max, min, temp);
+		
 	}
     protected double squared (double x) {
         return x * x;

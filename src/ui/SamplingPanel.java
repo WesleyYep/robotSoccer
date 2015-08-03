@@ -4,6 +4,7 @@ import controllers.WebcamController;
 import net.miginfocom.swing.MigLayout;
 import utils.ColorSpace;
 import vision.ColourRangeListener;
+import vision.LookupTable;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -12,6 +13,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +38,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JComboBox<String> HSVCombo;
     private List<ColourRangeListener> colourRangeListeners;
     private int hMax = -1, hMin = -1, sMax = -1, sMin = -1, vMax = -1, vMin = -1;
+    private byte mask = 0;
     public boolean isSampling = false;
     
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
@@ -87,7 +90,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				highHLabel.setText(HSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.hRangeChanged(HSlider.getHighValue(), HSlider.getLowValue(),SamplingPanel.this);
+					//c.hRangeChanged(HSlider.getHighValue(), HSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
@@ -101,7 +104,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				highSLabel.setText(SSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.sRangeChanged(SSlider.getHighValue(), SSlider.getLowValue(),SamplingPanel.this);
+					//c.sRangeChanged(SSlider.getHighValue(), SSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
@@ -115,7 +118,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
 				highVLabel.setText(VSlider.getHighValue() + "");
 				
 				for (ColourRangeListener c : colourRangeListeners) {
-					c.vRangeChanged(VSlider.getHighValue(), VSlider.getLowValue(),SamplingPanel.this);
+					//c.vRangeChanged(VSlider.getHighValue(), VSlider.getLowValue(),SamplingPanel.this);
 				}
 			}
         	
@@ -273,6 +276,14 @@ public class SamplingPanel extends JPanel implements ActionListener {
     public void setLowerBoundForV(int i) {
     	VSlider.setLowValue(i);
     }
+    
+    public byte getMask() {
+    	return mask;
+    }
+    
+    public void setMask(byte mask) {
+    	this.mask = mask;
+    }
 
     /**
      * <p>Changes the detect button to default value and stops sampling</p>
@@ -293,10 +304,22 @@ public class SamplingPanel extends JPanel implements ActionListener {
 		if (e.getSource() == sampleButton) {
             if (!isSampling) {
                 sampleButton.setText("Stop Sample");
-                isSampling = true;
+                isSampling = true;                                
             } else {
                 sampleButton.setText("Start Sample");
                 isSampling = false;
+                
+                for (int h=0; h<256; h++) {
+                	for (int s = 0; s<256; s++) {
+                		for(int v = 0; v<256; v++) {
+                			
+                			if (hMin <= h && h <= hMax && sMin <= s && s <= sMax && vMin <= v && v <= vMax) {
+                				LookupTable.setData(mask, h, s, v, true);
+                			}	
+                		}
+                	}
+                }
+
             }
 		} else if (e.getSource() == detectButton) {
             if (detectButton.getText().equals(DETECTSTRING[0])) {

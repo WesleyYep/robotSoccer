@@ -24,6 +24,7 @@ import strategy.GameState;
 import strategy.Play;
 import strategy.Role;
 import ui.WebcamDisplayPanel.ViewState;
+import vision.CplusplusVisionWorker;
 import vision.VisionSettingFile;
 import vision.VisionWorker;
 
@@ -321,10 +322,11 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		
 		visionWorker = new VisionWorker(colourPanel);
 		visionWorker.addListener(fieldController);
-		
+		CplusplusVisionWorker cWorker = new CplusplusVisionWorker(colourPanel);
 		// Add listener
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
-		webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
+		webcamDisplayPanel.addWebcamDisplayPanelListener(cWorker);
+		//webcamDisplayPanel.addWebcamDisplayPanelListener(visionWorker);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(colourPanel);
 
 		visionSetting = new VisionSettingFile(webcamController,colourPanel,visionController);

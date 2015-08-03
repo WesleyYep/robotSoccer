@@ -29,7 +29,7 @@ public class BasicGoalKeep extends Action {
 
 	@Override
 	public void execute() {
-        Robot r = bot;
+		Robot r = bot;
 		double goalLine = parameters.get("goalLine");
 		//double error = parameters.get("error");
 		int topPoint = parameters.get("topPoint");
@@ -320,7 +320,7 @@ public class BasicGoalKeep extends Action {
 		else if (fixPosition) {
 			//System.out.println("fixing position " + fixPosition );
 			if ( ( r.getTheta() > 90+5 && r.getTheta() <= 180)|| (r.getTheta() <= 0 && r.getTheta() > -90+5)) {
-			//	System.out.println("turning negative: " + r.getTheta() );
+				//	System.out.println("turning negative: " + r.getTheta() );
 				r.angularVelocity = -Math.PI/5;
 				if (r.getTheta() > 120 || r.getTheta() > -60) {
 					r.angularVelocity = -Math.PI/3;
@@ -328,7 +328,7 @@ public class BasicGoalKeep extends Action {
 				r.linearVelocity = 0;
 			}
 			else if ( (r.getTheta() < 90-5 && r.getTheta() >= 0) || (r.getTheta() < -90-5 && r.getTheta() >= -180)) {
-			//	System.out.println("turning positive: " + r.getTheta() );
+				//	System.out.println("turning positive: " + r.getTheta() );
 				r.angularVelocity = Math.PI/5;
 				if (r.getTheta() < 60  || r.getTheta() < -120) {
 					r.angularVelocity = Math.PI/3;
@@ -346,7 +346,7 @@ public class BasicGoalKeep extends Action {
 			//System.out.println("ballY: " + ballY + " resultY:" + resultY + " area1Y weghting:" + area1Y + " " + area1Weighting
 			//		+ " area2Y weghting:" + area2Y + " " + area2Weighting
 			//		+ " area3Y weghting:" + area3Y + " " + area3Weighting );
-			 setVelocityToTarget(goalLine, resultY, true, false);
+			setVelocityToTarget(goalLine, resultY, true, false);
 
 
 			/*
@@ -433,7 +433,7 @@ public class BasicGoalKeep extends Action {
 	}
 
 	public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
-        Robot r = bot;
+		Robot r = bot;
 		double targetDist;
 
 		targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
