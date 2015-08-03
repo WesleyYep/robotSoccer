@@ -319,6 +319,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
                 		}
                 	}
                 }
+
             }
 		} else if (e.getSource() == detectButton) {
             if (detectButton.getText().equals(DETECTSTRING[0])) {

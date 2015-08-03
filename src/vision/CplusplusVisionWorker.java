@@ -112,12 +112,11 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
         int total = (imageWidth*imageHeight/scanInterval);
 
         while ( (total -= 1) > 0) {
-			long start = System.currentTimeMillis();
             int x = (p/3)%imageWidth;
-            int y =  p/(imageWidth/3);
+            int y =  p/imageWidth/3;
 
 
-			if( x >= 0	&& y >= 0&& x < imageWidth-1 && y < imageHeight -1) {
+			if( x > 0	&& y > 0  && x < imageWidth-1 && y < imageHeight -1) {
             }
             else
             {
@@ -125,19 +124,17 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
                 continue;
             }
 
-			System.out.println(p + " " + x + " " + y + " " + total );
-            double[] hsv = webcamImageMat.get(x,y);
-			System.out.println(hsv.length);
-            //byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
 
-			/*
+            double[] hsv = webcamImageMat.get(y,x);
+			//System.out.println(p + " " + y + " " + x + " " + total );
+            byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+			System.out.println( (0 | 00000001));
+			//if (patchLUTData > 0 ) System.out.println(patchLUTData);
             if ( (patchLUTData & LookupTable.TEAM_COLOUR) > 0 ) {
-
+				//System.out.println("found " + System.currentTimeMillis());
                 //FindPatch(p,x,y,webcamImageMat,LookupTable.TEAM_COLOUR);
-            }*/
+            }
 			p = p + NEXT_X;
-			//" " + hsv[0] + " " + hsv[1] + " " + hsv[2] + " " + hsv[3] + " " + (byte) patchLUTData);
-
 
         }
 
