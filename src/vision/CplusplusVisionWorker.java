@@ -128,7 +128,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             double[] hsv = webcamImageMat.get(y,x);
 			//System.out.println(p + " " + y + " " + x + " " + total );
             byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-			System.out.println( (0 | 00000001));
+			
 			//if (patchLUTData > 0 ) System.out.println(patchLUTData);
             if ( (patchLUTData & LookupTable.TEAM_COLOUR) > 0 ) {
 				//System.out.println("found " + System.currentTimeMillis());
