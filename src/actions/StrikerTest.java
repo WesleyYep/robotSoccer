@@ -25,21 +25,23 @@ public class StrikerTest extends Action {
         double targetX = parameters.get("targetX");
         double targetY = parameters.get("targetY");
         double angleToGoal = Math.abs(getTargetTheta(bot, 220, targetY));
-        double speedMod = 1;
 
         if (ballX < 50) {
             targetY = ballY < 70 ? 75 : ballY > 110 ? 105 : ballY;
         }
 
         //check if ball is coming into path
-        if (ballComingIntoPath()) {
+        double ballDist = ballComingIntoPath();
+        if (ballDist > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
             if (getDistanceToTarget(bot, targetX, 90) > 5 || (angleToGoal > 10 && angleToGoal < 170)) {
                 //try to intercept
                 //         System.out.println("not on goaline but trying to intercept");
             } else {
-                speedMod = 3;
-                targetX = ballX;
-                targetY = ballY;
+                bot.linearVelocity = ballDist > 30 ? 0 : ballDist > 20 ? 0.3 : ballDist > 15 ? 0.5 : ballDist > 10 ? 1 : 2;
+                bot.angularVelocity = 0;
+                lastBallY = ballY;
+                lastBallX = ballX;
+                return;
             }
         }
 
@@ -86,14 +88,13 @@ public class StrikerTest extends Action {
         if (Math.abs(bot.angularVelocity) < 0.2) {
             bot.angularVelocity = 0;
         }
-        bot.linearVelocity *= speedMod;
 
         lastBallX = ballX;
         lastBallY = ballY;
 
     }
 
-    private boolean ballComingIntoPath() {
+    private double ballComingIntoPath() {
         double m = (ballY-lastBallY) / (ballX - lastBallX);
         double c = ballY - (m * ballX);
         double y = parameters.get("targetY");
@@ -110,7 +111,11 @@ public class StrikerTest extends Action {
             xInt = 0;
         }
 
-        return (xInt > bot.getXPosition());
+        if (xInt > bot.getXPosition() && ((lastBallY > ballY && lastBallY > y) || (lastBallY < ballY && lastBallY < y))) {
+            return ballDistance;
+        } else {
+            return -1;
+        }
 
     }
 

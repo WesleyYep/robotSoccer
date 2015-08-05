@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:new role
-permanent-actions.StrikerTest-[targetX, targetY]-[170, 90]
+permanent-actions.MoveSpotKickBall-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 100, 70]
 null-null
 null-null
 null-null

@@ -28,7 +28,7 @@ public class PIDGoalKeeper extends Action {
         double angleToTop = Math.abs(getTargetTheta(bot, targetX, 0));
         double goalLine = parameters.get("goalLine");
 
-        if (ballX < 50) {
+        if (ballX < parameters.get("goalLine")+5) {
             targetY = ballY < 70 ? 75 : ballY > 110 ? 105 : ballY;
         }
 
@@ -124,7 +124,7 @@ public class PIDGoalKeeper extends Action {
             }
         }
         if (65 < yInt && yInt < 115) {
-            if (ballX < 30 && (yInt > 90 && ballY < 90 || yInt < 90 && ballY > 90)) {
+            if (ballX < parameters.get("goalLine")+25 && (yInt > 90 && ballY < 90 || yInt < 90 && ballY > 90)) {
                 return false;
             }
            // System.out.println("going to hit goal! " + yInt);

@@ -28,8 +28,9 @@ public class Actions {
           add(PIDMoveToSpot.class.getSimpleName());
           add(PIDGoalKeeper.class.getSimpleName());
           add(BasicDefender.class.getSimpleName());
-          add(AdvancedGoalKeep.class.getSimpleName());
+          add(MoveSpotKickBall.class.getSimpleName());
           add(ChaseBall2.class.getSimpleName());
+          add(AdvancedGoalKeeper.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {

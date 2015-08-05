@@ -101,8 +101,12 @@ public class ActionFactory {
                 final ChaseBall2 chaseBall2 = new ChaseBall2();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, chaseBall2); }});
                 return chaseBall2;
-            } else if (simpleName.equals(AdvancedGoalKeep.class.getSimpleName())) {
-                final AdvancedGoalKeep a = new AdvancedGoalKeep();
+            } else if (simpleName.equals(MoveSpotKickBall.class.getSimpleName())) {
+                final MoveSpotKickBall a = new MoveSpotKickBall();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
+            } else if (simpleName.equals(AdvancedGoalKeeper.class.getSimpleName())) {
+                final AdvancedGoalKeeper a = new AdvancedGoalKeeper();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
             }
