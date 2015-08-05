@@ -4,6 +4,8 @@ import controllers.VisionController;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import utils.Image;
+import vision.CplusplusVisionWorker;
+import vision.Patch;
 import vision.VisionWorker;
 
 import javax.imageio.ImageIO;
@@ -128,7 +130,8 @@ public class WebcamDisplayPanel extends JPanel {
             final Mat matToProcess;
 
             if (colourPanel.isContourActive()) {
-                maskCameraImage(matToShow);
+               // maskCameraImage(matToShow);
+				debugCplusplusWorker(matToShow);
                 matToProcess = matToShow.clone();
             } else {
                 matToProcess = matToShow.clone();
@@ -234,6 +237,28 @@ public class WebcamDisplayPanel extends JPanel {
         return image;
 
     }
+
+	private Mat debugCplusplusWorker(Mat image) {
+		CplusplusVisionWorker worker = null;
+		for (WebcamDisplayPanelListener l : wdpListeners) {
+			if (l instanceof  CplusplusVisionWorker) {
+				worker = (CplusplusVisionWorker)l;
+			}
+		}
+
+		if (worker != null) {
+			ArrayList<Patch> patches = worker.getTeamPatchList();
+
+			if (patches.size() > 0)  {
+				for ( Patch p  : patches) {
+					for ( org.opencv.core.Point pixel : p.pixels) {
+						Core.line(image, pixel, pixel, new Scalar(0, 255, 255));
+					}
+				}
+			}
+		}
+		return image;
+	}
 
 	private org.opencv.core.Point toPoint(Point2D p) {
         return new org.opencv.core.Point(p.getX(), p.getY());

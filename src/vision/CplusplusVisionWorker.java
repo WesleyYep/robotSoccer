@@ -110,7 +110,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
         int NEXT_Y3 = imageWidth*3*scanInterval-1;
 
         int total = (imageWidth*imageHeight/scanInterval);
-
+		int patchCount = 0;
         while ( (total -= 1) > 0) {
             int x = (p/3)%imageWidth;
             int y =  p/imageWidth/3;
@@ -125,26 +125,31 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             }
 
 
+
             double[] hsv = webcamImageMat.get(y,x);
 			//System.out.println(p + " " + y + " " + x + " " + total );
             byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-			
-			//if (patchLUTData > 0 ) System.out.println(patchLUTData);
+			//System.out.println(x + " " + y +  " " + hsv[0] + " " + hsv[1] + " " + hsv[2]);
+
             if ( (patchLUTData & LookupTable.TEAM_COLOUR) > 0 ) {
-				//System.out.println("found " + System.currentTimeMillis());
-                //FindPatch(p,x,y,webcamImageMat,LookupTable.TEAM_COLOUR);
+                FindPatch(p,x,y,webcamImageMat,LookupTable.TEAM_COLOUR,1);
             }
 			p = p + NEXT_X;
 
         }
 
+		//System.out.println(patchCount);
+
     }
 
-    private void FindPatch(int p, int x, int y, Mat image, byte mask) {
+    private void FindPatch(int p, int x, int y, Mat image, byte mask, int scanInterval) {
+
         if (! (pMarkTable[p/3] == mask)) {
+
         	Patch patch = new Patch();
-	        SearchPathRecursive(p,x,y, patch, image, mask);
-	
+	        SearchPathRecursive(p,x,y, patch, image, mask, scanInterval);
+
+
 	        if  (colourPanel.getRobotSizeMinimum() <= patch.pixels.size() && patch.pixels.size() <= colourPanel.getRobotSizeMaximum()) {
 	
 	            Patch patchFilter = new Patch();
@@ -166,7 +171,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	            		check_neighbor = 0;
 	            		
 	            		for (int i = 0; i<4; i++) {
-	            			double[] hsv = image.get(x, y);
+	            			double[] hsv = image.get(y, x);
 	            			
 	            			
 	            			patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
@@ -185,17 +190,18 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	            
 	            if (colourPanel.getRobotSizeMinimum() <= patchFilter.pixels.size() && patchFilter.pixels.size() <= colourPanel.getRobotSizeMaximum()) {
 	            	teamPatchList.add(patchFilter);
+					System.out.println(patchFilter.center + " " + patchFilter.pixels.size());
 	            }
 	
 	        }
         }
     }
 
-    private void SearchPathRecursive(int p, int x, int y, Patch patch, Mat image, byte mask) {
+    private void SearchPathRecursive(int p, int x, int y, Patch patch, Mat image, byte mask, int scanInterval) {
         int q = p/3;
 
         patch.pixels.add(new Point(x,y));
-
+		//System.out.println(x + " " + y);
         if (patch.pixels.size() < colourPanel.getRobotSizeMaximum()) {
 
             if (scanInterval > 1) {
@@ -215,38 +221,39 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             if (processingArea[x+y*640] == 1) return;
              */
 
-            int h,s,v;
+
+
             byte patchLUTData;
 
             //LEFT
-            if ( x > 0 ) {
-                double[] hsv = image.get(x-scanInterval,y);
-
+            if ( x > 0 && !((pMarkTable[q-scanInterval] & mask) > 0) ){
+                double[] hsv = image.get(y,x-scanInterval);
                 patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-                if((patchLUTData & mask) > 0) SearchPathRecursive(p-3*scanInterval, x-scanInterval, y,patch,image,mask);
+                if((patchLUTData & mask) > 0) SearchPathRecursive(p-3*scanInterval, x-scanInterval, y,patch,image,mask,1);
             }
 
             //UP
-            if (y > 0 ) {
-                double[] hsv = image.get(x,y-scanInterval);
+            if (y > 0 && !((pMarkTable[q-scanInterval*image.width()] & mask) > 0) ) {
+                double[] hsv = image.get(y-scanInterval,x);
                 patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-                if((patchLUTData & mask) > 0) SearchPathRecursive(p-NEXT_Y*scanInterval, x, y-scanInterval,patch,image,mask);
+                if((patchLUTData & mask) > 0) SearchPathRecursive(p-NEXT_Y*scanInterval, x, y-scanInterval,patch,image,mask,1);
             }
 
 
             //RIGHT
-            if (x < image.width()) {
-                double[] hsv = image.get(x+scanInterval, y);
+            if (x < image.width() && !((pMarkTable[q+scanInterval] & mask) > 0) ) {
+                double[] hsv = image.get(y,x+scanInterval);
                 patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-                if ((patchLUTData & mask) > 0)  SearchPathRecursive(p+3*scanInterval, x+scanInterval, y,patch,image,mask);
+                if ((patchLUTData & mask) > 0)  SearchPathRecursive(p+3*scanInterval, x+scanInterval, y,patch,image,mask,1);
             }
 
             //DOWN
-            if (y < image.height()) {
-                double[] hsv = image.get(x, y+scanInterval);
+            if (y < image.height() && !((pMarkTable[q+scanInterval*image.width()] & mask) > 0) ) {
+                double[] hsv = image.get(y+scanInterval,x);
                 patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
-                if ( (patchLUTData & mask) > 0) SearchPathRecursive(p+NEXT_Y*scanInterval,x,y+scanInterval,patch,image,mask);
+                if ( (patchLUTData & mask) > 0) SearchPathRecursive(p+NEXT_Y*scanInterval,x,y+scanInterval,patch,image,mask,1);
             }
+
 
         }
 
@@ -496,6 +503,9 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     	}
         
     }
-    
+
+	public ArrayList<Patch> getTeamPatchList() {
+		return teamPatchList;
+	}
     
 }

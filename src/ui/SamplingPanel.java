@@ -313,7 +313,8 @@ public class SamplingPanel extends JPanel implements ActionListener {
                 	for (int s = 0; s<256; s++) {
                 		for(int v = 0; v<256; v++) {
                 			
-                			if (hMin <= h && h <= hMax && sMin <= s && s <= sMax && vMin <= v && v <= vMax) {
+                			if (HSlider.getLowValue() <= h && h <= HSlider.getHighValue() && SSlider.getLowValue() <= s
+                                    && s <= SSlider.getHighValue() && VSlider.getLowValue() <= v && v <= VSlider.getHighValue()) {
                 				LookupTable.setData(mask, h, s, v, true);
                 			}	
                 		}
