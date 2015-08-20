@@ -130,12 +130,12 @@ public class WebcamDisplayPanel extends JPanel {
             final Mat matToProcess;
 
             if (colourPanel.isContourActive()) {
-               // maskCameraImage(matToShow);
+               	//maskCameraImage(matToShow);
 				debugCplusplusWorker(matToShow);
                 matToProcess = matToShow.clone();
             } else {
                 matToProcess = matToShow.clone();
-                maskCameraImage(matToProcess);
+                //maskCameraImage(matToProcess);
             }
 
 

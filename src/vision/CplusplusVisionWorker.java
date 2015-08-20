@@ -63,7 +63,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 		Run_InitFlags();
 		Run_SearchPatch(image);
 		
-		//Run_FindPatchPosition(teamPatchList);
+		Run_FindPatchPosition(teamPatchList);
 		
 	}
 	
@@ -124,6 +124,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
                 continue;
             }
 
+			if (VisionController.processingArea[x+y*640] == 1) return;
 
 
             double[] hsv = webcamImageMat.get(y,x);
@@ -190,7 +191,6 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	            
 	            if (colourPanel.getRobotSizeMinimum() <= patchFilter.pixels.size() && patchFilter.pixels.size() <= colourPanel.getRobotSizeMaximum()) {
 	            	teamPatchList.add(patchFilter);
-					System.out.println(patchFilter.center + " " + patchFilter.pixels.size());
 	            }
 	
 	        }

@@ -30,6 +30,7 @@ public class VisionController {
     private Point2D leftGoalBottomLeft;
     private Point2D rightGoalBottomRight;
     private Point2D rightGoalBottomLeft;
+    public static int[] processingArea = new int[640*480];
     private int fieldFacing = 0; // (0 is nonflipped - 0 turns, 1 is nonflipped - 1 ACW turn, 2 is nonflipped - 1 CW turn
                                 //   3 is flipped - 0 turns, 4 is flipped - 1 ACW turn, 5 is flipped - 1 CW turn
 
@@ -314,4 +315,39 @@ public class VisionController {
     public void setRightGoalBottomRight(Point2D p) {
         rightGoalBottomRight = p;
     }
+
+    public boolean  pointInPoly(int nvert, double[] vertx, double[] verty, double testx, double testy) {
+
+        int i,j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++) {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) &&
+                    (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+                c = !c;
+        }
+
+        return c;
+    }
+
+    public void updateProcessingArea() {
+        int vert = 12;
+
+        double[] x = {topLeft.getX(),topRight.getX(),rightGoalTopLeft.getX(),rightGoalTopRight.getX(),rightGoalBottomRight.getX()
+                        ,rightGoalBottomLeft.getX(),bottomRight.getX(),bottomLeft.getX(),leftGoalBottomRight.getX(),leftGoalBottomLeft.getX()
+                        ,leftGoalTopLeft.getX(),leftGoalTopRight.getX()};
+
+        double[] y = {topLeft.getY(),topRight.getY(),rightGoalTopLeft.getY(),rightGoalTopRight.getY(),rightGoalBottomRight.getY()
+                ,rightGoalBottomLeft.getY(),bottomRight.getY(),bottomLeft.getY(),leftGoalBottomRight.getY(),leftGoalBottomLeft.getY()
+                ,leftGoalTopLeft.getY(),leftGoalTopRight.getY()};
+
+        for (int i = 0; i<640; i++) {
+            for (int j = 0; j<480; j++) {
+                if (pointInPoly(vert,x,y,i,j)) {
+                    processingArea[i+(j*640)] = 1;
+                }
+            }
+        }
+    }
+
 }
