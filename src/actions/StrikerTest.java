@@ -24,25 +24,16 @@ public class StrikerTest extends Action {
 
         double targetX = parameters.get("targetX");
         double targetY = parameters.get("targetY");
-        double angleToGoal = Math.abs(getTargetTheta(bot, 220, targetY));
-
-        if (ballX < 50) {
-            targetY = ballY < 70 ? 75 : ballY > 110 ? 105 : ballY;
-        }
 
         //check if ball is coming into path
-        double ballDist = ballComingIntoPath();
-        if (ballDist > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
-            if (getDistanceToTarget(bot, targetX, 90) > 5 || (angleToGoal > 10 && angleToGoal < 170)) {
-                //try to intercept
-                //         System.out.println("not on goaline but trying to intercept");
-            } else {
-                bot.linearVelocity = ballDist > 30 ? 0 : ballDist > 20 ? 0.3 : ballDist > 15 ? 0.5 : ballDist > 10 ? 1 : 2;
-                bot.angularVelocity = 0;
-                lastBallY = ballY;
-                lastBallX = ballX;
-                return;
-            }
+        double time = ballComingIntoPath();
+        if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
+            bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
+       //     System.out.println("time: " + time);
+            bot.angularVelocity = 0;
+            lastBallY = ballY;
+            lastBallX = ballX;
+            return;
         }
 
     //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
@@ -103,16 +94,18 @@ public class StrikerTest extends Action {
         double xInt = (y - c)/m;
         double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-y));
         long currentTime = System.currentTimeMillis();
-        double ballSpeed = (Math.sqrt(squared(ballX-lastBallX) + squared(ballY-lastBallY))) / ((currentTime - lastTime)/1000);
+        double ballSpeed = (Math.sqrt(squared(ballX-lastBallX) + squared(ballY-lastBallY))) / ((currentTime - lastTime));
+    //    System.out.println("current: " + currentTime + "last: " + lastTime);
         lastTime = currentTime;
         double time = ballDistance / ballSpeed;
-        if (time > 1) {
+      /*  if (time > 3) {
             //System.out.println("time or distance too long! " + time);
             xInt = 0;
         }
-
+*/
         if (xInt > bot.getXPosition() && ((lastBallY > ballY && lastBallY > y) || (lastBallY < ballY && lastBallY < y))) {
-            return ballDistance;
+       //     System.out.println("ball dist: " + ballDistance + "    ballSpeed: " + ballSpeed);
+            return time;
         } else {
             return -1;
         }
