@@ -84,6 +84,9 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         groundSamplingPanel = new SamplingPanel(wc);
         opponentSamplingPanel = new SamplingPanel(wc);
         teamSamplingPanel.setMask(LookupTable.TEAM_COLOUR);
+        ballSamplingPanel.setMask(LookupTable.BALL_COLOUR);
+        groundSamplingPanel.setMask(LookupTable.GROUND_COLOUR);
+        greenSamplingPanel.setMask(LookupTable.GREEN_COLOUR);
         samplingPanels = new SamplingPanel[] { ballSamplingPanel, teamSamplingPanel, greenSamplingPanel, groundSamplingPanel, opponentSamplingPanel };
         tabPane.addTab("Ball", ballSamplingPanel);
         tabPane.addTab("Team", teamSamplingPanel);

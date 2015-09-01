@@ -308,15 +308,15 @@ public class SamplingPanel extends JPanel implements ActionListener {
             } else {
                 sampleButton.setText("Start Sample");
                 isSampling = false;
-                
+
                 for (int h=0; h<256; h++) {
                 	for (int s = 0; s<256; s++) {
                 		for(int v = 0; v<256; v++) {
-                			
+
                 			if (HSlider.getLowValue() <= h && h <= HSlider.getHighValue() && SSlider.getLowValue() <= s
                                     && s <= SSlider.getHighValue() && VSlider.getLowValue() <= v && v <= VSlider.getHighValue()) {
-                				LookupTable.setData(mask, h, s, v, true);
-                			}	
+                				    LookupTable.setData(mask, h, s, v, true);
+                			}
                 		}
                 	}
                 }

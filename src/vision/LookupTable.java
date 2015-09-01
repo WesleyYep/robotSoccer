@@ -22,7 +22,6 @@ public class LookupTable {
 	}
 	
 	public static void setData(byte mask, int h, int s, int v, boolean state) {
-
 		LUT[h][s][v] |= mask;
 	}
 	

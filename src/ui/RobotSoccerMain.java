@@ -323,6 +323,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		visionWorker = new VisionWorker(colourPanel);
 		visionWorker.addListener(fieldController);
 		CplusplusVisionWorker cWorker = new CplusplusVisionWorker(colourPanel);
+		cWorker.addListeners(fieldController);
 		// Add listener
 		webcamDisplayPanel.addWebcamDisplayPanelListener(this);
 		webcamDisplayPanel.addWebcamDisplayPanelListener(cWorker);
