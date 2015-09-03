@@ -359,7 +359,8 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 				robot_angle[1] = robot_angle[0] + Math.PI;
             }
 
-
+			System.out.println("robot_angle: " + robot_angle[0] + " " + robot_angle[1]);
+			System.out.println("real center:" + teamPatchList.get(i).realCenter)
 
             double RadAngle = robot_angle[0] - Math.PI/2;
             
@@ -466,7 +467,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
         			}
         			
         		}
-        		System.out.println("id: " + id + " match: " + match);
+        		//System.out.println("id: " + id + " match: " + match);
         		if (match == 4) {
         			match_id = id;
         		}
