@@ -76,9 +76,9 @@ null-null
 null-null
 -----
 Play:new play
-new role
 wait
-waitingStriker
+wait
+defender
 wait
 wait
 -----

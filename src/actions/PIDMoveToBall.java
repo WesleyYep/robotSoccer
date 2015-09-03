@@ -80,7 +80,7 @@ public class PIDMoveToBall extends Action {
 
         if (state == 0) {
             if (getDistanceToTarget(bot, pretargetX, pretargetY) < 5) {
-                System.out.println("reached pretarget");
+     //           System.out.println("reached pretarget");
                 state = 1; //going to actual target
             } else {
                 targetX = pretargetX;
@@ -88,7 +88,7 @@ public class PIDMoveToBall extends Action {
             }
         }
         if (state == 1 && bot.getXPosition() > ballX) {
-            System.out.println("reached target");
+    //        System.out.println("reached target");
             state = 0;
         }
 

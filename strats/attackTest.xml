@@ -27,7 +27,7 @@ null-null
 null-null
 -----
 Role:blockingDefender
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[35, 130, 50]
+permanent-actions.BlockOpponentClosestToBall-[]-[]
 null-null
 null-null
 null-null
@@ -108,14 +108,14 @@ PIDGoalKeep
 PIDGkDefender
 PIDChaseBall
 goalLineDefenderTop
-blockingDefender
+PIDChaseBall
 -----
 Play:defendBot
 PIDGoalKeep
 PIDGkDefender
 PIDChaseBall
 goalLineDefenderBot
-blockingDefender
+PIDChaseBall
 -----
 Play:attackTop
 PIDGoalKeep

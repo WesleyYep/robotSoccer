@@ -1,6 +1,11 @@
 package actions;
 
 import strategy.Action;
+import ui.Field;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by Wesley on 18/07/2015.
@@ -148,6 +153,43 @@ public class PIDGoalKeeper extends Action {
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
     }
 
+    @Override
+    public void draw(Graphics2D g) {
+        Graphics2D g2 = (Graphics2D)g.create();
 
+        g2.setBackground(Color.RED);
+
+        // Convert parameter values to correct values to be shown on field.
+        int x1 = Field.fieldXValueToGUIValue(parameters.get("goalLine"));
+        int y1 = Field.fieldYValueToGUIValue(parameters.get("topPoint"));
+
+        int x2 = Field.fieldXValueToGUIValue(parameters.get("goalLine"));
+        int y2 = Field.fieldYValueToGUIValue(parameters.get("bottomPoint"));
+
+        // Draw string and how to change it
+        g2.drawString("Left Click", x1, y1);
+        g2.drawString("Right Click", x2, y2);
+        g2.drawLine(x1, y1, x2, y2);
+
+        g2.dispose();
+    }
+
+    @Override
+    public void react(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        // Transform to actual coordinates for the field
+        x = Field.GUIXValueToFieldValue(x);
+        y = Field.GUIYValueToFieldValue(y);
+
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            parameters.put("goalLine", x);
+            parameters.put("topPoint", y);
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            parameters.put("goalLine", x);
+            parameters.put("bottomPoint", y);
+        }
+    }
 
 }
