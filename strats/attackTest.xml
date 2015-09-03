@@ -134,9 +134,9 @@ chaseBall
 Play:attackMid
 PIDGoalKeep
 centreDefender
-chaseBall
+PIDChaseBall
 MoveSpotThenKick
-chaseBall
+waitingStrikerDeep
 -----
 Play:defend mid
 PIDGoalKeep
@@ -151,13 +151,13 @@ defendTop
 Situation:defendBot:27:235:228:134
 defendBot
 -----
-Situation:attackTop:426:4:54:184
+Situation:attackTop:483:-1:54:184
 attackTop
 -----
-Situation:attackBot:426:187:55:182
+Situation:attackBot:478:182:55:182
 attackBottom
 -----
-Situation:attackMid:257:5:170:366
+Situation:attackMid:257:5:228:366
 attackMid
 -----
 Situation:defend mid:27:135:229:101
