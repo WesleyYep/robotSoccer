@@ -8,6 +8,8 @@ import data.Situation;
 import ui.SituationArea;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,430 +18,444 @@ import java.util.List;
  * Created by Wesley on 23/01/2015.
  */
 public class CurrentStrategy {
-    private List<Role> roles;
-    private List<Play> plays;
-    private List<Situation> situations;
-    private List<StrategyListener> listeners = new ArrayList<StrategyListener>();
-    private FieldController fieldController;
-    private int[] robotMapping = new int[] {0, 1, 2, 3, 4};
-    private Play setPlay = null;
+	private List<Role> roles;
+	private List<Play> plays;
+	private List<Situation> situations;
+	private List<StrategyListener> listeners = new ArrayList<StrategyListener>();
+	private FieldController fieldController;
+	private int[] robotMapping = new int[] {0, 1, 2, 3, 4};
+	private Play setPlay = null;
 
-    public boolean openedStratFile = false;
+	public boolean openedStratFile = false;
 
-    public CurrentStrategy (FieldController fieldController) {
-        roles = new ArrayList<Role>();
-        plays = new ArrayList<Play>();
-        situations = new ArrayList<Situation>();
-        this.fieldController = fieldController;;
-    }
+	public CurrentStrategy (FieldController fieldController) {
+		roles = new ArrayList<Role>();
+		plays = new ArrayList<Play>();
+		situations = new ArrayList<Situation>();
+		this.fieldController = fieldController;;
+	}
 
-    public void changeMapping(int a, int b, int c, int d, int e) {
-        robotMapping[0] = a-1;
-        robotMapping[1] = b-1;
-        robotMapping[2] = c-1;
-        robotMapping[3] = d-1;
-        robotMapping[4] = e-1;
-    }
+	public void changeMapping(int a, int b, int c, int d, int e) {
+		robotMapping[0] = a-1;
+		robotMapping[1] = b-1;
+		robotMapping[2] = c-1;
+		robotMapping[3] = d-1;
+		robotMapping[4] = e-1;
+	}
 
-    public Role[] mapRoles(Role[] originalRoles) {
-        Role[] mappedRoles = new Role[5];
-        for (int i = 0; i < 5; i++) {
-            mappedRoles[i] = originalRoles[robotMapping[i]];
-        }
-        return mappedRoles;
-    }
+	public Role[] mapRoles(Role[] originalRoles) {
+		Role[] mappedRoles = new Role[5];
+		for (int i = 0; i < 5; i++) {
+			mappedRoles[i] = originalRoles[robotMapping[i]];
+		}
+		return mappedRoles;
+	}
 
-    public void addListener(StrategyListener listener) {
-        listeners.add(listener);
-    }
+	public void addListener(StrategyListener listener) {
+		listeners.add(listener);
+	}
 
-    public List<Role> getRoles() {
-        return roles;
-    }
+	public List<Role> getRoles() {
+		return roles;
+	}
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
-    public List<Play> getPlays() {
-        return plays;
-    }
+	public List<Play> getPlays() {
+		return plays;
+	}
 
-    public void setPlays(List<Play> plays) {
-        this.plays = plays;
-    }
+	public void setPlays(List<Play> plays) {
+		this.plays = plays;
+	}
 
-    public List<Situation> getSituations() {
-        return situations;
-    }
+	public List<Situation> getSituations() {
+		return situations;
+	}
 
-    public void setSituations(List<Situation> situations) {
-        this.situations = situations;
-    }
+	public void setSituations(List<Situation> situations) {
+		this.situations = situations;
+	}
 
-    public Role getRoleByName(String name) {
-        for (Role r : roles) {
-            if (r.toString().equals(name)) {
-                return r;
-            }
-        }
-        return null;
-    }
+	public Role getRoleByName(String name) {
+		for (Role r : roles) {
+			if (r.toString().equals(name)) {
+				return r;
+			}
+		}
+		return null;
+	}
 
 
-    public Play getPlayByName(String name) {
-        for (Play p : plays) {
-            if (p.toString().equals(name)) {
-                return p;
-            }
-        }
-        return null;
-    }
+	public Play getPlayByName(String name) {
+		for (Play p : plays) {
+			if (p.toString().equals(name)) {
+				return p;
+			}
+		}
+		return null;
+	}
 
-    public String saveToFile() {
-    	JFileChooser fileChooser;
-        String path;
-        //read in the last save directory
-        if ((path = ConfigFile.getInstance().getLastSaveDirectory()) == null) {
-        	fileChooser = new JFileChooser();
-        }
-        else {
-        	fileChooser = new JFileChooser(path);
-        }
-        fileChooser.showSaveDialog(null);
-        
-        if (fileChooser.getSelectedFile() == null) {
-        	return null;
-        }
-        
-        String fileName = fileChooser.getSelectedFile().getAbsolutePath();
-        save(fileName);
-        return fileName;
-    }
+	public String saveToFile() {
+		JFileChooser fileChooser;
+		String path;
+		//read in the last save directory
+		if ((path = ConfigFile.getInstance().getLastSaveDirectory()) == null) {
+			fileChooser = new JFileChooser();
+		}
+		else {
+			fileChooser = new JFileChooser(path);
+		}
 
-    public void save(String name) {
-        String fileName = name;
-        String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
-        ConfigFile.getInstance().setLastSaveDirectory(folderPath);
-        try {
-            FileWriter fileWriter = new FileWriter(fileName);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+		// Removes the accept all filter.
+		fileChooser.setAcceptAllFileFilterUsed(false);
 
-            for (Role r : getRoles()) {
-                if (r.isSetPlayRole() || r.toString().equals("wait")) {
-                    continue;
-                }
-                bufferedWriter.write("Role:" + r.toString() + "\n");
-                for (int i = 0; i < r.getCriterias().length; i++) {
-                    if (r.getActions()[i] == null || r.getCriterias()[i] == null) {
-                        bufferedWriter.write("null-null" + "\n");
-                        continue;
-                    }
-                    Action action = r.getActions()[i];
-                    bufferedWriter.write(r.getCriterias()[i].toString() + "-actions." + action.toString() + "-" + action.getParameters() + "-" + action.getValues() + "\n");
-                }
-                bufferedWriter.write("-----\n");
-            }
+		// Adds the save filter.
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("text/txt", "txt"));
 
-            for (Play p : getPlays()) {
-                if (p.isSetPlay()) {
-                    continue;
-                }
-                bufferedWriter.write("Play:" + p.toString() + "\n");
-                for (Role r : p.getRoles()) {
-                    if (r == null) {
-                        bufferedWriter.write(null + "\n");
-                        continue;
-                    }
-                    bufferedWriter.write(r.toString() + "\n");
-                }
-                bufferedWriter.write("-----\n");
-//                for (Point point : p.getPlayCriterias()) {
-//                    bufferedWriter.write(point.x + ":" + point.y + "\n");
-//                }
-//                bufferedWriter.write("-----\n");
-            }
+		fileChooser.showSaveDialog(null);
 
-            for (Situation s : situations) {
-                bufferedWriter.write("Situation:" + s.toString() + ":" + s.getArea().getX() + ":" + s.getArea().getY()
-                        + ":" + s.getArea().getWidth() + ":" + s.getArea().getHeight() +  "\n");
-                for (Play p : s.getPlays()) {
-                    bufferedWriter.write(p.toString() + "\n");
-                }
-                bufferedWriter.write("-----\n");
-            }
+		if (fileChooser.getSelectedFile() == null) {
+			return null;
+		}
 
-            bufferedWriter.close();
-            //save last read file
-            ConfigPreviousFile.getInstance().setPreviousStratFile(fileName);
-        }
-        catch (IOException ex) {
-            System.out.println("Unable to open file: " + fileName);
-        }
-    }
+		String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+		save(fileName);
+		return fileName;
+	}
 
-    public void readFromFile() {  	
-    	
-        JFileChooser fileChooser;
-        String path;
-        //read in the last open directory
-        if ((path = ConfigFile.getInstance().getLastOpenDirectory()) == null) {
-        	fileChooser = new JFileChooser();
-        }
-        else {
-        	fileChooser = new JFileChooser(path);
-        }
-        fileChooser.showOpenDialog(null);
-        
-        if (fileChooser.getSelectedFile() == null) {
-        	return;
-        }
-        
-        String fileName = fileChooser.getSelectedFile().getAbsolutePath();
-        
-        //creating the folder name and write into configuration
-        String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
-        ConfigFile.getInstance().setLastOpenDirectory(folderPath);
-        read(fileName);
-        //save last read file
-        ConfigPreviousFile.getInstance().setPreviousStratFile(fileName);
-    }
+	public void save(String name) {
+		String fileName = name;
+		String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
+		ConfigFile.getInstance().setLastSaveDirectory(folderPath);
+		try {
+			FileWriter fileWriter = new FileWriter(fileName);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-    public void read(String fileName) {
-        String line = null;
-        openedStratFile = true;
-        try {
-            FileReader fileReader = new FileReader(fileName);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+			for (Role r : getRoles()) {
+				if (r.isSetPlayRole() || r.toString().equals("wait")) {
+					continue;
+				}
+				bufferedWriter.write("Role:" + r.toString() + "\n");
+				for (int i = 0; i < r.getCriterias().length; i++) {
+					if (r.getActions()[i] == null || r.getCriterias()[i] == null) {
+						bufferedWriter.write("null-null" + "\n");
+						continue;
+					}
+					Action action = r.getActions()[i];
+					bufferedWriter.write(r.getCriterias()[i].toString() + "-actions." + action.toString() + "-" + action.getParameters() + "-" + action.getValues() + "\n");
+				}
+				bufferedWriter.write("-----\n");
+			}
 
-            clear(roles);
-            plays.clear();
-            situations.clear();
-            fieldController.removeAllSituationArea();
-            while((line = bufferedReader.readLine()) != null) {
-                if (line.startsWith("Role:")) {
-                    int i = 0;
-                    Criterias criterias = new Criterias();
-                    Role role = new Role();
-                    role.setRoleName(line.split(":")[1]);
+			for (Play p : getPlays()) {
+				if (p.isSetPlay()) {
+					continue;
+				}
+				bufferedWriter.write("Play:" + p.toString() + "\n");
+				for (Role r : p.getRoles()) {
+					if (r == null) {
+						bufferedWriter.write(null + "\n");
+						continue;
+					}
+					bufferedWriter.write(r.toString() + "\n");
+				}
+				bufferedWriter.write("-----\n");
+				//                for (Point point : p.getPlayCriterias()) {
+				//                    bufferedWriter.write(point.x + ":" + point.y + "\n");
+				//                }
+				//                bufferedWriter.write("-----\n");
+			}
 
-                    while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
-                        String[] lineArray = line.split("-");
-                        if (lineArray[0].equals("VeryCloseToBall")) {
-                            System.out.println("hi");
-                        }
-                        Action action = (Action)Class.forName(lineArray[1]).newInstance();
-                        Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
-                        if (lineArray.length < 3) {
-                            //do nothing
-                        } else {
-                            for (int j = 0; j < fromString(lineArray[2]).length; j++) {
-                                if (lineArray[2].equals("[]") || lineArray[3].equals("[]")) {
-                                    continue;
-                                }
-                                action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
-                            }
-                        }
-                        role.setPair(criteria, action, i);
-                        i++;
-                    }
-                    roles.add(role);
-                } else if (line.startsWith("Play:")) {
-                    Play play = new Play();
-                    play.setPlayName(line.split(":")[1]);
-                    int i = 0;
+			for (Situation s : situations) {
+				bufferedWriter.write("Situation:" + s.toString() + ":" + s.getArea().getX() + ":" + s.getArea().getY()
+						+ ":" + s.getArea().getWidth() + ":" + s.getArea().getHeight() +  "\n");
+				for (Play p : s.getPlays()) {
+					bufferedWriter.write(p.toString() + "\n");
+				}
+				bufferedWriter.write("-----\n");
+			}
 
-                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-                        String[] lineArray = line.split(":");
-                        Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
-                        for (int k = 0; k < roleToAdd.getActions().length; k++) {
-                            if (roleToAdd.getActions()[k] == null) { break; }
-                            Action firstAction = roleToAdd.getActions()[k];
-                            Object[] params = firstAction.getParameters().toArray();
+			bufferedWriter.close();
+			//save last read file
+			ConfigPreviousFile.getInstance().setPreviousStratFile(fileName);
+		}
+		catch (IOException ex) {
+			System.out.println("Unable to open file: " + fileName);
+		}
+	}
 
-                            for (int j = 0; j < params.length; j++) {
-                                if (lineArray.length == 5) {
-                                    firstAction.updateParameters((String) params[j], Integer.parseInt(lineArray[j + 1]));
-                                } else {
-                                    firstAction.parameters = getRoleByName(lineArray[0]).getActions()[k].parameters;
-                                }
-                            }
-                        }
-                        play.addRole(i, roleToAdd);
+	public void readFromFile() {  	
 
-                        i++;
-                    }
-                    plays.add(play);
-                } else if (line.startsWith("Situation:")) {
-                    String[] splitLine = line.split(":");
-                    SituationArea area = new SituationArea(Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
-                    area.addAreaListener(fieldController);
-                    area.setBounds(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]),
-                            Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
-                    fieldController.addArea(area);
-                    fieldController.setSelectedArea(area);
+		JFileChooser fileChooser;
+		String path;
+		//read in the last open directory
+		if ((path = ConfigFile.getInstance().getLastOpenDirectory()) == null) {
+			fileChooser = new JFileChooser();
+		}
+		else {
+			fileChooser = new JFileChooser(path);
+		}
 
-                    for (Situation s : situations) {
-                        s.setAreaActive(false);
-                    }
-                    Situation situation = new Situation(area, splitLine[1]);
-                    //why does area not show up when row selected?
-                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-                        situation.addPlay(getPlayByName(line));
-                    }
-                    situations.add(situation);
-                    situation.setAreaActive(true);
-                }
-            }
+		// Removes the accept all filter.
+		fileChooser.setAcceptAllFileFilterUsed(false);
 
-            bufferedReader.close();
-            if (!fileName.contains("setPlay.xml")) { //don't open set play file if we deliberately are opening it!
-                readSetPlay(new File(fileName).getParentFile().getAbsolutePath());
-            }
-            for (StrategyListener listener : listeners) {
-                listener.strategyChanged(); //this informs situationpanel, playspanel, and rolepanel that they need to update
-            }
-        } catch (IOException ex) {
-            System.out.println("Unable to open file: " + fileName);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+		// Adds the open filter.
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("text/xml", "xml"));
 
-    public void readSetPlay(String directory) {
-        String line = null;
-        openedStratFile = true;
-        try {
-            FileReader fileReader = new FileReader(directory + "\\setPlay.xml");
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+		fileChooser.showOpenDialog(null);
 
-            while((line = bufferedReader.readLine()) != null) {
-                if (line.startsWith("Role:")) {
-                    int i = 0;
-                    Criterias criterias = new Criterias();
-                    Role role = new Role();
-                    role.setRoleName(line.split(":")[1]);
-                    if (containsRole(role)) {
-                        continue;
-                    }
-                    role.setIsSetPlayRole(true);
+		if (fileChooser.getSelectedFile() == null) {
+			return;
+		}
 
-                    while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
-                        String[] lineArray = line.split("-");
-                        Action action = (Action)Class.forName(lineArray[1]).newInstance();
-                        Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
-                        if (lineArray.length < 3) {
-                            //do nothing
-                        } else {
-                            for (int j = 0; j < fromString(lineArray[2]).length; j++) {
-                                if (lineArray[2].equals("[]") || lineArray[3].equals("[]")) {
-                                    continue;
-                                }
-                                action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
-                            }
-                        }
-                        role.setPair(criteria, action, i);
-                        i++;
-                    }
-                    roles.add(role);
-                } else if (line.startsWith("Play:")) {
-                    Play play = new Play();
-                    play.setPlayName(line.split(":")[1]);
-                    play.setIsSetPlay(true);
-                    int i = 0;
+		String fileName = fileChooser.getSelectedFile().getAbsolutePath();
 
-                    while (!(line = bufferedReader.readLine()).equals("-----")) {
-                        String[] lineArray = line.split(":");
-                        Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
+		//creating the folder name and write into configuration
+		String folderPath = fileName.substring(0, fileName.lastIndexOf("\\"));;
+		ConfigFile.getInstance().setLastOpenDirectory(folderPath);
+		read(fileName);
+		//save last read file
+		ConfigPreviousFile.getInstance().setPreviousStratFile(fileName);
+	}
 
-                            Action firstAction = roleToAdd.getActions()[0];
-                            Object[] params = firstAction.getParameters().toArray();
-                            for (int j = 0; j < params.length; j++) {
-                                if (lineArray.length > params.length) {
-                                    if (firstAction.getName().equals("PenaltySpin")) {
-                                        System.out.println("wtf");
-                                    }
-                                    firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
-                                } else {
-                                    firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
-                                    break;
-                                }
-                            }
-                        play.addRole(i, roleToAdd);
+	public void read(String fileName) {
+		String line = null;
+		openedStratFile = true;
+		try {
+			FileReader fileReader = new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-                        i++;
-                    }
-                    plays.add(play);
-                }
-            }
+			clear(roles);
+			plays.clear();
+			situations.clear();
+			fieldController.removeAllSituationArea();
+			while((line = bufferedReader.readLine()) != null) {
+				if (line.startsWith("Role:")) {
+					int i = 0;
+					Criterias criterias = new Criterias();
+					Role role = new Role();
+					role.setRoleName(line.split(":")[1]);
 
-        } catch (IOException ex) {
-            System.out.println("Unable to open file: " + directory + "/setPlay.xml");
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+					while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
+						String[] lineArray = line.split("-");
+						if (lineArray[0].equals("VeryCloseToBall")) {
+							System.out.println("hi");
+						}
+						Action action = (Action)Class.forName(lineArray[1]).newInstance();
+						Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
+						if (lineArray.length < 3) {
+							//do nothing
+						} else {
+							for (int j = 0; j < fromString(lineArray[2]).length; j++) {
+								if (lineArray[2].equals("[]") || lineArray[3].equals("[]")) {
+									continue;
+								}
+								action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
+							}
+						}
+						role.setPair(criteria, action, i);
+						i++;
+					}
+					roles.add(role);
+				} else if (line.startsWith("Play:")) {
+					Play play = new Play();
+					play.setPlayName(line.split(":")[1]);
+					int i = 0;
 
-    private void clear(List<Role> roles) {
-        Role r = getRoleByName("wait");
-        roles.clear();
-        roles.add(r);
-    }
+					while (!(line = bufferedReader.readLine()).equals("-----")) {
+						String[] lineArray = line.split(":");
+						Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
+						for (int k = 0; k < roleToAdd.getActions().length; k++) {
+							if (roleToAdd.getActions()[k] == null) { break; }
+							Action firstAction = roleToAdd.getActions()[k];
+							Object[] params = firstAction.getParameters().toArray();
 
-    private int[] fromStringInt(String string) {
-        String[] strings = string.replace("[", "").replace("]", "").split(", ");
-        int result[] = new int[strings.length];
-        for (int i = 0; i < result.length; i++) {
-            try {
-                result[i] = Integer.parseInt(strings[i]);
-            }catch (NumberFormatException ex) {
-                System.out.println("Action parameter is not a number");
-            }
-        }
-        return result;
-    }
+							for (int j = 0; j < params.length; j++) {
+								if (lineArray.length == 5) {
+									firstAction.updateParameters((String) params[j], Integer.parseInt(lineArray[j + 1]));
+								} else {
+									firstAction.parameters = getRoleByName(lineArray[0]).getActions()[k].parameters;
+								}
+							}
+						}
+						play.addRole(i, roleToAdd);
 
-    private String[] fromString(String string) {
-        String[] strings = string.replace("[", "").replace("]", "").split(", ");
-        return strings;
-    }
+						i++;
+					}
+					plays.add(play);
+				} else if (line.startsWith("Situation:")) {
+					String[] splitLine = line.split(":");
+					SituationArea area = new SituationArea(Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
+					area.addAreaListener(fieldController);
+					area.setBounds(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]),
+							Integer.parseInt(splitLine[4]), Integer.parseInt(splitLine[5]));
+					fieldController.addArea(area);
+					fieldController.setSelectedArea(area);
 
-    public boolean containsRole(Role role) {
-        for (Role r : roles) {
-            if ( r.toString().equals(role.toString())) {
-                return true;
-            }
-        }
-        return false;
-    }
+					for (Situation s : situations) {
+						s.setAreaActive(false);
+					}
+					Situation situation = new Situation(area, splitLine[1]);
+					//why does area not show up when row selected?
+					while (!(line = bufferedReader.readLine()).equals("-----")) {
+						situation.addPlay(getPlayByName(line));
+					}
+					situations.add(situation);
+					situation.setAreaActive(true);
+				}
+			}
 
-    public void setSetPlay(Play play) {
-        for (StrategyListener listener : listeners) {
-            listener.setPlayChanged(play); //this informs situationpanel, playspanel, and rolepanel that they need to update
-        }
-        setPlay = play;
-    }
+			bufferedReader.close();
+			if (!fileName.contains("setPlay.xml")) { //don't open set play file if we deliberately are opening it!
+				readSetPlay(new File(fileName).getParentFile().getAbsolutePath());
+			}
+			for (StrategyListener listener : listeners) {
+				listener.strategyChanged(); //this informs situationpanel, playspanel, and rolepanel that they need to update
+			}
+		} catch (IOException ex) {
+			System.out.println("Unable to open file: " + fileName);
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public Play getSetPlay() {
-        return setPlay;
-    }
+	public void readSetPlay(String directory) {
+		String line = null;
+		openedStratFile = true;
+		try {
+			FileReader fileReader = new FileReader(directory + "\\setPlay.xml");
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-    private static Role cloneRole(Role role){
-        try{
-            Role clone = role.getClass().newInstance();
-            clone.setRoleName(role.toString());
-            Action[] actions = role.getActions();
-            Criteria[] crits = role.getCriterias();
+			while((line = bufferedReader.readLine()) != null) {
+				if (line.startsWith("Role:")) {
+					int i = 0;
+					Criterias criterias = new Criterias();
+					Role role = new Role();
+					role.setRoleName(line.split(":")[1]);
+					if (containsRole(role)) {
+						continue;
+					}
+					role.setIsSetPlayRole(true);
 
-            for (int i = 0; i < actions.length; i++) {
-                if (actions[i] == null || crits[i] == null) {
-                    break;
-                }
-                clone.setPair(crits[i], (Action)Class.forName("actions." + actions[i].toString()).newInstance(), i);
-            }
-            return clone;
-        }catch(Exception e){
-            return null;
-        }
-    }
+					while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
+						String[] lineArray = line.split("-");
+						Action action = (Action)Class.forName(lineArray[1]).newInstance();
+						Criteria criteria = (Criteria)Class.forName(lineArray[0]).newInstance();
+						if (lineArray.length < 3) {
+							//do nothing
+						} else {
+							for (int j = 0; j < fromString(lineArray[2]).length; j++) {
+								if (lineArray[2].equals("[]") || lineArray[3].equals("[]")) {
+									continue;
+								}
+								action.updateParameters(fromString(lineArray[2])[j], fromStringInt(lineArray[3])[j]);
+							}
+						}
+						role.setPair(criteria, action, i);
+						i++;
+					}
+					roles.add(role);
+				} else if (line.startsWith("Play:")) {
+					Play play = new Play();
+					play.setPlayName(line.split(":")[1]);
+					play.setIsSetPlay(true);
+					int i = 0;
+
+					while (!(line = bufferedReader.readLine()).equals("-----")) {
+						String[] lineArray = line.split(":");
+						Role roleToAdd = cloneRole(getRoleByName(lineArray[0]));
+
+						Action firstAction = roleToAdd.getActions()[0];
+						Object[] params = firstAction.getParameters().toArray();
+						for (int j = 0; j < params.length; j++) {
+							if (lineArray.length > params.length) {
+								if (firstAction.getName().equals("PenaltySpin")) {
+									System.out.println("wtf");
+								}
+								firstAction.updateParameters((String)params[j], Integer.parseInt(lineArray[j+1]));
+							} else {
+								firstAction.parameters = getRoleByName(lineArray[0]).getActions()[0].parameters;
+								break;
+							}
+						}
+						play.addRole(i, roleToAdd);
+
+						i++;
+					}
+					plays.add(play);
+				}
+			}
+
+		} catch (IOException ex) {
+			System.out.println("Unable to open file: " + directory + "/setPlay.xml");
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void clear(List<Role> roles) {
+		Role r = getRoleByName("wait");
+		roles.clear();
+		roles.add(r);
+	}
+
+	private int[] fromStringInt(String string) {
+		String[] strings = string.replace("[", "").replace("]", "").split(", ");
+		int result[] = new int[strings.length];
+		for (int i = 0; i < result.length; i++) {
+			try {
+				result[i] = Integer.parseInt(strings[i]);
+			}catch (NumberFormatException ex) {
+				System.out.println("Action parameter is not a number");
+			}
+		}
+		return result;
+	}
+
+	private String[] fromString(String string) {
+		String[] strings = string.replace("[", "").replace("]", "").split(", ");
+		return strings;
+	}
+
+	public boolean containsRole(Role role) {
+		for (Role r : roles) {
+			if ( r.toString().equals(role.toString())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void setSetPlay(Play play) {
+		for (StrategyListener listener : listeners) {
+			listener.setPlayChanged(play); //this informs situationpanel, playspanel, and rolepanel that they need to update
+		}
+		setPlay = play;
+	}
+
+	public Play getSetPlay() {
+		return setPlay;
+	}
+
+	private static Role cloneRole(Role role){
+		try{
+			Role clone = role.getClass().newInstance();
+			clone.setRoleName(role.toString());
+			Action[] actions = role.getActions();
+			Criteria[] crits = role.getCriterias();
+
+			for (int i = 0; i < actions.length; i++) {
+				if (actions[i] == null || crits[i] == null) {
+					break;
+				}
+				clone.setPair(crits[i], (Action)Class.forName("actions." + actions[i].toString()).newInstance(), i);
+			}
+			return clone;
+		}catch(Exception e){
+			return null;
+		}
+	}
 }
