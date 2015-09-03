@@ -9,21 +9,11 @@ Gradle is used to manage the program build.
 
 Authors: Wesley Yep, John Law, Chang Kon Han
 
-Developer Notes:
-Coding Convention
+Setup
 =================
-Add some so we can all see
---------------------------
-1.  Class naming, first letter of each internal word capitalized.
-2.  Tabs should be tab character and not tabs with spaces replaced.
-3.  if else or if else if statements should be:
-<pre>
-if () {
-} else {
-}
-if () {
-} else if () {
-}
-</pre>
+Software relies on x86 version of jdk
+# Eclipse  
+Install gradle plugin for Eclipse  
+File -> Import -> Gradle -> Gradle Project -> Browse to folder containing build.gradle file -> Build model -> Finish  
 
-
+# Intellij  
