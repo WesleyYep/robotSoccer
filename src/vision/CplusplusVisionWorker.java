@@ -285,13 +285,15 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     		patchList.get(i).center.y = sumY/patchList.get(i).pixels.size();
     		
     		//calculate revision position ..
-    		
+    		Point revision = VisionController.FlatToScreen(new Point(patchList.get(i).center.x,patchList.get(i).center.y));
     		//calc real position
     		Point temp = VisionController.imagePosToActualPos(new Point(patchList.get(i).center.x,patchList.get(i).center.y));
-    		patchList.get(i).realCenter.x = temp.x;
-    		patchList.get(i).realCenter.y = temp.y;
-    		
-    		
+			//Point ground = VisionController.ScreenToGround(revision);
+    		patchList.get(i).realCenter.x = temp.x/100;
+    		patchList.get(i).realCenter.y = (180 - temp.y)/100;
+
+			//System.out.println("i: "  + i);
+			//System.out.println("real center: " + temp.x + " " + (180-temp.y));
     	}
     	
 	}
@@ -300,9 +302,9 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     	byte maskTeam = LookupTable.TEAM_COLOUR;
     	byte maskBlack = LookupTable.GROUND_COLOUR;
     	//need to replace with black in look up table *reminder for myself
-		System.out.println("team patch list size: " + teamPatchList.size());
+		//System.out.println("team patch list size: " + teamPatchList.size());
         for (int i =0; i<teamPatchList.size(); i++) {
-
+			System.out.println("i :"  + i);
             int[] segment_count = new int[4];
             segment_count[0] = 0;
             segment_count[1] = 0;
@@ -350,37 +352,42 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 
 				Point tempPoint = VisionController.imagePosToActualPos(anglePoint);
 
-				double raX = tempPoint.x - teamPatchList.get(i).realCenter.x;
-				double raY = tempPoint.y - teamPatchList.get(i).realCenter.y;
+				double raX = tempPoint.x/100.00 - teamPatchList.get(i).realCenter.x;
+				double raY = (180-tempPoint.y)/100.00 - teamPatchList.get(i).realCenter.y;
 
-				robot_angle[0] = Math.atan2(raX,raY);
+				robot_angle[0] = Math.atan2(raY,raX);
 				while (robot_angle[0] < -Math.PI) robot_angle[0] += (2*Math.PI);
 				while (robot_angle[0] > Math.PI) robot_angle[0] -= (2*Math.PI);
 				robot_angle[1] = robot_angle[0] + Math.PI;
+				//System.out.println("angle point: " + anglePoint.x + " " + anglePoint.y);
+				//System.out.println("tempPoint: " + tempPoint.x/100.00 + " " + (180-tempPoint.y)/100.00 );
             }
+			//System.out.println("center: " + teamPatchList.get(i).realCenter.x + " " + teamPatchList.get(i).realCenter.y);
 
-			System.out.println("robot_angle: " + robot_angle[0] + " " + robot_angle[1]);
-			System.out.println("real center:" + teamPatchList.get(i).realCenter)
+			//System.out.println("robot_screen_angle" + robot_angle_screen[0] + " " + robot_angle_screen[1]);
+			//System.out.println("robot_angle: " + robot_angle[0] + " " + robot_angle[1]);
+
 
             double RadAngle = robot_angle[0] - Math.PI/2;
             
             double cx = teamPatchList.get(i).realCenter.x;
             double cy = teamPatchList.get(i).realCenter.y;
-            
+			System.out.println("real center:" + cx + " " + cy);
             {
             	double rad = RadAngle;
             	double cosTheta = Math.cos(rad);
             	double sinTheta = Math.sin(rad);
-            	
+				//System.out.println("robot_angle: " + robot_angle[0]);
+            	//System.out.println("RadAngle: " + rad);
+				//System.out.println("CosTheta: " + cosTheta + " " + "sinTheta: " + sinTheta);
             	int total_count = 0;
 
             	
             	for (int s =0; s<4; s++) {
-            		
-            		double d = valueSegmentCheckDistance /1000;
+            		//System.out.print("s:" + s + " ");
+            		double d = valueSegmentCheckDistance /1000.00;
             		double[] dx = {0, -d, -d, d, d};
             		double[] dy = {0, -d, d, -d, d};
-            		
             		for (int p=0; p<5; p++) {
             			double x = segmentPosition[s].x/100.0 + dx[p];
             			double y = segmentPosition[s].y/100.0 + dy[p];
@@ -388,11 +395,11 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             			double seg_x = cx + cosTheta*x - sinTheta*y;
             			double seg_y = cy + sinTheta*x + cosTheta*y;
             			
-            			Point temp = VisionController.actualPosToimagePos(new Point(seg_x,seg_y));
+            			Point temp = VisionController.actualPosToimagePos(new Point(seg_x*100,seg_y*100));
             			
             			double k = temp.x;
-            			double j = temp.y;
-
+            			double j = 480-temp.y;
+						//System.out.print(p + ": " + k + " " + j + " | ");
 						//System.out.println((int)j + " " + (int)k + " " + image.width() + " " + image.height());
             			double[] hsv = image.get((int)j, (int)k);
 
@@ -405,23 +412,26 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             				total_count++;
             			}
             		}
-            		
+            		//System.out.println("");
             	}
             }
-
 
             SegmentCount new_segment_count = new SegmentCount();
             new_segment_count.team_patch_id = i;
     		new_segment_count.inverseOrientation = false;
     		new_segment_count.orientation_rad    = robot_angle[0];
     		new_segment_count.orientation_screen = robot_angle_screen[0];
-    		
+
+			System.out.print("segment 1: ");
     		for( int s=0 ; s<4 ; s++ )
     		{
     			new_segment_count.count[s] = segment_count[s];
+				System.out.print(segment_count[s] + " ");
     		}
+			System.out.println("");
     		segmentCountList.add(new_segment_count);
-    		
+
+			System.out.print("segment 2: ");
     		SegmentCount new_segment_count2 = new SegmentCount();
     		new_segment_count2.team_patch_id = i;
     		new_segment_count2.inverseOrientation = true;
@@ -431,7 +441,13 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     		for( int s=0 ; s<4 ; s++ )
     		{
     			new_segment_count2.count[3-s] = segment_count[s];
+
     		}
+
+			for (int s=0; s<4; s++) {
+				System.out.print(new_segment_count2.count[s] + " ");
+			}
+			System.out.println("");
     		
     		segmentCountList.add(new_segment_count2);
         }
@@ -444,7 +460,6 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     		best_robot_seg_id[i] = -1;
     	}
 
-		System.out.println("segment count list size: " + segmentCountList.size());
         for (int i = 0; i<segmentCountList.size(); i++) {
         	int match_id = -1;
         	
@@ -510,6 +525,13 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     			
     			robotHome[id].direction += patchDirectionOffset /180*Math.PI;
     			robotHome[id].pixelDirection = patchDirectionOffset /180*Math.PI - robotHome[id].pixelDirection;
+
+				//System.out.println("found robot:" + id);
+				//System.out.println("pos: " + robotHome[id].realPos.x*100 + " " + (180-(robotHome[id].realPos.y*100)));
+				//System.out.println("angle: " + Math.toDegrees(robotHome[id].direction));
+				//System.out.println("");
+				robotHome[id].realPos.x *= 100;
+				robotHome[id].realPos.y = 180-(robotHome[id].realPos.y*100);
 				notifyListeners(new VisionData(robotHome[id].realPos,robotHome[id].direction, "robot:" + (id+1)));
     		}
     		else
@@ -527,7 +549,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     		}
 
     	}
-        
+
     }
 
 	public ArrayList<Patch> getTeamPatchList() {

@@ -131,12 +131,18 @@ public class WebcamDisplayPanel extends JPanel {
 
             if (colourPanel.isContourActive()) {
                	//maskCameraImage(matToShow);
+				matToProcess = matToShow.clone();
 				debugCplusplusWorker(matToShow);
-                matToProcess = matToShow.clone();
+
             } else {
                 matToProcess = matToShow.clone();
                 //maskCameraImage(matToProcess);
             }
+
+			if (colourPanel.isGroundMask()) {
+				//maskCameraImage(matToShow);
+				applyGroundMask(matToShow);
+			}
 
 
             notifyImageUpdate(matToProcess);
@@ -239,6 +245,7 @@ public class WebcamDisplayPanel extends JPanel {
     }
 
 	private Mat debugCplusplusWorker(Mat image) {
+
 		CplusplusVisionWorker worker = null;
 		for (WebcamDisplayPanelListener l : wdpListeners) {
 			if (l instanceof  CplusplusVisionWorker) {
@@ -249,13 +256,25 @@ public class WebcamDisplayPanel extends JPanel {
 		if (worker != null) {
 			ArrayList<Patch> patches = worker.getTeamPatchList();
 
-			if (patches.size() > 0)  {
-				for ( Patch p  : patches) {
-					for ( org.opencv.core.Point pixel : p.pixels) {
+			if (patches.size() > 0) {
+				for (Patch p : patches) {
+					for (org.opencv.core.Point pixel : p.pixels) {
 						Core.line(image, pixel, pixel, new Scalar(0, 255, 255));
 					}
 				}
 			}
+		}
+		return image;
+	}
+
+	private Mat applyGroundMask(Mat image) {
+
+		if (colourPanel != null) {
+			SamplingPanel panel = colourPanel.groundSamplingPanel;
+			Scalar hsv_l = new Scalar(panel.getLowerBoundForH(),panel.getLowerBoundForS(), panel.getLowerBoundForV());
+			Scalar hsv_h = new Scalar(panel.getUpperBoundForH(),panel.getUpperBoundForS(),panel.getUpperBoundForV());
+			Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2HSV_FULL);
+			Core.inRange(image,hsv_l,hsv_h,image);
 		}
 		return image;
 	}

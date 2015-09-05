@@ -186,13 +186,22 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 			ball.setY(p.y);
 
 		} else if (data.getType().startsWith("robot")) {
+			/*
 			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);
 			int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
 			double correctTheta = VisionController.imageThetaToActualTheta(data.getTheta());
 			bots.getRobot(index).setX(p.x);
 			bots.getRobot(index).setY(p.y);
+			bots.getRobot(index).setTheta(Math.toDegrees(correctTheta)); */
+
+			//Point2D p = VisionController.imagePosToActualPos(robotCoord.x, robotCoord.y);
+			int index = Math.abs(Integer.parseInt(data.getType().split(":")[1])) - 1;
+			double correctTheta = VisionController.imageThetaToActualTheta(data.getTheta());
+			bots.getRobot(index).setX(data.getCoordinate().x);
+			bots.getRobot(index).setY(data.getCoordinate().y);
 			bots.getRobot(index).setTheta(Math.toDegrees(correctTheta));
+
 
 		} else if (data.getType().startsWith("opponent")) {
 

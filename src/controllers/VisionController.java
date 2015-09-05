@@ -100,6 +100,34 @@ public class VisionController {
 		
 	}
 
+
+    public static Point FlatToScreen(Point p) {
+        double x = p.x;
+        double y = p.y;
+
+        if (t!=null) {
+            Point2D selectedPoint = new Point2D.Double();
+            t.transform(new Point2D.Double(x,y), selectedPoint);
+            return new Point(selectedPoint.getX(), selectedPoint.getY());
+        } else {
+            return null;
+        }
+    }
+
+    public static Point ScreenToGround(Point p) {
+        double x = p.x;
+        double y = p.y;
+
+        x -= 121;
+        y -= 48;
+
+        x /= 180.00;
+        y /= 180.00;
+
+        return new Point(x,y);
+    }
+
+
     public static Point actualPosToimagePos(Point p) {
         double x = p.x;
         double y = p.y;
@@ -340,14 +368,6 @@ public class VisionController {
         double[] y = {topLeft.getY(),topRight.getY(),rightGoalTopLeft.getY(),rightGoalTopRight.getY(),rightGoalBottomRight.getY()
                 ,rightGoalBottomLeft.getY(),bottomRight.getY(),bottomLeft.getY(),leftGoalBottomRight.getY(),leftGoalBottomLeft.getY()
                 ,leftGoalTopLeft.getY(),leftGoalTopRight.getY()};
-
-        for (int i = 0; i<640; i++) {
-            for (int j = 0; j<480; j++) {
-                if (pointInPoly(vert,x,y,i,j)) {
-                    processingArea[i+(j*640)] = 1;
-                }
-            }
-        }
     }
 
 }

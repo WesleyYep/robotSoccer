@@ -43,6 +43,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
     
     private JCheckBox autoRangeCheckBox;
     private JCheckBox contourCheckBox;
+    private JCheckBox blackMaskBox;
     private JCheckBox newYellowVisionCheckBox = new JCheckBox("New Yellow Vision");
     private JCheckBox newNewYellowVisionCheckBox = new JCheckBox("New (New) Yellow Vision");
     private JTextField robotNotPresentField = new JTextField("", 20);
@@ -51,6 +52,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 
     private boolean isAutoRange = false;
     private boolean isContour = false;
+    private boolean isGroundMask = false;
 
     private JLabel zoomLabel;
     private JButton setRobotDimensionButton = new JButton("Click to set robot dimension");
@@ -69,6 +71,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         
         autoRangeCheckBox = new JCheckBox("Auto Range");
         contourCheckBox = new JCheckBox("Contours");
+        blackMaskBox = new JCheckBox("ground mask");
         
         robotSizeSlider.setLowValue(10);
         ballSizeSlider.setLowValue(10);
@@ -194,6 +197,7 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         add(autoRangeCheckBox, "split 4");
         add(contourCheckBox);
         add(newYellowVisionCheckBox);
+        add(blackMaskBox);
         add(newNewYellowVisionCheckBox, "wrap");
 
         add(new JLabel("Robots not present: (eg. 1,4,5)"), "split 3");
@@ -246,6 +250,13 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
 
         });
 
+        blackMaskBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                isGroundMask = !isGroundMask;
+            }
+        });
+
         robotNotPresentSaveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -254,6 +265,8 @@ public class ColourPanel extends JPanel implements ColourRangeListener, WebcamDi
         });
         
     }
+
+    public boolean isGroundMask() { return isGroundMask; }
 
     public boolean isNewYellowVision() {
         return newYellowVisionCheckBox.isSelected();
