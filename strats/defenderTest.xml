@@ -78,13 +78,9 @@ null-null
 Play:new play
 wait
 wait
-wait
-<<<<<<< HEAD
-waitingStriker
-=======
-wait
 new role
->>>>>>> cba302680c999dc8e781fd606d50f86a21fa9d76
+wait
+wait
 -----
 Situation:new situation 1:30:1:452:367
 new play
