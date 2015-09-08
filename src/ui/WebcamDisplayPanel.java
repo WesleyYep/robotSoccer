@@ -263,6 +263,13 @@ public class WebcamDisplayPanel extends JPanel {
 					}
 				}
 			}
+
+			ArrayList<org.opencv.core.Point> segmentPoints = worker.getSegmentPointList();
+			if (segmentPoints.size() > 0 ) {
+				for (org.opencv.core.Point p : segmentPoints) {
+					Core.line(image, p, p, new Scalar(0, 255, 255));
+				}
+			}
 		}
 		return image;
 	}

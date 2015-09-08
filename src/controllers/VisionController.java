@@ -134,8 +134,8 @@ public class VisionController {
 
 
         if (tInverse != null ) {
-            x = x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH) + mapLeft;
-            y = y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT) + mapTop;
+            x = (x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH)) + mapLeft;
+            y = (y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT)) + mapTop;
 
             Point2D selectedPoint = new Point2D.Double();
             tInverse.transform(new Point2D.Double(x,y), selectedPoint);
@@ -243,7 +243,8 @@ public class VisionController {
 
 
 	public void setTopRight(Point2D topRight) {
-		this.topRight = topRight;
+		//this.topRight = new Point2D.Double(591,6);
+        this.topRight = topRight;
 		this.createTransformMatrix();
 	}
 
@@ -254,7 +255,8 @@ public class VisionController {
 
 
 	public void setTopLeft(Point2D topLeft) {
-		this.topLeft = topLeft;
+		//this.topLeft = new Point2D.Double(56,4);
+        this.topLeft = topLeft;
 		this.createTransformMatrix();
 	}
 
@@ -265,7 +267,8 @@ public class VisionController {
 
 
 	public void setBottomRight(Point2D bottomRight) {
-		this.bottomRight = bottomRight;
+		//this.bottomRight = new Point2D.Double(622,449);
+        this.bottomRight = bottomRight;
 		this.createTransformMatrix();
 	}
 
@@ -276,7 +279,8 @@ public class VisionController {
 
 
 	public void setBottomLeft(Point2D bottomLeft) {
-		this.bottomLeft = bottomLeft;
+		//this.bottomLeft = new Point2D.Double(42,461);
+        this.bottomLeft = bottomLeft;
 		this.createTransformMatrix();
 	}
 

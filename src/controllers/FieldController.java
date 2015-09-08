@@ -180,10 +180,10 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 	@Override
 	public void receive(VisionData data) {
 		if (data.getType().equals("ball")) {
-			org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
+			//org.opencv.core.Point p = VisionController.imagePosToActualPos(data.getCoordinate());
 			//Point2D p = VisionController.imagePosToActualPos(ballCoord.x, ballCoord.y);
-			ball.setX(p.x); //hardcoded for now
-			ball.setY(p.y);
+			ball.setX(data.getCoordinate().x); //hardcoded for now
+			ball.setY(data.getCoordinate().y);
 
 		} else if (data.getType().startsWith("robot")) {
 			/*
