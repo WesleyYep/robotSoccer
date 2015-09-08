@@ -147,7 +147,7 @@ public class WebcamDisplayPanel extends JPanel {
 
 			long startTime = System.currentTimeMillis();
             notifyImageUpdate(matToProcess);
-			System.out.println(System.currentTimeMillis() - startTime);
+			//System.out.println(System.currentTimeMillis() - startTime);
 
             
            

@@ -413,6 +413,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             			double j = temp.y;
 						//if (i == 1) System.out.print("p " + p + ": " + "x:" + x + " y:" +  y + " " + seg_x + " " + seg_y + " | ");
 						//if (i == 1) System.out.println((int)j + " " + (int)k + " " + image.width() + " " + image.height());
+
             			double[] hsv = image.get((int)j, (int)k);
 						segmentPointList.add(new Point(k,j));
             			byte patchLUTData = LookupTable.getLUTData((int)hsv[0], (int)hsv[1], (int)hsv[2]);
