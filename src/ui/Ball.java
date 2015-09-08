@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Ball extends RobotSoccerObject{
+public class Ball extends RobotSoccerObject {
 
 	//actual ball diameter is 42.7mm;
 	final public static int BALL_DIAMETER = 4;
@@ -20,7 +20,16 @@ public class Ball extends RobotSoccerObject{
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private boolean focused;
 
-	public Ball() {
+    private Ball instance = null;
+
+    public Ball getInstance() {
+        if (instance == null) {
+            instance = new Ball();
+        }
+        return instance;
+    }
+
+	private Ball() {
 		super(new Coordinate(70, 70));
 	}
 
