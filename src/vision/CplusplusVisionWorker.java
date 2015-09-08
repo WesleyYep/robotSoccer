@@ -64,13 +64,16 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	@Override
 	public void imageUpdated(Mat image) {
 		// TODO Auto-generated method stub
-	
+	try {
 		Run_InitFlags();
 		Run_SearchPatch(image);
-		
+
 		Run_FindPatchPosition(teamPatchList);
 		Run_FindBall(image);
 		Run_FindRobot(image);
+	}catch (Exception e){
+		e.printStackTrace();
+	}
 	}
 	
 	
@@ -137,7 +140,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 
             double[] hsv = webcamImageMat.get(y,x);
 			//System.out.println(p + " " + y + " " + x + " " + total );
-            byte patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+			byte patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
 			//System.out.println(x + " " + y +  " " + hsv[0] + " " + hsv[1] + " " + hsv[2]);
 
             if ( (patchLUTData & LookupTable.TEAM_COLOUR) > 0 ) {
@@ -185,9 +188,9 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	            		
 	            		for (int i = 0; i<4; i++) {
 	            			double[] hsv = image.get(y, x);
-	            			
-	            			
-	            			patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+
+
+							patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
 			
 							if( (patchLUTData & mask) > 0 )
 							{
@@ -240,14 +243,14 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             //LEFT
             if ( x > 0 && !((pMarkTable[q-scanInterval] & mask) > 0) ){
                 double[] hsv = image.get(y,x-scanInterval);
-                patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+                patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
                 if((patchLUTData & mask) > 0) SearchPathRecursive(p-3*scanInterval, x-scanInterval, y,patch,image,mask,1);
             }
 
             //UP
             if (y > 0 && !((pMarkTable[q-scanInterval*image.width()] & mask) > 0) ) {
                 double[] hsv = image.get(y-scanInterval,x);
-                patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+				patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
                 if((patchLUTData & mask) > 0) SearchPathRecursive(p-NEXT_Y*scanInterval, x, y-scanInterval,patch,image,mask,1);
             }
 
@@ -255,14 +258,14 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             //RIGHT
             if (x < image.width() && !((pMarkTable[q+scanInterval] & mask) > 0) ) {
                 double[] hsv = image.get(y,x+scanInterval);
-                patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+				patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
                 if ((patchLUTData & mask) > 0)  SearchPathRecursive(p+3*scanInterval, x+scanInterval, y,patch,image,mask,1);
             }
 
             //DOWN
             if (y < image.height() && !((pMarkTable[q+scanInterval*image.width()] & mask) > 0) ) {
                 double[] hsv = image.get(y+scanInterval,x);
-                patchLUTData = LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
+				patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
                 if ( (patchLUTData & mask) > 0) SearchPathRecursive(p+NEXT_Y*scanInterval,x,y+scanInterval,patch,image,mask,1);
             }
 
@@ -415,14 +418,16 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 						//if (i == 1) System.out.println((int)j + " " + (int)k + " " + image.width() + " " + image.height());
             			double[] hsv = image.get((int)j, (int)k);
 						segmentPointList.add(new Point(k,j));
-            			byte patchLUTData = LookupTable.getLUTData((int)hsv[0], (int)hsv[1], (int)hsv[2]);
+						if (hsv != null) {
+							byte patchLUTData = hsv == null ? 0 : LookupTable.getLUTData((int)hsv[0],(int)hsv[1],(int)hsv[2]);
 
-            			if ((patchLUTData & maskBlack) > 0) {
-            				
-            			} else {
-            				segment_count[s]++;
-            				total_count++;
-            			}
+							if ((patchLUTData & maskBlack) > 0) {
+
+							} else {
+								segment_count[s]++;
+								total_count++;
+							}
+						}
             		}
 //            		if (i == 1) System.out.println("");
             	}

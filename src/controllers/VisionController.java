@@ -129,20 +129,25 @@ public class VisionController {
 
 
     public static Point actualPosToimagePos(Point p) {
-        double x = p.x;
-        double y = p.y;
+        try {
+            double x = p.x;
+            double y = p.y;
 
 
-        if (tInverse != null ) {
-            x = (x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH)) + mapLeft;
-            y = (y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT)) + mapTop;
+            if (tInverse != null) {
+                x = (x * ((mapRight - mapLeft) / (double) Field.OUTER_BOUNDARY_WIDTH)) + mapLeft;
+                y = (y * ((mapBot - mapTop) / (double) Field.OUTER_BOUNDARY_HEIGHT)) + mapTop;
 
-            Point2D selectedPoint = new Point2D.Double();
-            tInverse.transform(new Point2D.Double(x,y), selectedPoint);
+                Point2D selectedPoint = new Point2D.Double();
+                tInverse.transform(new Point2D.Double(x, y), selectedPoint);
 
-            return new Point(selectedPoint.getX(), selectedPoint.getY());
+                return new Point(selectedPoint.getX(), selectedPoint.getY());
 
-         } else {
+            } else {
+                return null;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
 
