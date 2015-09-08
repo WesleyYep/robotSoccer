@@ -23,7 +23,7 @@ public class Robots {
         if (instance == null) {
             instance = new Robots();
             instance.makeTeamRobots();
-            instance.makeOpponentRobots();
+            //instance.makeOpponentRobots();
         }
 
         return instance;
