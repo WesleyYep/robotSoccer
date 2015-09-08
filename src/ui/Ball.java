@@ -20,9 +20,9 @@ public class Ball extends RobotSoccerObject {
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private boolean focused;
 
-    private Ball instance = null;
+    private static Ball instance = null;
 
-    public Ball getInstance() {
+    public static Ball getInstance() {
         if (instance == null) {
             instance = new Ball();
         }

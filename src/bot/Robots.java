@@ -19,7 +19,7 @@ public class Robots {
 
     private static Robots instance = null;
 
-    public Robots getInstance() {
+    public static Robots getInstance() {
         if (instance == null) {
             instance = new Robots();
             instance.makeTeamRobots();
