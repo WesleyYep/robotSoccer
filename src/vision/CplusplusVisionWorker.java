@@ -424,7 +424,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             				total_count++;
             			}
             		}
-            		if (i == 1) System.out.println("");
+//            		if (i == 1) System.out.println("");
             	}
             }
 
