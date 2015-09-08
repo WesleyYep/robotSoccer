@@ -96,6 +96,13 @@ public abstract class Action {
 		return fb;
 	}
 
+	/**
+	 *
+	 * @param r
+	 * @param x
+	 * @param y
+	 * @return theta in degrees
+	 */
     protected static double getTargetTheta(Robot r, double x, double y) {
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());

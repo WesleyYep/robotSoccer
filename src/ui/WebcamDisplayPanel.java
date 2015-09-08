@@ -7,7 +7,6 @@ import utils.Image;
 import vision.CplusplusVisionWorker;
 import vision.Patch;
 import vision.VisionWorker;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -147,7 +146,6 @@ public class WebcamDisplayPanel extends JPanel {
 
 			long startTime = System.currentTimeMillis();
             notifyImageUpdate(matToProcess);
-			//System.out.println(System.currentTimeMillis() - startTime);
 
             
            

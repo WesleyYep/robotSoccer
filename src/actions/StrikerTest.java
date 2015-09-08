@@ -1,6 +1,7 @@
 package actions;
 
 import strategy.Action;
+import strategy.GameState;
 
 /**
  * Created by Wesley on 18/07/2015.
@@ -30,10 +31,14 @@ public class StrikerTest extends Action {
         if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
             bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
        //     System.out.println("time: " + time);
+            GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+
             bot.angularVelocity = 0;
             lastBallY = ballY;
             lastBallX = ballX;
             return;
+        } else {
+            GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
         }
 
     //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {

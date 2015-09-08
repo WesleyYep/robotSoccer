@@ -5,6 +5,11 @@ import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import strategy.GameState;
 
+/**
+ * This action chases the ball and tries to avoid obstacles
+ * For practical purposes, we no longer use this for the game because it is not as useful as directly trying to go to the ball using something like PID
+ *
+ */
 public class ChaseBallWithObstacle extends Action {
 
     private double error = 2.5;
