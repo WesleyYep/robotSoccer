@@ -27,7 +27,7 @@ public class ChaseBallWithObstacle extends Action {
             return;
         }
 
-        /*
+
         //check if robot is stuck
         double newTargetDistance = getDistanceToTarget(r);
        //   System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
@@ -44,7 +44,7 @@ public class ChaseBallWithObstacle extends Action {
             r.angularVelocity = 10;
             countTimesThatSeemStuck++;
             return;
-        } */
+        }
 
 
         //see if robot is not in positive situation
@@ -60,7 +60,8 @@ public class ChaseBallWithObstacle extends Action {
             MoveToSpot.move(r, new Coordinate(30, yPos), 1, true);
             return;
         } */
-        //oldDistanceToTarget = newTargetDistance;
+
+        oldDistanceToTarget = newTargetDistance;
 
 
         if (ballX < r.getXPosition()) {

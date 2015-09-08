@@ -38,7 +38,7 @@ public class SamplingPanel extends JPanel implements ActionListener {
     private JComboBox<String> HSVCombo;
     private List<ColourRangeListener> colourRangeListeners;
     private int hMax = -1, hMin = -1, sMax = -1, sMin = -1, vMax = -1, vMin = -1;
-    private byte mask = 0;
+    private byte mask = 0b00000000;
     public boolean isSampling = false;
     
     private static final String[] DETECTSTRING = {"Detect", "Stop"};
@@ -316,7 +316,10 @@ public class SamplingPanel extends JPanel implements ActionListener {
                 			if (HSlider.getLowValue() <= h && h <= HSlider.getHighValue() && SSlider.getLowValue() <= s
                                     && s <= SSlider.getHighValue() && VSlider.getLowValue() <= v && v <= VSlider.getHighValue()) {
                 				    LookupTable.setData(mask, h, s, v, true);
-                			}
+                			} else {
+                                byte unmask = (byte) ~mask;
+                                LookupTable.clearData(unmask,h,s,v);
+                            }
                 		}
                 	}
                 }

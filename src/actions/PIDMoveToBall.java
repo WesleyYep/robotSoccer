@@ -13,10 +13,11 @@ public class PIDMoveToBall extends Action {
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
     private double behindRange = 5;
+    private int state = 0;
 
     {
         parameters.put("speed", 5);
-        parameters.put("kp", 3); //0.5
+        parameters.put("kp", 5); //0.5
         parameters.put("ki", 0);  //0.1
     }
 
@@ -41,7 +42,14 @@ public class PIDMoveToBall extends Action {
         double targetX = ballX;
         double targetY = ballY;
 
-        //change target if it's a negative situation
+        //find pre-target spot
+        double pretargetX = predX - 40;
+        double pretargetY = predY + ((90 - targetY)/(220 - targetX))*(pretargetX - targetX);
+
+        pretargetX = pretargetX < 5 ? 5 : pretargetX > 215 ? 215 : pretargetX; //set limits
+        pretargetY = pretargetY < 5 ? 5 : pretargetY > 175 ? 175 : pretargetY; //set limits
+
+    /*    //change target if it's a negative situation
         if (bot.getXPosition() - ballX > behindRange) {
             if (Math.abs(ballY - bot.getYPosition()) > 10 || bot.getXPosition() < ballX) { //bot is not inline with ball
                 behindRange = -15;
@@ -67,6 +75,25 @@ public class PIDMoveToBall extends Action {
         } else {
             behindRange = 5;
         }
+*/
+
+
+        if (state == 0) {
+            if (getDistanceToTarget(bot, pretargetX, pretargetY) < 5) {
+     //           System.out.println("reached pretarget");
+                state = 1; //going to actual target
+            } else {
+                targetX = pretargetX;
+                targetY = pretargetY;
+            }
+        }
+        if (state == 1 && bot.getXPosition() > ballX) {
+    //        System.out.println("reached target");
+            state = 0;
+        }
+
+
+
 
         boolean isCurrentDirectionForward;
         //get angle to ball
@@ -101,9 +128,8 @@ public class PIDMoveToBall extends Action {
         }
         isPreviousDirectionForward = isCurrentDirectionForward;
 
-        if  (Math.abs(actualAngleError) > Math.PI/10) {
-            bot.linearVelocity = 0;
-            return;
+        if (state == 0) {
+            return; //don't want to do any charging if still in pretarget state
         }
 
         //charge ball into goal
@@ -127,7 +153,7 @@ public class PIDMoveToBall extends Action {
         } else {
             isCharging = false;
         }
-
+//
     }
 
 

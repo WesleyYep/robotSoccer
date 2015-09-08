@@ -5,6 +5,13 @@ null-null
 null-null
 null-null
 -----
+Role:PIDGkDefender
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[25, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:defender
 permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 50, 50, 50]
 null-null
@@ -20,42 +27,14 @@ null-null
 null-null
 -----
 Role:blockingDefender
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[35, 130, 50]
-null-null
-null-null
-null-null
-null-null
------
-Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[50, 170]
-null-null
-null-null
-null-null
-null-null
------
-Role:waitingStrikerMidTop
-permanent-actions.StrikerTest-[startingY, startingX]-[70, 140]
-null-null
-null-null
-null-null
-null-null
------
-Role:waitingStrikerMidBot
-permanent-actions.StrikerTest-[startingY, startingX]-[110, 140]
-null-null
-null-null
-null-null
-null-null
------
-Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[130, 170]
+permanent-actions.BlockOpponentClosestToBall-[]-[]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerDeep
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 175]
+permanent-actions.StrikerTest-[startingY, targetX, startingX, targetY]-[90, 170, 175, 90]
 null-null
 null-null
 null-null
@@ -106,57 +85,64 @@ null-null
 Role:centreDefender
 VeryCloseToBall-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 3]
 NegativeSituation-actions.ChaseBallWithObstacle-[]-[]
-permanent-actions.AdvancedGoalKeep-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+-----
+Role:PIDGoalKeep
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:MoveSpotThenKick
+permanent-actions.MoveSpotKickBall-[turnSpotY, turnSpotX, spotX, spotY]-[110, 220, 130, 110]
+null-null
+null-null
 null-null
 null-null
 -----
 Play:defendTop
-gk
-defender
+PIDGoalKeep
+PIDGkDefender
 PIDChaseBall
 goalLineDefenderTop
-blockingDefender
+PIDChaseBall
 -----
 Play:defendBot
-gk
-defender
+PIDGoalKeep
+PIDGkDefender
 PIDChaseBall
 goalLineDefenderBot
-blockingDefender
+PIDChaseBall
 -----
 Play:attackTop
-gk
+PIDGoalKeep
 centreDefender
 waitingStrikerDeep
-waitingStrikerBottom
+MoveSpotThenKick
 chaseBall
 -----
 Play:attackBottom
-gk
+PIDGoalKeep
 centreDefender
-waitingStrikerTop
 waitingStrikerDeep
+MoveSpotThenKick
 chaseBall
 -----
 Play:attackMid
-gk
+PIDGoalKeep
 centreDefender
-chaseBall
-chaseBall
-chaseBall
------
-Play:allWait
-gk
-defender
 PIDChaseBall
-waitingStrikerMidTop
-blockingDefender
+MoveSpotThenKick
+waitingStrikerDeep
 -----
 Play:defend mid
-gk
-defender
+PIDGoalKeep
+PIDGkDefender
 PIDChaseBall
-waitingStrikerMidTop
+goalLineDefenderBot
 blockingDefender
 -----
 Situation:defendTop:30:1:225:134
@@ -165,17 +151,14 @@ defendTop
 Situation:defendBot:27:235:228:134
 defendBot
 -----
-Situation:attackTop:426:4:54:184
+Situation:attackTop:483:-1:54:184
 attackTop
 -----
-Situation:attackBot:426:187:55:182
+Situation:attackBot:478:182:55:182
 attackBottom
 -----
-Situation:attackMid:257:5:170:366
+Situation:attackMid:257:5:228:366
 attackMid
------
-Situation:allWait:44:428:223:366
-allWait
 -----
 Situation:defend mid:27:135:229:101
 defend mid

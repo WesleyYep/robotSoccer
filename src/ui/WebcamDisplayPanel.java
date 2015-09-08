@@ -130,13 +130,14 @@ public class WebcamDisplayPanel extends JPanel {
             final Mat matToProcess;
 
             if (colourPanel.isContourActive()) {
-               	//maskCameraImage(matToShow);
+               	maskCameraImage(matToShow);
 				matToProcess = matToShow.clone();
 				debugCplusplusWorker(matToShow);
 
             } else {
                 matToProcess = matToShow.clone();
-                //maskCameraImage(matToProcess);
+				maskCameraImage(matToProcess);
+                //
             }
 
 			if (colourPanel.isGroundMask()) {
@@ -144,8 +145,9 @@ public class WebcamDisplayPanel extends JPanel {
 				applyGroundMask(matToShow);
 			}
 
-
+			long startTime = System.currentTimeMillis();
             notifyImageUpdate(matToProcess);
+			System.out.println(System.currentTimeMillis() - startTime);
 
             
            

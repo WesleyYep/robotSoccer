@@ -1,13 +1,13 @@
-Role:obs
-permanent-actions.ChaseBall2-[]-[]
+Role:waitingStriker
+permanent-actions.StrikerTest-[targetX, targetY]-[170, 90]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:new role
-permanent-actions.StrikerTest-[targetX, targetY]-[170, 90]
-null-null
+NegativeSituation-actions.ChaseBallWithObstacle-[]-[]
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
 null-null
 null-null
 null-null
@@ -68,10 +68,17 @@ permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
 null-null
 null-null
 -----
+Role:MoveAndKickBall
+permanent-actions.MoveSpotKickBall-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 110, 90]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
-new role
 wait
 wait
+defender
 wait
 wait
 -----

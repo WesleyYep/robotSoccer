@@ -225,9 +225,6 @@ public class CurrentStrategy {
 
                     while (!(line = bufferedReader.readLine()).equals("-----") && !line.startsWith("null")) {
                         String[] lineArray = line.split("-");
-                        if (lineArray[0].equals("VeryCloseToBall")) {
-                            System.out.println("hi");
-                        }
                         Action action = (Action)Class.forName(lineArray[1]).newInstance();
                         Criteria criteria = (Criteria)Class.forName("criteria." + capitalize(lineArray[0])).newInstance();
                         if (lineArray.length < 3) {

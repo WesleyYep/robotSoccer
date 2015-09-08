@@ -3,6 +3,11 @@ package actions;
 import bot.Robot;
 import data.Coordinate;
 import strategy.Action;
+import ui.Field;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 
 /**
@@ -102,6 +107,45 @@ public class MoveAndTurn extends Action {
             if (getDistanceToTarget(r, targetX, targetY) > 12) {
                 madeItToPrespot = false;
             }
+        }
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+
+        g2.setBackground(Color.RED);
+
+        // Convert parameter values to correct values to be shown on field.
+        int x1 = Field.fieldXValueToGUIValue(parameters.get("spotX"));
+        int y1 = Field.fieldYValueToGUIValue(parameters.get("spotY"));
+
+        int x2 = Field.fieldXValueToGUIValue(parameters.get("turnSpotX"));
+        int y2 = Field.fieldYValueToGUIValue(parameters.get("turnSpotY"));
+
+        // Draw string and how to change it
+        g2.drawString("Left Click - Move", x1, y1);
+        g2.drawString("Right Click - Turn", x2, y2);
+    //    g2.drawLine(x1, y1, x2, y2);
+
+        g2.dispose();
+    }
+
+    @Override
+    public void react(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        // Transform to actual coordinates for the field
+        x = Field.GUIXValueToFieldValue(x);
+        y = Field.GUIYValueToFieldValue(y);
+
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            parameters.put("spotX", x);
+            parameters.put("spotY", y);
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            parameters.put("turnSpotX", x);
+            parameters.put("turnSpotY", y);
         }
     }
 

@@ -695,6 +695,6 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	 * @return
 	 */
 	public static int GUIYValueToFieldValue(int y) {
-		return (y - ORIGIN_X) / SCALE_FACTOR;
+		return (y - ORIGIN_Y) / SCALE_FACTOR;
 	}
 }

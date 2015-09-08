@@ -2,24 +2,19 @@ package actions;
 
 import data.Coordinate;
 import strategy.Action;
-import ui.Field;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
 
 /**
  * Created by Wesley on 18/07/2015.
  */
-public class PIDMoveToSpot extends Action {
+public class MoveSpotKickBall extends Action {
 
-    private long lastTime = 0;
-//    private LimitedQueue errorsList = new LimitedQueue(10);
+    //    private LimitedQueue errorsList = new LimitedQueue(10);
     private boolean isPreviousDirectionForward = true;
     private double kp = 3;
-    private double ki = 0;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
+    private int state = 0; //state 0 = moving to spot, spot 1 means kicking
+    private boolean isCharging = false;
 
     {
         parameters.put("spotX", 100);
@@ -31,9 +26,21 @@ public class PIDMoveToSpot extends Action {
     @Override
     public void execute() {
 
-        double targetX = parameters.get("spotX");
-        double targetY = parameters.get("spotY");
+        double targetX, targetY;
+
+        if (state == 0) {
+            targetX = parameters.get("spotX");
+            targetY = parameters.get("spotY");
+        } else {
+            targetX = ballX;
+            targetY = ballY;
+        }
         double dist = getDistanceToTarget(bot, targetX, targetY);
+
+        if (state == 0 && dist < 5) {
+            state = 1;
+            return;
+        }
 
         if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
             if (!presetToBackward && !presetToForward && dist > 10) {
@@ -64,11 +71,6 @@ public class PIDMoveToSpot extends Action {
 //        }
 
         boolean isCurrentDirectionForward;
-        double timePeriod;
-        long currentTime = System.currentTimeMillis();
-
-        timePeriod = lastTime == 0 ? 0 : currentTime - lastTime;
-        lastTime = currentTime;
 
         //get angle to target
         double angleToTarget = getTargetTheta(bot, targetX, targetY);
@@ -89,19 +91,41 @@ public class PIDMoveToSpot extends Action {
             bot.linearVelocity = 0.5;
             isCurrentDirectionForward = true;
         }
-//        if (isCurrentDirectionForward == isPreviousDirectionForward) {
-//            errorsList.add(actualAngleError * timePeriod/1000.0);
-//        } else {
-//            errorsList.clear();
-//        }
+
         isPreviousDirectionForward = isCurrentDirectionForward;
-//        bot.angularVelocity += errorsList.getTotal() * ki;
 
         if (dist <= 3) {
             bot.linearVelocity = 0;
             turn();
         }else if (dist < 10) {
             bot.linearVelocity *= dist/20.0;
+        }
+
+        if (state == 1) {
+            //charge ball into goal
+            double range = 10;
+            if (isCharging) {
+                range = 30;
+            }
+            if (dist < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
+                bot.linearVelocity = isCurrentDirectionForward ? 1 : -1;
+                if (targetX > 110) {
+                    double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+                    if (Math.abs(angleToGoal) > 45) {
+                        if (angleToGoal > 0 && isCurrentDirectionForward || angleToGoal < 0 && !isCurrentDirectionForward) {
+                            bot.angularVelocity = 30;
+                        } else {
+                            bot.angularVelocity = -30;
+                        }
+                    }
+                }
+                isCharging = true;
+            } else {
+                if (isCharging) {
+                    state = 0;
+                }
+                isCharging = false;
+            }
         }
 
 
@@ -115,47 +139,6 @@ public class PIDMoveToSpot extends Action {
         double angleToTarget = getTargetTheta(bot, targetX, targetY);
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
     }
-
-
-    @Override
-    public void draw(Graphics2D g) {
-        Graphics2D g2 = (Graphics2D)g.create();
-
-        g2.setBackground(Color.RED);
-
-        // Convert parameter values to correct values to be shown on field.
-        int x1 = Field.fieldXValueToGUIValue(parameters.get("spotX"));
-        int y1 = Field.fieldYValueToGUIValue(parameters.get("spotY"));
-
-        int x2 = Field.fieldXValueToGUIValue(parameters.get("turnSpotX"));
-        int y2 = Field.fieldYValueToGUIValue(parameters.get("turnSpotY"));
-
-        // Draw string and how to change it
-        g2.drawString("Left Click - Move", x1, y1);
-        g2.drawString("Right Click - Turn", x2, y2);
-        //    g2.drawLine(x1, y1, x2, y2);
-
-        g2.dispose();
-    }
-
-    @Override
-    public void react(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-
-        // Transform to actual coordinates for the field
-        x = Field.GUIXValueToFieldValue(x);
-        y = Field.GUIYValueToFieldValue(y);
-
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            parameters.put("spotX", x);
-            parameters.put("spotY", y);
-        } else if (SwingUtilities.isRightMouseButton(e)) {
-            parameters.put("turnSpotX", x);
-            parameters.put("turnSpotY", y);
-        }
-    }
-
 
 
 

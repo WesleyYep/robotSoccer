@@ -27,28 +27,28 @@ null-null
 null-null
 -----
 Role:waitingStrikerTop
-permanent-actions.StrikerTest-[startingY, startingX]-[20, 150]
+permanent-actions.StrikerTest-[startingY, targetX, startingX, targetY]-[20, 170, 150, 90]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerMid
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 130]
+permanent-actions.StrikerTest-[startingY, targetX, startingX, targetY]-[90, 170, 130, 90]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerBottom
-permanent-actions.StrikerTest-[startingY, startingX]-[160, 150]
+permanent-actions.StrikerTest-[startingY, targetX, startingX, targetY]-[160, 170, 150, 90]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingStrikerDeep
-permanent-actions.StrikerTest-[startingY, startingX]-[90, 185]
+permanent-actions.StrikerTest-[startingY, targetX, startingX, targetY]-[90, 170, 185, 90]
 null-null
 null-null
 null-null
@@ -90,8 +90,8 @@ null-null
 null-null
 -----
 Role:PIDChaseBall
+NegativeSituation-actions.ChaseBallWithObstacle-[]-[]
 permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
-null-null
 null-null
 null-null
 null-null
@@ -110,36 +110,43 @@ null-null
 null-null
 null-null
 -----
+Role:PIDGkDefender
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[25, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:defendTop
-gk
-defender
+PIDGoalKeeper
+PIDGkDefender
 PIDChaseBall
 goalLineDefenderTop
 blockingDefender
 -----
 Play:defendBot
-gk
-defender
+PIDGoalKeeper
+PIDGkDefender
 PIDChaseBall
 goalLineDefenderBot
 blockingDefender
 -----
 Play:attackTop
-gk
+PIDGoalKeeper
 centreDefender
 PIDChaseBall
 waitingStrikerMid
 waitingStrikerBottom
 -----
 Play:attackBottom
-gk
+PIDGoalKeeper
 centreDefender
 waitingStrikerTop
 waitingStrikerMid
 PIDChaseBall
 -----
 Play:attackMid
-gk
+PIDGoalKeeper
 centreDefender
 waitingStrikerTop
 PIDChaseBall
