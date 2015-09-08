@@ -6,6 +6,9 @@ import ui.Field;
 
 import java.awt.*;
 
+/**
+ * Robots class. Singleton pattern
+ */
 public class Robots {
 	
 	public final static int BOTTOTALCOUNT = 10;
@@ -14,11 +17,25 @@ public class Robots {
     private Robot[] bots;
     private SerialPortCommunicator serialCom;
 
-    public Robots(SerialPortCommunicator s) {
-		bots = new Robot[BOTTEAMMEMBERCOUNT];
-		serialCom = s;
+    private static Robots instance = null;
+
+    public Robots getInstance() {
+        if (instance == null) {
+            instance = new Robots();
+            instance.makeTeamRobots();
+            instance.makeOpponentRobots();
+        }
+
+        return instance;
     }
-    
+
+    private Robots() {
+		bots = new Robot[BOTTEAMMEMBERCOUNT];
+    }
+
+    public void addSerialPortCom(SerialPortCommunicator s) {
+        serialCom = s;
+    }
 
     public void makeTeamRobots() {
     	for (int i = 0; i < BOTTEAMMEMBERCOUNT; i++) {
