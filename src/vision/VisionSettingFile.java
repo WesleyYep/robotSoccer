@@ -265,6 +265,21 @@ public class VisionSettingFile {
             ballSP.setUpperBoundForS(openSetting.getInt("ballSUpper"));
             ballSP.setUpperBoundForV(openSetting.getInt("ballVUpper"));
 
+			for (int h=0; h<256; h++) {
+				for (int s = 0; s<256; s++) {
+					for(int v = 0; v<256; v++) {
+
+						if (ballSP.getLowerBoundForH() <= h && h <= ballSP.getUpperBoundForH() && ballSP.getLowerBoundForS() <= s
+								&& s <= ballSP.getUpperBoundForS() && ballSP.getLowerBoundForV() <= v && v <= ballSP.getUpperBoundForV()) {
+							LookupTable.setData(LookupTable.BALL_COLOUR, h, s, v, true);
+						} else {
+							byte unmask = (byte) ~LookupTable.BALL_COLOUR;
+							LookupTable.clearData(unmask,h,s,v);
+						}
+					}
+				}
+			}
+
             SamplingPanel teamSp = colourPanel.teamSamplingPanel;
 
             teamSp.setLowerBoundForH(openSetting.getInt("teamHLower"));
@@ -274,6 +289,21 @@ public class VisionSettingFile {
             teamSp.setUpperBoundForH(openSetting.getInt("teamHUpper"));
             teamSp.setUpperBoundForS(openSetting.getInt("teamSUpper"));
             teamSp.setUpperBoundForV(openSetting.getInt("teamVUpper"));
+
+			for (int h=0; h<256; h++) {
+				for (int s = 0; s<256; s++) {
+					for(int v = 0; v<256; v++) {
+
+						if (teamSp.getLowerBoundForH() <= h && h <= teamSp.getUpperBoundForH() && teamSp.getLowerBoundForS() <= s
+								&& s <= teamSp.getUpperBoundForS() && teamSp.getLowerBoundForV() <= v && v <= teamSp.getUpperBoundForV()) {
+							LookupTable.setData(LookupTable.TEAM_COLOUR, h, s, v, true);
+						} else {
+							byte unmask = (byte) ~LookupTable.TEAM_COLOUR;
+							LookupTable.clearData(unmask,h,s,v);
+						}
+					}
+				}
+			}
 
             SamplingPanel greenSp = colourPanel.greenSamplingPanel;
 
@@ -295,6 +325,21 @@ public class VisionSettingFile {
             groundSp.setUpperBoundForS(openSetting.getInt("groundSUpper"));
             groundSp.setUpperBoundForV(openSetting.getInt("groundVUpper"));
 
+			for (int h=0; h<256; h++) {
+				for (int s = 0; s<256; s++) {
+					for(int v = 0; v<256; v++) {
+
+						if (groundSp.getLowerBoundForH() <= h && h <= groundSp.getUpperBoundForH() && groundSp.getLowerBoundForS() <= s
+								&& s <= groundSp.getUpperBoundForS() && groundSp.getLowerBoundForV() <= v && v <= groundSp.getUpperBoundForV()) {
+							LookupTable.setData(LookupTable.GROUND_COLOUR, h, s, v, true);
+						} else {
+							byte unmask = (byte) ~LookupTable.GROUND_COLOUR;
+							LookupTable.clearData(unmask,h,s,v);
+						}
+					}
+				}
+			}
+
             SamplingPanel opponentSp = colourPanel.opponentSamplingPanel;
 
             opponentSp.setLowerBoundForH(openSetting.getInt("opponentHLower"));
@@ -304,6 +349,7 @@ public class VisionSettingFile {
             opponentSp.setUpperBoundForH(openSetting.getInt("opponentHUpper"));
             opponentSp.setUpperBoundForS(openSetting.getInt("opponentSUpper"));
             opponentSp.setUpperBoundForV(openSetting.getInt("opponentVUpper"));
+
 
             colourPanel.setRobotSizeMinimum(openSetting.getInt("robotMinSize",0));
             colourPanel.setGreenSizeMinimum(openSetting.getInt("greenMinSize",0));
