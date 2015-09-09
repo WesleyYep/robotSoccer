@@ -1,6 +1,5 @@
 package strategy;
 
-import bot.Robot;
 import bot.Robots;
 import ui.Ball;
 
@@ -13,9 +12,9 @@ public abstract class Criteria {
 
 	public abstract String getName();
 
-    public Criteria() {
-        bots = Robots.getInstance();
-        ball = Ball.getInstance();
+    public Criteria(Robots bots, Ball ball) {
+    	this.bots = bots;
+    	this.ball = ball;
     }
 
 	@Override

@@ -20,16 +20,7 @@ public class Ball extends RobotSoccerObject {
 	private ArrayList<FocusListener> fListeners = new ArrayList<FocusListener>();
 	private boolean focused;
 
-    private static Ball instance = null;
-
-    public static Ball getInstance() {
-        if (instance == null) {
-            instance = new Ball();
-        }
-        return instance;
-    }
-
-	private Ball() {
+	public Ball() {
 		super(new Coordinate(70, 70));
 	}
 

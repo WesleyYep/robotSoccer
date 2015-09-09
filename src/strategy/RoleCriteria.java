@@ -2,6 +2,7 @@ package strategy;
 
 import bot.Robot;
 import bot.Robots;
+import ui.Ball;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +15,8 @@ public abstract class RoleCriteria extends Criteria {
 
     public List<Robot> checkList;
 
-    public RoleCriteria() {
-        super();
+    public RoleCriteria(Robots bots, Ball ball) {
+        super(bots, ball);
         checkList = Arrays.asList(bots.getRobots());
     }
 

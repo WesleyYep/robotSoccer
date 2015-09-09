@@ -1,10 +1,10 @@
 package bot;
 
+import java.awt.Graphics2D;
+
 import communication.SerialPortCommunicator;
 import controllers.RobotController;
 import ui.Field;
-
-import java.awt.*;
 
 /**
  * Robots class. Singleton pattern
@@ -17,24 +17,9 @@ public class Robots {
     private Robot[] bots;
     private SerialPortCommunicator serialCom;
 
-    private static Robots instance = null;
-
-    public static Robots getInstance() {
-        if (instance == null) {
-            instance = new Robots();
-            instance.makeTeamRobots();
-            //instance.makeOpponentRobots();
-        }
-
-        return instance;
-    }
-
-    private Robots() {
+    public Robots(SerialPortCommunicator s) {
 		bots = new Robot[BOTTEAMMEMBERCOUNT];
-    }
-
-    public void addSerialPortCom(SerialPortCommunicator s) {
-        serialCom = s;
+		serialCom = s;
     }
 
     public void makeTeamRobots() {
