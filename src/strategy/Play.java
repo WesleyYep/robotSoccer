@@ -33,6 +33,9 @@ public class Play {
 //        criterias[index] = playCriteria;
 //    }
 
+    /**
+     * <p>Assigns roles to each robot based on criteria</p>
+     */
     public void assignRoles() {
         List<Robot> ignoreList = new ArrayList<Robot>();
         Iterator<Pair<Role, RoleCriteria>> iter = roles.iterator();
@@ -46,9 +49,10 @@ public class Play {
             Role r = current.getFirst();
             RoleCriteria c = current.getSecond();
 
-            // Add robot to ignore list
+            // Remove already assigned robots from checklist
             if (previous != null) {
-                c.checkList.removeAll(ignoreList);
+            	List<Robot> checkList = c.getCheckList();
+                checkList.removeAll(ignoreList);
             }
 
             Robot assignedRobot = c.isMet();
@@ -58,6 +62,9 @@ public class Play {
         }
     }
 
+    /**
+     * Runs each role in the play
+     */
     public void execute() {
         for (Pair<Role, RoleCriteria> role : roles) {
             Role r = role.getFirst();
