@@ -6,6 +6,7 @@ import bot.Robot;
 import bot.Robots;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import ui.Ball;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -21,13 +22,8 @@ public abstract class Action {
 	protected Robot bot;
 	protected Robots opponentRobots;
 	protected Robots teamRobots;
-	protected double ballX;
-	protected double ballY;
-	protected double predX;
-	protected double predY;
-	protected Path path;
+	protected Ball ball;
     protected HashMap<String, Integer> parameters = new HashMap<String, Integer>();
-//	protected static KalmanFilter kFilter = new KalmanFilter();
 
 	public String getName() {
         return getClass().getSimpleName();
@@ -47,9 +43,8 @@ public abstract class Action {
         MoveToSpot.addOpponentRobotsToMoveToSpot(opponent);
     }
 
-	public void setBallPosition(double x, double y) {
-		this.ballX = x;
-		this.ballY = y;
+	public void setBall(Ball ball) {
+		this.ball = ball;
 	}
 
     public Set<String> getParameters() {
@@ -70,11 +65,6 @@ public abstract class Action {
 	}
 
 	public abstract void execute();
-
-	public void setPredBallPosition(double predictedBallX, double predictedBallY) {
-		this.predX = predictedBallX;
-		this.predY = predictedBallY;
-	}
 
 	/**
 	 * <p>Loads fuzzy file and returns FunctionBlock object.</p>
@@ -109,7 +99,7 @@ public abstract class Action {
     }
 
 	protected double getDistanceToTarget(Robot r, double targetX, double targetY) {
-		return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
+		return Math.sqrt(Math.pow(targetX - r.getXPosition(), 2) + Math.pow(targetY - r.getYPosition(), 2));
 	}
 
 	protected double angleDifferenceFromGoal(double x, double y, double theta) {
@@ -124,11 +114,15 @@ public abstract class Action {
 		return Math.toDegrees(difference);
 	}
 
-    protected static double squared (double x) {
-        return x * x;
-    }
-
+    /**
+     * Override method to draw action on GUI
+     * @param g
+     */
 	public void draw(Graphics2D g) {};
 
+    /**
+     * Changes from GUI will callback this method
+     * @param e
+     */
 	public void react(MouseEvent e) {};
 }

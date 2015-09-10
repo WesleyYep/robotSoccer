@@ -2,7 +2,7 @@ package utils;
 
 import org.opencv.core.Point;
 
-public class PairPoint extends Pair {
+public class PairPoint extends Pair<Point, Point> {
 
 	private double euclideanDistance;
 	private double theta;

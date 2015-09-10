@@ -4,6 +4,7 @@ import Paths.Path;
 import bot.Robot;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import org.opencv.core.Point;
+import ui.Ball;
 import ui.Field;
 import utils.Geometry;
 
@@ -20,11 +21,11 @@ public class BasicDefender extends Defender {
     private double lastBallY2 = 0;
 
     public BasicDefender () {
-        super(new Point(50,70), new Point(50,110), null);
+        super(new Point(50,70), new Point(50,110));
     }
 
-    public BasicDefender(Point p1, Point p2, Path path) {
-        super(p1, p2, path);
+    public BasicDefender(Point p1, Point p2) {
+        super(p1, p2);
     }
 
     {
@@ -39,14 +40,9 @@ public class BasicDefender extends Defender {
         Robot r = bot;
         setDefendZone(new Point( 30, 50),new Point( 100, 50));
         Point positionToBe = getPosition();
-        //setVelocityToTarget(positionToBe.x, positionToBe.y, false, false);
 
-//        if (r.isStuck(new Coordinate(r.getXPosition(), r.getYPosition()))) {
-//            System.out.println("robot is stuck");
-//        }
-
-        double yDiff = Math.round(ballY-lastBallY);
-        double xDiff = Math.round(ballX-lastBallX);
+        double yDiff = Math.round(ball.getYPosition()-lastBallY);
+        double xDiff = Math.round(ball.getXPosition()-lastBallX);
         double constant;
 
         boolean goingHorizontal = false;
@@ -72,21 +68,21 @@ public class BasicDefender extends Defender {
         	//for the defender line
         	//vertical defender line
             if (Math.abs(p1.x-p2.x) == 0)  {
-            	interceptY = ballY;
+            	interceptY = ball.getYPosition();
             	interceptX = p1.x;
             }
             //horizontal defender line
             else if (Math.abs(p1.y-p2.y) == 0) {
             	interceptY = p1.y;
-            	interceptX  = ballX;
+            	interceptX  = ball.getXPosition();
             }
             //other defender line
             else {
             	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
             	double yConst = p1.y - (gradient*p1.x);
 
-            	interceptY = ballY;
-            	interceptX = (ballY-yConst) / gradient;
+            	interceptY = ball.getYPosition();
+            	interceptX = (ball.getYPosition()-yConst) / gradient;
             }
         }
 
@@ -98,35 +94,35 @@ public class BasicDefender extends Defender {
         	//vertical defender line
             if (Math.abs(p1.x-p2.x) == 0)  {
             	interceptY = p1.y;
-            	interceptX = ballX;
+            	interceptX = ball.getXPosition();
             }
             //horizontal defender line
             else if (Math.abs(p1.y-p2.y) == 0) {
             	interceptY = p1.x;
-            	interceptX  = ballY;
+            	interceptX  = ball.getYPosition();
             }
             //other defender line
             else {
             	double gradient = (p1.y-p2.y) /(p1.x-p2.x);
             	double yConst = p1.y - (gradient*p1.x);
 
-            	interceptY = (gradient*ballX) + yConst;
-            	interceptX = ballX;
+            	interceptY = (gradient*ball.getXPosition()) + yConst;
+            	interceptX = ball.getXPosition();
             }
         }
 
         if (!(goingVertical || goingHorizontal)) {
         	//System.out.println("diagonal line");
-            constant = ballY - ((yDiff/xDiff)*ballX);
+            constant = ball.getYPosition() - ((yDiff/xDiff)*ball.getXPosition());
             //trajectoryY = ((yDiff/xDiff)*goalLine) + constant;
 
-            double sumY = ballY + lastBallY + lastBallY2;
-            double sumX = ballX + lastBallX + lastBallX2;
+            double sumY = ball.getYPosition() + lastBallY + lastBallY2;
+            double sumX = ball.getXPosition() + lastBallX + lastBallX2;
 
-            double sumY2 = (ballY*ballY) + (lastBallY*lastBallY) + (lastBallY2*lastBallY2);
-            double sumX2 = (ballX*ballX) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
+            double sumY2 = (ball.getYPosition()*ball.getYPosition()) + (lastBallY*lastBallY) + (lastBallY2*lastBallY2);
+            double sumX2 = (ball.getXPosition()*ball.getXPosition()) + (lastBallX*lastBallX) + (lastBallX2*lastBallX2);
 
-            double sumXY = (ballX*ballY) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
+            double sumXY = (ball.getXPosition()*ball.getYPosition()) + (lastBallX*lastBallY) + (lastBallY2*lastBallX2);
 
             double xMean = sumX/3;
             double yMean = sumY/3;
@@ -134,12 +130,6 @@ public class BasicDefender extends Defender {
             double slope = (sumXY - sumX * yMean) / (sumX2 - sumX * xMean);
 
             double yInt = yMean - slope* xMean;
-
-
-            //trajectoryY = (slope*(goalLine+3.75)) + yInt;
-
-            //	trajectoryY = (slope*(goalLine-3.75)) + yInt;
-          	//for the defender line
 
             if (Math.abs(p1.x-p2.x) == 0)  {
             	interceptY = (slope*(p1.x-3.75)) + yInt;
@@ -161,11 +151,7 @@ public class BasicDefender extends Defender {
 
 
         }
-        //System.out.println(interceptY + " " + interceptX);
 
-        //if (!(r.getXPosition() >= positionToBe.x-5 && r.getXPosition() <= positionToBe.x+5 && r.getYPosition() >= positionToBe.y-5
-        //		&& r.getYPosition() <= positionToBe.y+5)) {
-        //setVelocityToTarget(positionToBe.x, positionToBe.y, true,false);
         if ( ((interceptX <= p1.x & interceptX >= p2.x) || (interceptX >= p1.x & interceptX <= p2.x)) &&
         		((interceptY <= p1.y & interceptY >= p2.y) || (interceptY >= p1.y & interceptY <= p2.y))) {
         	setVelocityToTarget(interceptX, interceptY, true,true);
@@ -174,15 +160,12 @@ public class BasicDefender extends Defender {
         else {
         	setVelocityToTarget(positionToBe.x, positionToBe.y, true,false);
         }
-        //} else {
-        ///	System.out.println("reached");
-        //}
 
-        lastBallX = ballX;
-		lastBallY = ballY;
+
+        lastBallX = ball.getXPosition();
+        lastBallY = ball.getYPosition();
 		lastBallX2 = lastBallX;
 		lastBallY2 = lastBallY;
-
     }
 
     @Override
@@ -191,7 +174,7 @@ public class BasicDefender extends Defender {
         Point p1 = new Point( parameters.get("point 1 x"), parameters.get("point 1 y"));
         Point p2 = new Point( parameters.get("point 2 x"), parameters.get("point 2 y"));
         //Point p2 = defendZone.getSecond();
-        Point p3 = new Point(ballX, ballY);
+        Point p3 = new Point(ball.getXPosition(), ball.getYPosition());
 
         double[] angles = Geometry.anglesInTriangle(p1, p2, p3);
 
@@ -229,8 +212,7 @@ public class BasicDefender extends Defender {
 
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
         double difference = targetTheta - Math.toRadians(r.getTheta());
-//       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta "
-        //     		+ Math.toRadians(r.getTheta()));
+
         //some hack to make the difference -Pi < theta < Pi
         if (difference > Math.PI) {
             difference -= (2 * Math.PI);
@@ -242,11 +224,9 @@ public class BasicDefender extends Defender {
         targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
 
         //clear the ball
-        double ballTargetTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+        double ballTargetTheta = Math.atan2(r.getYPosition() - ball.getYPosition(), ball.getXPosition() - r.getXPosition());
         double ballDifference = ballTargetTheta - Math.toRadians(r.getTheta());
-//       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta "
-        //     		+ Math.toRadians(r.getTheta()));
-        //some hack to make the difference -Pi < theta < Pi
+
         if (ballDifference > Math.PI) {
             ballDifference -= (2 * Math.PI);
         } else if (ballDifference < -Math.PI) {
@@ -254,27 +234,10 @@ public class BasicDefender extends Defender {
         }
         ballDifference = Math.toDegrees(ballDifference);
         ballTargetTheta = ballDifference;
-        /*
-        if ((Math.abs(ballTargetTheta) < 5 && Math.abs(r.getTheta()) < 90) || (Math.abs(ballTargetTheta) > 175 && Math.abs(r.getTheta()) > 90)) {
-            MoveToSpot.move(r, new Coordinate((int)ballX, (int)ballY), 1.5);
-            return;
-        } */
 
         boolean isFacingTop = true;
         boolean isTargetTop = true;
         boolean front  = true;
-        /*
-        if (r.getTheta() < 0) {
-            isFacingTop = false;
-        }
-
-        if (y > r.getYPosition()) {
-            isTargetTop = false;
-        }
-
-        if (isTargetTop != isFacingTop) {
-            front = false;
-        } */
         
         if (targetTheta > 90 || targetTheta < -90) {
         	front = false;
@@ -288,36 +251,6 @@ public class BasicDefender extends Defender {
                 targetTheta = 180 - targetTheta;
             }
         }
-
-        /*
-        FunctionBlock fb = loadFuzzy("fuzzy/newFuzzy.fcl");
-        //if (targetDist <= 3.75) targetDist = 0;
-        if (targetDist <=3.75) {
-            targetDist = 0;
-            targetTheta = 0;
-        }
-        // targetTheta = Math.round(targetTheta/5)*5;
-
-        fb.setVariable("angleError", targetTheta);
-        fb.setVariable("distanceError", Math.abs(targetDist));
-        //      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
-        //      		+ r.getYPosition() + " targetDist " + targetDist);
-        // Evaluate
-        fb.evaluate();
-        // Show output variable's chart
-        fb.getVariable("rightWheelVelocity").defuzzify();
-        fb.getVariable("leftWheelVelocity").defuzzify();
-        //  JFuzzyChart.get().chart(fb.getVariable("leftWheelVelocity"), fb.getVariable("leftWheelVelocity").getDefuzzifier(), true);
-        //   JFuzzyChart.get().chart(fb.getVariable("rightWheelVelocity"), fb.getVariable("rightWheelVelocity").getDefuzzifier(), true);
-        double right  = Math.toRadians(fb.getVariable("rightWheelVelocity").getValue());
-        double left = Math.toRadians(fb.getVariable("leftWheelVelocity").getValue());
-        //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
-        double linear =  (right+left)/2;
-        double angular = (right-left)*(2/0.135);
-        //    System.out.println("right :" + right + "left " + left)
-        r.linearVelocity = linear*2.5;
-        r.angularVelocity = angular*1; */
-
 
         FunctionBlock fb = loadFuzzy("fuzzy/goalKeeper.fcl");
         fb.setVariable("targetTheta", targetTheta);
@@ -337,15 +270,6 @@ public class BasicDefender extends Defender {
             r.linearVelocity *= -1;
             r.angularVelocity *= -1;
         }
-        //      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-        //  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-       // 	System.out.println("x:" + x + " y: " + y + " r.x: " + r.getXPosition() + " r.y" + r.getYPosition());
-        //     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
-        //r.linearVelocity = 0;
-//            r.angularVelocity = 0;
-//
-
-        // }
     }
 
     @Override
