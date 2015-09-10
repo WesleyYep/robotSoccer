@@ -353,6 +353,10 @@ public class VisionController {
         rightGoalBottomRight = p;
     }
 
+    public static double getRotateAngle() {
+        return rotationAngle;
+    }
+
     public boolean  pointInPoly(int nvert, double[] vertx, double[] verty, double testx, double testy) {
 
         int i,j = 0;

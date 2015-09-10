@@ -544,8 +544,8 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     			robotHome[id].direction = segmentCountList.get(best_robot_seg_id[id]).orientation_rad;
     			robotHome[id].pixelDirection = segmentCountList.get(best_robot_seg_id[id]).orientation_screen;
     			
-    			robotHome[id].direction += patchDirectionOffset /180*Math.PI;
-    			robotHome[id].pixelDirection = patchDirectionOffset /180*Math.PI - robotHome[id].pixelDirection;
+    			robotHome[id].direction += VisionController.getRotateAngle();
+    			robotHome[id].pixelDirection = VisionController.getRotateAngle() - robotHome[id].pixelDirection;
 
 				//System.out.println("found robot:" + id);
 				//System.out.println("pos: " + robotHome[id].realPos.x*100 + " " + (180-(robotHome[id].realPos.y*100)));
