@@ -466,7 +466,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 					} else if (optionList.getSelectedValue().equals(options[4])) {
 						CardLayout c = (CardLayout)optionCards.getLayout();
 						c.show(optionCards, options[4]);
-					} else if (optionList.getSelectedValue().equals(options[4])) {
+					} else if (optionList.getSelectedValue().equals(options[5])) {
 						CardLayout c = (CardLayout)optionCards.getLayout();
 						c.show(optionCards, options[5]);
 					}
