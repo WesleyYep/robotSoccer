@@ -266,6 +266,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		SituationPanel situationPanel = new SituationPanel(fieldController, currentStrategy);
 		PlaysPanel playsPanel = new PlaysPanel(currentStrategy);
 		RolesPanel rolesPanel = new RolesPanel(currentStrategy, fieldController);
+		SetPlayPanel setPlaysPanel = new SetPlayPanel(currentStrategy, fieldController);
 		ActionParameterPanel actionPanel = new ActionParameterPanel();
 
 		//creating panel holding robot informations
@@ -371,6 +372,7 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 			"Situation",
 			"Plays",
 			"Roles",
+			"Set Plays",
 			"Colour",
 			"Vision"
 		};
@@ -433,8 +435,9 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 		optionCards.add(situationPanel, options[0]);
 		optionCards.add(playsPanel, options[1]);
 		optionCards.add(rolesPanel, options[2]);
-        optionCards.add(colourPanel, options[3]);
-        optionCards.add(visionPanel, options[4]);
+		optionCards.add(setPlaysPanel, options[3]);
+        optionCards.add(colourPanel, options[4]);
+        optionCards.add(visionPanel, options[5]);
 
 		optionList.addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -463,9 +466,12 @@ public class RobotSoccerMain extends JFrame implements ActionListener, WebcamDis
 					} else if (optionList.getSelectedValue().equals(options[4])) {
 						CardLayout c = (CardLayout)optionCards.getLayout();
 						c.show(optionCards, options[4]);
+					} else if (optionList.getSelectedValue().equals(options[4])) {
+						CardLayout c = (CardLayout)optionCards.getLayout();
+						c.show(optionCards, options[5]);
 					}
 
-					if (optionList.getSelectedValue().equals(options[3])) {
+					if (optionList.getSelectedValue().equals(options[4])) {
 						webcamController.getWebcamDisplayPanel().setZoomCursor();
 					} else {
 						webcamController.getWebcamDisplayPanel().setDefaultCursor();
