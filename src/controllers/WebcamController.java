@@ -152,7 +152,6 @@ public class WebcamController {
             webcamImageMat = new Mat();
 
             while (!isCancelled() && grabber.isOpened()) {
-
                 grabber.read(webcamImageMat);
 
                 if (webcamImageMat == null) {

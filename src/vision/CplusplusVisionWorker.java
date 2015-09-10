@@ -35,6 +35,11 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     public static final int MAX_ROBOT = 5;
 	private List<VisionListener> listeners = new ArrayList<VisionListener>();
 	private ArrayList<Point> segmentPointList = new ArrayList<Point>();
+
+	private boolean[][] bFound = new boolean[5][100];
+	private int[] countLoss = new int[5];
+
+	private int testCount = 0;
     public CplusplusVisionWorker(ColourPanel cp) {
 		colourPanel = cp;
 
@@ -112,6 +117,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
         BufferedImage rectImage = new BufferedImage(webcamImageMat.width(), webcamImageMat.height(), BufferedImage.TYPE_3BYTE_BGR);
         // Full range HSV. Range 0-255.
         Imgproc.cvtColor(webcamImageMat, webcamImageMat, Imgproc.COLOR_BGR2HSV_FULL);
+
 		int imageWidth = webcamImageMat.width();
 		int imageHeight = webcamImageMat.height();
 
@@ -569,8 +575,25 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     			robotHome[id].pixelDirection = 0;
     			
     		}
-			notifyListeners(new VisionData(robotHome[id].realPos,robotHome[id].direction, "robot:" + (id+1)));
+
+			if (robotHome[id].valid) {
+				bFound[id][testCount] = true;
+			} else {
+				bFound[id][testCount] = false;
+			}
+
+			int tempCountLoss = 0;
+			for (int t = 0; t<100; t++) {
+				if (bFound[id][t]) {
+					tempCountLoss++;
+				}
+			}
+			notifyListeners(new VisionData(robotHome[id].realPos, robotHome[id].direction, "robot:" + (id + 1)));
     	}
+		testCount += 1;
+		if (testCount >= 100) {
+			testCount = 0;
+		}
 
     }
 
