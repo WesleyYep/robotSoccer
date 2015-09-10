@@ -18,7 +18,7 @@ import strategy.GameState;
  * ki - integral constant (unused)
  *
  */
-public class PIDMoveToBall extends Action {
+public class PIDMoveToBallReverse extends Action {
 
     private boolean isPreviousDirectionForward = true;
     private boolean isCharging = true;
@@ -62,14 +62,14 @@ public class PIDMoveToBall extends Action {
         double targetY = ballY;
 
         //find pre-target spot
-        double pretargetX = predX - 40;
-        double pretargetY = predY + ((90 - targetY)/(220 - targetX))*(pretargetX - targetX);
+        double pretargetX = predX + 40;
+        double pretargetY = predY + ((90 - targetY)/(0 - targetX))*(pretargetX - targetX);
 
         pretargetX = pretargetX < 5 ? 5 : pretargetX > 215 ? 215 : pretargetX; //set limits
         pretargetY = pretargetY < 5 ? 5 : pretargetY > 175 ? 175 : pretargetY; //set limits
 
         if (state == 0) {
-            if (getDistanceToTarget(bot, pretargetX, pretargetY) < 5 || ballX > 210) { //try to push ball if its close to goal
+            if (getDistanceToTarget(bot, pretargetX, pretargetY) < 5 || ballX < 10) { //try to push ball if its close to goal
      //           System.out.println("reached pretarget");
                 state = 1; //going to actual target
             } else {
@@ -77,7 +77,7 @@ public class PIDMoveToBall extends Action {
                 targetY = pretargetY;
             }
         }
-        if (state == 1 && bot.getXPosition() > ballX) {
+        if (state == 1 && bot.getXPosition() < ballX) {
     //        System.out.println("reached target");
             state = 0;
         }
@@ -93,7 +93,7 @@ public class PIDMoveToBall extends Action {
 
         //stop if it's a negative situation
      //   System.out.println(bot.getXPosition() + " " + ballX + " " + distanceToTarget + " " + angleToBall);
-        if (bot.getXPosition() > ballX && distanceToBall < 20 && (Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170)) {
+        if (bot.getXPosition() < ballX && distanceToBall < 20 && (Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170)) {
             System.out.println("negative!");
             bot.linearVelocity = isPreviousDirectionForward ? 0 : 0;
             bot.angularVelocity = 0;
@@ -101,7 +101,7 @@ public class PIDMoveToBall extends Action {
         }
 
         //spin if ball is stuck beside robot on positive side
-        if (distanceToBall < 7 && Math.abs((angleToBall-90)%180) < 30 && ballX > bot.getXPosition()) {
+        if (distanceToBall < 7 && Math.abs((angleToBall-90)%180) < 30 && ballX < bot.getXPosition()) {
             if (angleToBall > 0) {//ie. around 90
                 bot.angularVelocity = 30;
             } else {

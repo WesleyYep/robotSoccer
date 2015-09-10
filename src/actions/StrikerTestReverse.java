@@ -6,7 +6,7 @@ import strategy.GameState;
 /**
  * Created by Wesley on 18/07/2015.
  */
-public class StrikerTest extends Action {
+public class StrikerTestReverse extends Action {
 
     private double kp = 5;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
@@ -28,7 +28,7 @@ public class StrikerTest extends Action {
 
         //check if ball is coming into path
         double time = ballComingIntoPath();
-        if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
+        if (time > 0 || (ballX < bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
             bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
        //     System.out.println("time: " + time);
             if (time < 200) {
@@ -111,7 +111,7 @@ public class StrikerTest extends Action {
             xInt = 0;
         }
 */
-        if (xInt > bot.getXPosition() && ((lastBallY > ballY && lastBallY > y) || (lastBallY < ballY && lastBallY < y))) {
+        if (xInt < bot.getXPosition() && ((lastBallY > ballY && lastBallY > y) || (lastBallY < ballY && lastBallY < y))) {
        //     System.out.println("ball dist: " + ballDistance + "    ballSpeed: " + ballSpeed);
             return time;
         } else {
@@ -121,7 +121,7 @@ public class StrikerTest extends Action {
     }
 
     private void turn() {
-        double targetX = 220;
+        double targetX = 0;
         double targetY = parameters.get("targetY");
 
         //get angle to target

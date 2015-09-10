@@ -1,3 +1,10 @@
+Role:waitingStrikerReverse
+permanent-actions.StrikerTestReverse-[targetX, targetY]-[50, 90]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:waitingStriker
 permanent-actions.StrikerTest-[targetX, targetY]-[170, 90]
 null-null
@@ -5,7 +12,14 @@ null-null
 null-null
 null-null
 -----
-Role:new role
+Role:reverseKicker
+permanent-actions.PIDMoveToBallReverse-[ki, speed, kp]-[0, 5, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:kicker
 permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
 null-null
 null-null
@@ -20,7 +34,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 50, 50, 50]
+permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[110, 35, 35, 70]
 null-null
 null-null
 null-null
@@ -75,16 +89,19 @@ null-null
 null-null
 null-null
 -----
+Role:spinner
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[45, 10]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:new play
 wait
+defender
+reverseKicker
 wait
-wait
-<<<<<<< HEAD
-waitingStriker
-=======
-wait
-new role
->>>>>>> cba302680c999dc8e781fd606d50f86a21fa9d76
+gk
 -----
 Situation:new situation 1:30:1:452:367
 new play

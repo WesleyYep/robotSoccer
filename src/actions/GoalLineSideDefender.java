@@ -63,9 +63,9 @@ public class GoalLineSideDefender extends Action {
 
         if (getDistanceToTarget(r) < 10) {
             if (r.getYPosition() > 90) {
-                r.angularVelocity = 30;
+                r.angularVelocity = 10;
             } else {
-                r.angularVelocity = -30;
+                r.angularVelocity = -10;
             }
             r.linearVelocity = 0;
             return;

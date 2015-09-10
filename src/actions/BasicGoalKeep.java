@@ -425,7 +425,7 @@ public class BasicGoalKeep extends Action {
 
 		}
 
-		System.out.println(r.getXPosition());
+	//	System.out.println(r.getXPosition());
 		lastBallX = ballX;
 		lastBallY = ballY;
 		lastBallX2 = lastBallX;
@@ -542,7 +542,7 @@ public class BasicGoalKeep extends Action {
 				averageTheta -= 2*Math.PI;
 			}
 		} else {
-			System.out.println("There is an error in the half angle calculations.");
+//			System.out.println("There is an error in the half angle calculations.");
 		}
 
 //        if (ballY < 90) {
