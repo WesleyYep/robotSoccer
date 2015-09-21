@@ -1,7 +1,6 @@
 package vision;
 
 import controllers.VisionController;
-import data.RobotData;
 import data.VisionData;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -70,6 +69,10 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 	public void imageUpdated(Mat image) {
 		// TODO Auto-generated method stub
 	try {
+
+		Imgproc.GaussianBlur(image,image, new org.opencv.core.Size(5,5), 0 ,0);
+
+		//org.opencv.photo.Photo.fastNlMeansDenoisingColored(image,image);
 		Run_InitFlags();
 		Run_SearchPatch(image);
 
