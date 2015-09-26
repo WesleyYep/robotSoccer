@@ -249,7 +249,7 @@ public class Tick implements SenderListener {
                         runStrat = true;
                     }
                 }
-            }, 10000);
+            }, 3000);
         }
     }
 

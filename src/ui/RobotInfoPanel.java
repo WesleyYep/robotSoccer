@@ -24,6 +24,7 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 	private JLabel orientation;
 	private CurrentStrategy currentStrategy;
 	private JComboBox manualRolesBox = new JComboBox();
+	private boolean flag = false;
 
 	public RobotInfoPanel(Robot r, int i, final CurrentStrategy currentStrategy) {
 		robot = r;
@@ -55,11 +56,12 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 		manualRolesBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					Role role = (Role)e.getItem();
+				if (e.getStateChange() == ItemEvent.SELECTED && !flag) {
+					Role role = (Role) e.getItem();
 					if (currentStrategy != null && currentStrategy.getSetPlay() != null) {
 						currentStrategy.getSetPlay().addRole(robot.getId(), role);
 					}
+		//			System.out.println("fire!" + currentStrategy.getSetPlay().toString());
 				}
 			}
 		});
@@ -91,16 +93,25 @@ public class RobotInfoPanel extends JPanel implements RobotListener, FocusListen
 
 	@Override
 	public void strategyChanged() {
+		flag = true;
+		//System.out.println("flag true");
         manualRolesBox.removeAllItems();
 		for (int j = 0; j < currentStrategy.getRoles().size(); j++) {
             manualRolesBox.addItem(currentStrategy.getRoles().get(j));
 		}
+		flag = false;
+		//System.out.println("flag false");
 	}
 
 	@Override
 	public void setPlayChanged(Play setPlay) {
+		flag = true;
+	//	System.out.println("flag true");
+	//	System.out.println(setPlay);
 		Role[] roles = setPlay.getRoles();
 		PlaysPanel.setSelectedValue(manualRolesBox, roles[robot.getId()]);
+		flag = false;
+	//	System.out.println("flag false");
 	}
 
 }

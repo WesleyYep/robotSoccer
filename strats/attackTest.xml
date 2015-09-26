@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.BasicDefender-[point 2 y, point 2 x, point 1 x, point 1 y]-[130, 50, 50, 50]
+permanent-actions.PIDGoalKeeper-[goalLine, bottomPoint, topPoint]-[50, 110, 70]
 null-null
 null-null
 null-null
@@ -97,7 +97,21 @@ null-null
 null-null
 -----
 Role:MoveSpotThenKick
-permanent-actions.MoveSpotKickBall-[turnSpotY, turnSpotX, spotX, spotY]-[110, 220, 130, 110]
+NegativeSituation-actions.MoveAndTurn-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 130, 90]
+permanent-actions.MoveSpotKickBall-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 130, 90]
+null-null
+null-null
+null-null
+-----
+Role:waitingDefenderTop
+permanent-actions.StrikerTest-[targetX, targetY]-[5, 45]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingDefenderBot
+permanent-actions.StrikerTest-[targetX, targetY]-[5, 135]
 null-null
 null-null
 null-null
@@ -108,58 +122,62 @@ gk
 defender
 PIDChaseBall
 goalLineDefenderTop
-PIDChaseBall
+waitingDefenderBot
 -----
 Play:defendBot
 gk
 defender
 PIDChaseBall
+waitingDefenderTop
 goalLineDefenderBot
-PIDChaseBall
------
-Play:attackTop
-gk
-centreDefender
-PIDChaseBall
-waitingStriker
-PIDChaseBall
------
-Play:attackBottom
-gk
-centreDefender
-PIDChaseBall
-waitingStriker
-PIDChaseBall
 -----
 Play:attackMid
 gk
 centreDefender
-PIDChaseBall
 waitingStriker
+MoveSpotThenKick
 PIDChaseBall
 -----
-Play:defend mid
+Play:defendMidTop
 gk
 defender
-PIDChaseBall
-goalLineDefenderBot
-blockingDefender
+PIDGkDefender
+goalLineDefenderTop
+waitingDefenderBot
 -----
-Situation:defendTop:30:1:225:134
+Play:deepDefence
+gk
+defender
+goalLineDefenderTop
+waitingDefenderTop
+goalLineDefenderBot
+-----
+Play:defendMidBot
+gk
+defender
+PIDGkDefender
+goalLineDefenderBot
+waitingDefenderBot
+-----
+Situation:defendTop:66:1:189:135
 defendTop
 -----
-Situation:defendBot:27:235:228:134
+Situation:defendBot:66:232:189:137
 defendBot
 -----
-Situation:attackTop:483:-1:54:184
-attackTop
+Situation:defendTop2:134:136:124:47
+defendTop
 -----
-Situation:attackBot:478:182:55:182
-attackBottom
+Situation:defendBot2:134:181:124:52
+defendBot
 -----
 Situation:attackMid:257:5:228:366
 attackMid
 -----
-Situation:defend mid:27:135:229:101
-defend mid
+Situation:defendMidBot:66:181:68:52
+defendMidTop
+-----
+Situation:deepDefence:16:2:49:368
+-----
+Situation:defendMidTop:66:135:69:47
 -----

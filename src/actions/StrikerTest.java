@@ -26,22 +26,24 @@ public class StrikerTest extends Action {
         double targetX = parameters.get("targetX");
         double targetY = parameters.get("targetY");
 
-        //check if ball is coming into path
-        double time = ballComingIntoPath();
-        if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
-            bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
-       //     System.out.println("time: " + time);
-            if (time < 200) {
-                GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+        if (bot.getXPosition() > targetX-10) {
+            //check if ball is coming into path
+            double time = ballComingIntoPath();
+            if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
+                bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
+                //     System.out.println("time: " + time);
+                if (time < 200) {
+                    GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+                } else {
+                    GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
+                }
+                bot.angularVelocity = 0;
+                lastBallY = ballY;
+                lastBallX = ballX;
+                return;
             } else {
                 GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
             }
-            bot.angularVelocity = 0;
-            lastBallY = ballY;
-            lastBallX = ballX;
-            return;
-        } else {
-            GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
         }
 
     //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
