@@ -7,9 +7,19 @@ import strategy.Action;
  */
 public class PenaltyStraight extends Action {
 
+    {
+        parameters.put("speed", 3);
+    }
+
+
     @Override
     public void execute() {
-        bot.linearVelocity = 3;
+        int speed = parameters.get("speed");
+
+        if (speed > 100) {
+            speed = -(speed - 100);
+        }
+        bot.linearVelocity = speed;
         bot.angularVelocity = 0;
     }
 

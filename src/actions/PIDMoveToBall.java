@@ -94,7 +94,7 @@ public class PIDMoveToBall extends Action {
         //stop if it's a negative situation
      //   System.out.println(bot.getXPosition() + " " + ballX + " " + distanceToTarget + " " + angleToBall);
         if (bot.getXPosition() > ballX && distanceToBall < 20 && (Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170)) {
-            System.out.println("negative!");
+            //System.out.println("negative!");
             bot.linearVelocity = isPreviousDirectionForward ? 0 : 0;
             bot.angularVelocity = 0;
             return;

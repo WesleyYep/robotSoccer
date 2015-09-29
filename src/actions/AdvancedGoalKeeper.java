@@ -27,34 +27,6 @@ public class AdvancedGoalKeeper extends Action {
         double targetY = getYPositionForGoalKeeper();
         double dist = getDistanceToTarget(bot, targetX, targetY);
 
-//        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
-//            if (!presetToBackward && !presetToForward && dist > 10) {
-//                System.out.println("bot is stuck :(");
-//                if (isPreviousDirectionForward) {
-//                    presetToBackward = true;
-//                } else {
-//                    presetToForward = true;
-//                }
-//            }
-//        } else {
-//            presetToBackward = false;
-//            presetToForward = false;
-//        }
-
-        //check for obstacles
-//        for (int i = 0; i < opponentRobots.getRobots().length; i++) {
-//            Robot opp = opponentRobots.getRobot(i);
-//            if ((isPreviousDirectionForward && Math.abs(getTargetTheta(bot, opp.getXPosition(), opp.getYPosition())) < 20)
-//                    || (!isPreviousDirectionForward && Math.abs(getTargetTheta(bot, opp.getXPosition(), opp.getYPosition())) > 160)
-//                    && getDistanceToTarget(bot, opp.getXPosition(), opp.getYPosition()) < 20) {
-//                if (isPreviousDirectionForward) {
-//                    presetToBackward = true;
-//                } else {
-//                    presetToForward = true;
-//                }
-//            }
-//        }
-
         boolean isCurrentDirectionForward;
 
         //get angle to target
@@ -68,12 +40,12 @@ public class AdvancedGoalKeeper extends Action {
                 actualAngleError = Math.toRadians(180 - angleToTarget);
             }
             bot.angularVelocity = actualAngleError * kp * -1;
-            bot.linearVelocity = 0.5 * -1;
+            bot.linearVelocity = 0.8 * -1;
             isCurrentDirectionForward = false;
         } else {
             actualAngleError =  Math.toRadians(angleToTarget);
             bot.angularVelocity = actualAngleError * kp;
-            bot.linearVelocity = 0.5;
+            bot.linearVelocity = 0.8;
             isCurrentDirectionForward = true;
         }
         isPreviousDirectionForward = isCurrentDirectionForward;
@@ -90,7 +62,10 @@ public class AdvancedGoalKeeper extends Action {
 
     private double getYPositionForGoalKeeper() {
         //just use ballY
-        return ballY;
+        double minY = parameters.get("topPoint");
+        double maxY = parameters.get("bottomPoint");
+
+        return ballY < maxY && ballY > minY ? ballY : ballY > maxY ? maxY : minY;
     }
 
     private void turn() {

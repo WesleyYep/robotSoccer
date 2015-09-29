@@ -27,22 +27,22 @@ public class GoalLineSideDefender extends Action {
         Robot r = bot;
 
         //check if robot is stuck
-        double newTargetDistance = getDistanceToTarget(r);
-        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
-            countTimesThatSeemStuck++;
-        } else if (r.linearVelocity >= 0){
-            countTimesThatSeemStuck = 0;
-        }
-        if (countTimesThatSeemStuck > 20) {
-            countTimesThatSeemStuck = 0;
-            return;
-        } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 10;
-            countTimesThatSeemStuck++;
-            return;
-        }
+//        double newTargetDistance = getDistanceToTarget(r);
+//        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
+//        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
+//            countTimesThatSeemStuck++;
+//        } else if (r.linearVelocity >= 0){
+//            countTimesThatSeemStuck = 0;
+//        }
+//        if (countTimesThatSeemStuck > 20) {
+//            countTimesThatSeemStuck = 0;
+//            return;
+//        } else if (countTimesThatSeemStuck > 10) {
+//            r.linearVelocity = -0.5;
+//            r.angularVelocity = 10;
+//            countTimesThatSeemStuck++;
+//            return;
+//        }
 
         //move and turn
         if (Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
@@ -63,9 +63,9 @@ public class GoalLineSideDefender extends Action {
 
         if (getDistanceToTarget(r) < 10) {
             if (r.getYPosition() > 90) {
-                r.angularVelocity = 10;
+                r.angularVelocity = 12;
             } else {
-                r.angularVelocity = -10;
+                r.angularVelocity = -12;
             }
             r.linearVelocity = 0;
             return;
