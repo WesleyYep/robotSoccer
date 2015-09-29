@@ -175,9 +175,11 @@ Situation:attackMid:257:5:228:366
 attackMid
 -----
 Situation:defendMidBot:66:181:68:52
-defendMidTop
+defendMidBot
 -----
 Situation:deepDefence:16:2:49:368
+deepDefence
 -----
 Situation:defendMidTop:66:135:69:47
+defendMidTop
 -----
