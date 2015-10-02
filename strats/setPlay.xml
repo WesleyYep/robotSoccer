@@ -142,7 +142,7 @@ moveAndTurn:70:220:105:70
 -----
 Play:penaltyDefendSetUp
 moveAndTurn:70:0:115:70
-moveAndTurn:90:220:5:90
+moveAndTurn:5:0:5:90
 moveAndTurn:10:0:115:10
 moveAndTurn:170:0:115:170
 moveAndTurn:110:0:115:110
