@@ -1,5 +1,5 @@
 Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
 null-null
 null-null
 null-null
@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[30, 120, 60]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[20, 120, 60]
 null-null
 null-null
 null-null
@@ -34,7 +34,7 @@ null-null
 null-null
 -----
 Role:waitingStriker
-permanent-actions.StrikerTest-[targetX, targetY]-[170, 90]
+permanent-actions.StrikerTest-[targetX, targetY]-[150, 90]
 null-null
 null-null
 null-null
@@ -142,15 +142,15 @@ Play:attackTop
 gk
 centreDefender
 waitingStriker
-MoveSpotThenKickFromTop
+MoveSpotThenKickFromBot
 PIDChaseBall
 -----
 Play:attackBot
 gk
 centreDefender
 waitingStriker
-MoveSpotThenKickFromBot
 PIDChaseBall
+MoveSpotThenKickFromTop
 -----
 Play:defendMidTop
 gk

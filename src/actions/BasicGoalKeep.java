@@ -216,11 +216,11 @@ public class BasicGoalKeep extends Action {
 		//clear the ball
 		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
 			//System.out.println(targetTheta);
-			if (ballY > r.getYPosition() && ballY - r.getYPosition() < 15 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
+			if (ballY > r.getYPosition() && ballY - r.getYPosition() < 35 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
 				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 2, false);
 				return;
 			} else {
-				if (ballY < r.getYPosition() && r.getYPosition() - ballY < 15 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
+				if (ballY < r.getYPosition() && r.getYPosition() - ballY < 35 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
 					MoveToSpot.move(r, new Coordinate((int)goalLine, 5), 2, false);
 					return;
 				}
@@ -348,7 +348,6 @@ public class BasicGoalKeep extends Action {
 			//		+ " area3Y weghting:" + area3Y + " " + area3Weighting );
 			setVelocityToTarget(goalLine, resultY, true, false);
 
-
 			/*
 			if (goal) {
 				setVelocityToTarget(goalLine,Field.OUTER_BOUNDARY_HEIGHT/2, true,false);
@@ -415,13 +414,6 @@ public class BasicGoalKeep extends Action {
 				}
 			}
 			*/
-			if (ballY >= topPoint && ballY <= bottomPoint) {
-				setVelocityToTarget(goalLine, ballY, true, true);
-			} else if (ballY < topPoint) {
-				setVelocityToTarget(goalLine, topPoint, true, true);
-			} else if (ballY > bottomPoint) {
-				setVelocityToTarget(goalLine, bottomPoint, true, true);
-			}
 
 		}
 
