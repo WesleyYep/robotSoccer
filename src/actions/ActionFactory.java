@@ -109,6 +109,10 @@ public class ActionFactory {
                 final AdvancedGoalKeeper a = new AdvancedGoalKeeper();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            } else if (simpleName.equals(AdvancedGoalKeeperStriker.class.getSimpleName())) {
+                final AdvancedGoalKeeperStriker a = new AdvancedGoalKeeperStriker();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             } else if (simpleName.equals(PIDMoveToBallReverse.class.getSimpleName())) {
                 final PIDMoveToBallReverse a = new PIDMoveToBallReverse();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});

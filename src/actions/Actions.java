@@ -31,6 +31,7 @@ public class Actions {
           add(MoveSpotKickBall.class.getSimpleName());
           add(ChaseBall2.class.getSimpleName());
           add(AdvancedGoalKeeper.class.getSimpleName());
+          add(AdvancedGoalKeeperStriker.class.getSimpleName());
           add(PIDMoveToBallReverse.class.getSimpleName());
           add(StrikerTestReverse.class.getSimpleName());
       }};

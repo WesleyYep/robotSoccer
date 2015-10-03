@@ -178,9 +178,9 @@ chaseBall
 Play:penaltyDefend
 gk
 chaseBall
-PIDGkDefender
-goalLineDefenderBot
-waitingDefenderBot
+defender
+circle
+circle
 -----
 Play:circle
 circle:0
