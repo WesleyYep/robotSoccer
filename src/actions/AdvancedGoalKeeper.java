@@ -1,5 +1,6 @@
 package actions;
 
+import data.Coordinate;
 import strategy.Action;
 import ui.Field;
 
@@ -46,12 +47,12 @@ public class AdvancedGoalKeeper extends Action {
                 actualAngleError = Math.toRadians(180 - angleToTarget);
             }
             bot.angularVelocity = actualAngleError * kp * -1;
-            bot.linearVelocity = speed * -1;
+            bot.linearVelocity = Math.abs(angleToTarget) > 160 ? speed * -1 : 0;
             isCurrentDirectionForward = false;
         } else {
             actualAngleError =  Math.toRadians(angleToTarget);
             bot.angularVelocity = actualAngleError * kp;
-            bot.linearVelocity = speed;
+            bot.linearVelocity = Math.abs(angleToTarget) < 20 ? speed : 0;
             isCurrentDirectionForward = true;
         }
         isPreviousDirectionForward = isCurrentDirectionForward;
@@ -63,6 +64,20 @@ public class AdvancedGoalKeeper extends Action {
             bot.linearVelocity *= dist/20.0;
         }
 
+        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
+        //clear the ball
+        int goalLine = parameters.get("goalLine");
+        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
+            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 5 || Math.abs(angleToBall) > 175 )) {
+                MoveToSpot.move(bot, new Coordinate(goalLine, 175), 2, false);
+                return;
+            } else {
+                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 5 || Math.abs(angleToBall) > 175 )) {
+                    MoveToSpot.move(bot, new Coordinate(goalLine, 5), 2, false);
+                    return;
+                }
+            }
+        }
 
     }
 

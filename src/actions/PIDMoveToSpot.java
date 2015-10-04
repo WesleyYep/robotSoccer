@@ -17,7 +17,7 @@ public class PIDMoveToSpot extends Action {
 //    private LimitedQueue errorsList = new LimitedQueue(10);
     private boolean isPreviousDirectionForward = true;
     private double kp = 3;
-    private double ki = 0;
+//    private double ki = 0;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
 

@@ -16,6 +16,7 @@ public class GoalLineSideDefender extends Action {
     private int targetY = 0;
     private double oldDistanceToTarget = 0;
     private int countTimesThatSeemStuck = 0;
+    private boolean spinning = true;
 
     {
         parameters.put("startingX", 10);
@@ -25,6 +26,8 @@ public class GoalLineSideDefender extends Action {
     @Override
     public void execute() {
         Robot r = bot;
+        targetX = parameters.get("startingX");
+        targetY = parameters.get("startingY");
 
         //check if robot is stuck
 //        double newTargetDistance = getDistanceToTarget(r);
@@ -43,6 +46,21 @@ public class GoalLineSideDefender extends Action {
 //            countTimesThatSeemStuck++;
 //            return;
 //        }
+        if (getDistanceToTarget(r) < 10) {
+            spinning = true;
+        } if (getDistanceToTarget(r) > 20) {
+            spinning = false;
+        }
+
+        if (spinning) {
+            if (ballY < r.getYPosition()) {
+                r.angularVelocity = -12;
+            } else {
+                r.angularVelocity = 12;
+            }
+            r.linearVelocity = 0;
+            return;
+        }
 
         //move and turn
         if (Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
@@ -55,21 +73,11 @@ public class GoalLineSideDefender extends Action {
             countTimesThatSeemStuck = 0;
         }
         else {
-            targetX = parameters.get("startingX");
-            targetY = parameters.get("startingY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, false);
+            MoveToSpot.pidMove(r, targetX, targetY);
             oldDistanceToTarget = getDistanceToTarget(r);
         }
 
-        if (getDistanceToTarget(r) < 10) {
-            if (r.getYPosition() > 90) {
-                r.angularVelocity = 12;
-            } else {
-                r.angularVelocity = -12;
-            }
-            r.linearVelocity = 0;
-            return;
-        }
+
 
 //        int y;
 //        int facing;

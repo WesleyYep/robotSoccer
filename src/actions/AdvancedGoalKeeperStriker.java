@@ -44,11 +44,11 @@ public class AdvancedGoalKeeperStriker extends Action {
                     actualAngleError = Math.toRadians(180 - angleToTarget);
                 }
                 bot.angularVelocity = actualAngleError * kp * -1;
-                bot.linearVelocity = speed * -1;
+                bot.linearVelocity = Math.abs(angleToTarget) > 160 ? speed * -1 : 0;
             } else {
                 actualAngleError = Math.toRadians(angleToTarget);
                 bot.angularVelocity = actualAngleError * kp;
-                bot.linearVelocity = speed;
+                bot.linearVelocity = Math.abs(angleToTarget) < 20 ? speed : 0;
             }
 
             if (dist <= 3) {

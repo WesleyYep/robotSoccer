@@ -15,6 +15,8 @@ public class MoveToSpot extends Action{
     public static final double ERROR_MARGIN = 5;
     private static Robots teamBots;
     private static Robots opponentBots;
+    private static double kp = 3;
+
     //non-static initialiser block
     {
         if(!(parameters.containsKey("startingX"))) {
@@ -55,7 +57,7 @@ public class MoveToSpot extends Action{
         //if directly behind, just hard code
         if (Math.abs(targetTheta) > 175) {
             r.angularVelocity = 0;
-            r.linearVelocity = -0.3;
+            r.linearVelocity = -0.5;
             return;
         }
 
@@ -157,10 +159,47 @@ public class MoveToSpot extends Action{
 
         double linear  = fb.getVariable("linearVelocity").getValue();
         double angular = fb.getVariable("angularVelocity").getValue();
-        r.linearVelocity = linear*speed;
+        r.linearVelocity = Math.abs(targetTheta) < 20 || Math.abs(targetTheta) > 160 ? linear*speed : 0;
         r.angularVelocity = angular*-1;
 
         return;
 
     }
+
+
+    public static void pidMove(Robot bot, int targetX, int targetY) {
+        double dist = getsStaticDistanceToTarget(bot, targetX, targetY);
+
+        //get angle to target
+        double angleToTarget = getTargetTheta(bot, targetX, targetY);
+        double actualAngleError;
+
+        if ((Math.abs(angleToTarget) > 90)) {
+            if (angleToTarget < 0) {
+                actualAngleError = Math.toRadians(-180 - angleToTarget);
+            } else {
+                actualAngleError = Math.toRadians(180 - angleToTarget);
+            }
+            bot.angularVelocity = actualAngleError * kp * -1;
+            bot.linearVelocity = 0.5 * -1;
+        } else {
+            actualAngleError =  Math.toRadians(angleToTarget);
+            bot.angularVelocity = actualAngleError * kp;
+            bot.linearVelocity = 0.5;
+        }
+
+        if (dist <= 3) {
+            bot.linearVelocity = 0;
+        }else if (dist < 10) {
+            bot.linearVelocity *= dist/20.0;
+        }
+        return;
+    }
+
+
+
+    protected static double getsStaticDistanceToTarget(Robot r, double targetX, double targetY) {
+        return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
+    }
+
 }
