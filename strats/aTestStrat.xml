@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[130, 180, 0]
+permanent-actions.StrikerTest-[targetX, targetY]-[160, 90]
 null-null
 null-null
 null-null
@@ -20,21 +20,21 @@ null-null
 null-null
 -----
 Role:triangleMember1
-permanent-actions.PenaltyStraight-[speed]-[1]
+permanent-actions.KickOffSurround-[speed]-[2]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:triangleMember2
-permanent-actions.PenaltyStraight-[speed]-[1]
+permanent-actions.KickOffSurround-[speed]-[2]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:triangleMember3
-permanent-actions.PenaltyStraight-[speed]-[1]
+permanent-actions.KickOffSurround-[speed]-[2]
 null-null
 null-null
 null-null
@@ -55,7 +55,7 @@ triangleMember2
 triangleMember3
 -----
 Play:test2
-tester2
+tester
 wait
 wait
 wait

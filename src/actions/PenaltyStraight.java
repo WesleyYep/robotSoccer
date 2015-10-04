@@ -21,6 +21,7 @@ public class PenaltyStraight extends Action {
         }
         bot.linearVelocity = speed;
         bot.angularVelocity = 0;
+
     }
 
 }

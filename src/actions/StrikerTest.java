@@ -8,12 +8,13 @@ import strategy.GameState;
  */
 public class StrikerTest extends Action {
 
-    private double kp = 5;
+    private double kp = 3;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
     private double lastBallX = 0;
     private double lastBallY = 0;
     private long lastTime = 0;
+    private int state = 0;
 
     {
         parameters.put("targetX", 170);
@@ -26,23 +27,26 @@ public class StrikerTest extends Action {
         double targetX = parameters.get("targetX");
         double targetY = parameters.get("targetY");
 
-        if (bot.getXPosition() > targetX-10) {
-            //check if ball is coming into path
-            double time = ballComingIntoPath();
-            if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
-                bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
-                //     System.out.println("time: " + time);
-                if (time < 200) {
-                    GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+        if (state == 1) {
+            if (bot.getXPosition() > targetX - 10) {
+                //check if ball is coming into path
+                double time = ballComingIntoPath();
+                if (time > 0 || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)) {
+                    bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
+                    //     System.out.println("time: " + time);
+                    if (time < 200) {
+                        GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+                    } else {
+                        GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
+                    }
+                    bot.angularVelocity = 0;
+                    lastBallY = ballY;
+                    lastBallX = ballX;
+                    return;
                 } else {
                     GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
+                    state = 0;
                 }
-                bot.angularVelocity = 0;
-                lastBallY = ballY;
-                lastBallX = ballX;
-                return;
-            } else {
-                GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
             }
         }
 
@@ -59,40 +63,45 @@ public class StrikerTest extends Action {
     //            presetToBackward = false;
     //            presetToForward = false;
     //        }
+        else if (state == 0) {
+            double dist = getDistanceToTarget(bot, targetX, targetY);
 
-        double dist = getDistanceToTarget(bot, targetX, targetY);
+            //get angle to target
+            double angleToTarget = getTargetTheta(bot, targetX, targetY);
+            double actualAngleError;
 
-        //get angle to target
-        double angleToTarget = getTargetTheta(bot, targetX, targetY);
-        double actualAngleError;
-
-        if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
-            if (angleToTarget < 0) {
-                actualAngleError = Math.toRadians(-180 - angleToTarget);
+            if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
+                if (angleToTarget < 0) {
+                    actualAngleError = Math.toRadians(-180 - angleToTarget);
+                } else {
+                    actualAngleError = Math.toRadians(180 - angleToTarget);
+                }
+                bot.angularVelocity = actualAngleError * kp * -1;
+                bot.linearVelocity = 0.5 * -1;
             } else {
-                actualAngleError = Math.toRadians(180 - angleToTarget);
+                actualAngleError = Math.toRadians(angleToTarget);
+                bot.angularVelocity = actualAngleError * kp;
+                bot.linearVelocity = 0.5;
             }
-            bot.angularVelocity = actualAngleError * kp * -1;
-            bot.linearVelocity = 0.5 * -1;
-        } else {
-            actualAngleError = Math.toRadians(angleToTarget);
-            bot.angularVelocity = actualAngleError * kp;
-            bot.linearVelocity = 0.5;
-        }
+//        if (isCurrentDirectionForward == isPreviousDirectionForward) {
+//            errorsList.add(actualAngleError * timePeriod/1000.0);
+//        } else {
+//            errorsList.clear();
+//        }
+//        bot.angularVelocity += errorsList.getTotal() * ki;
 
-        if (dist <= 3) {
-            bot.linearVelocity = 0;
-            turn();
-        } else if (dist < 10) {
-            bot.linearVelocity *= dist / 20.0;
-        }
-        if (Math.abs(bot.angularVelocity) < 0.2) {
-            bot.angularVelocity = 0;
-        }
+            if (dist <= 3) {
+                bot.linearVelocity = 0;
+                if (Math.abs(turn()) < 10) {
+                    state = 1;
+                }
+            } else if (dist < 10) {
+                bot.linearVelocity *= dist / 20.0;
+            }
 
-        lastBallX = ballX;
-        lastBallY = ballY;
-
+            lastBallX = ballX;
+            lastBallY = ballY;
+        }
     }
 
     private double ballComingIntoPath() {
@@ -122,13 +131,14 @@ public class StrikerTest extends Action {
 
     }
 
-    private void turn() {
+    private double turn() {
         double targetX = 220;
         double targetY = parameters.get("targetY");
 
         //get angle to target
         double angleToTarget = getTargetTheta(bot, targetX, targetY);
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
+        return angleToTarget;
     }
 
 

@@ -121,6 +121,10 @@ public class ActionFactory {
                 final StrikerTestReverse a = new StrikerTestReverse();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            } else if (simpleName.equals(KickOffSurround.class.getSimpleName())) {
+                final KickOffSurround a = new KickOffSurround();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             }
         }
 

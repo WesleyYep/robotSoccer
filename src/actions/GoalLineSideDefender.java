@@ -48,7 +48,7 @@ public class GoalLineSideDefender extends Action {
 //        }
         if (getDistanceToTarget(r) < 10) {
             spinning = true;
-        } if (getDistanceToTarget(r) > 20) {
+        } if (getDistanceToTarget(r) > 15) {
             spinning = false;
         }
 

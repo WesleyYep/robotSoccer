@@ -20,28 +20,77 @@ null-null
 null-null
 -----
 Role:spinnerTop
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[35, 5]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[25, 5]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:secondSpinnerTop
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[35, 25]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[25, 25]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:spinnerBot
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[145, 5]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[155, 5]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:secondSpinnerBot
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[145, 25]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[155, 25]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender1
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[70, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender2
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender3
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[130, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:PIDChaseBall
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:PIDChaseBall2
+permanent-actions.PIDMoveToBallReverse-[ki, speed, kp]-[0, 5, 3]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingStriker
+permanent-actions.StrikerTest-[targetX, targetY]-[165, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingStriker2
+permanent-actions.StrikerTest-[targetX, targetY]-[160, 110]
 null-null
 null-null
 null-null
@@ -68,6 +117,34 @@ secondSpinnerTop
 spinnerTop
 spinnerBot
 -----
+Play:attackPlay
+gk
+centreDefender2
+centreDefender3
+defender
+PIDChaseBall2
+-----
+Play:attackDeepTopPlay
+gk
+centreDefender2
+waitingStriker
+defender
+PIDChaseBall2
+-----
+Play:attackDeepBotPlay
+gk
+centreDefender2
+waitingStriker
+defender
+PIDChaseBall2
+-----
+Play:middlePlay
+gk
+defender
+centreDefender1
+PIDChaseBall
+PIDChaseBall
+-----
 Situation:topDefence:0:2:179:134
 defTopPlay
 -----
@@ -76,4 +153,16 @@ defBotPlay
 -----
 Situation:midDefence:2:135:178:101
 defMidPlay
+-----
+Situation:attack:255:3:113:367
+attackPlay
+-----
+Situation:middle:178:0:78:368
+middlePlay
+-----
+Situation:attackDeepTop:366:2:139:183
+attackDeepTopPlay
+-----
+Situation:attackDeepBot:367:184:139:186
+attackDeepBotPlay
 -----
