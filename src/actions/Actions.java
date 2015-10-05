@@ -36,6 +36,8 @@ public class Actions {
           add(PIDMoveToBallReverse.class.getSimpleName());
           add(StrikerTestReverse.class.getSimpleName());
           add(KickOffSurround.class.getSimpleName());
+          add(VerticalPusher.class.getSimpleName());
+          add(SpinnerForAttack.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {

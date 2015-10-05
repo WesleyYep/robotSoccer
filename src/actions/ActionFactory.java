@@ -129,6 +129,14 @@ public class ActionFactory {
                 final KickOffSurround a = new KickOffSurround();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            }  else if (simpleName.equals(VerticalPusher.class.getSimpleName())) {
+                final VerticalPusher a = new VerticalPusher();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
+            }  else if (simpleName.equals(SpinnerForAttack.class.getSimpleName())) {
+                final SpinnerForAttack a = new SpinnerForAttack();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             }
         }
 

@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Role:goalLineDefenderTop
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[35, 5]
+permanent-actions.SpinnerForAttack-[startingY, startingX]-[50, 170]
 null-null
 null-null
 null-null
@@ -54,6 +54,13 @@ null-null
 null-null
 null-null
 -----
+Role:testVerticalPush
+permanent-actions.VerticalPusher-[goalLine, bottomPoint, topPoint]-[170, 180, 110]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:test
 tester
 wait
@@ -62,8 +69,8 @@ triangleMember2
 triangleMember3
 -----
 Play:test2
-PenaltyFake
-wait
+testVerticalPush
+goalLineDefenderTop
 wait
 wait
 wait
