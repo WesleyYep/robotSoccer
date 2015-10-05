@@ -1,131 +1,183 @@
 package actions;
 
-import data.Coordinate;
 import strategy.Action;
-import ui.Field;
+import strategy.GameState;
 
 /**
  * Created by Wesley on 18/07/2015.
  */
 public class SpinnerForAttack extends Action {
 
-    private boolean isPreviousDirectionForward = true;
     private double kp = 3;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
-
+    private double lastBallX = 0;
+    private double lastBallY = 0;
+    private long lastTime = 0;
+    private int state = 0;
 
     {
-        parameters.put("firstX", 130);
-        parameters.put("firstY", 30);
-        parameters.put("secondX", 180);
-        parameters.put("secondY", 60);
+        parameters.put("targetX", 170);
+        parameters.put("targetY", 90);
     }
 
     @Override
     public void execute() {
 
-        if (Math.abs(getTargetTheta(bot, ballX, ballY)) < 10) {
-            bot.linearVelocity = 1;
-            bot.angularVelocity = 0;
-            return;
-        }
+        double targetX = parameters.get("targetX");
+        double targetY = parameters.get("targetY");
 
-        //firstX should always be lower than secondX
-        double firstX = parameters.get("firstX");
-        double firstY = parameters.get("firstY");
-        double secondX = parameters.get("secondX");
-        double secondY = parameters.get("secondY");
+        if (state == 1) {
+            if (bot.getXPosition() > targetX - 10) {
+                //check if ball is coming into path
+                double time = ballComingIntoPath();
 
-
-        double m = (secondY-firstY) / (secondX-firstX);
-        double expectedTheta = -Math.atan(m);
-       // System.out.println("expectecTheta: " + expectedTheta);
-        double c = firstY - (m * firstX);
-        double x = ballX-5;
-
-        double targetX = x > firstX && x < secondX ? x : x < firstX ? firstX : secondX;
-        double y = m * targetX + c;
-
-        double targetY = y;
-
-
-        double dist = getDistanceToTarget(bot, targetX, targetY);
-
-        boolean isCurrentDirectionForward;
-
-        //get angle to target
-        double angleToTarget = getTargetTheta(bot, targetX, targetY);
-        double actualAngleError;
-
-        double speed = 0.5;
-//        if (Math.abs(bot.getTheta()) < expectedTheta + 10 && Math.abs(bot.getTheta()) > expectedTheta - 10) {
-//            //    System.out.println("on goal line");
-//            speed = 0.8;
-//        }
-
-        if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
-            if (angleToTarget < 0) {
-                actualAngleError = Math.toRadians(-180 - angleToTarget);
-            } else {
-                actualAngleError = Math.toRadians(180 - angleToTarget);
+                if (time > 0/* || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)*/) {
+                    bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
+                    //     System.out.println("time: " + time);
+                    if (time < 200) {
+                        GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
+                    } else {
+                        GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
+                    }
+                    bot.angularVelocity = 0;
+                    lastBallY = ballY;
+                    lastBallX = ballX;
+                    return;
+                } else {
+                    GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
+                    state = 0;
+                }
             }
-            bot.angularVelocity = actualAngleError * kp * -1;
-            bot.linearVelocity = Math.abs(angleToTarget) > 160 ? speed * -1 : 0;
-            isCurrentDirectionForward = false;
-        } else {
-            actualAngleError =  Math.toRadians(angleToTarget);
-            bot.angularVelocity = actualAngleError * kp;
-            bot.linearVelocity = Math.abs(angleToTarget) < 20 ? speed : 0;
-            isCurrentDirectionForward = true;
-        }
-        isPreviousDirectionForward = isCurrentDirectionForward;
-
-        if (dist <= 3) {
-            bot.linearVelocity = 0;
-            turn();
-        }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
-            bot.linearVelocity *= dist/20.0;
         }
 
-        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
+        //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
+        //            if (!presetToBackward && !presetToForward && dist > 10) {
+        //                System.out.println("bot is stuck :(");
+        //                if (isPreviousDirectionForward) {
+        //                    presetToBackward = true;
+        //                } else {
+        //                    presetToForward = true;
+        //                }
+        //            }
+        //        } else {
+        //            presetToBackward = false;
+        //            presetToForward = false;
+        //        }
+        else if (state == 0) {
+            double dist = getDistanceToTarget(bot, targetX, targetY);
 
-//        //clear the ball
-//        int goalLine = parameters.get("goalLine");
-//        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
-//            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 5 || Math.abs(angleToBall) > 175 )) {
-//                MoveToSpot.move(bot, new Coordinate(goalLine, 175), 2, false);
-//                return;
-//            } else {
-//                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 5 || Math.abs(angleToBall) > 175 )) {
-//                    MoveToSpot.move(bot, new Coordinate(goalLine, 5), 2, false);
-//                    return;
-//                }
-//            }
+            //get angle to target
+            double angleToTarget = getTargetTheta(bot, targetX, targetY);
+            double actualAngleError;
+
+            if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
+                if (angleToTarget < 0) {
+                    actualAngleError = Math.toRadians(-180 - angleToTarget);
+                } else {
+                    actualAngleError = Math.toRadians(180 - angleToTarget);
+                }
+                bot.angularVelocity = actualAngleError * kp * -1;
+                bot.linearVelocity = 0.5 * -1;
+            } else {
+                actualAngleError = Math.toRadians(angleToTarget);
+                bot.angularVelocity = actualAngleError * kp;
+                bot.linearVelocity = 0.5;
+            }
+//        if (isCurrentDirectionForward == isPreviousDirectionForward) {
+//            errorsList.add(actualAngleError * timePeriod/1000.0);
+//        } else {
+//            errorsList.clear();
 //        }
+//        bot.angularVelocity += errorsList.getTotal() * ki;
+
+            if (dist <= 3) {
+                bot.linearVelocity = 0;
+                if (Math.abs(turn()) < 10) {
+                    state = 1;
+                }
+            } else if (dist < 10) {
+                bot.linearVelocity *= dist / 20.0;
+            }
+
+            lastBallX = ballX;
+            lastBallY = ballY;
+        }
+    }
+
+    private double ballComingIntoPath() {
+
+        double targetX = parameters.get("targetX");
+        double targetY = parameters.get("targetY");
+        double goalY = 90;
+        double goalX = 220;
+
+        double mLine = (goalY - targetY) / (goalX - targetX);
+        double cLine = goalY - (mLine * goalX);
+
+        double m = (ballY-lastBallY) / (ballX - lastBallX);
+        double c = ballY - (m * ballX);
+
+    //    System.out.println("yolo: " + Math.abs((mLine * ballX + cLine) - ballY));
+
+        if ((Double.isNaN(m) || Double.isInfinite(m) || Double.isNaN(c) || Double.isInfinite(c))
+                && Math.abs((mLine * ballX + cLine) - ballY) > 4) {
+            return -1;
+        }
+        //m * xInt + c = mLine * xInt + cLine
+        // (m - mLine)xInt = cLine - c
+        // xInt = (cLine - c) / (m - mLine)
+
+        //System.out.println("m: " + m);
+        //System.out.println("c: " + c);
+
+        double xInt = (cLine - c) / (m - mLine);
+        double y = mLine * xInt + cLine;
+
+//        if (xInt > targetX && xInt < goalX && y > 0 && y < 180) {
+  //          System.out.println("xInt: " + xInt);
+  //          System.out.println("yInt: " + y);
+  //      }
+
+     //   double y = targetY;
+        //y = mx + c therefore x = (y-c)/m
+        double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-y));
+        long currentTime = System.currentTimeMillis();
+        double ballSpeed = (Math.sqrt(squared(ballX-lastBallX) + squared(ballY-lastBallY))) / ((currentTime - lastTime));
+        //    System.out.println("current: " + currentTime + "last: " + lastTime);
+        lastTime = currentTime;
+        double time = ballDistance / ballSpeed;
+      /*  if (time > 3) {
+            //System.out.println("time or distance too long! " + time);
+            xInt = 0;
+        }
+*/
+        if (xInt > bot.getXPosition()/* && ((lastBallY > y && lastBallY > y) || (lastBallY < ballY && lastBallY < y))*/) {
+            //     System.out.println("ball dist: " + ballDistance + "    ballSpeed: " + ballSpeed);
+            return time;
+        } else if (Math.abs((mLine * ballX + cLine) - ballY) <= 4 && ballX > bot.getXPosition()) {
+      //      System.out.println("CHARGE");
+            return 1;
+        } else {
+            return -1;
+        }
 
     }
-//
-//    private double getYPositionForGoalKeeper() {
-//        //just use ballY
-//        double minY = parameters.get("topPoint");
-//        double maxY = parameters.get("bottomPoint");
-//
-//        return ballY < maxY && ballY > minY ? ballY : ballY > maxY ? maxY : minY;
-//    }
 
-    private void turn() {
+    private double turn() {
         double targetX = 220;
         double targetY = 90;
 
         //get angle to target
         double angleToTarget = getTargetTheta(bot, targetX, targetY);
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
+        return angleToTarget;
     }
 
 
 
 }
+
 
 //package actions;
 //

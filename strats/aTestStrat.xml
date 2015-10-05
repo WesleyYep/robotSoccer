@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.SpinnerForAttack-[firstY, firstX, secondY, secondX]-[70, 140, 70, 180]
+permanent-actions.SpinnerForAttack-[targetX, targetY]-[170, 50]
 null-null
 null-null
 null-null
@@ -76,7 +76,7 @@ triangleMember2
 triangleMember3
 -----
 Play:test2
-waitingStriker
+tester
 wait
 centreDefender
 testVerticalPush
