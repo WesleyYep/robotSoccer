@@ -101,6 +101,20 @@ public class PIDMoveToBallReverse extends Action {
         }
         isPreviousDirectionForward = isCurrentDirectionForward;
 
+        //kick ball into goal
+        double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+        if (actualAngleError < 0.5 && ballX > bot.getXPosition()) { //facing ball
+            double m = (ballY-bot.getYPosition()) / (ballX - bot.getXPosition());
+            double c = ballY - (m * ballX);
+            double x = 220;
+
+            double y = m *x + c;
+            if (y > 70 && y < 110) { //intercept with goal line is in goal
+                bot.linearVelocity *= 3;
+            //    System.out.println("kicking for goal!");
+            }
+        }
+
         //charge ball into goal
         double range = 10;
         if (isCharging) {
@@ -109,7 +123,6 @@ public class PIDMoveToBallReverse extends Action {
         if (distanceToBall < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
             bot.linearVelocity = isCurrentDirectionForward ? 1 : -1;
             if (targetX > 110) {
-                double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
                 if (Math.abs(angleToGoal) > 45) {
                     if (angleToGoal > 0 && isCurrentDirectionForward || angleToGoal < 0 && !isCurrentDirectionForward) {
                         bot.angularVelocity = 30;

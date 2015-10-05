@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.StrikerTest-[targetX, targetY]-[160, 90]
+permanent-actions.MoveSpotKickBall-[spotX, spotY]-[160, 50]
 null-null
 null-null
 null-null
