@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.MoveSpotKickBall-[spotX, spotY]-[160, 50]
+permanent-actions.SpinnerForAttack-[firstY, firstX, secondY, secondX]-[70, 140, 70, 180]
 null-null
 null-null
 null-null
@@ -7,13 +7,6 @@ null-null
 -----
 Role:defender
 permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[20, 120, 60]
-null-null
-null-null
-null-null
-null-null
------
-Role:goalLineDefenderTop
-permanent-actions.SpinnerForAttack-[startingY, startingX]-[50, 170]
 null-null
 null-null
 null-null
@@ -55,7 +48,21 @@ null-null
 null-null
 -----
 Role:testVerticalPush
-permanent-actions.VerticalPusher-[goalLine, bottomPoint, topPoint]-[170, 180, 110]
+permanent-actions.VerticalPusher-[goalLine, bottomPoint, topPoint]-[170, 180, 120]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[160, 180, 120]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingStriker
+permanent-actions.StrikerTest-[targetX, targetY]-[150, 80]
 null-null
 null-null
 null-null
@@ -69,10 +76,10 @@ triangleMember2
 triangleMember3
 -----
 Play:test2
+waitingStriker
+wait
+centreDefender
 testVerticalPush
-goalLineDefenderTop
-wait
-wait
 wait
 -----
 Situation:new situation 1:33:2:450:367

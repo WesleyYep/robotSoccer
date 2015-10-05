@@ -20,7 +20,7 @@ public class PenaltyFake extends Action {
         double angleToGoal = getTargetTheta(bot, 220, 105);
 
         if (Math.abs(angleToGoal) > 170) {
-            bot.linearVelocity = -1;
+            bot.linearVelocity = -2;
             bot.angularVelocity = 0;
         } else {
             bot.linearVelocity = -0.2;

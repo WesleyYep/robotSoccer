@@ -26,10 +26,10 @@ public class MoveSpotKickBall extends Action {
 
         int spotX = parameters.get("spotX");
         int spotY = parameters.get("spotY");
-
+        //System.out.println(predX + " - " + predY);
         //kick ball into goal
-        double m1 = (ballY-spotY) / (ballX - spotX);
-        double c1 = ballY - (m1 * ballX);
+        double m1 = (predY-spotY) / (predX - spotX);
+        double c1 = predY - (m1 * predX);
         double x1 = 220;
 
         double y1 = m1 *x1 + c1;

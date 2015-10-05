@@ -66,15 +66,13 @@ public class VerticalPusher extends Action {
         double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
         //clear the ball
         int goalLine = parameters.get("goalLine");
-        if (ballX <= goalLine + 10 && ballX > goalLine - 10) {
-            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
-                bot.linearVelocity = -2;
-                bot.angularVelocity = 0;
+        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
+            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 10 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
+                MoveToSpot.move(bot, new Coordinate(goalLine, 175), 1, false);
                 return;
             } else {
-                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
-                    bot.linearVelocity = 2;
-                    bot.angularVelocity = 0;
+                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 10 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
+                    MoveToSpot.move(bot, new Coordinate(goalLine, 5), 1, false);
                     return;
                 }
             }
