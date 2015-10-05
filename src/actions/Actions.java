@@ -22,6 +22,7 @@ public class Actions {
           add(BlockOpponentClosestToBall.class.getSimpleName());
           add(PenaltyStraight.class.getSimpleName());
           add(PenaltySpin.class.getSimpleName());
+          add(PenaltyFake.class.getSimpleName());
           add(GoalLineSideDefender.class.getSimpleName());
           add(GoalLineSideAttacker.class.getSimpleName());
           add(PIDMoveToBall.class.getSimpleName());

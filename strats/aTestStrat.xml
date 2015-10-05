@@ -47,6 +47,13 @@ null-null
 null-null
 null-null
 -----
+Role:PenaltyFake
+permanent-actions.PenaltyFake-[spin]-[0]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:test
 tester
 wait
@@ -55,7 +62,7 @@ triangleMember2
 triangleMember3
 -----
 Play:test2
-tester
+PenaltyFake
 wait
 wait
 wait

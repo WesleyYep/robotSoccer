@@ -77,6 +77,10 @@ public class ActionFactory {
                 final PenaltySpin penaltySpin = new PenaltySpin();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, penaltySpin); }});
                 return penaltySpin;
+            } else if (simpleName.equals(PenaltyFake.class.getSimpleName())) {
+                final PenaltyFake penaltyFake = new PenaltyFake();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, penaltyFake); }});
+                return penaltyFake;
             } else if (simpleName.equals(GoalLineSideDefender.class.getSimpleName())) {
                 final GoalLineSideDefender goalLineSideDefender = new GoalLineSideDefender();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, goalLineSideDefender); }});

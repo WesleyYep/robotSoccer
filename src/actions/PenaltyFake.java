@@ -5,9 +5,8 @@ import strategy.Action;
 /**
  * Created by Wesley on 11/07/2015.
  */
-public class PenaltySpin extends Action {
+public class PenaltyFake extends Action {
     //for this method, parameter spin = 0 means spin clockwise, spin = 1 means anticlockwise
-
 
     {
         if (!parameters.containsKey("spin")) {
@@ -17,20 +16,16 @@ public class PenaltySpin extends Action {
 
     @Override
     public void execute() {
-        int mod = 1;
-        if (parameters.get("spin") == 0) {
-            mod = -1;
-        }
 
-        if (Math.abs(bot.getTheta()) < 12) {
-            bot.linearVelocity = 0.1;
-            bot.angularVelocity = 1 * mod;
-        } else {
+        double angleToGoal = getTargetTheta(bot, 220, 105);
+
+        if (Math.abs(angleToGoal) > 170) {
+            bot.linearVelocity = -1;
             bot.angularVelocity = 0;
-            bot.linearVelocity = 3;
+        } else {
+            bot.linearVelocity = -0.2;
+            bot.angularVelocity = -2*(Math.PI-Math.toRadians(angleToGoal));
         }
-
-
 
     }
 
