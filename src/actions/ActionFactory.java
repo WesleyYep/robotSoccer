@@ -145,6 +145,10 @@ public class ActionFactory {
                 final FreeBall a = new FreeBall();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            } else if (simpleName.equals(TestPIDMoveToBall.class.getSimpleName())) {
+            	final TestPIDMoveToBall t = new TestPIDMoveToBall();
+            	actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, t); }});
+            	return t;
             }
         }
 
