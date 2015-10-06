@@ -74,6 +74,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	public strategy.Action action;
 	public boolean drawAction;
 
+	private Situation lastActiveSituation;
+
     private Action left = new AbstractAction("Left") {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -483,34 +485,47 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	}
 
 	public void executeStrategy() {
+
+		//first check if ball is still in last situation
+		if (lastActiveSituation != null && lastActiveSituation.getArea().containsPoint(getBallX(), getBallY())) {
+		//	System.out.println("using last situation");
+			executeSituation(lastActiveSituation);
+			return;
+		}
+		//otherwise go through list
 		List<Situation> situations = currentStrategy.getSituations();
 		for (int i = 0; i < situations.size(); i++) {
 			if (situations.get(i).getArea().containsPoint(getBallX(), getBallY())) {
-				if (situations.get(i).getPlays().size() == 0) { break; }
-                Play p = situations.get(i).getPlays().get(0); //get the first play
-                if (p == null) { break; }
-                List<Robot> order;
+				executeSituation(situations.get(i));
+				lastActiveSituation = situations.get(i);
+			}
+		}
+	}
+
+	private void executeSituation(Situation situation) {
+		if (situation.getPlays().size() == 0) { return; }
+		Play p = situation.getPlays().get(0); //get the first play
+		if (p == null) { return; }
+		List<Robot> order;
 
 //                if (currentOrder != null && situations.get(i) == currentSituation) {
 //                    order = currentOrder;
 //                } else {
-                    order = Arrays.asList(bots.getRobots());
+		order = Arrays.asList(bots.getRobots());
 //                    currentOrder = order;
 //                    currentSituation = situations.get(i);
 //                }
 
-				for (int j = 0; j < 5; j++) {
-					Role role = currentStrategy.mapRoles(p.getRoles())[j];
-					if (role == null) { continue; }
-					role.addRobot(order.get(j));
-					role.addTeamRobots(bots);
-					role.addOpponentRobots(opponentBots);
-					//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-					role.setBallPosition(ball.getXPosition(), ball.getYPosition());
-					role.setPredictedPosition(predX, predY);
-					role.execute();
-				}
-			}
+		for (int j = 0; j < 5; j++) {
+			Role role = currentStrategy.mapRoles(p.getRoles())[j];
+			if (role == null) { continue; }
+			role.addRobot(order.get(j));
+			role.addTeamRobots(bots);
+			role.addOpponentRobots(opponentBots);
+			//role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+			role.setBallPosition(ball.getXPosition(), ball.getYPosition());
+			role.setPredictedPosition(predX, predY);
+			role.execute();
 		}
 	}
 

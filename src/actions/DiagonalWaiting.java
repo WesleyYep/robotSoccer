@@ -46,9 +46,9 @@ public class DiagonalWaiting extends Action {
                     return;
                 } else {
                     GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
-                    state = 0;
                 }
             }
+            state = 0;
         }
 
         //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
@@ -103,6 +103,7 @@ public class DiagonalWaiting extends Action {
             lastBallX = ballX;
             lastBallY = ballY;
         }
+     //   System.out.println("state: " + state);
     }
 
     private double ballComingIntoPath() {

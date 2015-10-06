@@ -45,9 +45,9 @@ public class StrikerTest extends Action {
                     return;
                 } else {
                     GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
-                    state = 0;
                 }
             }
+            state = 0;
         }
 
     //        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
