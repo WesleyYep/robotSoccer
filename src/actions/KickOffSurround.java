@@ -16,6 +16,11 @@ public class KickOffSurround extends Action {
 
     @Override
     public void execute() {
+//
+//        if (ballX > 105 && ballX < 115 && ballY > 85 && ballY < 95) {
+//            count = 0;
+//        }
+
         int speed = parameters.get("speed");
 
         if (speed > 100) {
