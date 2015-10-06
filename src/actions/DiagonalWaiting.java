@@ -6,7 +6,7 @@ import strategy.GameState;
 /**
  * Created by Wesley on 18/07/2015.
  */
-public class SpinnerForAttack extends Action {
+public class DiagonalWaiting extends Action {
 
     private double kp = 3;
     private boolean presetToForward = false;  // if true, robot will definitely go forward

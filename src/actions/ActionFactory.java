@@ -133,8 +133,16 @@ public class ActionFactory {
                 final VerticalPusher a = new VerticalPusher();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
-            }  else if (simpleName.equals(SpinnerForAttack.class.getSimpleName())) {
-                final SpinnerForAttack a = new SpinnerForAttack();
+            }  else if (simpleName.equals(DiagonalWaiting.class.getSimpleName())) {
+                final DiagonalWaiting a = new DiagonalWaiting();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
+            }  else if (simpleName.equals(PenaltySpinToStraight.class.getSimpleName())) {
+                final PenaltySpinToStraight a = new PenaltySpinToStraight();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
+            }  else if (simpleName.equals(FreeBall.class.getSimpleName())) {
+                final FreeBall a = new FreeBall();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
             }

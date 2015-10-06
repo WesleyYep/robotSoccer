@@ -69,7 +69,21 @@ null-null
 null-null
 null-null
 -----
+Role:PenaltySpinStraight
+IsFirst2Seconds-actions.PenaltySpinToStraight-[spin]-[1]
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+-----
 //for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
+Play:gkOnly
+gk
+wait
+wait
+wait
+wait
+-----
 Play:kickOffSetUp
 gk
 moveAndTurn:90:220:81:90
@@ -172,6 +186,13 @@ Play:penaltySpinAnti
 gk
 chaseBall
 PenaltySpinAnti
+chaseBall
+chaseBall
+-----
+Play:penaltySpinStraight
+gk
+chaseBall
+PenaltySpinStraight
 chaseBall
 chaseBall
 -----

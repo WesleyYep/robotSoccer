@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.SpinnerForAttack-[targetX, targetY]-[170, 50]
+permanent-actions.DiagonalWaiting-[targetX, targetY]-[170, 50]
 null-null
 null-null
 null-null

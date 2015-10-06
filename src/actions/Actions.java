@@ -37,7 +37,9 @@ public class Actions {
           add(StrikerTestReverse.class.getSimpleName());
           add(KickOffSurround.class.getSimpleName());
           add(VerticalPusher.class.getSimpleName());
-          add(SpinnerForAttack.class.getSimpleName());
+          add(DiagonalWaiting.class.getSimpleName());
+          add(FreeBall.class.getSimpleName());
+          add(PenaltySpinToStraight.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {
