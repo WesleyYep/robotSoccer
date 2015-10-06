@@ -145,6 +145,14 @@ public class ActionFactory {
                 final FreeBall a = new FreeBall();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            } else if (simpleName.equals(TestTurnFirstGoalKeeper.class.getSimpleName())) {
+                final TestTurnFirstGoalKeeper a = new TestTurnFirstGoalKeeper();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
+            } else if (simpleName.equals(FreeBallKicker.class.getSimpleName())) {
+                final FreeBallKicker a = new FreeBallKicker();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             }
         }
 

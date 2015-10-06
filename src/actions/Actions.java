@@ -40,6 +40,8 @@ public class Actions {
           add(DiagonalWaiting.class.getSimpleName());
           add(FreeBall.class.getSimpleName());
           add(PenaltySpinToStraight.class.getSimpleName());
+          add(TestTurnFirstGoalKeeper.class.getSimpleName());
+          add(FreeBallKicker.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {
