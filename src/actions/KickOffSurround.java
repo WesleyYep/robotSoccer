@@ -11,15 +11,11 @@ public class KickOffSurround extends Action {
     {
         parameters.put("speed", 3);
     }
-    private boolean me = false;
-    private int count = 0;
 
     @Override
     public void execute() {
-//
-//        if (ballX > 105 && ballX < 115 && ballY > 85 && ballY < 95) {
-//            count = 0;
-//        }
+
+
 
         int speed = parameters.get("speed");
 
@@ -33,16 +29,13 @@ public class KickOffSurround extends Action {
         }
         bot.angularVelocity = 0;
 
-
-        if (count > 100) {
+        if (System.currentTimeMillis() - GameState.getInstance().getLastStartedTime() > 2500) {
             if (Math.abs(bot.getTheta()) < 90) {
                 bot.linearVelocity = 1;
             } else {
                 bot.linearVelocity = -0.5;
             }
         }
-
-        count++;
 
 //        double angleDifferenceFromGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
 //
