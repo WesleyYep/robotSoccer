@@ -152,7 +152,8 @@ public class PIDMoveToBall extends Action {
         } else {
             isCharging = false;
         }
-//
+
+        System.out.println(bot.angularVelocity);
     }
 
 

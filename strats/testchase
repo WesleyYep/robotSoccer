@@ -1,0 +1,24 @@
+Role:chase
+permanent-actions.PIDMoveToBall-[kp, speed, ki]-[5, 5, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:new chase
+permanent-actions.TestPIDMoveToBall-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:chase
+new chase
+wait
+wait
+wait
+wait
+-----
+Situation:new situation 1:31:4:451:363
+chase
+-----
