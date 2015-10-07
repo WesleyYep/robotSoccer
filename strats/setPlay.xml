@@ -143,9 +143,9 @@ chaseBall
 Play:surroundKickOff
 gk
 defender
-triangleMember1
-triangleMember2
-triangleMember3
+triangleMember
+triangleMember
+triangleMember
 -----
 Play:freeBallTopDefSetUp
 gk
