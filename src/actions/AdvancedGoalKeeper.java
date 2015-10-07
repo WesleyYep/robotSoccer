@@ -35,10 +35,10 @@ public class AdvancedGoalKeeper extends Action {
         double actualAngleError;
 
         double speed = 0.5;
-        if (Math.abs(bot.getTheta()) < 95 && Math.abs(bot.getTheta()) > 85) {
-        //    System.out.println("on goal line");
-            speed = 0.8;
-        }
+//        if (Math.abs(bot.getTheta()) < 95 && Math.abs(bot.getTheta()) > 85) {
+//        //    System.out.println("on goal line");
+//            speed = 0.8;
+//        }
 
         if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
             if (angleToTarget < 0) {
@@ -60,8 +60,14 @@ public class AdvancedGoalKeeper extends Action {
         if (dist <= 3) {
             bot.linearVelocity = 0;
             turn();
-        }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
-            bot.linearVelocity *= dist/20.0;
+        }else if (dist < 20 && Math.abs(bot.getTheta()) > 10) {
+      //  }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
+            //bot.linearVelocity *= dist/20.0;
+            if (bot.linearVelocity > 0) {
+                bot.linearVelocity = dist > 15 ? 0.4 : dist > 10 ? 0.3 : dist > 5 ? 0.2 : 0.1;
+            } else if (bot.linearVelocity < 0) {
+                bot.linearVelocity = dist > 15 ? -0.4 : dist > 10 ? -0.3 : dist > 5 ? -0.2 : -0.1;
+            }
         }
 
         double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees

@@ -214,18 +214,18 @@ public class BasicGoalKeep extends Action {
 		resultY = area1Y*area1Weighting + area2Y*area2Weighting + area3Y*area3Weighting;
 
 		//clear the ball
-		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
-			//System.out.println(targetTheta);
-			if (ballY > r.getYPosition() && ballY - r.getYPosition() < 35 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
-				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 2, false);
-				return;
-			} else {
-				if (ballY < r.getYPosition() && r.getYPosition() - ballY < 35 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
-					MoveToSpot.move(r, new Coordinate((int)goalLine, 5), 2, false);
-					return;
-				}
-			}
-		}
+//		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
+//			//System.out.println(targetTheta);
+//			if (ballY > r.getYPosition() && ballY - r.getYPosition() < 35 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
+//				MoveToSpot.move(r, new Coordinate((int)goalLine, 175), 2, false);
+//				return;
+//			} else {
+//				if (ballY < r.getYPosition() && r.getYPosition() - ballY < 35 && Math.abs(r.getXPosition() - goalLine) < 5 &&(Math.abs(targetTheta) < 5 || Math.abs(targetTheta) > 175 )) {
+//					MoveToSpot.move(r, new Coordinate((int)goalLine, 5), 2, false);
+//					return;
+//				}
+//			}
+//		}
 
 		//first phase getting the robot to the goal line
 		if (r.getXPosition() < goalLine-error || r.getXPosition() >  goalLine+error){

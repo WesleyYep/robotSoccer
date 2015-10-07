@@ -78,8 +78,14 @@ public class AdvancedGoalKeeperStriker extends Action {
             if (dist <= 3) {
                 bot.linearVelocity = 0;
                 turn();
-            } else if (dist < 5 && Math.abs(bot.getTheta()) > 10) {
-                bot.linearVelocity *= dist / 20.0;
+            }else if (dist < 20 && Math.abs(bot.getTheta()) > 10) {
+                //  }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
+                //bot.linearVelocity *= dist/20.0;
+                if (bot.linearVelocity > 0) {
+                    bot.linearVelocity = dist > 15 ? 0.4 : dist > 10 ? 0.3 : dist > 5 ? 0.2 : 0.1;
+                } else if (bot.linearVelocity < 0) {
+                    bot.linearVelocity = dist > 15 ? -0.4 : dist > 10 ? -0.3 : dist > 5 ? -0.2 : -0.1;
+                }
             }
 
 
