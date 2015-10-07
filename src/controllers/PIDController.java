@@ -21,11 +21,16 @@ public class PIDController {
 
 	// result
 	private double result;
+
+    private boolean clip;
+    private double maximumOutput;
+    private double minimumOutput;
 	
 	public PIDController(double Kp, double Ki, double Kd) {
 		this.Kp = Kp;
 		this.Ki = Ki;
 		this.Kd = Kd;
+        totalError = 0;
 	}
 	
 	private void calculate() {
@@ -36,7 +41,7 @@ public class PIDController {
 		// Calculate proportional term
 		pTerm = Kp * error;
 		
-		totalError += error;
+		totalError = totalError + error;
 		
 		// calculate integral term
 		iTerm = Ki * totalError;
@@ -46,16 +51,55 @@ public class PIDController {
 		
 		// update previous error
 		previousError = error;
-		
+
+        System.out.println("Total error: " + totalError);
+        System.out.println("Error: " + error);
+        System.out.println("pTerm: " + pTerm);
+        System.out.println("iTerm: " + iTerm);
+        System.out.println("dTerm: " + dTerm);
+
 		result = pTerm + iTerm + dTerm;
+
+        // check if clipping needed
+        if (clip) {
+            if (result > maximumOutput) {
+                result = maximumOutput;
+            } else if (result < minimumOutput) {
+                result = minimumOutput;
+            }
+        }
 	}
 
 	public double performPID() {
 		calculate();
 		return result;
 	}
-	
-	public double getKp() {
+
+    public boolean isClip() {
+        return clip;
+    }
+
+    public void setClip(boolean clip) {
+        this.clip = clip;
+    }
+
+    public double getMaximumOutput() {
+        return maximumOutput;
+    }
+
+    public void setMaximumOutput(double maximumOutput) {
+        this.maximumOutput = maximumOutput;
+    }
+
+    public double getMinimumOutput() {
+        return minimumOutput;
+    }
+
+    public void setMinimumOutput(double minimumOutput) {
+        this.minimumOutput = minimumOutput;
+    }
+
+    public double getKp() {
 		return Kp;
 	}
 
