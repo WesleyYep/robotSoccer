@@ -1,31 +1,31 @@
-Role:test gk
+Role:testgk
 permanent-actions.TestTurnFirstGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
 null-null
 null-null
 null-null
 null-null
 -----
-Role:mid defender
+Role:middefender
 permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 70]
 null-null
 null-null
 null-null
 null-null
 -----
-Role:free ball kicker
-permanent-actions.FreeBallKicker-[ang, lin]-[10, 10]
+Role:freeballkicker
+permanent-actions.FreeBallKicker-[ang, lin]-[0, 30]
 null-null
 null-null
 null-null
 null-null
 -----
-Play:new play
+Play:newplay
+testgk
 wait
-free ball kicker
 wait
 wait
 wait
 -----
-Situation:new situation 1:31:3:448:365
-new play
+Situation:newsituation 1:31:3:448:365
+newplay
 -----

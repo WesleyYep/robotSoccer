@@ -133,9 +133,9 @@ PIDChaseBall2
 -----
 Play:attackDeepTopPlay
 gk
-centreDefender2
+diagonalWaitingTop
 diagonalWaitingBot
-defender
+centreDefender2
 PIDChaseBall2
 -----
 Play:attackDeepBotPlay
@@ -167,9 +167,9 @@ attackPlay
 Situation:middle:178:0:78:368
 middlePlay
 -----
-Situation:attackDeepTop:366:2:139:264
+Situation:attackDeepTop:366:2:139:371
 attackDeepTopPlay
 -----
-Situation:attackDeepBot:367:106:139:264
+Situation:attackDeepBot:353:378:139:64
 attackDeepBotPlay
 -----

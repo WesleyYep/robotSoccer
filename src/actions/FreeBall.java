@@ -24,11 +24,12 @@ public class FreeBall extends Action {
 
         double distanceToBall = getDistanceToTarget(bot, ballX, ballY);
 
-        if (distanceToBall < 10) {
+        if (distanceToBall < 16) {
+  //          System.out.println("spinning");
             bot.angularVelocity = 30;
             bot.linearVelocity = 0;
         } else {
-            bot.linearVelocity = 3;
+            bot.linearVelocity = 5;
             bot.angularVelocity = 0;
         }
 
