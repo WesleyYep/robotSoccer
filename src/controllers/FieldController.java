@@ -249,4 +249,8 @@ public class FieldController implements ReceiverListener, AreaListener, VisionLi
 		field.setAction(action);
 		field.repaint();
 	}
+
+	public void resetActiveSituation() {
+		field.resetActiveSituation();
+	}
 }

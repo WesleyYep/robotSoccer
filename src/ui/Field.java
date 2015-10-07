@@ -712,4 +712,8 @@ public class Field extends JPanel implements MouseListener, MouseMotionListener,
 	public static int GUIYValueToFieldValue(int y) {
 		return (y - ORIGIN_Y) / SCALE_FACTOR;
 	}
+
+	public void resetActiveSituation() {
+		lastActiveSituation = null;
+	}
 }

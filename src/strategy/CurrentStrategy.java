@@ -296,6 +296,9 @@ public class CurrentStrategy {
             for (StrategyListener listener : listeners) {
                 listener.strategyChanged(); //this informs situationpanel, playspanel, and rolepanel that they need to update
             }
+
+            fieldController.resetActiveSituation();
+
         } catch (IOException ex) {
             System.out.println("Unable to open file: " + fileName);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
