@@ -1,0 +1,17 @@
+Role:movetospot
+permanent-actions.TestPIDMoveToSpot-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:movetospot
+movetospot
+wait
+wait
+wait
+wait
+-----
+Situation:new situation 1:33:4:447:362
+movetospot
+-----
