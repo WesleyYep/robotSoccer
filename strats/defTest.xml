@@ -62,14 +62,14 @@ null-null
 null-null
 -----
 Role:diagonalWaitingTop
-permanent-actions.DiagonalWaiting-[targetX, targetY]-[160, 55]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 160, 55]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:diagonalWaitingBot
-permanent-actions.DiagonalWaiting-[targetX, targetY]-[160, 125]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 160, 125]
 null-null
 null-null
 null-null
@@ -83,14 +83,14 @@ null-null
 null-null
 -----
 Role:waitingTopDefence
-permanent-actions.DiagonalWaiting-[targetX, targetY]-[45, 10]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 10]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingBotDefence
-permanent-actions.DiagonalWaiting-[targetX, targetY]-[45, 170]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 170]
 null-null
 null-null
 null-null

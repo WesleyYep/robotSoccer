@@ -19,6 +19,8 @@ public class DiagonalWaiting extends Action {
     {
         parameters.put("targetX", 170);
         parameters.put("targetY", 90);
+        parameters.put("goalX", 220);
+        parameters.put("goalY", 90);
     }
 
     @Override
@@ -33,6 +35,7 @@ public class DiagonalWaiting extends Action {
                 double time = ballComingIntoPath();
 
                 if (time > 0/* || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)*/) {
+        //            bot.linearVelocity = time > 1000 ? 0 : time > 500 ? 2 : time > 300 ? 2 : time > 200 ? 2 : time > 100 ? 2 : 2;
                     bot.linearVelocity = time > 1000 ? 0 : time > 500 ? 2 : time > 300 ? 2 : time > 200 ? 2 : time > 100 ? 2 : 2;
                     //     System.out.println("time: " + time);
                     if (time < 200) {
@@ -110,8 +113,8 @@ public class DiagonalWaiting extends Action {
 
         double targetX = parameters.get("targetX");
         double targetY = parameters.get("targetY");
-        double goalY = 90;
-        double goalX = 220;
+        double goalX = parameters.get("goalX");
+        double goalY = parameters.get("goalY");
 
         double mLine = (goalY - targetY) / (goalX - targetX);
         double cLine = goalY - (mLine * goalX);
@@ -166,11 +169,11 @@ public class DiagonalWaiting extends Action {
     }
 
     private double turn() {
-        double targetX = 220;
-        double targetY = 90;
+        double goalX = parameters.get("goalX");
+        double goalY = parameters.get("goalY");
 
         //get angle to target
-        double angleToTarget = getTargetTheta(bot, targetX, targetY);
+        double angleToTarget = getTargetTheta(bot, goalX, goalY);
         bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
         return angleToTarget;
     }

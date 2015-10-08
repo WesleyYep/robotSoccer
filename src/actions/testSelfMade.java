@@ -1,16 +1,21 @@
 package actions;
 
 import bot.Robot;
+import data.Coordinate;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import strategy.Action;
 import strategy.GameState;
 
+/**
+ * Uses fuzzy for chase ball action
+ */
 public class testSelfMade extends Action {
 
     private double error = 2.5;
     private double oldDistanceToTarget = 0;
     private int countTimesThatSeemStuck = 0;
-    boolean isCharging = false;
+    private boolean isCharging = false;
+    private boolean front = true;
 
     @Override
     public void execute() {
@@ -25,8 +30,6 @@ public class testSelfMade extends Action {
             r.angularVelocity = 0;
             return;
         }
-
-
 
 //
 //        //see if robot is not in positive situation
@@ -81,13 +84,21 @@ public class testSelfMade extends Action {
 //            return;
 //        }
 //
-        boolean front = true;
-        
+
     	if (targetTheta > 90 || targetTheta < -90) {
 			front = false;
 		}
 
-		if (!front && reverse) {
+        //reverse if stuck
+        if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
+            if (front) {
+                front = false;
+            } else {
+                front = true;
+            }
+        }
+
+        if (!front && reverse) {
 			if (targetTheta < 0) {
 				targetTheta = -180 - targetTheta;
 			} else if (targetTheta > 0) {
@@ -156,10 +167,7 @@ public class testSelfMade extends Action {
         
         double actualAngleError;
         double distanceToTarget = getDistanceToTarget(bot, targetX, targetY);
-        double distanceToBall = getDistanceToTarget(bot, ballX, ballY);
         double angleToTarget = getTargetTheta(bot, targetX, targetY); //degrees
-        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
-
 
         if ((Math.abs(angleToTarget) > 90)) {
             if (angleToTarget < 0) {
@@ -178,14 +186,14 @@ public class testSelfMade extends Action {
             range = 30;
         }
         if (distanceToTarget < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
-            bot.linearVelocity = 1;
+            bot.linearVelocity = front ? 1 : -1;
             if (targetX > 110) {
                 double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
                 if (Math.abs(angleToGoal) > 45) {
-                    if (angleToGoal > 0 || angleToGoal < 0) {
-                        bot.angularVelocity = 30;
+                    if (angleToGoal > 0) {
+                        bot.angularVelocity = front ? 30 : -30;
                     } else {
-                        bot.angularVelocity = -30;
+                        bot.angularVelocity = front ? -30 : -30;
                     }
                 }
             }
