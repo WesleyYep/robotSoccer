@@ -154,9 +154,15 @@ public class ActionFactory {
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
             } else if (simpleName.equals(TestPIDMoveToBall.class.getSimpleName())) {
-            	final TestPIDMoveToBall t = new TestPIDMoveToBall();
-            	actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, t); }});
-            	return t;
+                final TestPIDMoveToBall t = new TestPIDMoveToBall();
+                actionMap.put(role, new HashMap<String, Action>() {{
+                    put(simpleName, t);
+                }});
+                return t;
+            } else if (simpleName.equals(TestPIDMoveToSpot.class.getSimpleName())) {
+                final TestPIDMoveToSpot t = new TestPIDMoveToSpot();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, t); }});
+                return t;
             }
         }
 

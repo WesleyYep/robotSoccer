@@ -6,7 +6,7 @@ import strategy.Action;
 public class TestPIDMoveToBall extends Action {
 
 	private PIDController linearPID = new PIDController(1, 1, 1);
-	private PIDController angularPID = new PIDController(3, 0, 0);
+	private PIDController angularPID = new PIDController(3, 0, 2);
 	
 	private double previousBallX;
     private double previousBallY;
@@ -72,19 +72,18 @@ public class TestPIDMoveToBall extends Action {
             angularPID.setTotalError(0);
             System.out.println("Goal changed");
         }
-
+        //System.out.println("Distance to ball" + distanceToBall);
         //linearPID
         // update current state
         angularPID.setInput(Math.toRadians(correctAngle));
 
-        System.out.println("Angle: " + correctAngle);
         // testing purpose
         double result = angularPID.performPID();
 
         bot.angularVelocity = result;
 
         // override linear velocity if ball distance is close and is turning
-        if (Math.abs(bot.angularVelocity) > 1 && distanceToBall < 20) {
+        if (Math.abs(bot.angularVelocity) > 0.8 && distanceToBall < 30) {
             bot.linearVelocity = 0.1;
         } else if (distanceToBall > 70 && bot.linearVelocity < 0) {
             bot.linearVelocity = -1.3;
