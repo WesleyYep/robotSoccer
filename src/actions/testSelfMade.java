@@ -10,10 +10,11 @@ public class testSelfMade extends Action {
     private double error = 2.5;
     private double oldDistanceToTarget = 0;
     private int countTimesThatSeemStuck = 0;
+    boolean isCharging = false;
 
     @Override
     public void execute() {
-        setVelocityToTarget(ballX,ballY,false,false);
+        setVelocityToTarget(ballX,ballY,true,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
@@ -25,24 +26,8 @@ public class testSelfMade extends Action {
             return;
         }
 
-//        //check if robot is stuck
-//        double newTargetDistance = getDistanceToTarget(r);
-//      //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
-//        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
-//            countTimesThatSeemStuck++;
-//        } else if (r.linearVelocity >= 0){
-//            countTimesThatSeemStuck = 0;
-//        }
-//        if (countTimesThatSeemStuck > 20) {
-//            countTimesThatSeemStuck = 0;
-//            return;
-//        } else if (countTimesThatSeemStuck > 10) {
-//            r.linearVelocity = -0.5;
-//            r.angularVelocity = 10;
-//            countTimesThatSeemStuck++;
-//            return;
-//        }
-//
+
+
 //
 //        //see if robot is not in positive situation
 //        if (ballX < r.getXPosition()) {
@@ -96,31 +81,19 @@ public class testSelfMade extends Action {
 //            return;
 //        }
 //
+        boolean front = true;
+        
+    	if (targetTheta > 90 || targetTheta < -90) {
+			front = false;
+		}
 
-        boolean isFacingTop = true;
-        boolean isTargetTop = true;
-        boolean front  = true;
-        if (r.getTheta() < 0) {
-            isFacingTop = false;
-        }
-
-        if (y > r.getYPosition()) {
-            isTargetTop = false;
-        }
-
-        if (isTargetTop != isFacingTop) {
-            front = false;
-        }
-
-
-        if (!front && reverse) {
-            if (targetTheta < 0) {
-                targetTheta = -180 - targetTheta;
-            }
-            else if (targetTheta > 0) {
-                targetTheta = 180 - targetTheta;
-            }
-        }
+		if (!front && reverse) {
+			if (targetTheta < 0) {
+				targetTheta = -180 - targetTheta;
+			} else if (targetTheta > 0) {
+				targetTheta = 180 - targetTheta;
+			}
+		}
 
         FunctionBlock fb = loadFuzzy("fuzzy/selfMade.fcl");
 
@@ -177,7 +150,51 @@ public class testSelfMade extends Action {
 //        	
 
         // }
-        return;
+        
+        double targetX = ballX;
+        double targetY = ballY;
+        
+        double actualAngleError;
+        double distanceToTarget = getDistanceToTarget(bot, targetX, targetY);
+        double distanceToBall = getDistanceToTarget(bot, ballX, ballY);
+        double angleToTarget = getTargetTheta(bot, targetX, targetY); //degrees
+        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
+
+
+        if ((Math.abs(angleToTarget) > 90)) {
+            if (angleToTarget < 0) {
+                actualAngleError = Math.toRadians(-180 - angleToTarget);
+            } else {
+                actualAngleError = Math.toRadians(180 - angleToTarget);
+            }
+        } else {
+            actualAngleError =  Math.toRadians(angleToTarget);
+        }
+
+
+        //charge ball into goal
+        double range = 10;
+        if (isCharging) {
+            range = 30;
+        }
+        if (distanceToTarget < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
+            bot.linearVelocity = 1;
+            if (targetX > 110) {
+                double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+                if (Math.abs(angleToGoal) > 45) {
+                    if (angleToGoal > 0 || angleToGoal < 0) {
+                        bot.angularVelocity = 30;
+                    } else {
+                        bot.angularVelocity = -30;
+                    }
+                }
+            }
+            isCharging = true;
+        } else {
+            isCharging = false;
+        }
+      
+      return;
     }
 
     private double getDistanceToTarget(Robot r) {

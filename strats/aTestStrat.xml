@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.DiagonalWaiting-[targetX, targetY]-[160, 60]
+permanent-actions.testSelfMade-[]-[]
 null-null
 null-null
 null-null
@@ -54,6 +54,13 @@ null-null
 null-null
 null-null
 -----
+Role:diagonalWaitingTop
+permanent-actions.DiagonalWaiting-[targetX, targetY]-[160, 50]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:centreDefender
 permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[170, 170, 110]
 null-null
@@ -77,10 +84,10 @@ null-null
 -----
 Play:test
 wait
-testVerticalPush
-waitingStriker
+wait
+wait
 tester
-centreDefender
+wait
 -----
 Play:test2
 tester

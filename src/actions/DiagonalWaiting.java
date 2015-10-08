@@ -33,7 +33,7 @@ public class DiagonalWaiting extends Action {
                 double time = ballComingIntoPath();
 
                 if (time > 0/* || (ballX > bot.getXPosition() && Math.abs(ballY - bot.getYPosition()) < 5)*/) {
-                    bot.linearVelocity = time > 500 ? 0 : time > 300 ? 0.3 : time > 200 ? 0.5 : time > 100 ? 1 : 2;
+                    bot.linearVelocity = time > 1000 ? 0 : time > 500 ? 2 : time > 300 ? 2 : time > 200 ? 2 : time > 100 ? 2 : 2;
                     //     System.out.println("time: " + time);
                     if (time < 200) {
                         GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");

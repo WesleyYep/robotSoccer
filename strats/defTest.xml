@@ -55,7 +55,7 @@ null-null
 null-null
 -----
 Role:PIDChaseBall
-permanent-actions.PIDMoveToBallReverse-[ki, speed, kp]-[0, 5, 3]
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
 null-null
 null-null
 null-null
@@ -141,16 +141,16 @@ waitingTopDefence
 Play:attackDeepTopPlay
 gk
 defender
-deepBlockTop
+PIDChaseBall
 diagonalWaitingTop
-verticalPushTop
+PIDChaseBall
 -----
 Play:attackDeepBotPlay
 gk
 defender
-deepBlockBot
+PIDChaseBall
 diagonalWaitingBot
-verticalPushBot
+PIDChaseBall
 -----
 Play:middleTopPlay
 gk
