@@ -9,19 +9,19 @@ import strategy.Action;
 public class TestPIDMoveToSpot extends Action {
 
     private PIDController linearPID = new PIDController(1, 1, 1);
-    private PIDController angularPID = new PIDController(1, 0, 0);
+    private PIDController angularPID = new PIDController(1, 0, 3);
 
     private double previousBallX;
     private double previousBallY;
 	private double deadZone;
-    private double counter = 0;
+    private boolean first = false;
     // error allowed in updating goal
     private double ballErrorMargin = 3;
 
     public TestPIDMoveToSpot() {
         // set upper and lower bounds
-        linearPID.setMaximumOutput(0.8);
-        linearPID.setMinimumOutput(-0.8);
+        linearPID.setMaximumOutput(0.65);
+        linearPID.setMinimumOutput(-0.65);
         linearPID.setClip(true);
 
         // set upper and lower bounds
@@ -30,7 +30,7 @@ public class TestPIDMoveToSpot extends Action {
         angularPID.setClip(true);
 
         // allowable error margin
-        deadZone = 0.05;
+        deadZone = 0.1;
     }
 
     @Override
@@ -45,12 +45,15 @@ public class TestPIDMoveToSpot extends Action {
         double angleToTarget = getTargetTheta(bot, 110, 90); //degrees
         double angleToBall = getTargetTheta(bot, 110, 90); //degrees
 
-        double difference = Math.abs(Math.abs(110) - Math.abs(110) + Math.abs(90) - Math.abs(90));
+        //double difference = Math.abs(Math.abs(110) - Math.abs(110) + Math.abs(90) - Math.abs(90));
 
         double correctAngle = 0;
 
-        linearPID.setResult(distanceToTarget);
-        linearPID.setTotalError(0);
+        if (!first) {
+            linearPID.setResult(distanceToTarget);
+            linearPID.setTotalError(0);
+            first = true;
+        }
 
         linearPID.setInput(distanceToTarget);
         double linResult = linearPID.performPID();
@@ -82,31 +85,7 @@ public class TestPIDMoveToSpot extends Action {
             correctAngle = -180 - angleToBall;
         }
 
-//        if (bot.getXPosition() > 110) {
-//            bot.linearVelocity = -1 * linResult;
-//        } else {
-//            bot.linearVelocity = linResult;
-//        }
-
-        if (distanceToTarget < deadZone) {
-            bot.linearVelocity = 0;
-        }
-        System.out.println("X position" + bot.getXPosition());
-        System.out.println("Distance to target: " + distanceToTarget);
-
         // update goal
-//        if (difference > ballErrorMargin) {
-//            angularPID.setResult(Math.toRadians(correctAngle));
-//            // clear previous error
-//            angularPID.setTotalError(0);
-//
-//            linearPID.setResult(distanceToTarget);
-//            linearPID.setTotalError(0);
-//
-//            System.out.println("Goal changed");
-//        }
-
-        //System.out.println("Distance to ball" + distanceToBall);
 
         //linearPID
         // update current state
@@ -117,22 +96,22 @@ public class TestPIDMoveToSpot extends Action {
 
         bot.angularVelocity = result;
 
-        //bot.linearVelocity = linResult;
-        //System.out.println("Linear velocity : " + bot.linearVelocity);
-        // override linear velocity if ball distance is close and is turning
-//        if (Math.abs(bot.angularVelocity) > 0.8 && distanceToBall < 30) {
-//            bot.linearVelocity = linResult;
-//        } else if (distanceToBall > 70 && bot.linearVelocity < 0) {
-//            bot.linearVelocity = -1 * linResult;
-//        } else if (distanceToBall > 70 && bot.linearVelocity > 0) {
-//            bot.linearVelocity = linResult;
-//        } else {
-//            bot.linearVelocity = linResult;
-//        }
+        if (Math.abs(bot.angularVelocity) > 0.5 && distanceToTarget < 0.3) {
+            bot.linearVelocity = 0.1;
+        } else if (distanceToTarget < 0.5) {
+            bot.linearVelocity *= 0.5;
+        }
+
+        System.out.println(distanceToTarget);
+
+        if (distanceToTarget < deadZone) {
+            bot.linearVelocity = 0;
+        }
+
+        System.out.println("Linear velocity: " + bot.linearVelocity);
 
         // update previous
         previousBallX = ballX;
         previousBallY = ballY;
-        counter++;
     }
 }

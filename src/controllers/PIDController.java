@@ -52,12 +52,6 @@ public class PIDController {
 		// update previous error
 		previousError = error;
 
-        System.out.println("Total error: " + totalError);
-        System.out.println("Error: " + error);
-        System.out.println("pTerm: " + pTerm);
-        System.out.println("iTerm: " + iTerm);
-        System.out.println("dTerm: " + dTerm);
-
 		result = pTerm + iTerm + dTerm;
 
         // check if clipping needed
