@@ -91,41 +91,44 @@ public class AdvancedGoalKeeperStriker extends Action {
 
             //20 game ticks after the collision
         //    if (count == 1) {
-          if (count == 20) {
-                state = 1;
-                count = 0;
-            } else if (count != 0) {
-                count++;
-            } else {
+//          if (count == 20) {
+//                state = 1;
+//                count = 0;
+//            } else if (count != 0) {
+//                count++;
+//            } else {
                 //check for state change
-                if (ballX > bot.getXPosition() && getDistanceToTarget(bot, ballX, ballY) < 7) {
-                    count = 1;
+                if (ballX > bot.getXPosition() && getDistanceToTarget(bot, ballX, ballY) < 10) {
+                    state = 1;
                 }
-            }
-
+//            }
+//
         }
         else if (state == 1) {
-            int angleMod = 1;
+//            int angleMod = 1;
+//
+//            if (bot.getYPosition() > 90) {
+//                angleMod = -1;
+//            }
+//
+//            double angleToTarget = getTargetTheta(bot, ballX, ballY);
+//            double angleDifferenceFromGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+//            double actualAngleError;
+//
+//            //check if ball is in line with robot
+//            if ((bot.getYPosition() < 90 && Math.abs(angleToTarget) < 10) || (bot.getYPosition() > 90 && Math.abs(angleToTarget) > 170)) {
+//                state = 2;
+//            }
+//
+//            if (angleDifferenceFromGoal < 0) {
+//                actualAngleError = Math.toRadians(-180 - angleDifferenceFromGoal);
+//            } else {
+//                actualAngleError = Math.toRadians(180 - angleDifferenceFromGoal);
+//            }
+//            bot.angularVelocity = kp * actualAngleError * angleMod;
+//            bot.linearVelocity = 0;
 
-            if (bot.getYPosition() > 90) {
-                angleMod = -1;
-            }
-
-            double angleToTarget = getTargetTheta(bot, ballX, ballY);
-            double angleDifferenceFromGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
-            double actualAngleError;
-
-            //check if ball is in line with robot
-            if ((bot.getYPosition() < 90 && Math.abs(angleToTarget) < 10) || (bot.getYPosition() > 90 && Math.abs(angleToTarget) > 170)) {
-                state = 2;
-            }
-
-            if (angleDifferenceFromGoal < 0) {
-                actualAngleError = Math.toRadians(-180 - angleDifferenceFromGoal);
-            } else {
-                actualAngleError = Math.toRadians(180 - angleDifferenceFromGoal);
-            }
-            bot.angularVelocity = kp * actualAngleError * angleMod;
+            bot.angularVelocity = bot.getYPosition() > 90 ? -12: 12;
             bot.linearVelocity = 0;
 
             //check for state change
@@ -133,45 +136,45 @@ public class AdvancedGoalKeeperStriker extends Action {
                 state = 0;
             }
         }
-        else if (state == 2) {
-//            double angleToTarget = getTargetTheta(bot, ballX, ballY);
-//            double actualAngleError;
-//            double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+//        else if (state == 2) {
+////            double angleToTarget = getTargetTheta(bot, ballX, ballY);
+////            double actualAngleError;
+////            double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+////
+////            if ((Math.abs(angleToTarget) > 90)) {
+////                if (angleToTarget < 0) {
+////                    actualAngleError = Math.toRadians(-180 - angleToTarget);
+////                } else {
+////                    actualAngleError = Math.toRadians(180 - angleToTarget);
+////                }
+////                bot.angularVelocity = actualAngleError * kp * -1 + Math.toRadians(angleToGoal);
+////                bot.linearVelocity = -0.2;
+////            } else {
+////                actualAngleError =  Math.toRadians(angleToTarget);
+////                bot.angularVelocity = actualAngleError * kp + Math.toRadians(angleToGoal);
+////                bot.linearVelocity = 0.2;
+////            }
+////
+////            if (Math.abs(angleToGoal) < 10) {
+////                bot.angularVelocity = 0;
+////                bot.linearVelocity = 3;
+////            }
 //
-//            if ((Math.abs(angleToTarget) > 90)) {
-//                if (angleToTarget < 0) {
-//                    actualAngleError = Math.toRadians(-180 - angleToTarget);
-//                } else {
-//                    actualAngleError = Math.toRadians(180 - angleToTarget);
-//                }
-//                bot.angularVelocity = actualAngleError * kp * -1 + Math.toRadians(angleToGoal);
-//                bot.linearVelocity = -0.2;
-//            } else {
-//                actualAngleError =  Math.toRadians(angleToTarget);
-//                bot.angularVelocity = actualAngleError * kp + Math.toRadians(angleToGoal);
-//                bot.linearVelocity = 0.2;
-//            }
+//            bot.linearVelocity = Math.abs(bot.getTheta()) > 90 ? -1 : 1;
+//            bot.angularVelocity = 0;
 //
-//            if (Math.abs(angleToGoal) < 10) {
-//                bot.angularVelocity = 0;
-//                bot.linearVelocity = 3;
+//            //check for state change
+//            if (getDistanceToTarget(bot, ballX, ballY) > 30) {
+//                state = 0;
 //            }
-
-            bot.linearVelocity = Math.abs(bot.getTheta()) > 90 ? -1 : 1;
-            bot.angularVelocity = 0;
-
-            //check for state change
-            if (getDistanceToTarget(bot, ballX, ballY) > 30) {
-                state = 0;
-            }
-        }
-
-//        if (count % 50 == 49) {
-//            count = 0;
-//            previousBall = new Coordinate(ballX, ballY);
-//        } else {
-//            count++;
 //        }
+//
+////        if (count % 50 == 49) {
+////            count = 0;
+////            previousBall = new Coordinate(ballX, ballY);
+////        } else {
+////            count++;
+////        }
     }
 
     private double getYPositionForGoalKeeper() {

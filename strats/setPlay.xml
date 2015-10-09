@@ -13,7 +13,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[20, 120, 60]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 70]
 null-null
 null-null
 null-null
@@ -111,6 +111,20 @@ null-null
 null-null
 null-null
 -----
+Role:SpinClockWise
+permanent-actions.Spin-[spin]-[1]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:SpinAnti
+permanent-actions.Spin-[spin]-[0]
+null-null
+null-null
+null-null
+null-null
+-----
 //for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
 Play:gkOnly
 gk
@@ -121,14 +135,14 @@ wait
 -----
 Play:kickOffSetUp
 gk
-moveAndTurn:90:220:81:90
+defender
 moveAndTurn:90:220:81:100
 moveAndTurn:90:220:85:110
 moveAndTurn:90:110:115:85
 -----
 Play:kickOffDefSetUp
 gk
-moveAndTurn:90:110:81:90
+defender
 moveAndTurn:90:110:88:68
 moveAndTurn:90:110:85:105
 moveAndTurn:90:110:95:115
@@ -146,6 +160,20 @@ defender
 triangleMember
 triangleMember
 triangleMember
+-----
+Play:spinCWKickOff
+gk
+defender
+SpinClockWise
+chaseBall
+chaseBall
+-----
+Play:spinAntiKickOff
+gk
+defender
+SpinAnti
+chaseBall
+chaseBall
 -----
 Play:freeBallTopDefSetUp
 gk
