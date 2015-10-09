@@ -15,7 +15,7 @@ public class MoveToSpot extends Action{
     public static final double ERROR_MARGIN = 5;
     private static Robots teamBots;
     private static Robots opponentBots;
-    private static double kp = 3;
+    private static double kp = 3.5;
 
     //non-static initialiser block
     {
