@@ -87,7 +87,9 @@ public class testSelfMade extends Action {
 
     	if (targetTheta > 90 || targetTheta < -90) {
 			front = false;
-		}
+		} else {
+            front = true;
+        }
 
         //reverse if stuck
         if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
@@ -98,6 +100,7 @@ public class testSelfMade extends Action {
             }
         }
 
+        //System.out.println("front is " + front);
         if (!front && reverse) {
 			if (targetTheta < 0) {
 				targetTheta = -180 - targetTheta;
@@ -189,11 +192,12 @@ public class testSelfMade extends Action {
             bot.linearVelocity = front ? 1 : -1;
             if (targetX > 110) {
                 double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
-                if (Math.abs(angleToGoal) > 45) {
+             //   System.out.println("front is " + front + "     abs(angleTogoal) is " + Math.abs(angleToGoal));
+                if ((front && Math.abs(angleToGoal) > 45) || (!front && Math.abs(angleToGoal)  < 135)) {
                     if (angleToGoal > 0) {
                         bot.angularVelocity = front ? 30 : -30;
                     } else {
-                        bot.angularVelocity = front ? -30 : -30;
+                        bot.angularVelocity = front ? -30 : 30;
                     }
                 }
             }

@@ -55,7 +55,7 @@ null-null
 null-null
 -----
 Role:diagonalWaitingTop
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 160, 50]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 180, 60]
 null-null
 null-null
 null-null
@@ -83,10 +83,10 @@ null-null
 null-null
 -----
 Play:test
-wait
-wait
-tester2
 tester
+wait
+diagonalWaitingTop
+wait
 wait
 -----
 Play:test2
