@@ -34,7 +34,7 @@ null-null
 null-null
 -----
 Role:tester2
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[70, 220, 170, 90]
+permanent-actions.testSelfMadeObstacle-[fixed point1 x, fixed point1 y]-[5, 50]
 null-null
 null-null
 null-null
@@ -83,7 +83,7 @@ null-null
 null-null
 -----
 Play:test
-tester
+tester2
 wait
 diagonalWaitingTop
 wait

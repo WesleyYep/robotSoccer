@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 105, 75]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 70]
 null-null
 null-null
 null-null
@@ -54,6 +54,13 @@ null-null
 null-null
 null-null
 -----
+Role:centreDefender4
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[130, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:PIDChaseBall
 permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
 null-null
@@ -83,14 +90,14 @@ null-null
 null-null
 -----
 Role:waitingTopDefence
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 10]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 30]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingBotDefence
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 170]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 150]
 null-null
 null-null
 null-null
@@ -124,6 +131,13 @@ null-null
 null-null
 null-null
 -----
+Role:FuzzyChaseBall
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:defBotPlay
 gk
 defender
@@ -141,16 +155,16 @@ waitingTopDefence
 Play:attackDeepTopPlay
 gk
 defender
-PIDChaseBall
-diagonalWaitingTop
-PIDChaseBall
+FuzzyChaseBall
+centreDefender4
+FuzzyChaseBall
 -----
 Play:attackDeepBotPlay
 gk
 defender
-PIDChaseBall
-diagonalWaitingBot
-PIDChaseBall
+FuzzyChaseBall
+centreDefender4
+FuzzyChaseBall
 -----
 Play:middleTopPlay
 gk
@@ -169,9 +183,9 @@ centreDefender2
 Play:attackPlay
 gk
 defender
-centreDefender3
-PIDChaseBall
-PIDChaseBall
+FuzzyChaseBall
+centreDefender4
+FuzzyChaseBall
 -----
 Situation:topDefence:0:2:179:192
 defTopPlay
