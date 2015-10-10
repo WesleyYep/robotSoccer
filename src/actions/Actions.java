@@ -43,6 +43,7 @@ public class Actions {
           add(TestTurnFirstGoalKeeper.class.getSimpleName());
           add(FreeBallKicker.class.getSimpleName());
           add(Spin.class.getSimpleName());
+          add(KickA.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {

@@ -157,6 +157,10 @@ public class ActionFactory {
                 final Spin a = new Spin();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            } else if (simpleName.equals(KickA.class.getSimpleName())) {
+                final KickA a = new KickA();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             }
         }
 

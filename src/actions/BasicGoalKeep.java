@@ -195,7 +195,14 @@ public class BasicGoalKeep extends Action {
 				//ball travelling in the same side of board
 				if ((trajectoryY > Field.OUTER_BOUNDARY_HEIGHT/2 && ballY > Field.OUTER_BOUNDARY_HEIGHT/2) || (trajectoryY <= Field.OUTER_BOUNDARY_HEIGHT/2 && ballY <= Field.OUTER_BOUNDARY_HEIGHT/2)) {
 					// System.out.println("same side");
-					area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
+					//area3Y = topPoint + ((bottomPoint - topPoint) / (176.0 - 3.0)) * ballY;
+					if (ballY >= topPoint && ballY <= bottomPoint) {
+						area3Y = ballY;
+					} else if (ballY < topPoint) {
+						area3Y = topPoint;
+					} else if (ballY > bottomPoint) {
+						area3Y = bottomPoint;
+					}
 				} else {
 					// System.out.println("oppo side");
 					area3Y = Field.OUTER_BOUNDARY_HEIGHT / 2;

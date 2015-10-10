@@ -1,0 +1,17 @@
+Role:new role
+permanent-actions.KickA-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:new play
+wait
+wait
+wait
+wait
+new role
+-----
+Situation:new situation 1:28:1:454:366
+new play
+-----
