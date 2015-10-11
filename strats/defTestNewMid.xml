@@ -55,7 +55,14 @@ null-null
 null-null
 -----
 Role:centreDefender4
-permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[130, 180, 0]
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:defenderStriker
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[145, 140, 40]
 null-null
 null-null
 null-null
@@ -166,6 +173,13 @@ null-null
 null-null
 null-null
 -----
+Role:strikerDefender
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[165, 140, 40]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:defBotPlay
 gk
 defender
@@ -183,16 +197,16 @@ spinnerTop
 Play:attackDeepTopPlay
 gk
 defender
-waitAtBot
 centreDefender4
 FuzzyChaseBall
+strikerDefender
 -----
 Play:attackDeepBotPlay
 gk
 defender
-FuzzyChaseBall
 centreDefender4
-waitAtTop
+FuzzyChaseBall
+strikerDefender
 -----
 Play:middleTopPlay
 gk
