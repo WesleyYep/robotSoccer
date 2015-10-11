@@ -44,7 +44,7 @@ public class BasicDefender extends Defender {
         // allowable error margin
         deadZone = 0.05;
 
-        defendSize = 0.2;
+        defendSize = 0.3;
 
         updatePolygon();
     }
@@ -60,6 +60,8 @@ public class BasicDefender extends Defender {
     public void execute() {
         Robot r = bot;
         setDefendZone(new Point(parameters.get("point 1 x"), parameters.get("point 1 y")), new Point(parameters.get("point 2 x"), parameters.get("point 2 y")));
+        updatePolygon();
+
         Point positionToBe = getPosition();
 
         // information values
