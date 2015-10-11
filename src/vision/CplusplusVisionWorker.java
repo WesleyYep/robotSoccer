@@ -92,6 +92,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 		
 		teamPatchList.clear();
 		ballPatchList.clear();
+		enemyPatchList.clear();
 		segmentCountList.clear();
 		segmentPointList.clear();
 		Arrays.fill(pMarkTable, (byte)0);
@@ -163,7 +164,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 			}
 			
 			if ( (patchLUTData & LookupTable.OPPONENT_COLOUR)  > 0 ) {
-				FindPatch(p,x,y,webcamImageMat,LookupTable.OPPONENT_COLOUR,1,enemyPatchList,colourPanel.getRobotSizeMaximum(),colourPanel.getBallSizeMaximum());
+				FindPatch(p,x,y,webcamImageMat,LookupTable.OPPONENT_COLOUR,1,enemyPatchList,colourPanel.getRobotSizeMinimum(),colourPanel.getRobotSizeMaximum());
 			}
 			
 			p = p + NEXT_X;
@@ -689,6 +690,9 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 		return teamPatchList;
 	}
 
+	public ArrayList<Patch> getEnemyPatchList() {
+		return enemyPatchList;
+	}
 	public ArrayList<Point> getSegmentPointList() { return segmentPointList; }
 
 	public void notifyListeners(VisionData visionData) {

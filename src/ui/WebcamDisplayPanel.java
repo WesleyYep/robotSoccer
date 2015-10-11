@@ -264,6 +264,16 @@ public class WebcamDisplayPanel extends JPanel {
 				}
 			}
 
+			ArrayList<Patch> enemyPatches = worker.getEnemyPatchList();
+
+			if (enemyPatches.size() > 0) {
+				for (Patch p : enemyPatches) {
+					for (org.opencv.core.Point pixel : p.pixels) {
+						Core.line(image, pixel, pixel, new Scalar(255, 0, 255));
+					}
+				}
+			}
+
 			ArrayList<org.opencv.core.Point> segmentPoints = worker.getSegmentPointList();
 			if (segmentPoints.size() > 0 ) {
 				for (org.opencv.core.Point p : segmentPoints) {

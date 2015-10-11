@@ -165,6 +165,10 @@ public class ActionFactory {
                 final DefenderStriker a = new DefenderStriker();
                 actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
                 return a;
+            } else if (simpleName.equals(KickOffKick.class.getSimpleName())) {
+                final KickOffKick a = new KickOffKick();
+                actionMap.put(role, new HashMap<String, Action>() {{ put(simpleName, a); }});
+                return a;
             }
         }
 

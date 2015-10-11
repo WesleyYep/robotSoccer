@@ -61,6 +61,13 @@ null-null
 null-null
 null-null
 -----
+Role:defenderStriker
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[110, 140, 40]
+null-null
+null-null
+null-null
+null-null
+-----
 Role:PIDChaseBall
 permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
 null-null
@@ -90,14 +97,14 @@ null-null
 null-null
 -----
 Role:waitingTopDefence
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 30]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[173, 46, 20, 45]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingBotDefence
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 150]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[7, 46, 20, 135]
 null-null
 null-null
 null-null
@@ -171,13 +178,13 @@ gk
 defender
 waitingMidDefence
 spinnerBot
-topDefStation
+waitingTopDefence
 -----
 Play:defTopPlay
 gk
 defender
 waitingMidDefence
-botDefStation
+waitingBotDefence
 spinnerTop
 -----
 Play:attackDeepTopPlay
