@@ -109,56 +109,9 @@ public class BasicDefender extends Defender {
             return;
         }
 
-        // update goal
-        linearPID.setResult(distanceToTarget);
-        linearPID.setTotalError(0);
+        // use fuzzy
 
-        // find linear velocity to target
-        linearPID.setInput(distanceToTarget);
-        double linResult = linearPID.performPID();
-
-        double correctAngle = 0;
-
-        //  a                   | b
-        //                      |
-        // 180                  |                       0
-        // ----------------------------------------------
-        // -180                 |                       0
-        //                      |
-        //  c                   | d
-
-        if (angleToTarget > 90) {
-            // quadrant a
-
-            correctAngle = 180 - angleToTarget;
-            // ball is behind
-            bot.linearVelocity = -1 * linResult;
-        } else if (angleToTarget < 0 && angleToTarget > -90) {
-            // quadrant d
-            correctAngle = Math.abs(angleToTarget);
-            bot.linearVelocity = linResult;
-        } else if (angleToTarget > 0 && angleToTarget < 90) {
-            // quadrant b
-            correctAngle = angleToTarget * -1;
-            bot.linearVelocity = linResult;
-        } else {
-            bot.linearVelocity = -1 * linResult;
-            correctAngle = -180 - angleToTarget;
-        }
-
-        angularPID.setResult(Math.toRadians(correctAngle));
-        angularPID.setTotalError(0);
-        angularPID.setInput(Math.toRadians(correctAngle));
-        double angleResult = angularPID.performPID();
-
-        bot.angularVelocity = angleResult;
-
-        // override linear velocity if ball distance is close and is turning
-        if (Math.abs(bot.angularVelocity) > 0.5 && distanceToTarget < 0.3) {
-            bot.linearVelocity = 0.1;
-        } else if (distanceToTarget < 0.5) {
-            bot.linearVelocity *= 0.5;
-        }
+        MoveToSpot.pidMove(bot, (int)positionToBe.x, (int)positionToBe.y);
 
         // update previous details
         previousDefX = positionToBe.x;
