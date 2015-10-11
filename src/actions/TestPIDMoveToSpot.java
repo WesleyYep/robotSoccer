@@ -40,10 +40,10 @@ public class TestPIDMoveToSpot extends Action {
         double targetY = ballY;
 
         // information values
-        double distanceToTarget = getDistanceToTarget(bot, 110, 90) / 100;
+        double distanceToTarget = getDistanceToTarget(bot, ballX, ballY) / 100;
         double distanceToBall = getDistanceToTarget(bot, 110, 90);
         double angleToTarget = getTargetTheta(bot, 110, 90); //degrees
-        double angleToBall = getTargetTheta(bot, 110, 90); //degrees
+        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
 
         //double difference = Math.abs(Math.abs(110) - Math.abs(110) + Math.abs(90) - Math.abs(90));
 
