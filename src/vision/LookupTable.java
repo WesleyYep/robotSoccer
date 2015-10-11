@@ -9,11 +9,13 @@ public class LookupTable {
 	final public static byte GREEN_COLOUR = 0b00000010;
 	final public static byte BALL_COLOUR =  0b00000100;
 	final public static byte GROUND_COLOUR = 0b00001000;
+	final public static byte OPPONENT_COLOUR  = 0b00010000;
 
 	final public static int TEAM_BIT_POS = 0;
 	final public static int GREEN_BIT_POS = 1;
 	final public static int BALL_BIT_POS = 2;
 	final public static int GROUND_BIT_POS = 3;
+	final public static int OPPONENT_BIT_POS = 4;
 
 	public static boolean[] bValid = new boolean[8];
 	

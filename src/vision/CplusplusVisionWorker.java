@@ -21,6 +21,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
     private byte[] pMarkTable = new byte[640*480];
     private ArrayList<Patch> teamPatchList = new ArrayList<Patch>();
 	private ArrayList<Patch> ballPatchList = new ArrayList<Patch>();
+	private ArrayList<Patch> enemyPatchList = new ArrayList<Patch>();
     private ArrayList<SegmentCount> segmentCountList = new ArrayList<SegmentCount>();
     private int NEXT_Y;
     private ColourPanel colourPanel;
@@ -79,6 +80,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 		Run_FindPatchPosition(teamPatchList);
 		Run_FindBall(image);
 		Run_FindRobot(image);
+		Run_FindOpponent();
 	}catch (Exception e){
 		e.printStackTrace();
 	}
@@ -159,6 +161,11 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 			if ( (patchLUTData & LookupTable.BALL_COLOUR)  > 0 ) {
 				FindPatch(p,x,y,webcamImageMat,LookupTable.BALL_COLOUR,1,ballPatchList,colourPanel.getBallSizeMinimum(),colourPanel.getBallSizeMaximum());
 			}
+			
+			if ( (patchLUTData & LookupTable.OPPONENT_COLOUR)  > 0 ) {
+				FindPatch(p,x,y,webcamImageMat,LookupTable.OPPONENT_COLOUR,1,enemyPatchList,colourPanel.getRobotSizeMaximum(),colourPanel.getBallSizeMaximum());
+			}
+			
 			p = p + NEXT_X;
 
         }
@@ -652,6 +659,30 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 
 
 
+	}
+	
+	public void Run_FindOpponent() {
+		if (enemyPatchList.size() == 0 ) {
+			return;
+		}
+
+		int count = 1;
+
+		for (int l=0; l<enemyPatchList.size(); l++ ) {
+			double sumX = 0, sumY = 0;
+
+			for (int p=0; p<enemyPatchList.get(l).pixels.size(); p++) {
+				sumX += enemyPatchList.get(l).pixels.get(p).x;
+				sumY += enemyPatchList.get(l).pixels.get(p).y;
+			}
+
+			enemyPatchList.get(l).center.x = sumX/enemyPatchList.get(l).pixels.size();
+			enemyPatchList.get(l).center.y = sumY/enemyPatchList.get(l).pixels.size();
+			
+			notifyListeners(new VisionData(new Point(enemyPatchList.get(l).center.x, enemyPatchList.get(l).center.y), 0, "opponent:" + count));
+			count++;
+			if (count > 5) count = 5;
+		}
 	}
 
 	public ArrayList<Patch> getTeamPatchList() {
