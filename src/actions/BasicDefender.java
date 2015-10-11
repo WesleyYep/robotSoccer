@@ -39,7 +39,7 @@ public class BasicDefender extends Defender {
         angularPID.setMaximumOutput(Math.toRadians(120));
 
         // allowable error margin
-        deadZone = 0.1;
+        deadZone = 0.05;
     }
 
     {
@@ -54,11 +54,6 @@ public class BasicDefender extends Defender {
         Robot r = bot;
         setDefendZone(new Point(parameters.get("point 1 x"), parameters.get("point 1 y")), new Point(parameters.get("point 2 x"), parameters.get("point 2 y")));
         Point positionToBe = getPosition();
-        //setVelocityToTarget(positionToBe.x, positionToBe.y, false, false);
-
-//        if (r.isStuck(new Coordinate(r.getXPosition(), r.getYPosition()))) {
-//            System.out.println("robot is stuck");
-//        }
 
         // information values
         // distance to target in metres
@@ -67,13 +62,56 @@ public class BasicDefender extends Defender {
         double angleToTarget = getTargetTheta(bot, positionToBe.x, positionToBe.y);
 
         // difference between previous
-        double difference = Math.abs(Math.abs(previousDefY) - Math.abs(positionToBe.y) + Math.abs(previousDefX) - Math.abs(positionToBe.y));
+        //double difference = Math.abs(Math.abs(previousDefY) - Math.abs(positionToBe.y) + Math.abs(previousDefX) - Math.abs(positionToBe.y));
+
+        // Check if distance to target is small
+        if (distanceToTarget < deadZone) {
+            bot.linearVelocity = 0;
+
+            // set angle to robot
+
+            Point p1 = getDefendZone().getFirst();
+            Point p2 = getDefendZone().getSecond();
+
+            double distanceToP1 = getDistanceToTarget(bot, p1.x, p1.y) / 100;
+            double distanceToP2 = getDistanceToTarget(bot, p2.x, p2.y) / 100;
+
+            if (distanceToP1 > distanceToP2) {
+                angleToTarget = getTargetTheta(bot, p1.x, p1.y);
+            } else {
+                angleToTarget = getTargetTheta(bot, p2.x, p2.y);
+            }
+
+            double correctAngle = 0;
+
+            if (angleToTarget > 90) {
+                // quadrant a
+
+                correctAngle = 180 - angleToTarget;
+                // ball is behind
+            } else if (angleToTarget < 0 && angleToTarget > -90) {
+                // quadrant d
+                correctAngle = Math.abs(angleToTarget);
+            } else if (angleToTarget > 0 && angleToTarget < 90) {
+                // quadrant b
+                correctAngle = angleToTarget * -1;
+            } else {
+                correctAngle = -180 - angleToTarget;
+            }
+
+            angularPID.setResult(Math.toRadians(correctAngle));
+            angularPID.setTotalError(0);
+            angularPID.setInput(Math.toRadians(correctAngle));
+            double angleResult = angularPID.performPID();
+            bot.angularVelocity = angleResult;
+            System.out.println(bot.angularVelocity);
+            System.out.println("Angle to target: " + angleToTarget);
+            return;
+        }
 
         // update goal
-        if (difference > deadZone) {
-            linearPID.setResult(distanceToTarget);
-            linearPID.setTotalError(0);
-        }
+        linearPID.setResult(distanceToTarget);
+        linearPID.setTotalError(0);
 
         // find linear velocity to target
         linearPID.setInput(distanceToTarget);
@@ -94,21 +132,33 @@ public class BasicDefender extends Defender {
 
             correctAngle = 180 - angleToTarget;
             // ball is behind
-            bot.linearVelocity = linResult;
+            bot.linearVelocity = -1 * linResult;
         } else if (angleToTarget < 0 && angleToTarget > -90) {
             // quadrant d
             correctAngle = Math.abs(angleToTarget);
-            bot.linearVelocity = -1 * linResult;
+            bot.linearVelocity = linResult;
         } else if (angleToTarget > 0 && angleToTarget < 90) {
             // quadrant b
             correctAngle = angleToTarget * -1;
-            bot.linearVelocity = -1 * linResult;
-        } else {
             bot.linearVelocity = linResult;
+        } else {
+            bot.linearVelocity = -1 * linResult;
             correctAngle = -180 - angleToTarget;
         }
 
+        angularPID.setResult(Math.toRadians(correctAngle));
+        angularPID.setTotalError(0);
+        angularPID.setInput(Math.toRadians(correctAngle));
+        double angleResult = angularPID.performPID();
 
+        bot.angularVelocity = angleResult;
+
+        // override linear velocity if ball distance is close and is turning
+        if (Math.abs(bot.angularVelocity) > 0.5 && distanceToTarget < 0.3) {
+            bot.linearVelocity = 0.1;
+        } else if (distanceToTarget < 0.5) {
+            bot.linearVelocity *= 0.5;
+        }
 
         // update previous details
         previousDefX = positionToBe.x;

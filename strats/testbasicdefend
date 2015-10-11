@@ -1,0 +1,17 @@
+Role:defend
+permanent-actions.BasicDefender-[point 1 x, point 1 y, point 2 x, point 2 y]-[52, 60, 60, 116]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:defend
+defend
+wait
+wait
+wait
+wait
+-----
+Situation:new situation 1:31:2:452:370
+defend
+-----
