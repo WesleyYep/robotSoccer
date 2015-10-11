@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.Spin-[spin]-[1]
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[110, 140, 40]
 null-null
 null-null
 null-null
@@ -84,8 +84,8 @@ null-null
 -----
 Play:test
 wait
-tester
 wait
+tester
 wait
 wait
 -----
