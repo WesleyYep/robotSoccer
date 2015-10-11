@@ -23,6 +23,9 @@ public class BasicDefender extends Defender {
 
     private double deadZone;
 
+    private Polygon defendArea;
+    private double defendSize;
+
     public BasicDefender () {
         this(new Point(50, 70), new Point(50, 110), null);
     }
@@ -40,6 +43,10 @@ public class BasicDefender extends Defender {
 
         // allowable error margin
         deadZone = 0.05;
+
+        defendSize = 0.2;
+
+        updatePolygon();
     }
 
     {
@@ -62,7 +69,77 @@ public class BasicDefender extends Defender {
         double angleToTarget = getTargetTheta(bot, positionToBe.x, positionToBe.y);
 
         // difference between previous
-        //double difference = Math.abs(Math.abs(previousDefY) - Math.abs(positionToBe.y) + Math.abs(previousDefX) - Math.abs(positionToBe.y));
+        if (defendArea.contains(ballX, ballY)) {
+            FunctionBlock fb = loadFuzzy("fuzzy/selfMade.fcl");
+            double targetDist;
+            double targetTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
+            double difference = targetTheta - Math.toRadians(r.getTheta());
+            boolean reverse = true;
+            //some hack to make the difference -Pi < theta < Pi
+            if (difference > Math.PI) {
+                difference -= (2 * Math.PI);
+            } else if (difference < -Math.PI) {
+                difference += (2 * Math.PI);
+            }
+            difference = Math.toDegrees(difference);
+            targetTheta = difference;
+            targetDist = Math.sqrt(Math.pow((ballX-r.getXPosition()),2) + Math.pow((ballY-r.getYPosition()),2));
+
+            boolean isFacingTop = true;
+            boolean isTargetTop = true;
+            boolean front  = true;
+            if (r.getTheta() < 0) {
+                isFacingTop = false;
+            }
+
+            if (ballY > r.getYPosition()) {
+                isTargetTop = false;
+            }
+
+            if (isTargetTop != isFacingTop) {
+                front = false;
+            }
+
+
+            if (!front && reverse) {
+                if (targetTheta < 0) {
+                    targetTheta = -180 - targetTheta;
+                }
+                else if (targetTheta > 0) {
+                    targetTheta = 180 - targetTheta;
+                }
+            }
+
+            fb.setVariable("targetTheta", targetTheta);
+            fb.setVariable("targetDist", Math.abs(targetDist));
+            fb.setVariable("direction", r.getTheta());
+            fb.setVariable("xPos", r.getXPosition());
+            fb.setVariable("yPos", r.getYPosition());
+
+            // Evaluate
+            fb.evaluate();
+
+
+            // Show output variable's chart
+            fb.getVariable("linearVelocity").defuzzify();
+            fb.getVariable("angularVelocity").defuzzify();
+            double linear  = fb.getVariable("linearVelocity").getValue();
+            double angular = fb.getVariable("angularVelocity").getValue();
+
+            r.linearVelocity = linear;
+            r.angularVelocity = angular*-1;
+
+            if (!front &&reverse) {
+                r.linearVelocity *= -1;
+                r.angularVelocity *= -1;
+            }
+            if (targetDist <=2.5) {
+                r.linearVelocity = 0;
+                r.angularVelocity = 0;
+            }
+
+            return;
+        }
 
         // Check if distance to target is small
         if (distanceToTarget < deadZone) {
@@ -104,13 +181,10 @@ public class BasicDefender extends Defender {
             angularPID.setInput(Math.toRadians(correctAngle));
             double angleResult = angularPID.performPID();
             bot.angularVelocity = angleResult;
-            System.out.println(bot.angularVelocity);
-            System.out.println("Angle to target: " + angleToTarget);
             return;
         }
 
         // use fuzzy
-
         MoveToSpot.pidMove(bot, (int)positionToBe.x, (int)positionToBe.y);
 
         // update previous details
@@ -153,131 +227,40 @@ public class BasicDefender extends Defender {
         }
     }
 
+    public void updatePolygon() {
+        Point perp1 = calculate_perp_point(parameters.get("point 1 x"), parameters.get("point 1 y"), parameters.get("point 2 x"), parameters.get("point 2 y"), true, (float)(defendSize * 100));
+        Point perp2 = calculate_perp_point(parameters.get("point 1 x"), parameters.get("point 1 y"), parameters.get("point 2 x"), parameters.get("point 2 y"), false, (float)(defendSize * 100));
 
-//    public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
-//        Robot r = bot;
-//        double targetDist;
-//
-//        double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
-//        double difference = targetTheta - Math.toRadians(r.getTheta());
-////       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta "
-//        //     		+ Math.toRadians(r.getTheta()));
-//        //some hack to make the difference -Pi < theta < Pi
-//        if (difference > Math.PI) {
-//            difference -= (2 * Math.PI);
-//        } else if (difference < -Math.PI) {
-//            difference += (2 * Math.PI);
-//        }
-//        difference = Math.toDegrees(difference);
-//        targetTheta = difference;
-//        targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
-//
-//        //clear the ball
-//        double ballTargetTheta = Math.atan2(r.getYPosition() - ballY, ballX - r.getXPosition());
-//        double ballDifference = ballTargetTheta - Math.toRadians(r.getTheta());
-////       System.out.println("initial targetTheta: " + targetTheta + " initial difference " + difference + " current Theta "
-//        //     		+ Math.toRadians(r.getTheta()));
-//        //some hack to make the difference -Pi < theta < Pi
-//        if (ballDifference > Math.PI) {
-//            ballDifference -= (2 * Math.PI);
-//        } else if (ballDifference < -Math.PI) {
-//            ballDifference += (2 * Math.PI);
-//        }
-//        ballDifference = Math.toDegrees(ballDifference);
-//        ballTargetTheta = ballDifference;
-//        /*
-//        if ((Math.abs(ballTargetTheta) < 5 && Math.abs(r.getTheta()) < 90) || (Math.abs(ballTargetTheta) > 175 && Math.abs(r.getTheta()) > 90)) {
-//            MoveToSpot.move(r, new Coordinate((int)ballX, (int)ballY), 1.5);
-//            return;
-//        } */
-//
-//        boolean isFacingTop = true;
-//        boolean isTargetTop = true;
-//        boolean front  = true;
-//        /*
-//        if (r.getTheta() < 0) {
-//            isFacingTop = false;
-//        }
-//
-//        if (y > r.getYPosition()) {
-//            isTargetTop = false;
-//        }
-//
-//        if (isTargetTop != isFacingTop) {
-//            front = false;
-//        } */
-//
-//        if (targetTheta > 90 || targetTheta < -90) {
-//        	front = false;
-//        }
-//
-//        if (!front && reverse) {
-//            if (targetTheta < 0) {
-//                targetTheta = -180 - targetTheta;
-//            }
-//            else if (targetTheta > 0) {
-//                targetTheta = 180 - targetTheta;
-//            }
-//        }
-//
-//        /*
-//        FunctionBlock fb = loadFuzzy("fuzzy/newFuzzy.fcl");
-//        //if (targetDist <= 3.75) targetDist = 0;
-//        if (targetDist <=3.75) {
-//            targetDist = 0;
-//            targetTheta = 0;
-//        }
-//        // targetTheta = Math.round(targetTheta/5)*5;
-//
-//        fb.setVariable("angleError", targetTheta);
-//        fb.setVariable("distanceError", Math.abs(targetDist));
-//        //      System.out.println("x y: " + x + " " + y + " r.x r.y " + r.getXPosition() + " "
-//        //      		+ r.getYPosition() + " targetDist " + targetDist);
-//        // Evaluate
-//        fb.evaluate();
-//        // Show output variable's chart
-//        fb.getVariable("rightWheelVelocity").defuzzify();
-//        fb.getVariable("leftWheelVelocity").defuzzify();
-//        //  JFuzzyChart.get().chart(fb.getVariable("leftWheelVelocity"), fb.getVariable("leftWheelVelocity").getDefuzzifier(), true);
-//        //   JFuzzyChart.get().chart(fb.getVariable("rightWheelVelocity"), fb.getVariable("rightWheelVelocity").getDefuzzifier(), true);
-//        double right  = Math.toRadians(fb.getVariable("rightWheelVelocity").getValue());
-//        double left = Math.toRadians(fb.getVariable("leftWheelVelocity").getValue());
-//        //    System.out.println(" raw right :" + fb.getVariable("rightWheelVelocity").getValue() + " raw left " + fb.getVariable("leftWheelVelocity").getValue());
-//        double linear =  (right+left)/2;
-//        double angular = (right-left)*(2/0.135);
-//        //    System.out.println("right :" + right + "left " + left)
-//        r.linearVelocity = linear*2.5;
-//        r.angularVelocity = angular*1; */
-//
-//
-//        FunctionBlock fb = loadFuzzy("fuzzy/goalKeeper.fcl");
-//        fb.setVariable("targetTheta", targetTheta);
-//        fb.setVariable("targetDist", targetDist);
-//        fb.evaluate();
-//        fb.getVariable("linearVelocity").defuzzify();
-//        fb.getVariable("angularVelocity").defuzzify();
-//        r.linearVelocity = fb.getVariable("linearVelocity").getValue();
-//        r.angularVelocity = fb.getVariable("angularVelocity").getValue();
-//
-//        if (targetDist <= 3.75) {
-//            r.linearVelocity = 0;
-//            r.angularVelocity = 0;
-//        }
-//
-//        if (!front &&reverse) {
-//            r.linearVelocity *= -1;
-//            r.angularVelocity *= -1;
-//        }
-//        //      System.out.println("linear velocity " + r.linearVelocity + " angular velocity" + r.angularVelocity + "angleError: " + targetTheta
-//        //  		 + " r.angle: " + r.getTheta() + " dist: " + targetDist);
-//       // 	System.out.println("x:" + x + " y: " + y + " r.x: " + r.getXPosition() + " r.y" + r.getYPosition());
-//        //     System.out.println("linear: " + r.linearVelocity + " y: " + y + " theta: " + targetTheta + " dist: " + targetDist);
-//        //r.linearVelocity = 0;
-////            r.angularVelocity = 0;
-////
-//
-//        // }
-//    }
+        int[] xpoints = new int [4];
+        xpoints[0] = parameters.get("point 1 x");
+        xpoints[1] = parameters.get("point 2 x");
+        xpoints[2] = (int)perp2.x;
+        xpoints[3] = (int)perp1.x;
+
+        int[] ypoints = new int [4];
+        ypoints[0] = parameters.get("point 1 y");
+        ypoints[1] = parameters.get("point 2 y");
+        ypoints[2] = (int)perp2.y;
+        ypoints[3] = (int)perp1.y;
+
+        defendArea = new Polygon(xpoints, ypoints, xpoints.length);
+    }
+
+    public Point calculate_perp_point(double startX, double startY, double stopX, double stopY, boolean start, float distance) {
+        Point M = new Point();
+        if (start) {
+            M = new Point(startX, startY);
+        } else {
+            M = new Point(stopX, stopY);
+        }
+
+        Point p = new Point(startX - stopX, startY - stopY);
+        Point n = new Point(-p.y, p.x);
+        int norm_length = (int) Math.sqrt((n.x * n.x) + (n.y * n.y));
+        n.x /= norm_length;
+        n.y /= norm_length;
+        return new Point(M.x + (distance * n.x), M.y + (distance * n.y));
+    }
 
     @Override
     public void draw(Graphics2D g) {
@@ -297,6 +280,19 @@ public class BasicDefender extends Defender {
         g2.drawString("Right Click", x2, y2);
         g2.drawLine(x1, y1, x2, y2);
 
+        int x[] = new int[4];
+        x[0] = x1;
+        x[1] = x2;
+        x[2] = Field.fieldXValueToGUIValue(defendArea.xpoints[2]);
+        x[3] = Field.fieldXValueToGUIValue(defendArea.xpoints[3]);
+
+        int y[] = new int[4];
+        y[0] = y1;
+        y[1] = y2;
+        y[2] = Field.fieldYValueToGUIValue(defendArea.ypoints[2]);
+        y[3] = Field.fieldYValueToGUIValue(defendArea.ypoints[3]);
+
+        g2.drawPolygon (x, y, defendArea.xpoints.length);
         g2.dispose();
     }
 
@@ -316,5 +312,7 @@ public class BasicDefender extends Defender {
             parameters.put("point 2 x", x);
             parameters.put("point 2 y", y);
         }
+
+        updatePolygon();
     }
 }
