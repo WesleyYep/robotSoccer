@@ -11,10 +11,10 @@ public class KickOffKick extends Action {
     @Override
     public void execute() {
         if ((System.currentTimeMillis()-GameState.getInstance().getLastStartedTime()) < 100) {
-            bot.linearVelocity = 3;
+            bot.linearVelocity = 0.1;
             bot.angularVelocity = 0;
         } else {
-            System.out.println((System.currentTimeMillis()-GameState.getInstance().getLastStartedTime()));
+     //       System.out.println((System.currentTimeMillis()-GameState.getInstance().getLastStartedTime()));
             bot.linearVelocity = -1;
             bot.angularVelocity = 0;
         }

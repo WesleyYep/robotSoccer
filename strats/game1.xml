@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 70]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 105, 75]
 null-null
 null-null
 null-null
@@ -90,7 +90,7 @@ null-null
 null-null
 -----
 Role:waitingMidDefence
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 110, 70]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 130, 50]
 null-null
 null-null
 null-null
@@ -181,14 +181,14 @@ null-null
 null-null
 -----
 Role:midDefTop
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 90, 70]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[27, 95, 85]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:midDefBot
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 90]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[27, 95, 85]
 null-null
 null-null
 null-null
@@ -211,16 +211,16 @@ spinnerTop
 Play:attackDeepTopPlay
 gk
 defender
+strikerDefender
 waitAtBot
 FuzzyChaseBall
-strikerDefender
 -----
 Play:attackDeepBotPlay
 gk
 defender
+strikerDefender
 FuzzyChaseBall
 waitAtTop
-strikerDefender
 -----
 Play:middleTopPlay
 gk
@@ -246,10 +246,10 @@ FuzzyChaseBall
 Situation:topDefence:0:2:108:192
 defTopPlay
 -----
-Situation:botDefence:1:180:107:191
+Situation:botDefence:1:180:106:191
 defBotPlay
 -----
-Situation:middleTop:106:0:150:194
+Situation:middleTop:106:0:150:106
 middleTopPlay
 -----
 Situation:attackDeepTop:255:-1:253:241
@@ -261,6 +261,12 @@ attackDeepBotPlay
 Situation:attack:483:275:26:43
 attackPlay
 -----
-Situation:middleBot:105:180:153:193
+Situation:middleBot:105:264:153:109
+middleBotPlay
+-----
+Situation:middleMidBot:106:187:153:79
+middleTopPlay
+-----
+Situation:middleMidTop:104:105:153:83
 middleBotPlay
 -----

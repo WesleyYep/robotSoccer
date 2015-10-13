@@ -34,7 +34,7 @@ null-null
 null-null
 -----
 Role:tester2
-permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[130, 180, 0]
+permanent-actions.testSelfMade-[]-[]
 null-null
 null-null
 null-null
@@ -84,7 +84,7 @@ null-null
 -----
 Play:test
 wait
-tester
+tester2
 wait
 wait
 wait

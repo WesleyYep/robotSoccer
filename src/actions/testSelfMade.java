@@ -16,6 +16,7 @@ public class testSelfMade extends Action {
     private int countTimesThatSeemStuck = 0;
     private boolean isCharging = false;
     private boolean front = true;
+    private int count = 0;
 
     @Override
     public void execute() {
@@ -84,21 +85,27 @@ public class testSelfMade extends Action {
 //            return;
 //        }
 //
-
-    	if (targetTheta > 90 || targetTheta < -90) {
-			front = false;
-		} else {
-            front = true;
+        if (count == 0) {
+            if (targetTheta > 90 || targetTheta < -90) {
+                front = false;
+            } else {
+                front = true;
+            }
+        } else {
+        //    System.out.println("count = " + count);
+            count--;
         }
 
         //reverse if stuck
         if (bot.isStuck(new Coordinate(bot.getXPosition(), bot.getYPosition()))) {
+            count = 20;
             if (front) {
                 front = false;
             } else {
                 front = true;
             }
         }
+
 
         //System.out.println("front is " + front);
         if (!front && reverse) {
@@ -188,22 +195,35 @@ public class testSelfMade extends Action {
         if (isCharging) {
             range = 30;
         }
-        if (distanceToTarget < range && Math.abs(actualAngleError) < Math.PI/10 /* radians*/) {
-            bot.linearVelocity = front ? 1 : -1;
-            if (targetX > 110) {
-                double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
-             //   System.out.println("front is " + front + "     abs(angleTogoal) is " + Math.abs(angleToGoal));
-                if ((front && Math.abs(angleToGoal) > 45) || (!front && Math.abs(angleToGoal)  < 135)) {
-                    if (angleToGoal > 0) {
-                        bot.angularVelocity = front ? 30 : -30;
-                    } else {
-                        bot.angularVelocity = front ? -30 : 30;
+        //check if positive situation first
+        if (count == 0 && distanceToTarget < 20 && Math.abs(actualAngleError) < Math.PI/10 /* radians*/ && bot.getXPosition() - ballX > 5) {
+            //negative situation so reverse
+            count = 20;
+            if (front) {
+                front = false;
+            } else {
+                front = true;
+            }
+            isCharging = false;
+        } else {
+            if (distanceToTarget < range && Math.abs(actualAngleError) < Math.PI / 10 /* radians*/) {
+                bot.linearVelocity = front ? 1 : -1;
+                if (targetX > 110) {
+                    double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+                    //   System.out.println("front is " + front + "     abs(angleTogoal) is " + Math.abs(angleToGoal));
+                    if ((front && Math.abs(angleToGoal) > 45) || (!front && Math.abs(angleToGoal) < 135)) {
+                        if (angleToGoal > 0) {
+                            bot.angularVelocity = front ? 30 : -30;
+                        } else {
+                            bot.angularVelocity = front ? -30 : 30;
+                        }
                     }
                 }
+                isCharging = true;
+
+            } else {
+                isCharging = false;
             }
-            isCharging = true;
-        } else {
-            isCharging = false;
         }
       
       return;
