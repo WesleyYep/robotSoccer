@@ -90,7 +90,7 @@ null-null
 null-null
 -----
 Role:waitingMidDefence
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 130, 50]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 60, 30]
 null-null
 null-null
 null-null
@@ -211,14 +211,14 @@ spinnerTop
 Play:attackDeepTopPlay
 gk
 defender
-strikerDefender
+centreDefender4
 waitAtBot
 FuzzyChaseBall
 -----
 Play:attackDeepBotPlay
 gk
 defender
-strikerDefender
+centreDefender4
 FuzzyChaseBall
 waitAtTop
 -----
