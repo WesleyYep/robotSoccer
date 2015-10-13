@@ -15,7 +15,7 @@ public class KickOffKick extends Action {
             bot.angularVelocity = 0;
         } else {
      //       System.out.println((System.currentTimeMillis()-GameState.getInstance().getLastStartedTime()));
-            bot.linearVelocity = -1;
+            bot.linearVelocity = -3;
             bot.angularVelocity = 0;
         }
 

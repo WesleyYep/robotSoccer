@@ -90,8 +90,8 @@ null-null
 null-null
 null-null
 -----
-Role:centreDefender2
-permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+Role:centreDefenderKickOff
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[115, 180, 0]
 null-null
 null-null
 null-null
@@ -164,16 +164,16 @@ wait
 Play:base
 gk
 defender
-moveAndTurn:50:220:55:50
 moveAndTurn:90:220:55:90
 moveAndTurn:130:220:55:130
+moveAndTurn:50:220:55:50
 -----
 Play:kickOffSetUp
 gk
 defender
-moveAndTurn:90:110:80:80
 moveAndTurn:90:0:120:90
 moveAndTurn:90:110:80:100
+moveAndTurn:90:110:80:80
 -----
 Play:kickOffDefSetUp
 gk
@@ -196,18 +196,18 @@ triangleMember
 triangleMember
 triangleMember
 -----
-Play:topKickOff
-gk
-defender
-PenaltyStraight
-kickOffSmall
-wait
------
 Play:botKickOff
 gk
 defender
-wait
 kickOffSmall
+PenaltyStraight
+centreDefenderKickOff
+-----
+Play:topKickOff
+gk
+defender
+kickOffSmall
+centreDefenderKickOff
 PenaltyStraight
 -----
 Play:kickOffStraight

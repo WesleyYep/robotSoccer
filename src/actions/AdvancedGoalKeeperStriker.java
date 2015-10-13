@@ -50,11 +50,11 @@ public class AdvancedGoalKeeperStriker extends Action {
             //clear the ball
             int goalLine = parameters.get("goalLine");
             if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
-                if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 5 || Math.abs(angleToTarget) > 175 )) {
+                if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 10 || Math.abs(angleToTarget) > 170 )) {
                     MoveToSpot.move(bot, new Coordinate(goalLine, 175), 2, false);
                     return;
                 } else {
-                    if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 5 || Math.abs(angleToTarget) > 175 )) {
+                    if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToTarget) < 10 || Math.abs(angleToTarget) > 170 )) {
                         MoveToSpot.move(bot, new Coordinate(goalLine, 5), 2, false);
                         return;
                     }

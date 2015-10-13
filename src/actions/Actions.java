@@ -46,6 +46,7 @@ public class Actions {
           add(KickA.class.getSimpleName());
           add(DefenderStriker.class.getSimpleName());
           add(KickOffKick.class.getSimpleName());
+          add(AntiDefender.class.getSimpleName());
       }};
 
 //      public Action getAction(Class className) {

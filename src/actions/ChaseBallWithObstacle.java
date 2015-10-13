@@ -172,7 +172,7 @@ public class ChaseBallWithObstacle extends Action {
 
         //charge ball if we are in a kicking position
         if (Math.abs(targetTheta) < 20 && targetDist < 50) {//degrees
-            System.out.println("kicking");
+        //    System.out.println("kicking");
             r.linearVelocity = 1;
             r.angularVelocity = 0;
             return;
