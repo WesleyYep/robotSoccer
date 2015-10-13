@@ -34,7 +34,7 @@ null-null
 null-null
 -----
 Role:tester2
-permanent-actions.testSelfMade-[]-[]
+permanent-actions.PenaltyKeeper-[goalLine, bottomPoint, direction, topPoint]-[5, 110, 0, 70]
 null-null
 null-null
 null-null

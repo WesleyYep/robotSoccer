@@ -153,6 +153,20 @@ null-null
 null-null
 null-null
 -----
+Role:PenaltyKeeperTop
+permanent-actions.PenaltyKeeper-[goalLine, bottomPoint, direction, topPoint]-[5, 110, 0, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:PenaltyKeeperTop
+permanent-actions.PenaltyKeeper-[goalLine, bottomPoint, direction, topPoint]-[5, 110, 1, 70]
+null-null
+null-null
+null-null
+null-null
+-----
 //for moveAndTurn, the parameters are turnSpotY:turnSpotX:spotX:spotY
 Play:gkOnly
 gk
@@ -408,6 +422,20 @@ chaseBall
 -----
 Play:penaltyDefend
 gk
+defender
+spinnerTop
+spinnerBot
+waitingMidDefence
+-----
+Play:penaltyDefendTop
+PenaltyKeeperTop
+defender
+spinnerTop
+spinnerBot
+waitingMidDefence
+-----
+Play:penaltyDefendBot
+PenaltyKeeperTop
 defender
 spinnerTop
 spinnerBot
