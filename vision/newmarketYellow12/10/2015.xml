@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-<topRightX>597.0</topRightX>
-<topRightY>20.0</topRightY>
+<topRightX>604.0</topRightX>
+<topRightY>19.0</topRightY>
 <topLeftX>82.0</topLeftX>
 <topLeftY>24.0</topLeftY>
-<bottomRightX>632.0</bottomRightX>
-<bottomRightY>457.0</bottomRightY>
+<bottomRightX>638.0</bottomRightX>
+<bottomRightY>460.0</bottomRightY>
 <bottomLeftX>59.0</bottomLeftX>
 <bottomLeftY>456.0</bottomLeftY>
 <leftGoalTopLeftX>34.0</leftGoalTopLeftX>
@@ -33,9 +33,9 @@
 <teamHUpper>56</teamHUpper>
 <teamHLower>28</teamHLower>
 <teamSUpper>175</teamSUpper>
-<teamSLower>55</teamSLower>
+<teamSLower>48</teamSLower>
 <teamVUpper>212</teamVUpper>
-<teamVLower>113</teamVLower>
+<teamVLower>99</teamVLower>
 <greenHUpper>127</greenHUpper>
 <greenHLower>127</greenHLower>
 <greenSUpper>127</greenSUpper>

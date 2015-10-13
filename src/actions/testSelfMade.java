@@ -25,11 +25,11 @@ public class testSelfMade extends Action {
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
         Robot r = bot;
 
-        if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
-            r.linearVelocity = 0;
-            r.angularVelocity = 0;
-            return;
-        }
+//        if (GameState.getInstance().isGoingOn("waitingStrikerKicking")) {
+//            r.linearVelocity = 0;
+//            r.angularVelocity = 0;
+//            return;
+//        }
 
 //
 //        //see if robot is not in positive situation

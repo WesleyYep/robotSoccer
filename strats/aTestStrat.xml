@@ -1,5 +1,5 @@
 Role:tester
-permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[165, 140, 40]
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[165, 160, 20]
 null-null
 null-null
 null-null
@@ -84,7 +84,7 @@ null-null
 -----
 Play:test
 wait
-tester2
+tester
 wait
 wait
 wait

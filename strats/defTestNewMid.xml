@@ -62,7 +62,7 @@ null-null
 null-null
 -----
 Role:defenderStriker
-permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[145, 140, 40]
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[145, 160, 20]
 null-null
 null-null
 null-null
@@ -90,7 +90,7 @@ null-null
 null-null
 -----
 Role:waitingMidDefence
-permanent-actions.StrikerTest-[targetX, targetY]-[55, 90]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 110, 70]
 null-null
 null-null
 null-null
@@ -146,14 +146,14 @@ null-null
 null-null
 -----
 Role:waitAtTop
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 220, 127, 22]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 163, 45]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitAtBot
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 220, 127, 158]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 163, 135]
 null-null
 null-null
 null-null
@@ -180,32 +180,46 @@ null-null
 null-null
 null-null
 -----
+Role:midDefTop
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 90, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:midDefBot
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 90]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:defBotPlay
 gk
 defender
 waitingMidDefence
 spinnerBot
-topDefStation
+midDefTop
 -----
 Play:defTopPlay
 gk
 defender
 waitingMidDefence
-botDefStation
+midDefBot
 spinnerTop
 -----
 Play:attackDeepTopPlay
 gk
 defender
-centreDefender4
+waitAtBot
 FuzzyChaseBall
 strikerDefender
 -----
 Play:attackDeepBotPlay
 gk
 defender
-centreDefender4
 FuzzyChaseBall
+waitAtTop
 strikerDefender
 -----
 Play:middleTopPlay
@@ -229,24 +243,24 @@ FuzzyChaseBall
 centreDefender4
 FuzzyChaseBall
 -----
-Situation:topDefence:0:2:179:192
+Situation:topDefence:0:2:108:192
 defTopPlay
 -----
-Situation:botDefence:1:180:178:191
+Situation:botDefence:1:180:107:191
 defBotPlay
 -----
-Situation:middleTop:178:0:78:194
+Situation:middleTop:106:0:150:194
 middleTopPlay
 -----
-Situation:attackDeepTop:255:-1:253:187
+Situation:attackDeepTop:255:-1:253:241
 attackDeepTopPlay
 -----
-Situation:attackDeepBot:256:183:250:187
+Situation:attackDeepBot:256:132:250:238
 attackDeepBotPlay
 -----
 Situation:attack:483:275:26:43
 attackPlay
 -----
-Situation:middleBot:178:180:80:193
+Situation:middleBot:105:180:153:193
 middleBotPlay
 -----
