@@ -164,8 +164,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
 			}
 			
 			if ( (patchLUTData & LookupTable.OPPONENT_COLOUR)  > 0 ) {
-				FindPatch(p,x,y,webcamImageMat,LookupTable.OPPONENT_COLOUR,1,enemyPatchList,colourPanel.getRobotSizeMinimum(),colourPanel.getRobotSizeMaximum());
-			}
+				FindPatch(p,x,y,webcamImageMat,LookupTable.OPPONENT_COLOUR,1,enemyPatchList,colourPanel.getOpponentSizeMinimum(),colourPanel.getOpponentSizeMaximum());			}
 			
 			p = p + NEXT_X;
 

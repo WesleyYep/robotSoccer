@@ -75,16 +75,18 @@ public class AdvancedGoalKeeperStriker extends Action {
                 bot.linearVelocity = Math.abs(angleToTarget) < 20 ? speed : 0;
             }
 
+            double distanceToBall = getDistanceToTarget(bot, ballX, ballY);
+
             if (dist <= 3) {
                 bot.linearVelocity = 0;
                 turn();
             }else if (dist < 20 && Math.abs(bot.getTheta()) > 10) {
                 //  }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
                 //bot.linearVelocity *= dist/20.0;
-                if (bot.linearVelocity > 0) {
-                    bot.linearVelocity = dist > 15 ? 0.4 : dist > 10 ? 0.3 : dist > 5 ? 0.2 : 0.1;
+               if (bot.linearVelocity > 0) {
+                    bot.linearVelocity = distanceToBall < 12 ? 0.5 : dist > 15 ? 0.4 : dist > 10 ? 0.3 : dist > 5 ? 0.2 : 0.1;
                 } else if (bot.linearVelocity < 0) {
-                    bot.linearVelocity = dist > 15 ? -0.4 : dist > 10 ? -0.3 : dist > 5 ? -0.2 : -0.1;
+                    bot.linearVelocity = distanceToBall < 12 ? -0.5 : dist > 15 ? -0.4 : dist > 10 ? -0.3 : dist > 5 ? -0.2 : -0.1;
                 }
             }
 
@@ -128,11 +130,11 @@ public class AdvancedGoalKeeperStriker extends Action {
 //            bot.angularVelocity = kp * actualAngleError * angleMod;
 //            bot.linearVelocity = 0;
 
-            bot.angularVelocity = bot.getYPosition() > 90 ? -12: 12;
+            bot.angularVelocity = bot.getYPosition() > 90 ? 12: -12;
             bot.linearVelocity = 0;
 
             //check for state change
-            if (getDistanceToTarget(bot, ballX, ballY) > 30) {
+            if (getDistanceToTarget(bot, ballX, ballY) > 20) {
                 state = 0;
             }
         }

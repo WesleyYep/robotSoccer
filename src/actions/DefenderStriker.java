@@ -294,8 +294,8 @@ public class DefenderStriker extends Action {
 
         //    System.out.println("right :" + right + "left " + left);
 
-        r.linearVelocity = linear;
-        r.angularVelocity = angular*-1;
+        r.linearVelocity = linear*2;
+        r.angularVelocity = angular*-2;
 
 //            System.out.println("linear: " + linear + " angular:" + angular*-1
 //            					+ " x: " + r.getXPosition() + " y: " + r.getYPosition()
