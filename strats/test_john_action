@@ -1,5 +1,5 @@
 Role:testgk
-permanent-actions.TestTurnFirstGoalKeeper-[goalLine, bottomPoint, topPoint]-[5, 110, 70]
+permanent-actions.MoveToFacing-[fixed point1 x, fixed point1 y, direction facing]-[140, 30, 0]
 null-null
 null-null
 null-null
@@ -19,8 +19,15 @@ null-null
 null-null
 null-null
 -----
+Role:tester
+permanent-actions.MoveToFacing-[fixed point1 x, fixed point1 y, direction facing]-[140, 30, 0]
+null-null
+null-null
+null-null
+null-null
+-----
 Play:newplay
-testgk
+tester
 wait
 wait
 wait

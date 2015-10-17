@@ -202,8 +202,6 @@ public class KickA extends Action{
 		ballVelocity.y = Math.sin(theta)*Distance(dis.x,dis.y) / ballPoints.size() / (1.0/30.0);
 	}
 	
-
-
 	private Point ballSimulationMove(double sec) {
 		
 		double radius = 2.3500000000000000;
