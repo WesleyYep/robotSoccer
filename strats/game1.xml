@@ -6,7 +6,7 @@ null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 105, 75]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[17, 110, 70]
 null-null
 null-null
 null-null
@@ -181,14 +181,21 @@ null-null
 null-null
 -----
 Role:midDefTop
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[27, 95, 85]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[27, 100, 80]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:midDefBot
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[27, 95, 85]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[27, 100, 80]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:chaseBall
+permanent-actions.ChaseBallWithObstacle-[]-[]
 null-null
 null-null
 null-null
@@ -213,13 +220,13 @@ gk
 defender
 centreDefender4
 waitAtBot
-FuzzyChaseBall
+chaseBall
 -----
 Play:attackDeepBotPlay
 gk
 defender
 centreDefender4
-FuzzyChaseBall
+chaseBall
 waitAtTop
 -----
 Play:middleTopPlay
