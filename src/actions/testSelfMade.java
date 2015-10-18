@@ -143,8 +143,8 @@ public class testSelfMade extends Action {
 
         //    System.out.println("right :" + right + "left " + left);
 
-        r.linearVelocity = linear;
-        r.angularVelocity = angular*-1;
+        r.linearVelocity = linear*1.5;
+        r.angularVelocity = angular*-1.5;
 
 //            System.out.println("linear: " + linear + " angular:" + angular*-1
 //            					+ " x: " + r.getXPosition() + " y: " + r.getYPosition()

@@ -6,31 +6,26 @@ import strategy.Action;
  * Created by Wesley on 11/07/2015.
  */
 public class PenaltySpin extends Action {
-    //for this method, parameter spin = 0 means spin clockwise, spin = 1 means anticlockwise
-
-
+//used for goalkeeper
     {
-        if (!parameters.containsKey("spin")) {
-            parameters.put("spin", 0); //default clockwise
-        }
+        parameters.put("speed", 3);
     }
+
 
     @Override
     public void execute() {
-        int mod = 1;
-        if (parameters.get("spin") == 0) {
-            mod = -1;
+        int speed = parameters.get("speed");
+
+        if (speed > 100) {
+            speed = -(speed - 100);
         }
+        bot.linearVelocity = speed;
+        bot.angularVelocity = 0;
 
-        if (Math.abs(bot.getTheta()) < 12) {
-            bot.linearVelocity = 0.1;
-            bot.angularVelocity = 1 * mod;
-        } else {
-            bot.angularVelocity = 0;
-            bot.linearVelocity = 3;
+        if(bot.getXPosition() > 110) {
+            bot.linearVelocity = 0.5;
+            bot.angularVelocity = bot.getYPosition() > 90 ? 30 : -30;
         }
-
-
 
     }
 

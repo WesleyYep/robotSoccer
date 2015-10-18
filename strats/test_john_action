@@ -27,9 +27,9 @@ null-null
 null-null
 -----
 Play:newplay
+wait
+wait
 tester
-wait
-wait
 wait
 wait
 -----

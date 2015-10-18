@@ -20,6 +20,9 @@ public class MoveToFacing  extends Action {
     private int currentPointIndex = 0;
     private boolean once = true;
     private boolean stationary= false;
+	private boolean front = true;
+	private boolean isCharging = true;
+	private int count = 0;
     private double previousX = 0;
     private double previousY = 0;
     
@@ -94,7 +97,7 @@ public class MoveToFacing  extends Action {
 				
 				targetPos = B;
 				
-				double errorPositionStop =2;
+				double errorPositionStop =3;
 				if (setVelocityToTarget(targetPos.x,targetPos.y,true)  < errorPositionStop) {
 					//if( mission.behavior.controlType == StrategyGUI_BehaviorControlType::Once )
 						//mission.bComplete = true;
@@ -143,10 +146,10 @@ public class MoveToFacing  extends Action {
 					targetPos.x = posCenter.x + Math.cos(radCenterToRobot + turnDirection *radTarget)*radius;
 					targetPos.y = posCenter.y + Math.sin(radCenterToRobot + turnDirection *radTarget)*radius;
 				}
-				double errorPositionStop = 2;
+				double errorPositionStop = 1;
 				if (setVelocityToTarget(targetPos.x,targetPos.y,true) < errorPositionStop) {
 					missionText = "kick.approach.rotate";
-					missionBeginTime  = System.currentTimeMillis();	
+					missionBeginTime = System.currentTimeMillis();
 				} else {
 					missionText = "kick.approach";
 				}
@@ -154,7 +157,7 @@ public class MoveToFacing  extends Action {
 			
 		}
 		
-		if (missionText.equals("kick.approach.rotate")) {	
+		if (missionText.equals("kick.approach.rotate")) {
 			if (missionBeginTime + 500 < System.currentTimeMillis()) {
 				missionText = "kick";
 				bot.angularVelocity = 0;
@@ -165,18 +168,92 @@ public class MoveToFacing  extends Action {
 				} else  {
 					bot.linearVelocity = 0.3;
 				}
-				bot.angularVelocity = -1*(480*turnDirection) * (Math.PI/180);
-				
+				bot.angularVelocity = -2*(480*turnDirection) * (Math.PI/180);
+
 			}
-			
-		}	
-		
-		System.out.println(missionText);
-    }
+
+		}
+
+
+		double targetX = ballX;
+		double targetY = ballY;
+
+		double actualAngleError;
+		double distanceToTarget = getDistanceToTarget(bot, targetX, targetY);
+		double angleToTarget = getTargetTheta(bot, targetX, targetY); //degrees
+
+		if ((Math.abs(angleToTarget) > 90)) {
+			if (angleToTarget < 0) {
+				actualAngleError = Math.toRadians(-180 - angleToTarget);
+			} else {
+				actualAngleError = Math.toRadians(180 - angleToTarget);
+			}
+		} else {
+			actualAngleError =  Math.toRadians(angleToTarget);
+		}
+
+
+		//charge ball into goal
+		double range = 10;
+		if (isCharging) {
+			range = 30;
+		}
+		//check if positive situation first
+//		if (count == 0 && distanceToTarget < 20 && Math.abs(actualAngleError) < Math.PI/10 && bot.getXPosition() - ballX > 5) {
+//			//negative situation so reverse
+//			count = 20;
+//			if (front) {
+//				front = false;
+//			} else {
+//				front = true;
+//			}
+//			isCharging = false;
+//		} else {
+			if (distanceToTarget < range && Math.abs(actualAngleError) < Math.PI / 10 && bot.getXPosition() - ballX < 5) {
+				bot.linearVelocity = front ? 1 : -1;
+				if (targetX > 110) {
+					double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
+					//   System.out.println("front is " + front + "     abs(angleTogoal) is " + Math.abs(angleToGoal));
+					if ((front && Math.abs(angleToGoal) > 45) || (!front && Math.abs(angleToGoal) < 135)) {
+						if (angleToGoal > 0) {
+							bot.angularVelocity = front ? 30 : -30;
+						} else {
+							bot.angularVelocity = front ? -30 : 30;
+						}
+					}
+				}
+				isCharging = true;
+
+			} else {
+				isCharging = false;
+			}
+
+			System.out.println(missionText);
+		}
+//		System.out.println("isCharing:" + isCharging);
+//
+//		//System.out.println(missionText);
+//    }
+
+	public double getTargetTheta(Point target) {
+		Robot r = bot;
+		double targetTheta = Math.atan2(r.getYPosition() - target.y, target.x - r.getXPosition());
+		double difference = targetTheta - Math.toRadians(r.getTheta());
+
+		if (difference > Math.PI) {
+			difference -= (2 * Math.PI);
+		} else if (difference < -Math.PI) {
+			difference += (2 * Math.PI);
+		}
+		difference = Math.toDegrees(difference);
+		targetTheta = difference;
+
+		return targetTheta;
+	}
 
     public double setVelocityToTarget(double x, double y, boolean reverse) {
         Robot r = bot;
-        boolean front  = true;
+        front  = true;
         double targetDist = Math.sqrt(Math.pow((x-r.getXPosition()),2) + Math.pow((y-r.getYPosition()),2));
         double targetTheta = Math.atan2(r.getYPosition() - y, x - r.getXPosition());
 		double difference = targetTheta - Math.toRadians(r.getTheta());

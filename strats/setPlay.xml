@@ -40,9 +40,16 @@ null-null
 null-null
 null-null
 -----
+Role:GoalKick
+IsFirst2Seconds-actions.PenaltySpin-[speed]-[3]
+permanent-actions.Wait-[]-[]
+null-null
+null-null
+null-null
+-----
 //103 means -3
 Role:PenaltyStraightReverse
-IsFirst2Seconds-actions.PenaltyStraight-[speed]-[103]
+IsFirst2Seconds-actions.PenaltyStraight-[speed]-[1.5]
 permanent-actions.Wait-[]-[]
 null-null
 null-null
@@ -160,7 +167,7 @@ null-null
 null-null
 null-null
 -----
-Role:PenaltyKeeperTop
+Role:PenaltyKeeperBot
 permanent-actions.PenaltyKeeper-[goalLine, bottomPoint, direction, topPoint]-[5, 110, 1, 70]
 null-null
 null-null
@@ -339,16 +346,16 @@ botWaiting
 Play:goalKick
 gk
 defender
-PenaltyStraight
+GoalKick
 topWaiting
-botWaiting
+GoalKick
 -----
 Play:goalKickChaseBall
 gk
 defender
-PenaltyStraight
+GoalKick
 chaseBall
-chaseBall
+GoalKick
 -----
 Play:goalKickSpinBot
 gk
@@ -435,7 +442,7 @@ spinnerBot
 waitingMidDefence
 -----
 Play:penaltyDefendBot
-PenaltyKeeperTop
+PenaltyKeeperBot
 defender
 spinnerTop
 spinnerBot

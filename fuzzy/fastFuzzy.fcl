@@ -38,9 +38,9 @@ END_FUZZIFY
 
 DEFUZZIFY linearVelocity
 	TERM stop := trian -0.1 0 0.1;
-	TERM slow := trian 0.1 0.2 0.3;
-	TERM medium := trian 0.2 0.3 0.4;
-	TERM fast := trian 0.3 0.8 1.3;
+	TERM slow := trian 0.1 0.4 0.6;
+	TERM medium := trian 0.4 0.6 0.8;
+	TERM fast := trian 0.8 1 1.3;
 	METHOD : COG;
 	DEFAULT :=0;
 END_DEFUZZIFY
@@ -107,10 +107,10 @@ RULEBLOCK No1
 	RULE 16 : if targetDist is far and targetTheta is frontRight THEN angularVelocity is SR;
 	
 	RULE 17 : if targetDist is far and targetTheta is behindLeft THEn linearVelocity is medium;
-	RULE 18 : if targetDist is far and targetTheta is behindLeft then angularVelocity is LL;
+	RULE 18 : if targetDist is far and targetTheta is behindLeft then angularVelocity is ML;
 	
 	RULE 19 : if targetDist is far and targetTheta is behindRight then linearVelocity is medium;
-	RULE 20 : if targetDist is far and targetTheta is behindRight then angularVelocity is LR;
+	RULE 20 : if targetDist is far and targetTheta is behindRight then angularVelocity is MR;
 
 END_RULEBLOCK
 

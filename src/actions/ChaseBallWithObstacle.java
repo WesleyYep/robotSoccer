@@ -19,7 +19,7 @@ public class ChaseBallWithObstacle extends Action {
 
     @Override
     public void execute() {
-        setVelocityToTarget(predX,predY,false,false);
+        setVelocityToTarget(ballX,ballY,false,false);
     }
 
     public void setVelocityToTarget(double x, double y, boolean reverse, boolean onGoalLine) {
