@@ -1,0 +1,294 @@
+Role:gk
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:defender
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[16, 110, 70]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:secondDefender
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[35, 120, 60]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:spinnerTop
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[35, 7]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:spinnerBot
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[145, 7]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender1
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[180, 45, 45, 10]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender2
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[0, 45, 45, 170]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender3
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:centreDefender4
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[110, 180, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:defenderStriker
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[145, 160, 20]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:PIDChaseBall
+permanent-actions.PIDMoveToBall-[ki, speed, kp]-[0, 5, 5]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:diagonalWaitingTop
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 160, 55]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:diagonalWaitingBot
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 160, 125]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingMidDefence
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 60, 30]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingTopDefence
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[35, 220, 7, 35]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitingBotDefence
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[145, 220, 7, 145]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:verticalPushBot
+permanent-actions.VerticalPusher-[goalLine, bottomPoint, topPoint]-[185, 180, 140]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:deepBlockBot
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[175, 170, 140]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:verticalPushTop
+permanent-actions.VerticalPusher-[goalLine, bottomPoint, topPoint]-[185, 40, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:deepBlockTop
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[175, 40, 10]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:FuzzyChaseBall
+permanent-actions.testSelfMade-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitAtTop
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 163, 45]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:waitAtBot
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 220, 163, 135]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:topDefStation
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 110, 55, 60]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:botDefStation
+permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[90, 220, 55, 120]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:strikerDefender
+permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[165, 140, 40]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:midDefTop
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 110, 60, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:midDefBot
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 110, 60, 90]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:chaseBall
+permanent-actions.ChaseBallWithObstacle-[]-[]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:KickA
+permanent-actions.MoveToFacing-[fixed point1 x, fixed point1 y, direction facing]-[140, 30, 0]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:moveBotKickBall
+permanent-actions.MoveSpotKickBall-[spotX, spotY]-[160, 130]
+null-null
+null-null
+null-null
+null-null
+-----
+Role:moveTopKickBall
+permanent-actions.MoveSpotKickBall-[spotX, spotY]-[160, 50]
+null-null
+null-null
+null-null
+null-null
+-----
+Play:defBotPlay
+gk
+defender
+centreDefender1
+spinnerBot
+waitingTopDefence
+-----
+Play:defTopPlay
+gk
+defender
+centreDefender2
+waitingBotDefence
+spinnerTop
+-----
+Play:middleTopPlay
+gk
+defender
+FuzzyChaseBall
+waitingBotDefence
+FuzzyChaseBall
+-----
+Play:middleBotPlay
+gk
+defender
+FuzzyChaseBall
+FuzzyChaseBall
+waitingTopDefence
+-----
+Play:attackTopPlay
+gk
+defender
+midDefTop
+FuzzyChaseBall
+moveBotKickBall
+-----
+Play:attackBotPlay
+gk
+defender
+midDefTop
+moveTopKickBall
+FuzzyChaseBall
+-----
+Play:middlePlay
+gk
+defender
+FuzzyChaseBall
+FuzzyChaseBall
+FuzzyChaseBall
+-----
+Situation:topDefence:0:2:108:192
+defTopPlay
+-----
+Situation:botDefence:1:180:106:191
+defBotPlay
+-----
+Situation:middleTop:106:0:150:187
+middleTopPlay
+-----
+Situation:attackTop:336:0:172:187
+attackTopPlay
+-----
+Situation:middleBot:105:187:153:186
+middleBotPlay
+-----
+Situation:attackBot:336:187:172:205
+attackBotPlay
+-----
+Situation:middle:254:1:83:392
+middlePlay
+-----
