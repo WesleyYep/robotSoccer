@@ -1,12 +1,12 @@
 Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 115, 65]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[16, 110, 70]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[20, 115, 65]
 null-null
 null-null
 null-null

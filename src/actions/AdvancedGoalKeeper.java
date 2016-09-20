@@ -13,7 +13,7 @@ public class AdvancedGoalKeeper extends Action {
     private double kp = 3;
     private boolean presetToForward = false;  // if true, robot will definitely go forward
     private boolean presetToBackward = false; //if true, robot will definitely go backwards
-
+    private boolean spinning = false;
 
     {
         parameters.put("goalLine", 110);
@@ -39,6 +39,22 @@ public class AdvancedGoalKeeper extends Action {
 //        //    System.out.println("on goal line");
 //            speed = 0.8;
 //        }
+        //spin if close
+        if (getDistanceToTarget(bot, ballX, ballY) < 10) {
+            spinning = true;
+        } else if (getDistanceToTarget(bot, ballX, ballY) > 15) {
+            spinning = false;
+        }
+
+        if (spinning) {
+            if (ballY < bot.getYPosition()) {
+                bot.angularVelocity = -25;
+            } else {
+                bot.angularVelocity = 25;
+            }
+            bot.linearVelocity = 0;
+            return;
+        }
 
         if ((!presetToForward && Math.abs(angleToTarget) > 90) || presetToBackward) {
             if (angleToTarget < 0) {
