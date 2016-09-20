@@ -54,9 +54,9 @@ public class GoalLineSideDefender extends Action {
 
         if (spinning) {
             if (ballY < r.getYPosition()) {
-                r.angularVelocity = -12;
+                r.angularVelocity = -25;
             } else {
-                r.angularVelocity = 12;
+                r.angularVelocity = 25;
             }
             r.linearVelocity = 0;
             return;

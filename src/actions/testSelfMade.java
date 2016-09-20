@@ -207,7 +207,7 @@ public class testSelfMade extends Action {
             isCharging = false;
         } else {
             if (distanceToTarget < range && Math.abs(actualAngleError) < Math.PI / 10 /* radians*/) {
-                bot.linearVelocity = front ? 1 : -1;
+                bot.linearVelocity = front ? 2 : -2;
                 if (targetX > 110) {
                     double angleToGoal = angleDifferenceFromGoal(bot.getXPosition(), bot.getYPosition(), bot.getTheta()); //degrees
                     //   System.out.println("front is " + front + "     abs(angleTogoal) is " + Math.abs(angleToGoal));
