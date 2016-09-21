@@ -423,6 +423,7 @@ public class CplusplusVisionWorker implements WebcamDisplayPanelListener {
             			
             			double seg_x = cx + cosTheta*x - sinTheta*y;
             			double seg_y = cy + sinTheta*x + cosTheta*y;
+
             			
             			Point temp = VisionController.actualPosToimagePos(new Point(seg_x*100,180-(seg_y*100)));
 

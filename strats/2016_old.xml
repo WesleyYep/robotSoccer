@@ -1,12 +1,12 @@
 Role:gk
-permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 115, 65]
+permanent-actions.BasicGoalKeep-[goalLine, bottomPoint, topPoint]-[6, 110, 70]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:defender
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[18, 115, 65]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[16, 110, 70]
 null-null
 null-null
 null-null
@@ -20,28 +20,28 @@ null-null
 null-null
 -----
 Role:spinnerTop
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[35, 7]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[35, 5]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:spinnerBot
-permanent-actions.GoalLineSideDefender-[startingY, startingX]-[145, 7]
+permanent-actions.GoalLineSideDefender-[startingY, startingX]-[145, 5]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:centreDefender1
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[180, 45, 45, 10]
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[70, 70, 0]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:centreDefender2
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[0, 45, 45, 170]
+permanent-actions.AdvancedGoalKeeperStriker-[goalLine, bottomPoint, topPoint]-[70, 180, 110]
 null-null
 null-null
 null-null
@@ -90,21 +90,21 @@ null-null
 null-null
 -----
 Role:waitingMidDefence
-permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[203, 60, 30]
+permanent-actions.AdvancedGoalKeeper-[goalLine, bottomPoint, topPoint]-[160, 10, 10]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingTopDefence
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[35, 220, 7, 35]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 30]
 null-null
 null-null
 null-null
 null-null
 -----
 Role:waitingBotDefence
-permanent-actions.PIDMoveToSpot-[turnSpotY, turnSpotX, spotX, spotY]-[145, 220, 7, 145]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 85, 45, 150]
 null-null
 null-null
 null-null
@@ -181,7 +181,7 @@ null-null
 null-null
 -----
 Role:midDefTop
-permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 110, 40, 90]
+permanent-actions.DiagonalWaiting-[goalY, goalX, targetX, targetY]-[90, 110, 60, 90]
 null-null
 null-null
 null-null
@@ -208,68 +208,54 @@ null-null
 null-null
 null-null
 -----
-Role:moveBotKickBall
-permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[165, 140, 40]
-null-null
-null-null
-null-null
-null-null
------
-Role:moveTopKickBall
-permanent-actions.DefenderStriker-[goalLine, bottomPoint, topPoint]-[165, 140, 40]
-null-null
-null-null
-null-null
-null-null
------
 Play:defBotPlay
 gk
 defender
-centreDefender1
+waitingMidDefence
 spinnerBot
-waitingTopDefence
+midDefTop
 -----
 Play:defTopPlay
 gk
 defender
-centreDefender2
-waitingBotDefence
+waitingMidDefence
+midDefBot
 spinnerTop
+-----
+Play:attackDeepTopPlay
+gk
+defender
+strikerDefender
+waitAtBot
+FuzzyChaseBall
+-----
+Play:attackDeepBotPlay
+gk
+defender
+strikerDefender
+FuzzyChaseBall
+waitAtTop
 -----
 Play:middleTopPlay
 gk
 defender
-KickA
-waitingBotDefence
+waitingMidDefence
+centreDefender2
 FuzzyChaseBall
 -----
 Play:middleBotPlay
 gk
 defender
-KickA
+waitingMidDefence
 FuzzyChaseBall
-waitingTopDefence
+centreDefender1
 -----
-Play:attackTopPlay
+Play:attackPlay
 gk
 defender
-midDefTop
+strikerDefender
+centreDefender4
 KickA
-moveBotKickBall
------
-Play:attackBotPlay
-gk
-defender
-midDefTop
-moveTopKickBall
-KickA
------
-Play:middlePlay
-gk
-defender
-KickA
-FuzzyChaseBall
-FuzzyChaseBall
 -----
 Situation:topDefence:0:2:108:192
 defTopPlay
@@ -277,18 +263,18 @@ defTopPlay
 Situation:botDefence:1:180:106:191
 defBotPlay
 -----
-Situation:middleTop:106:0:150:187
+Situation:middleTop:106:0:150:106
 middleTopPlay
 -----
-Situation:attackTop:336:0:172:187
-attackTopPlay
+Situation:attack:255:0:253:377
+attackPlay
 -----
-Situation:middleBot:105:187:153:186
+Situation:middleBot:105:264:153:109
 middleBotPlay
 -----
-Situation:attackBot:336:187:172:205
-attackBotPlay
+Situation:middleMidBot:106:187:153:79
+middleTopPlay
 -----
-Situation:middle:254:1:83:392
-middlePlay
+Situation:middleMidTop:104:105:153:83
+middleBotPlay
 -----

@@ -43,7 +43,7 @@ public class AdvancedGoalKeeperStriker extends Action {
             double speed = 0.5;
             if (Math.abs(bot.getTheta()) < 95 && Math.abs(bot.getTheta()) > 85) {
                 //    System.out.println("on goal line");
-                speed = 0.8;
+                speed = 1.2;
             }
 
 
