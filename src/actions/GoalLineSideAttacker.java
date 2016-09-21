@@ -13,7 +13,7 @@ public class GoalLineSideAttacker extends Action {
     private boolean spinning = false;
 
     {
-        parameters.put("horizontalLine", 110);
+        parameters.put("horizontalLine", 90);
         parameters.put("rightPoint", 180);
         parameters.put("leftPoint", 100);
     }
@@ -31,6 +31,16 @@ public class GoalLineSideAttacker extends Action {
 
         double speed = 0.5;
 
+        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
+        //charge the ball
+        int horizontalLine = parameters.get("horizontalLine");
+        if (ballY <= horizontalLine + 5 && ballY > horizontalLine - 5) {
+            if (ballX > bot.getXPosition() && ballX - bot.getXPosition() < 35 && Math.abs(bot.getYPosition() - horizontalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
+                MoveToSpot.move(bot, new Coordinate(200, horizontalLine), 2, false);
+                return;
+            }
+        }
+
         //spin if close
         if (getDistanceToTarget(bot, ballX, ballY) < 10) {
             spinning = true;
@@ -39,9 +49,9 @@ public class GoalLineSideAttacker extends Action {
         }
         if (spinning) {
             if (ballY < bot.getYPosition()) {
-                bot.angularVelocity = 25;
-            } else {
                 bot.angularVelocity = -25;
+            } else {
+                bot.angularVelocity = 25;
             }
             bot.linearVelocity = 0;
             return;
@@ -60,11 +70,10 @@ public class GoalLineSideAttacker extends Action {
             bot.angularVelocity = actualAngleError * kp;
             bot.linearVelocity = Math.abs(angleToTarget) < 20 ? speed : 0;
         }
-
         if (dist <= 3) {
             bot.linearVelocity = 0;
             turn();
-        }else if (dist < 20 && Math.abs(bot.getTheta()) > 10) {
+        }else if (dist < 20) {
             //  }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
             //bot.linearVelocity *= dist/20.0;
             if (bot.linearVelocity > 0) {
@@ -74,34 +83,17 @@ public class GoalLineSideAttacker extends Action {
             }
         }
 
-        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
-        //clear the ball
-        int goalLine = parameters.get("goalLine");
-        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
-            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
-                MoveToSpot.move(bot, new Coordinate(goalLine, 175), 1, false);
-                return;
-            } else {
-                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
-                    MoveToSpot.move(bot, new Coordinate(goalLine, 5), 1, false);
-                    return;
-                }
-            }
-        }
-
     }
 
     private double getXPositionForGoalKeeper() {
-        //just use ballY
         double minX = parameters.get("leftPoint");
         double maxX = parameters.get("rightPoint");
-
-        return ballY < minX && ballY > minX ? ballY : ballY > maxX ? maxX : minX;
+        return ballX < maxX && ballX > minX ? ballX-10 : ballX > maxX ? maxX : minX;
     }
 
     private void turn() {
-        double targetX = parameters.get("goalLine");
-        double targetY = 0;
+        double targetX = 220;
+        double targetY = parameters.get("horizontalLine");
 
         //get angle to target
         double angleToTarget = getTargetTheta(bot, targetX, targetY);

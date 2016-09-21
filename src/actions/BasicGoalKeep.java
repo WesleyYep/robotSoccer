@@ -485,12 +485,12 @@ public class BasicGoalKeep extends Action {
 
 		//clear the ball if it about to go in goal
 		double goalLine = parameters.get("goalLine");
-		if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
+		if (ballX <= goalLine + 5 && ballX > goalLine - 5 && Math.abs(r.getYPosition()-ballY) > 10) {
 			if (ballY > r.getYPosition() && ballY < 110) {
-				MoveToSpot.move(r, new Coordinate((int)goalLine, 110), 2, false);
+				r.linearVelocity = r.getTheta() < 0 ? 2 : -2;// fast downwards
 				return;
 			} else if (ballY < r.getYPosition() && ballY > 70) {
-				MoveToSpot.move(r, new Coordinate((int)goalLine, 70), 2, false);
+				r.linearVelocity = r.getTheta() < 0 ? -2 : 2;// fast upwards
 				return;
 			}
 		}

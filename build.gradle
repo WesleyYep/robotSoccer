@@ -23,3 +23,13 @@ repositories {
 dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ui.RobotSoccerMain'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
