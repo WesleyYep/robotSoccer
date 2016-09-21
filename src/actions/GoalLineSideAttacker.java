@@ -1,151 +1,113 @@
 package actions;
 
-import bot.Robot;
 import data.Coordinate;
-import game.Tick;
 import strategy.Action;
-
+import ui.Field;
 
 /**
- * Created by Wesley on 27/02/2015.
+ * Created by Wesley on 18/07/2015.
  */
 public class GoalLineSideAttacker extends Action {
-    private boolean ready = false;
-    private boolean atCentre = false;
-    private int targetX = 0;
-    private int targetY = 0;
-    private double oldDistanceToTarget = 0;
-    private int countTimesThatSeemStuck = 0;
 
-    //non-static initialiser block
+    private double kp = 3;
+    private boolean spinning = false;
+
     {
-        if(!(parameters.containsKey("startingX") && parameters.containsKey("startingY"))) {
-            //don't bother if these already exist
-            parameters.put("startingX", 210);
-            parameters.put("startingY", 10);
-        }
+        parameters.put("horizontalLine", 110);
+        parameters.put("rightPoint", 180);
+        parameters.put("leftPoint", 100);
     }
 
     @Override
     public void execute() {
-        Robot r = bot;
 
-        //this is number 1 priority
-        if (ballComingIntoPath(r)) {
-//            GameState.getInstance().addToWhatsGoingOn("waitingStrikerKicking");
-            return;
-        }else {
-//            GameState.getInstance().removeFromWhatsGoingOn("waitingStrikerKicking");
-        }
+        double targetY = parameters.get("horizontalLine");
+        double targetX = getXPositionForGoalKeeper();
+        double dist = getDistanceToTarget(bot, targetX, targetY);
 
-        //check if robot is stuck
-        double newTargetDistance = getDistanceToTarget(r);
-        //  System.out.println(Math.abs(oldDistanceToTarget - newTargetDistance));
-        if (Math.abs(oldDistanceToTarget - newTargetDistance) < 0.4) {
-            countTimesThatSeemStuck++;
-        } else if (r.linearVelocity >= 0){
-            countTimesThatSeemStuck = 0;
-        }
-        if (countTimesThatSeemStuck > 20) {
-            countTimesThatSeemStuck = 0;
-            return;
-        } else if (countTimesThatSeemStuck > 10) {
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 10;
-            countTimesThatSeemStuck++;
-            return;
-        }
+        //get angle to target
+        double angleToTarget = getTargetTheta(bot, targetX, targetY);
+        double actualAngleError;
 
-        //move and turn
-        if (Math.abs(r.getXPosition() - parameters.get("startingX")) < 10 && Math.abs(r.getYPosition() - parameters.get("startingY")) < 10 ) { //already at centre, now turn to goal
-            TurnTo.turn(r, new Coordinate(220, 90), 1);
-            double targetTheta = getTargetTheta(r, 220, 90);
-            r.linearVelocity = 0;
-            if (Math.abs(targetTheta) < 5) {
-                r.angularVelocity = 0;
-                atCentre = true;
+        double speed = 0.5;
+
+        //spin if close
+        if (getDistanceToTarget(bot, ballX, ballY) < 10) {
+            spinning = true;
+        } else if (getDistanceToTarget(bot, ballX, ballY) > 15) {
+            spinning = false;
+        }
+        if (spinning) {
+            if (ballY < bot.getYPosition()) {
+                bot.angularVelocity = 25;
+            } else {
+                bot.angularVelocity = -25;
             }
-            countTimesThatSeemStuck = 0;
-        }
-        else {
-            targetX = parameters.get("startingX");
-            targetY = parameters.get("startingY");
-            MoveToSpot.move(r, new Coordinate(targetX, targetY), 1, true);
-            oldDistanceToTarget = getDistanceToTarget(r);
-        }
-    }
-
-    private boolean ballComingIntoPath(Robot r) {
-        double angleToBall = Math.abs(getTargetTheta(r, ballX, ballY));
-        boolean isFacingGoal = Math.abs(getTargetTheta(r, 220, 90)) < 10 || Math.abs(getTargetTheta(r, 220, 90)) > 170;
-        double ballDistanceFromRobot = Math.sqrt(squared(ballX-r.getXPosition()) + squared(ballY-r.getYPosition()));
-
-        if (!isFacingGoal) {return false;}
-        if ( angleToBall < (10 + 50-ballDistanceFromRobot)) {
-            r.linearVelocity = 0.5;
-            r.angularVelocity = 0;
-            return true;
-        } else if (r.getXPosition() < ballX && angleToBall > 170) {
-            r.linearVelocity = -0.5;
-            r.angularVelocity = 0;
-            return true;
+            bot.linearVelocity = 0;
+            return;
         }
 
-        //get an equation in the form y = mx + c of the path of ball
-        double m = (predY-ballY) / (predX - ballX);
-        double c = ballY - (m * ballX);
-        //get an equation of the line for robot angle
-        double mR = 0 - Math.tan(Math.toRadians(r.getTheta()));
-        double cR = r.getYPosition() - (mR * r.getXPosition());
-
-        //check if line crosses the line y = mRx + cR (old was y = robotY) and 0 < x < r.X]
-        // mx + c = mRx + cR
-        // mx - mRx = cR - c
-        //x(m - mR) = cR - c
-        //x = (cR - c) / (m - mR)
-        //use this to get coordinates of intersection point
-        double xInt = (cR - c) / (m - mR);
-        double yInt = m * xInt + c;
-
-        //return false is intersection point is in the past (ie. ball is between pred and int
-        if (predY - ballY > 5 && ballY - yInt > 5 || ballY - predY > 5 && yInt - ballY > 5) {
-            //         System.out.println("moving away");
-            return false;
-        }
-
-        //double x = (r.getYPosition() - c) / m;
-        if (xInt < 220 && xInt > r.getXPosition()) {
-            //find distance of intersection point from current ball position
-            double ballDistance = Math.sqrt(squared(ballX-xInt) + squared(ballY-yInt));
-            if (ballDistance < 5) {
-                r.linearVelocity = 0.5;
-                r.angularVelocity = 0;
-                //    System.out.println("ball so close");
-                return true;
+        if ((Math.abs(angleToTarget) > 90)) {
+            if (angleToTarget < 0) {
+                actualAngleError = Math.toRadians(-180 - angleToTarget);
+            } else {
+                actualAngleError = Math.toRadians(180 - angleToTarget);
             }
-            //find speed of ball
-            double ballSpeed = (Math.sqrt(squared(predX-ballX) + squared(predY-ballY))) / Tick.PREDICT_TIME;
-            //find time taken for ball to reach intersection point
-            double time = ballDistance / ballSpeed;
-            //only go if the time is under 1 second
-            if (time < 1) {
-                //get distance of robot to spot
-                double robotDistance = Math.sqrt(squared(r.getXPosition()-xInt) + squared(r.getYPosition()-yInt));
-                r.linearVelocity = squared((robotDistance/time)/100);
-                r.angularVelocity = 0;
-                atCentre = false;
-                return true;
+            bot.angularVelocity = actualAngleError * kp * -1;
+            bot.linearVelocity = Math.abs(angleToTarget) > 160 ? speed * -1 : 0;
+        } else {
+            actualAngleError =  Math.toRadians(angleToTarget);
+            bot.angularVelocity = actualAngleError * kp;
+            bot.linearVelocity = Math.abs(angleToTarget) < 20 ? speed : 0;
+        }
+
+        if (dist <= 3) {
+            bot.linearVelocity = 0;
+            turn();
+        }else if (dist < 20 && Math.abs(bot.getTheta()) > 10) {
+            //  }else if (dist < 10 && Math.abs(bot.getTheta()) > 10) {
+            //bot.linearVelocity *= dist/20.0;
+            if (bot.linearVelocity > 0) {
+                bot.linearVelocity = dist > 15 ? 0.4 : dist > 10 ? 0.3 : dist > 5 ? 0.2 : 0.1;
+            } else if (bot.linearVelocity < 0) {
+                bot.linearVelocity = dist > 15 ? -0.4 : dist > 10 ? -0.3 : dist > 5 ? -0.2 : -0.1;
             }
         }
-        return false;
+
+        double angleToBall = getTargetTheta(bot, ballX, ballY); //degrees
+        //clear the ball
+        int goalLine = parameters.get("goalLine");
+        if (ballX <= goalLine + 5 && ballX > goalLine - 5) {
+            if (ballY > bot.getYPosition() && ballY - bot.getYPosition() < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
+                MoveToSpot.move(bot, new Coordinate(goalLine, 175), 1, false);
+                return;
+            } else {
+                if (ballY < bot.getYPosition() && bot.getYPosition() - ballY < 35 && Math.abs(bot.getXPosition() - goalLine) < 5 &&(Math.abs(angleToBall) < 10 || Math.abs(angleToBall) > 170 )) {
+                    MoveToSpot.move(bot, new Coordinate(goalLine, 5), 1, false);
+                    return;
+                }
+            }
+        }
+
     }
 
-    private double getDistanceToTarget(Robot r) {
-        return Math.sqrt(squared(targetX - r.getXPosition()) + squared(targetY - r.getYPosition()));
+    private double getXPositionForGoalKeeper() {
+        //just use ballY
+        double minX = parameters.get("leftPoint");
+        double maxX = parameters.get("rightPoint");
+
+        return ballY < minX && ballY > minX ? ballY : ballY > maxX ? maxX : minX;
     }
 
-    protected static double squared (double x) {
-        return x * x;
+    private void turn() {
+        double targetX = parameters.get("goalLine");
+        double targetY = 0;
+
+        //get angle to target
+        double angleToTarget = getTargetTheta(bot, targetX, targetY);
+        bot.angularVelocity = Math.toRadians(angleToTarget) * kp;
     }
+
+
 
 }
